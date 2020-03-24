@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfService1", "WcfService1\WcfService1.csproj", "{AA5C88D0-1D30-48EE-9780-06EA073E5FC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PNPU_WS", "WcfService1\PNPU_WS.csproj", "{AA5C88D0-1D30-48EE-9780-06EA073E5FC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{8E869844-5E86-4F60-985B-E1E8DB20B87B}"
 	ProjectSection(ProjectDependencies) = postProject

@@ -41,6 +41,56 @@ namespace WcfService1
         {
             return test;
         }
+
+        public string GetInfoAllClient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetInfoOneClient(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetProcessusCritiquesAllCLient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetProcessusCritiquesOneClient(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetIdOrgaAllClient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetIdOrgaOneClient(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetTypoAllClient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetTypoOneClient(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string RunWorkflow(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string CreateWorkflow(string ClientName)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
