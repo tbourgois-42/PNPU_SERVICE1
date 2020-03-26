@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="WorkFlow.cs" />
     <Compile Include="ControleTypePack.cs" />
     <Compile Include="ControleParamAppli.cs" />
     <Compile Include="ControleCmdInterdites.cs" />

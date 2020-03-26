@@ -7,6 +7,9 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.IO;
 using System.IO.Pipes;
+using PNPUCore.Database;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace WcfService1
 {
@@ -42,7 +45,7 @@ namespace WcfService1
             return test;
         }
 
-        public string GetInfoAllClient()
+        public List<InfoClient> GetInfoAllClient()
         {
             throw new NotImplementedException();
         }
@@ -87,9 +90,25 @@ namespace WcfService1
             throw new NotImplementedException();
         }
 
-        public string CreateWorkflow(string ClientName)
+        public bool CreateWorkflow(Stream input)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            WorkFlow newWorkflow = new WorkFlow();
+
+            using (StreamReader sr = new StreamReader(input))
+            {
+                NameValueCollection qs = HttpUtility.ParseQueryString(sr.ReadToEnd());
+                newBooking.DateBooking = DateTime.Parse(qs["dateBooking"].ToString());
+                newBooking.NbGuest = int.Parse(qs["nbGuest"].ToString());
+            }
+
+            if (newBooking != null && !MenuRepository.Bookings.Any(bo => bo.DateBooking.Equals(newBooking.DateBooking)))
+            {
+                result = true;
+                MenuRepository.Bookings.Add(newBooking);
+            }
+
+            return result;
         }
     }
 

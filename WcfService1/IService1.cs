@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PNPUCore.Database;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -17,7 +19,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "clients")]
-        string GetInfoAllClient();
+        List<InfoClient> GetInfoAllClient();
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -76,11 +78,13 @@ namespace WcfService1
         string RunWorkflow(string ClientName);
 
         [OperationContract]
-        [WebInvoke(Method = "GET",
+        [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Workflow/CreateWorkflow/")]
-        string CreateWorkflow(string ClientName);
+        bool CreateWorkflow(Stream input);
+
+
     }
 
 }

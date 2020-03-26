@@ -82,6 +82,16 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PNPUCore\PNPUCore.csproj">
+      <Project>{d75d6ea6-79d7-4b08-9968-482ae762dfc5}</Project>
+      <Name>PNPUCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PNPUTools\PNPUTools.csproj">
+      <Project>{b0256ca4-bb09-4f83-a5aa-b1017c09607f}</Project>
+      <Name>PNPUTools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
