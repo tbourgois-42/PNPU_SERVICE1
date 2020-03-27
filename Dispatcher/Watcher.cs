@@ -71,7 +71,7 @@ namespace PNUDispatcher
         private static void LaunchProcessFunction()
         {
             var launcher = new Launcher();
-            launcher.Launch("toto", "Unnomdeprocess");
+            launcher.Launch("toto", "ProcessControlePacks");
         }
 
         /// <summary>  
