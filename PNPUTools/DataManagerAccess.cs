@@ -8,27 +8,20 @@ namespace PNPUTools.DataManager
 {
     public class DataManagerAccess : IDataManager
     {
-        private string sMdbPath = string.Empty;
-
-        public DataManagerAccess(string sPMdbPath)
-        {
-            sMdbPath = sPMdbPath;
-        }
-
-
-        string GetConnectionString()
+    
+        string GetConnectionString(string sMdbPath)
         {
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq="
                 + sMdbPath
                 + ";Uid=Admin;Pwd=;";
         }
 
-        public DataSet GetData(string sRequest)
+        public DataSet GetData(string sRequest, string sMdbPath)
         {
             DataSet dataSet = null;
 
              using (OdbcConnection connection =
-              new OdbcConnection(GetConnectionString()))
+              new OdbcConnection(GetConnectionString(sMdbPath)))
             {
                 OdbcDataAdapter adapter =
                     new OdbcDataAdapter(sRequest, connection);
@@ -44,7 +37,7 @@ namespace PNPUTools.DataManager
                 {
                     // A gérer la mise à jour du log
                     //Console.WriteLine(ex.Message);
-                    
+                    dataSet = null;
                 }
 
             }
