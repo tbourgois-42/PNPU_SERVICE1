@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataManagerAccess.cs" />
+    <Compile Include="DataManagerSQLServer.cs" />
     <Compile Include="IDataManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

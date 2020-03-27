@@ -75,7 +75,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Workflow/{WorkflowName}/Run")]
-        string RunWorkflow(string ClientName);
+        string RunWorkflow(string WorkflowName);
 
         [OperationContract]
         [WebInvoke(Method = "POST",

@@ -85,9 +85,18 @@ namespace WcfService1
             throw new NotImplementedException();
         }
 
-        public string RunWorkflow(string ClientName)
+        public string RunWorkflow(string WorkflowName)
         {
-            throw new NotImplementedException();
+            if (npcsPipeClient == null)
+            {
+                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
+                npcsPipeClient.Connect();
+                ssStreamString = new StreamString(npcsPipeClient);
+            }
+
+            ssStreamString.WriteString(WorkflowName);
+
+            return (ssStreamString.ReadString());
         }
 
         public bool CreateWorkflow(Stream input)
@@ -95,7 +104,7 @@ namespace WcfService1
             bool result = false;
             WorkFlow newWorkflow = new WorkFlow();
 
-            using (StreamReader sr = new StreamReader(input))
+            /*using (StreamReader sr = new StreamReader(input))
             {
                 NameValueCollection qs = HttpUtility.ParseQueryString(sr.ReadToEnd());
                 newBooking.DateBooking = DateTime.Parse(qs["dateBooking"].ToString());
@@ -106,7 +115,7 @@ namespace WcfService1
             {
                 result = true;
                 MenuRepository.Bookings.Add(newBooking);
-            }
+            }*/
 
             return result;
         }
