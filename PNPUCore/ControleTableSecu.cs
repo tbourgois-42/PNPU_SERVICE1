@@ -8,33 +8,43 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
+    /// <summary>  
+    /// Cette classe permet de controler que les tables livrées dans le packs sont sécurisées. 
+    /// </summary>  
     class ControleTableSecu : IControle
     {
-        private string sPathMdb = string.Empty;
+        private PNPUCore.Process.ProcessControlePacks Process;
 
-        public ControleTableSecu(string sPPathMdb)
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        public ControleTableSecu(PNPUCore.Process.IProcess pProcess)
         {
-            sPathMdb = sPPathMdb;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
         }
 
-        public bool makeControl()
+        /// <summary>  
+        /// Méthode effectuant le contrôle. 
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// </summary>  
+        public bool MakeControl()
         {
-            string sTest;
             bool bResultat = true;
+            string sPathMdb = Process.MDBCourant;
 
             DataManagerAccess dmaManagerAccess = null;
             try
             {
-                dmaManagerAccess = new DataManagerAccess(sPathMdb);
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_OBJECT FROM M4RDC_LOGIC_OBJECT WHERE HAVE_SECURITY <> 1");
+                dmaManagerAccess = new DataManagerAccess();
+                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_OBJECT FROM M4RDC_LOGIC_OBJECT WHERE HAVE_SECURITY <> 1", sPathMdb);
 
-                if (dsDataSet.Tables[0].Rows.Count > 0)
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
                     bResultat = false;
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
-                        // TODO Loguer les tables non sécurisées
-                        sTest = drRow[0].ToString();
+                        Process.AjouteRapport("Table " + drRow[0].ToString() + " non sécurisée.");
                     }
                 }
             }

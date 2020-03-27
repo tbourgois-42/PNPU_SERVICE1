@@ -7,7 +7,7 @@ namespace PNPUCore.Controle
 {
     class ControleMock : IControle
     {
-        public bool makeControl()
+        public bool MakeControl()
         {
             return true;
         }

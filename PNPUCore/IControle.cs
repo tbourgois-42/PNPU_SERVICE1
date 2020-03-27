@@ -4,8 +4,11 @@ using System.Text;
 
 namespace PNPUCore.Controle
 {
+    
+
     interface IControle
     {
-        Boolean makeControl();
+
+        Boolean MakeControl();
     }
 }

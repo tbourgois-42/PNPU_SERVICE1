@@ -342,7 +342,7 @@ export default {
   }),
   created() {
     axios
-      .get('http://localhost:63267/Service1.svc/Alacon/1')
+      .get('http://localhost:63267/Service1.svc/Workflow/TEST/Run')
       .then((res) => {
         this.test = res.data
       })

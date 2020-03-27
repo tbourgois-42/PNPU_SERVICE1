@@ -3,32 +3,49 @@ using PNPUCore.Process;
 using System;
 using System.Collections.Generic;
 
+
 namespace PNPUCore
 {
+    /// <summary>  
+    /// Cette classe permet de gérer le lancement des process. 
+    /// </summary>  
     public class Launcher
     {
         List<InfoClient> listClient;
 
 
-        void launchProcess(IProcess process)
+        void LaunchProcess(IProcess process)
         {
-            process.executeMainProcess();
-            String json = process.formatReport();
+            process.ExecuteMainProcess();
+            String json = process.FormatReport();
             Console.WriteLine(json);
         }
 
-
+        /// <summary>  
+        /// Lancement d'une process pour un client.
+        /// </summary>  
+        /// <param name="clientName">Client pour lequel on lance le preocess.</param>
+        /// <param name="processName">Nom du process à lancer.</param>
         public void Launch(String clientName, String processName)
         {
-            IProcess process = createProcess(processName, clientName);
+            IProcess process = CreateProcess(processName, clientName);
 
-            launchProcess(process);
+            LaunchProcess(process);
         }
 
 
-        IProcess createProcess(String process, String client)
+        IProcess CreateProcess(String process, String client)
         {
-            return ProcessMock.createProcess();
+            PNPUCore.Rapport.Process rapportProcess = new Rapport.Process();
+
+            switch (process)
+            {
+                case "ProcessControlePacks" :
+                    return ProcessControlePacks.CreateProcess(rapportProcess);
+
+                default:
+                    return ProcessMock.CreateProcess();
+            }
         }
 
     }

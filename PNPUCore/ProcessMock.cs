@@ -10,31 +10,19 @@ namespace PNPUCore.Process
     {
         private readonly object listOfMockControl;
 
-        public void executeMainProcess()
+        public void ExecuteMainProcess()
         {
             List<IControle> listControl =  ListControls.listOfMockControl;
 
-            //Pour test MHUM
-            listControl.Clear();
-            string sCheminMDB = "D:\\PNPU\\02_8.1_HF2003_PLFR_HP.mdb";
-            ControleTacheSecu ctsControleTacheSecu = new ControleTacheSecu(sCheminMDB);
-            listControl.Add(ctsControleTacheSecu);
-            ControleTableSecu ctsControleTableSecu = new ControleTableSecu(sCheminMDB);
-            listControl.Add(ctsControleTableSecu);
-
-            foreach (IControle controle in listControl)
-            {
-                controle.makeControl();
-            }
-
+            
         }
 
-        public string formatReport()
+        public string FormatReport()
         {
             return "{OUAH MAIS QUEL TALENT!}";
         }
 
-        internal static IProcess createProcess()
+        internal static IProcess CreateProcess()
         {
             return new ProcessMock();
         }

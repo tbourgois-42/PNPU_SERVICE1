@@ -1,4 +1,4 @@
-﻿using PNPUCore.Database;
+using PNPUCore.Database;
 using System;
 using System.Collections.Generic;
 using System.IO;

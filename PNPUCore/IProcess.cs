@@ -7,9 +7,9 @@ namespace PNPUCore.Process
     interface IProcess
     {
 
-        void executeMainProcess();
+        void ExecuteMainProcess();
 
-        String formatReport();
+        String FormatReport();
 
     }
 }

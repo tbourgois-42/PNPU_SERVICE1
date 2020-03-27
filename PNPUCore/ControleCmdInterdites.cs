@@ -8,31 +8,44 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
+    /// <summary>  
+    /// Cette classe permet de controler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
+    /// </summary>  
     class ControleCmdInterdites : IControle
     {
-        private string sPathMdb = string.Empty;
         private List<string> lL_INTERDIT;
+        private PNPUCore.Process.ProcessControlePacks Process;
 
-        public ControleCmdInterdites(string sPPathMdb, List<string> L_INTERDIT)
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        public ControleCmdInterdites(PNPUCore.Process.IProcess pProcess)
         {
-            sPathMdb = sPPathMdb;
-            lL_INTERDIT = L_INTERDIT;
-         }
+            lL_INTERDIT = ParamAppli.ListeCmdInterdite;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+        }
 
-        public bool makeControl()
+         /// <summary>  
+        /// Méthode effectuant le contrôle. 
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// </summary>  
+        public bool MakeControl()
         {
             bool bResultat = true;
             string sCommandPack = string.Empty;
             int iCpt = 0;
             bool bTrouve;
+            string sPathMdb = Process.MDBCourant;
+
 
             DataManagerAccess dmaManagerAccess = null;
             try
             {
-                dmaManagerAccess = new DataManagerAccess(sPathMdb);
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_PACKAGE,CMD_SEQUENCE,CMD_CODE FROM M4RDL_PACK_CMDS WHERE CMD_ACTIVE =-1");
+                dmaManagerAccess = new DataManagerAccess();
+                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_PACKAGE,CMD_SEQUENCE,CMD_CODE FROM M4RDL_PACK_CMDS WHERE CMD_ACTIVE =-1", sPathMdb);
 
-                if (dsDataSet.Tables[0].Rows.Count > 0)
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
 
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -50,7 +63,19 @@ namespace PNPUCore.Controle
                             {
                                 bTrouve = true;
                                 bResultat = false;
-                                // TODO indiquer que le pack contient des commandes interdites
+                                double dConv;
+
+                                try
+                                {
+                                    dConv = Convert.ToDouble(drRow[1].ToString());
+                                }
+                                catch
+                                {
+                                    dConv = 0;
+                                }
+                                bTrouve = true;
+                                Process.AjouteRapport("La commande " + dConv.ToString("###0") + " du pack " + drRow[0].ToString() + " est interdite.");
+                          
                             }
                         }
 

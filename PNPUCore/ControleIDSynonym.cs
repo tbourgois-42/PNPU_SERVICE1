@@ -8,31 +8,44 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
+    /// <summary>  
+    /// Cette classe permet de controler que les ID_SYNONYME des items livrés ne sont pas dans les plages réservées aux clients. 
+    /// </summary>  
     class ControleIDSynonym : IControle
     {
         private string sPathMdb = string.Empty;
         private List<int> lLIM_INF;
         private List<int> lLIM_SUP;
+        private PNPUCore.Process.ProcessControlePacks Process;
 
-        public ControleIDSynonym(string sPPathMdb, List<int> LIM_INF, List<int> LIM_SUP)
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        public ControleIDSynonym(PNPUCore.Process.IProcess pProcess)
         {
-            sPathMdb = sPPathMdb;
-            lLIM_INF = LIM_INF;
-            lLIM_SUP = LIM_SUP;
+            lLIM_INF = ParamAppli.ListeLimInf;
+            lLIM_SUP = ParamAppli.ListeLimSup;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
         }
 
-        public bool makeControl()
+         /// <summary>  
+        /// Méthode effectuant le contrôle. 
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// </summary>  
+        public bool MakeControl()
         {
             bool bResultat = true;
             int iID_SYNONYM;
+            string sPathMdb = Process.MDBCourant;
 
             DataManagerAccess dmaManagerAccess = null;
             try
             {
-                dmaManagerAccess = new DataManagerAccess(sPathMdb);
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE ID_TI LIKE '%HR%CALC' AND ID_TI NOT LIKE '%DIF%' AND ID_SYNONYM <> 0");
+                dmaManagerAccess = new DataManagerAccess();
+                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE ID_TI LIKE '%HR%CALC' AND ID_TI NOT LIKE '%DIF%' AND ID_SYNONYM <> 0", sPathMdb);
 
-                if (dsDataSet.Tables[0].Rows.Count > 0)
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
@@ -48,7 +61,8 @@ namespace PNPUCore.Controle
                         if (bPlageOK == false)
                         {
                             bResultat = false;
-                            // TODO logger l'item et l'ID_SYNONYM
+                            Process.AjouteRapport("L'ID_SYNONYM de l'item " + drRow[0].ToString() + "(" + drRow[1].ToString() + ") est dans les plages réservées client.");
+                                
                         }
                     }
                 }

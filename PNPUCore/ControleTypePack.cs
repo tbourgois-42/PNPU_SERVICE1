@@ -8,41 +8,64 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleTypeack : IControle
+    /// <summary>  
+    /// Cette classe permet de controler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
+    /// </summary>  
+    class ControleTypePack : IControle
     {
-        private string sPathMdb = string.Empty;
         private List<string> lCMD_L;
         private List<string> lCMD_D;
         private List<string> lCMD_F;
         private List<string> lCMD_B;
+        private PNPUCore.Process.ProcessControlePacks Process;
 
-        public ControleTypeack(string sPPathMdb, List<string> CMD_L, List<string> CMD_D, List<string> CMD_F, List<string> CMD_B)
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        public ControleTypePack(PNPUCore.Process.IProcess pProcess)
         {
-            sPathMdb = sPPathMdb;
-            lCMD_L = CMD_L;
-            lCMD_D = CMD_D;
-            lCMD_F = CMD_F;
-            lCMD_B = CMD_B;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            lCMD_L = ParamAppli.ListeCmdL;
+            lCMD_D = ParamAppli.ListeCmdD;
+            lCMD_F = ParamAppli.ListeCmdF;
+            lCMD_B = ParamAppli.ListeCmdB;
         }
 
-        public bool makeControl()
+        /// <summary>  
+        /// Méthode effectuant le contrôle. Elle va appeler la méthode ControleUnTypack pour chaque type de pack (L, B, D et F).
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// </summary>  
+        public bool MakeControl()
         {
             bool bResultat = true;
-            int iID_SYNONYM;
-
             DataManagerAccess dmaManagerAccess = null;
+
+
             try
             {
-                dmaManagerAccess = new DataManagerAccess(sPathMdb);
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE ID_TI LIKE '%HR%CALC' AND ID_TI NOT LIKE '%DIF%' AND ID_SYNONYM <> 0");
+                dmaManagerAccess = new DataManagerAccess();
 
-                if (dsDataSet.Tables[0].Rows.Count > 0)
+                if (ControleUnTypack("_L", lCMD_L, dmaManagerAccess) == false)
                 {
-                    foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
-                    {
-                        
-                    }
+                    bResultat = false;
                 }
+
+                if (ControleUnTypack("_D", lCMD_D, dmaManagerAccess) == false)
+                {
+                    bResultat = false;
+                }
+
+                if (ControleUnTypack("_F", lCMD_F, dmaManagerAccess) == false)
+                {
+                    bResultat = false;
+                }
+
+                if (ControleUnTypack("_B", lCMD_B, dmaManagerAccess) == false)
+                {
+                    bResultat = false;
+                }
+
             }
             catch (Exception ex)
             {
@@ -54,21 +77,58 @@ namespace PNPUCore.Controle
 
         }
 
-        private bool ControleUnTypack(string TypePack, List<string> CMD)
+        /// <summary>  
+        /// Méthode effectuant le contrôle pour un type de pack. 
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// <param name="TypePack">Contient une chaîne de caractère permettant de filtrer le type de pack à contrôler.</param>
+        /// <param name="CMD">Contient la liste des commandes autorisées pour le type de pack à contrôler.</param>
+        /// <param name="dmaManagerAccess">Objet permettant de faire des requêtes dans le MDB à contrôler.</param>
+        /// </summary>  
+        private bool ControleUnTypack(string TypePack, List<string> CMD, DataManagerAccess dmaManagerAccess )
         {
             bool bResultat = true;
-            DataManagerAccess dmaManagerAccess = null;
+            
+            bool bTrouve;
+            int iCpt;
+            string sCommandPack;
+            string sPathMdb = Process.MDBCourant;
 
             try
             {
-                dmaManagerAccess = new DataManagerAccess(sPathMdb);
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_PACKAGE,CMD_SEQUENCE,CMD_CODE FROM M4RDL_PACK_CMDS WHERE ID_PACKAGE LIKE '%" + TypePack + "' AND CMD_ACTIVE =-1");
+                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_PACKAGE,CMD_SEQUENCE,CMD_CODE FROM M4RDL_PACK_CMDS WHERE ID_PACKAGE LIKE '%" + TypePack + "' AND CMD_ACTIVE =-1", sPathMdb);
 
-                if (dsDataSet.Tables[0].Rows.Count > 0)
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
-                        
+                        iCpt = 0;
+                        bTrouve = false;
+                        sCommandPack = drRow[2].ToString().ToUpper().Trim();
+
+                        // Je remplace les espaces et tabulation par un seul espace.
+                        sCommandPack = System.Text.RegularExpressions.Regex.Replace(sCommandPack, "\\s+", " ");
+
+                        while ((iCpt < CMD.Count()) && (bTrouve == false))
+                        {
+                            if (sCommandPack.IndexOf(CMD[iCpt++]) >= 0)
+                                bTrouve = true;
+                        }
+                        if (bTrouve == false)
+                        {
+                             double dConv;
+
+                            try
+                            {
+                                dConv = Convert.ToDouble(drRow[1].ToString());
+                            }
+                            catch
+                            {
+                                dConv = 0;
+                            }
+                            bResultat = false;
+                            Process.AjouteRapport("La commande " + dConv.ToString("###0") + " du pack " + drRow[0].ToString() + " est interdite.");
+                        }
+
                     }
                 }
             }
