@@ -21,11 +21,11 @@
 </template>
 
 <script>
-  export default {
-    components: {},
-    data: () => ({
-      title: 'Paramètres',
-      subTitle: 'Subtitle'
-    })
-  }
+export default {
+  components: {},
+  data: () => ({
+    title: 'Paramètres',
+    subTitle: 'Subtitle'
+  })
+}
 </script>

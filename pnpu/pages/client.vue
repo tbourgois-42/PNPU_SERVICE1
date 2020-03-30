@@ -31,18 +31,21 @@
     </v-alert>
     <v-alert v-if="textStatus == 'En cours'" type="info">
       Le workflow <strong>{{ workflowDate }}</strong> est en cours d'éxécution
-      sur <strong>l'étape {{ etape }}</strong>.
+      sur <strong>l'étape {{ etape }}</strong
+      >.
     </v-alert>
 
     <v-stepper v-model="e1" class="mt-3">
       <v-stepper-header>
         <template v-for="step in steps">
-          <v-stepper-step :key="`${step}-step`"
-                          :step="step.etape"
-                          :complete="step.completed"
-                          editable
-                          editIcon="mdi-check"
-                          :color="step.color">
+          <v-stepper-step
+            :key="`${step}-step`"
+            :step="step.etape"
+            :complete="step.completed"
+            editable
+            editIcon="mdi-check"
+            :color="step.color"
+          >
             {{ step.name }}
           </v-stepper-step>
           <v-divider v-if="step !== steps" :key="step"></v-divider>
@@ -50,9 +53,11 @@
       </v-stepper-header>
 
       <v-stepper-items>
-        <v-stepper-content v-for="step in steps"
-                           :key="`${step}-step`"
-                           :step="step.etape">
+        <v-stepper-content
+          v-for="step in steps"
+          :key="`${step}-step`"
+          :step="step.etape"
+        >
           <v-row cols="12" flex-wrap>
             <v-col md="6">
               <v-card class="ml-1">
@@ -85,123 +90,123 @@
   </v-app>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        select: ['Workflow', 'Programming'],
-        items: ['Programming', 'Design', 'Vue', 'Vuetify'],
-        e1: 1,
-        steps: [
-          {
-            name: 'Pré-contrôle MDB',
-            etape: '1',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: '',
-            content: 'lorem '
-          },
-          {
-            name: 'Initialisation',
-            etape: '2',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: "Analyse d'impact",
-            etape: '3',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: 'Gestion dépendances',
-            etape: '4',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: 'Tests intégration',
-            etape: '5',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: 'Test processus critiques',
-            etape: '6',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: 'TNR Standard',
-            etape: '7',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          },
-          {
-            name: 'Livraison',
-            etape: '8',
-            completed: false,
-            msgError: false,
-            color: '',
-            icon: ''
-          }
-        ],
-        client: '',
-        etape: '',
-        workflowDate: '',
-        textStatus: ''
-      }
-    },
-
-    watch: {
-      steps(val) {
-        if (this.e1 > val) {
-          this.e1 = val
+export default {
+  data() {
+    return {
+      select: ['Workflow', 'Programming'],
+      items: ['Programming', 'Design', 'Vue', 'Vuetify'],
+      e1: 1,
+      steps: [
+        {
+          name: 'Pré-contrôle MDB',
+          etape: '1',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: '',
+          content: 'lorem '
+        },
+        {
+          name: 'Initialisation',
+          etape: '2',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: "Analyse d'impact",
+          etape: '3',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: 'Gestion dépendances',
+          etape: '4',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: 'Tests intégration',
+          etape: '5',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: 'Test processus critiques',
+          etape: '6',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: 'TNR Standard',
+          etape: '7',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
+        },
+        {
+          name: 'Livraison',
+          etape: '8',
+          completed: false,
+          msgError: false,
+          color: '',
+          icon: ''
         }
-      }
-    },
+      ],
+      client: '',
+      etape: '',
+      workflowDate: '',
+      textStatus: ''
+    }
+  },
 
-    created() {
-      this.client = this.$route.params.client
-      this.etape = this.$route.params.step
-      this.workflowDate = this.$route.params.workflowDate
-      this.textStatus = this.$route.params.textStatus
-      this.e1 = this.$route.params.step
-      for (let i = 0; i < this.e1; i++) {
-        this.steps[i].completed = true
-        this.steps[i].color = 'light green'
+  watch: {
+    steps(val) {
+      if (this.e1 > val) {
+        this.e1 = val
       }
-      if (this.textStatus === 'Erreur') {
-        this.steps[this.e1 - 1].color = 'error'
-        this.steps[this.e1 - 1].icon = 'mdi-alert'
+    }
+  },
+
+  created() {
+    this.client = this.$route.params.client
+    this.etape = this.$route.params.step
+    this.workflowDate = this.$route.params.workflowDate
+    this.textStatus = this.$route.params.textStatus
+    this.e1 = this.$route.params.step
+    for (let i = 0; i < this.e1; i++) {
+      this.steps[i].completed = true
+      this.steps[i].color = 'light green'
+    }
+    if (this.textStatus === 'Erreur') {
+      this.steps[this.e1 - 1].color = 'error'
+      this.steps[this.e1 - 1].icon = 'mdi-alert'
+    } else {
+      this.steps[this.e1 - 1].color = 'primary'
+    }
+  },
+
+  methods: {
+    onInput(val) {
+      this.steps = parseInt(val)
+    },
+    nextStep(step) {
+      if (step === this.steps) {
+        this.e1 = 1
       } else {
-        this.steps[this.e1 - 1].color = 'primary'
-      }
-    },
-
-    methods: {
-      onInput(val) {
-        this.steps = parseInt(val)
-      },
-      nextStep(step) {
-        if (step === this.steps) {
-          this.e1 = 1
-        } else {
-          this.e1 = step + 1
-        }
+        this.e1 = step + 1
       }
     }
   }
+}
 </script>
