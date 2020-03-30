@@ -56,6 +56,7 @@
             :textStatus="item.textStatus"
             :currentStep="item.step"
             :percentCircular="item.percent"
+            :workflowDate="workflowDate"
           />
         </transition>
       </v-col>
@@ -66,10 +67,80 @@
           >Lancement workflow<v-icon>mdi-cog-box</v-icon></v-card-title
         >
         <v-divider class="mx-4"></v-divider>
-        <v-btn class="my-4 ml-6" color="primary">
+        <v-btn
+          class="my-4 ml-6"
+          color="primary"
+          @click="dialog = !dialog"
+          v-on="on"
+        >
           <v-icon left>mdi-play</v-icon>Lancer
         </v-btn>
       </v-card>
+      <!-- Lancer un process -->
+      <v-dialog v-model="dialog" max-width="500px">
+        <v-card>
+          <v-card-title class="headline">Lancement du workflow</v-card-title>
+          <v-card-subtitle class="mt-1">{{ workflowDate }}</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field
+                    label="Solo"
+                    placeholder="Nom du processus"
+                    solo
+                  ></v-text-field>
+                  <v-select
+                    :items="typologie"
+                    label="Typologie"
+                    chips
+                    multiple
+                    solo
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" sm="12" md="12">
+                  <v-file-input
+                    v-model="files"
+                    color="primary"
+                    counter
+                    label=".mdb .zip"
+                    multiple
+                    placeholder="Selection des fichiers"
+                    prepend-icon="mdi-paperclip"
+                    outlined
+                    :show-size="1000"
+                  >
+                    <template v-slot:selection="{ index, text }">
+                      <v-chip v-if="index < 2" color="primary" dark label small>
+                        {{ text }}
+                      </v-chip>
+
+                      <span
+                        v-else-if="index === 2"
+                        class="overline grey--text text--darken-3 mx-2"
+                      >
+                        +{{ files.length - 2 }} Fichier(s)
+                      </span>
+                    </template>
+                  </v-file-input>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="error" @click="close"
+              ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
+            >
+            <v-btn color="primary" @click="testpost"
+              ><v-icon left>mdi-play</v-icon> Lancer</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- Fin Lancer un process -->
       <v-card class="mx-auto" max-width="374">
         <v-card-title class="d-flex justify-space-between subtitle-1">
           Avancement par typologie<v-icon>mdi-progress-clock</v-icon>
@@ -155,7 +226,6 @@
         <v-card-title class="d-flex justify-space-between subtitle-1"
           >Mes indicateurs<v-icon>mdi-filter</v-icon></v-card-title
         >
-
         <v-divider class="mx-4"></v-divider>
         <v-chip class="ml-4 mt-4" color="grey" text-color="white">
           <v-avatar left class="grey darken-4">{{ countInProgress }}</v-avatar>
@@ -174,6 +244,12 @@
           Manuel
         </v-chip>
       </v-card>
+      <v-snackbar v-model="snackbar" color="success" :timeout="6000" top>
+        {{ snackbarMessage }}
+        <v-btn dark text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-col>
     <v-col cols="12">
       <v-pagination
@@ -188,6 +264,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CardPnpu from '../components/Card.vue'
 import ClientData from '../data/Clients.json'
 import Workflow from '../data/Workflow.json'
@@ -209,7 +286,11 @@ export default {
     colorCircularSaaSDesync: 'lime lighten-2',
     progressSaaSDedie: '',
     progressSaaSDesynchronise: '',
-    progressPlateforme: ''
+    progressPlateforme: '',
+    dialog: false,
+    typologie: ['SaaS Dédié', 'Plateforme', 'SaaS Désynchronisé'],
+    snackbarMessage: '',
+    snackbar: false
   }),
   beforeMount() {
     this.updateVisibleItems()
@@ -262,6 +343,24 @@ export default {
       this.progressSaaSDesynchronise = Math.round(
         (progressSDesync / (nbClientDesync * 100)) * 100
       )
+    },
+    testpost() {
+      axios
+        .post('https://jsonplaceholder.typicode.com/posts', {
+          title: 'foo',
+          body: 'bar',
+          userId: 1
+        })
+        .then((response) => {
+          console.log(response.status)
+          if (response.status === 201) {
+            this.snackbar = true
+            this.snackbarMessage = 'Lancement effectué avec succès'
+          }
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   },
   computed: {
@@ -287,9 +386,9 @@ export default {
       } else if (this.filter === 'Manuel') {
         return this.items.filter((items) => items.textStatus === 'Manuel')
       } else if (this.filter === 'Done') {
-        return this.items.filter((items) => items.step === '10')
+        return this.items.filter((items) => items.step === this.maxStep)
       } else if (this.filter === 'Plateforme') {
-        return this.items.filter((items) => items.typologie === 'Platform')
+        return this.items.filter((items) => items.typologie === 'Plateforme')
       } else if (this.filter === 'SaaS Dédié') {
         return this.items.filter((items) => items.typologie === 'SaaS Dédié')
       } else if (this.filter === 'SaaS Désynchronisé') {
