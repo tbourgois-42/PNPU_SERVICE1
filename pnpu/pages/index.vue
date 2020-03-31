@@ -86,14 +86,17 @@
             <v-container>
               <v-row>
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field
-                    label="Solo"
-                    placeholder="Nom du processus"
-                    solo
-                  ></v-text-field>
                   <v-select
                     :items="typologie"
                     label="Typologie"
+                    chips
+                    multiple
+                    solo
+                  ></v-select>
+                  <v-select
+                    v-model="items.client"
+                    :items="items.client"
+                    label="Client"
                     chips
                     multiple
                     solo
@@ -361,6 +364,9 @@ export default {
         .catch(function(error) {
           console.log(error)
         })
+    },
+    close() {
+      this.dialog = false
     }
   },
   computed: {
