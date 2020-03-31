@@ -77,7 +77,7 @@
         </v-btn>
       </v-card>
       <!-- Lancer un process -->
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="dialog" max-width="600px">
         <v-card>
           <v-card-title class="headline">Lancement du workflow</v-card-title>
           <v-card-subtitle class="mt-1">{{ workflowDate }}</v-card-subtitle>
@@ -87,7 +87,9 @@
               <v-row>
                 <v-col cols="12" sm="12" md="12">
                   <v-select
+                    v-model="txtTypologie"
                     :items="typologie"
+                    :rules="[verifyTypologie()]"
                     label="Typologie"
                     chips
                     multiple
@@ -137,7 +139,7 @@
             <v-btn color="error" @click="close"
               ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
             >
-            <v-btn color="primary" @click="testpost"
+            <v-btn color="primary" @click="testpost" :disabled="launchWorkflow"
               ><v-icon left>mdi-play</v-icon> Lancer</v-btn
             >
           </v-card-actions>
@@ -291,9 +293,22 @@ export default {
     progressSaaSDesynchronise: '',
     progressPlateforme: '',
     dialog: false,
-    typologie: ['SaaS Dédié', 'Plateforme', 'SaaS Désynchronisé'],
+    typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
     snackbarMessage: '',
-    snackbar: false
+    snackbar: false,
+    txtTypologie: '',
+    launchWorkflow: false,
+    verifyTypologie() {
+      if (
+        this.txtTypologie.length > 1 &&
+        this.txtTypologie.includes('SaaS Dédié')
+      ) {
+        this.launchWorkflow = true
+        return 'Impossible de sélectionner SaaS Dédié avec une autre typologie'
+      } else {
+        this.launchWorkflow = false
+      }
+    }
   }),
   beforeMount() {
     this.updateVisibleItems()
@@ -367,6 +382,14 @@ export default {
     },
     close() {
       this.dialog = false
+    },
+    controle() {
+      if (
+        this.txtTypologie.length > 1 &&
+        this.txtTypologie.includes('SaaS Dédié')
+      ) {
+        console.log(this.$v)
+      }
     }
   },
   computed: {
