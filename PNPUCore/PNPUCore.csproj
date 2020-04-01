@@ -45,7 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="ControleObjetTechno.cs" />
     <Compile Include="ControleCatalogueTables.cs" />
+    <Compile Include="ControleNiveauSaisie.cs" />
+    <Compile Include="ControleNiveauHeritage.cs" />
     <Compile Include="ParamAppli.cs" />
     <Compile Include="ProcessControlePacks.cs" />
     <Compile Include="Rapport.cs" />

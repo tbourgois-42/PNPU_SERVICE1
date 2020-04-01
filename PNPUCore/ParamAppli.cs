@@ -75,7 +75,7 @@ namespace PNPUCore
             ListeCmdD = new List<string> { "APPEND", "REPLACE" };
             ListeCmdF = new List<string> { "CREATE TABLE", "CREATE VIEW" };
             ListeCmdB = new List<string> { "KILL" };
-            ConnectionStringBaseRef = string.Empty;//"server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
+            ConnectionStringBaseRef = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
 
             // A lire dans base de ref
             if (ConnectionStringBaseRef == string.Empty)

@@ -45,11 +45,15 @@ namespace PNPUCore.Process
 
             //Pour test MHUM
             listControl.Clear();
-            listMDB.Add( "C:\\PNPU\\02_8.1_HF2003_PLFR_HP.mdb");
-            listMDB.Add("C:\\PNPU\\8.1_HF2003_PLFR_PAY.mdb");
+            listMDB.Add( "D:\\PNPU\\02_8.1_HF2003_PLFR_HP.mdb");
+            listMDB.Add("D:\\PNPU\\8.1_HF2003_PLFR_PAY.mdb");
+            listMDB.Add("D:\\PNPU\\TEST.mdb");
             listControl.Add(new ControleCatalogueTable(this));
             listControl.Add(new ControleCmdInterdites(this));
             listControl.Add(new ControleIDSynonym(this));
+            listControl.Add(new ControleNiveauHeritage(this));
+            listControl.Add(new ControleNiveauSaisie(this));
+            listControl.Add(new ControleObjetTechno(this));
             listControl.Add(new ControleParamAppli(this));
             listControl.Add(new ControleTacheSecu(this));
             listControl.Add(new ControleTableSecu(this));
