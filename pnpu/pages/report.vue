@@ -1,6 +1,6 @@
 <template>
-  <v-layout>
-    <v-container row wrap>
+  <v-layout row wrap>
+    <v-container>
       <v-flex md12>
         <v-list-item>
           <v-list-item-content>
@@ -24,7 +24,7 @@
 export default {
   components: {},
   data: () => ({
-    title: 'Paramètres',
+    title: 'Report',
     subTitle: 'Subtitle'
   })
 }

@@ -38,11 +38,18 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" app flat dark color="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title v-text="title" class="title" />
+      <v-btn text to="/">
+        <v-toolbar-title class="title"
+          >PeopleNet Platform Update</v-toolbar-title
+        >
+      </v-btn>
       <v-spacer />
+      <v-btn icon>
+        <v-icon>mdi-account</v-icon>
+      </v-btn>
     </v-app-bar>
     <v-content>
-      <v-container>
+      <v-container fluid>
         <nuxt />
       </v-container>
     </v-content>
@@ -104,6 +111,7 @@ export default {
 .v-application .title {
   font-size: 1rem !important;
 }
+
 .v-navigation-drawer .v-icon.v-icon {
   font-size: 24px;
 }

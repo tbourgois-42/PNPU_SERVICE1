@@ -1,15 +1,31 @@
 <template>
   <v-layout>
-    <v-flex class="text-center">
-      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
-    </v-flex>
+    <v-container row wrap>
+      <v-flex md12>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="title">
+              {{ title }}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ subTitle }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-flex>
+      <v-flex md12>
+        <v-divider class="my-2 mx-4" inset></v-divider>
+      </v-flex>
+    </v-container>
   </v-layout>
 </template>
+
+<script>
+export default {
+  components: {},
+  data: () => ({
+    title: 'Report',
+    subTitle: 'Subtitle'
+  })
+}
+</script>

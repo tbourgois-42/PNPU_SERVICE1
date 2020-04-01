@@ -1,88 +1,92 @@
 <template>
   <v-app>
-    <div class="mb-4 mt-4">
-      <v-content class="pa-0">
-        <v-toolbar dense flat>
-          <v-icon right class="mr-5">mdi-view-dashboard</v-icon>
-          <v-toolbar-title
-            >Workflow {{ workflowDate }} | {{ client }} | Step
-            {{ etape }}</v-toolbar-title
-          >
-        </v-toolbar>
-      </v-content>
-    </div>
+    <v-container>
+      <v-flex md12>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="title">
+              {{ client }}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Workflow {{ workflowDate }} | Step {{ etape }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-flex>
+      <v-divider class="my-2 mx-4" inset></v-divider>
 
-    <v-alert v-if="textStatus == 'Erreur'" type="error">
-      Le process <strong>***</strong> a renvoyé une erreur de type
-      <strong>***</strong>. Pour plus de détail veuillez vous référer aux
-      données de Logs ci-dessous.
-    </v-alert>
-    <v-alert v-if="textStatus == 'Terminé'" type="success">
-      Le workflow <strong>{{ workflowDate }}</strong> s'est déroulé avec succès
-      ! Les rapports d'éxécutions sont disponibles ci-dessous.
-    </v-alert>
-    <v-alert v-if="textStatus == 'Manuel'" type="warning">
-      Le process <strong>***</strong> nécesite l'intervention d'un utilisateur
-      pour pouvoir passer à l'étape suivante.
-    </v-alert>
-    <v-alert v-if="textStatus == 'En cours'" type="info">
-      Le workflow <strong>{{ workflowDate }}</strong> est en cours d'éxécution
-      sur <strong>l'étape {{ etape }}</strong
-      >.
-    </v-alert>
+      <v-alert v-if="textStatus == 'Erreur'" type="error">
+        Le process <strong>***</strong> a renvoyé une erreur de type
+        <strong>***</strong>. Pour plus de détail veuillez vous référer aux
+        données de Logs ci-dessous.
+      </v-alert>
+      <v-alert v-if="textStatus == 'Terminé'" type="success">
+        Le workflow <strong>{{ workflowDate }}</strong> s'est déroulé avec
+        succès ! Les rapports d'éxécutions sont disponibles ci-dessous.
+      </v-alert>
+      <v-alert v-if="textStatus == 'Manuel'" type="warning">
+        Le process <strong>***</strong> nécesite l'intervention d'un utilisateur
+        pour pouvoir passer à l'étape suivante.
+      </v-alert>
+      <v-alert v-if="textStatus == 'En cours'" type="info">
+        Le workflow <strong>{{ workflowDate }}</strong> est en cours d'éxécution
+        sur <strong>l'étape {{ etape }}</strong
+        >.
+      </v-alert>
 
-    <v-stepper v-model="e1" class="mt-3">
-      <v-stepper-header>
-        <template v-for="step in steps">
-          <v-stepper-step
+      <v-stepper v-model="e1" class="mt-3">
+        <v-stepper-header>
+          <template v-for="step in steps">
+            <v-stepper-step
+              :key="`${step}-step`"
+              :step="step.etape"
+              :complete="step.completed"
+              editable
+              editIcon="mdi-check"
+              :color="step.color"
+            >
+              {{ step.name }}
+            </v-stepper-step>
+            <v-divider v-if="step !== steps" :key="step"></v-divider>
+          </template>
+        </v-stepper-header>
+
+        <v-stepper-items>
+          <v-stepper-content
+            v-for="step in steps"
             :key="`${step}-step`"
             :step="step.etape"
-            :complete="step.completed"
-            editable
-            editIcon="mdi-check"
-            :color="step.color"
           >
-            {{ step.name }}
-          </v-stepper-step>
-          <v-divider v-if="step !== steps" :key="step"></v-divider>
-        </template>
-      </v-stepper-header>
-
-      <v-stepper-items>
-        <v-stepper-content
-          v-for="step in steps"
-          :key="`${step}-step`"
-          :step="step.etape"
-        >
-          <v-row cols="12" flex-wrap>
-            <v-col md="6">
-              <v-card class="ml-1">
-                <v-container>
-                  <v-subheader>Logs</v-subheader>
+            <v-row cols="12" flex-wrap>
+              <v-col md="6">
+                <v-card class="ml-1">
                   <v-container>
-                    <p class="text-justify caption">
-                      {{ step.content }}
-                    </p>
+                    <v-subheader>Logs</v-subheader>
+                    <v-container>
+                      <p class="text-justify caption">
+                        {{ step.content }}
+                      </p>
+                    </v-container>
                   </v-container>
-                </v-container>
-              </v-card>
-            </v-col>
-            <v-col md="6">
-              <v-card class="mr-1">
-                <v-container>
-                  <v-subheader>Report</v-subheader>
+                </v-card>
+              </v-col>
+              <v-col md="6">
+                <v-card class="mr-1">
                   <v-container>
-                    <p class="text-justify caption">
-                      {{ step.content }}
-                    </p>
+                    <v-subheader>Report</v-subheader>
+                    <v-container>
+                      <p class="text-justify caption">
+                        {{ step.content }}
+                      </p>
+                    </v-container>
                   </v-container>
-                </v-container>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+    </v-container>
   </v-app>
 </template>
 <script>
@@ -94,7 +98,7 @@ export default {
       e1: 1,
       steps: [
         {
-          name: 'Initialisation',
+          name: 'Pré-contrôle MDB',
           etape: '1',
           completed: false,
           msgError: false,
@@ -103,7 +107,7 @@ export default {
           content: 'lorem '
         },
         {
-          name: 'Pré-contrôle HF',
+          name: 'Initialisation',
           etape: '2',
           completed: false,
           msgError: false,
@@ -111,7 +115,7 @@ export default {
           icon: ''
         },
         {
-          name: 'Ramener les dépendances',
+          name: "Analyse d'impact",
           etape: '3',
           completed: false,
           msgError: false,
@@ -119,7 +123,7 @@ export default {
           icon: ''
         },
         {
-          name: "Analyse d'impact",
+          name: 'Gestion dépendances',
           etape: '4',
           completed: false,
           msgError: false,
@@ -143,7 +147,7 @@ export default {
           icon: ''
         },
         {
-          name: 'Recette standard',
+          name: 'TNR Standard',
           etape: '7',
           completed: false,
           msgError: false,
@@ -151,24 +155,8 @@ export default {
           icon: ''
         },
         {
-          name: 'TNR Standard',
+          name: 'Livraison',
           etape: '8',
-          completed: false,
-          msgError: false,
-          color: '',
-          icon: ''
-        },
-        {
-          name: 'Livraison',
-          etape: '9',
-          completed: false,
-          msgError: false,
-          color: '',
-          icon: ''
-        },
-        {
-          name: 'Livraison',
-          etape: '10',
           completed: false,
           msgError: false,
           color: '',
@@ -196,11 +184,10 @@ export default {
     this.workflowDate = this.$route.params.workflowDate
     this.textStatus = this.$route.params.textStatus
     this.e1 = this.$route.params.step
-    for (let i = 0; i < this.e1 - 1; i++) {
+    for (let i = 0; i < this.e1; i++) {
       this.steps[i].completed = true
       this.steps[i].color = 'light green'
     }
-
     if (this.textStatus === 'Erreur') {
       this.steps[this.e1 - 1].color = 'error'
       this.steps[this.e1 - 1].icon = 'mdi-alert'

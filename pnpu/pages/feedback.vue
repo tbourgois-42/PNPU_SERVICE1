@@ -24,7 +24,7 @@
 export default {
   components: {},
   data: () => ({
-    title: 'Paramètres',
+    title: 'Feedback',
     subTitle: 'Subtitle'
   })
 }
