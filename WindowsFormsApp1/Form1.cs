@@ -14,9 +14,16 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        NamedPipeClientStream npcsPipeClient = null;
+        StreamString ssStreamString = null;
+        
+
         public Form1()
         {
             InitializeComponent();
+            npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
+            npcsPipeClient.Connect();
+            ssStreamString = new StreamString(npcsPipeClient);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -61,12 +68,7 @@ namespace WindowsFormsApp1
         // Test de lancement du process de controle des packs
         private void bntCtrlPack_Click(object sender, EventArgs e)
         {
-            NamedPipeClientStream npcsPipeClient = null;
-            StreamString ssStreamString = null;
-            npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-            npcsPipeClient.Connect();
-            ssStreamString = new StreamString(npcsPipeClient);
-            ssStreamString.WriteString("Test");
+             ssStreamString.WriteString("Test");
             label1.Text = ssStreamString.ReadString();
         }
     }

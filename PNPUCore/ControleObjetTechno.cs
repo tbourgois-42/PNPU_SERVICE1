@@ -122,6 +122,13 @@ namespace PNPUCore.Controle
 
         }
 
+        /// <summary>  
+        /// Méthode vérifiant que les M4O modifiés par un pack ne sont pas des objets technos. 
+        /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
+        /// <param name="lListeM4O">Contient la liste des M4O livrés et des M4O des NODES livrés.</param>
+        /// <param name="lListeNODESTRUCTURE">Contient la liste des NODE STRUCTURES livrées et des NODES STRUCTURES des ITEM livrés.</param>
+        /// <param name="sIDPackageCourant">Contient le nom du pack courant.</param>
+        /// </summary>  
         private bool ControleM4OModifiesPack(List<string> lListeM4O, List<string> lListeNODESTRUCTURE, string sIDPackageCourant)
         {
             DataManagerAccess dmaManagerAccess = null;

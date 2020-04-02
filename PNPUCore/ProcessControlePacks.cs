@@ -42,7 +42,6 @@ namespace PNPUCore.Process
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.Source = new List<Rapport.Source>();
 
-
             //Pour test MHUM
             listControl.Clear();
             listMDB.Add( "D:\\PNPU\\02_8.1_HF2003_PLFR_HP.mdb");
@@ -50,6 +49,7 @@ namespace PNPUCore.Process
             listMDB.Add("D:\\PNPU\\TEST.mdb");
             listControl.Add(new ControleCatalogueTable(this));
             listControl.Add(new ControleCmdInterdites(this));
+            listControl.Add(new ControleDonneesReplace(this));
             listControl.Add(new ControleIDSynonym(this));
             listControl.Add(new ControleNiveauHeritage(this));
             listControl.Add(new ControleNiveauSaisie(this));

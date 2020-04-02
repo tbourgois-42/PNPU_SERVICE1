@@ -49,6 +49,7 @@
     <Compile Include="ControleCatalogueTables.cs" />
     <Compile Include="ControleNiveauSaisie.cs" />
     <Compile Include="ControleNiveauHeritage.cs" />
+    <Compile Include="ControleDonneesReplace.cs" />
     <Compile Include="ParamAppli.cs" />
     <Compile Include="ProcessControlePacks.cs" />
     <Compile Include="Rapport.cs" />
