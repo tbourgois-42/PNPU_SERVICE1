@@ -96,8 +96,8 @@
                     solo
                   ></v-select>
                   <v-select
-                    v-model="items.client"
-                    :items="items.client"
+                    v-model="txtClient"
+                    :items="lstClient"
                     label="Client"
                     chips
                     multiple
@@ -115,6 +115,8 @@
                     prepend-icon="mdi-paperclip"
                     outlined
                     :show-size="1000"
+                    accept=".zip, .mdb, .7zip, .rar"
+                    :rules="[controleAcceptFile()]"
                   >
                     <template v-slot:selection="{ index, text }">
                       <v-chip v-if="index < 2" color="primary" dark label small>
@@ -255,6 +257,8 @@
           Close
         </v-btn>
       </v-snackbar>
+      <v-card> test {{ getapi.AlaconResult }} </v-card>
+      <v-card> test {{ getapi.GetTypoOneClientResult }} </v-card>
     </v-col>
     <v-col cols="12">
       <v-pagination
@@ -298,6 +302,10 @@ export default {
     snackbar: false,
     txtTypologie: '',
     launchWorkflow: false,
+    files: '',
+    getapi: '',
+    txtClient: '',
+    lstClient: [],
     verifyTypologie() {
       if (
         this.txtTypologie.length > 1 &&
@@ -305,11 +313,37 @@ export default {
       ) {
         this.launchWorkflow = true
         return 'Impossible de sélectionner SaaS Dédié avec une autre typologie'
-      } else {
+      } else if (
+        this.txtTypologie.length === 1 &&
+        this.txtTypologie.includes('SaaS Dédié')
+      ) {
         this.launchWorkflow = false
+        this.items.forEach((element) => {
+          if (this.lstClient.includes(element.client) === false) {
+            if (
+              this.txtTypologie === 'SaaS dédié' &&
+              this.txtTypologie.includes('SaaS Dédié')
+            ) {
+              this.lstClient.push(element.client)
+            }
+          }
+        })
+        console.log(this.lstClient)
+        console.log(this.typologie)
       }
-    }
+    },
+    controleAcceptFile() {}
   }),
+  created() {
+    axios
+      .get('http://localhost:63267/Service1.svc/typologie/sanef')
+      .then((res) => {
+        this.getapi = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  },
   beforeMount() {
     this.updateVisibleItems()
     this.totalPages()
@@ -364,10 +398,8 @@ export default {
     },
     testpost() {
       axios
-        .post('https://jsonplaceholder.typicode.com/posts', {
-          title: 'foo',
-          body: 'bar',
-          userId: 1
+        .post('http://localhost:63267/Service1.svc/TestPost', {
+          title: 'foo'
         })
         .then((response) => {
           console.log(response.status)
@@ -382,14 +414,6 @@ export default {
     },
     close() {
       this.dialog = false
-    },
-    controle() {
-      if (
-        this.txtTypologie.length > 1 &&
-        this.txtTypologie.includes('SaaS Dédié')
-      ) {
-        console.log(this.$v)
-      }
     }
   },
   computed: {

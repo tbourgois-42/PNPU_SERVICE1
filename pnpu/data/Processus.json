@@ -1,0 +1,42 @@
+[
+    {
+      "id": 1,
+      "name": "Pré-Contrôle du HF",
+      "order": 1
+    },
+    {
+      "id": 2,
+      "name": "Initialisation",
+      "order": 2
+    },
+    {
+      "id": 3,
+      "name": "Packaging des dépendances",
+      "order": 3
+    },
+    {
+      "id": 4,
+      "name": "Analyse d'impact",
+      "order": 4
+    },
+    {
+      "id": 5,
+      "name": "Tests d'intégration",
+      "order": 6
+    },
+    {
+      "id": 6,
+      "name": "Tests des processus critiques",
+      "order": 6
+    },
+    {
+      "id": 7,
+      "name": "TNR Standard",
+      "order": 7
+    },
+    {
+      "id": 8,
+      "name": "Livraison",
+      "order": 8
+    }
+  ]

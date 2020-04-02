@@ -15,17 +15,23 @@
       <v-row>
         <v-col cols="12" sm="6">
           <v-data-table
-            :headers="headers"
+            :headers="headersWorkflow"
             :items="workflows"
             sort-by="calories"
+            :page.sync="page"
+            :items-per-page="itemsPerPage"
+            hide-default-footer
             class="elevation-1"
+            show-select
+            single-select
+            @page-count="pageCount = $event"
           >
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-toolbar-title>Mes workflows</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
+                <v-dialog v-model="dialogWorkflow" max-width="500px">
                   <template v-slot:activator="{ on }">
                     <v-btn color="primary" dark class="mb-2" v-on="on"
                       >Créer un workflow</v-btn
@@ -34,23 +40,20 @@
                   <v-card>
                     <v-card-title>
                       <span class="headline">{{ formTitle }}</span>
+                      <v-spacer></v-spacer>
+                      <v-icon>mdi-plus-circle</v-icon>
                     </v-card-title>
-
+                    <v-divider></v-divider>
                     <v-card-text>
                       <v-container>
                         <v-row>
                           <v-col cols="12" sm="6" md="12">
                             <v-text-field
                               v-model="editedItem.name"
-                              label="Nom du processus"
+                              :rules="nameRules"
+                              label="Nom du workflow"
+                              required
                             ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              :items="editedItem.calories"
-                              label="Ordre"
-                              solo
-                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -61,7 +64,7 @@
                       <v-btn color="blue darken-1" text @click="close"
                         >Cancel</v-btn
                       >
-                      <v-btn color="blue darken-1" text @click="save"
+                      <v-btn color="blue darken-1" text @click="save(workflow)"
                         >Save</v-btn
                       >
                     </v-card-actions>
@@ -70,31 +73,81 @@
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">
-                mdi-pencil
-              </v-icon>
-              <v-icon small @click="deleteItem(item)">
-                mdi-delete
-              </v-icon>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    @click="editItem(item, 'Workflow')"
+                  >
+                    mdi-pencil
+                  </v-icon>
+                </template>
+                <span>Modifier</span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    @click="deleteItem(item)"
+                  >
+                    mdi-delete
+                  </v-icon>
+                </template>
+                <span>Supprimer</span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    @click="affectItem(item)"
+                  >
+                    mdi-arrow-down-bold
+                  </v-icon>
+                </template>
+                <span>Affecter les processus sélectionnés au workflow</span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-icon small v-on="on" @click="showDetail(item)">
+                    mdi-eye
+                  </v-icon>
+                </template>
+                <span>Voir le detail</span>
+              </v-tooltip>
             </template>
             <template v-slot:no-data>
               <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template>
           </v-data-table>
+          <div class="text-center pt-2">
+            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+          </div>
         </v-col>
         <v-col cols="12" sm="6">
           <v-data-table
-            :headers="headers"
+            v-model="selectedProcessus"
+            :headers="headersProcessus"
             :items="processus"
-            sort-by="calories"
+            :page.sync="pageProcessus"
+            :items-per-page="itemsPerPageProcessus"
+            hide-default-footer
             class="elevation-1"
+            show-select
+            @page-count="pageCountProcessus = $event"
+            @item-selected="test($event)"
           >
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-toolbar-title>Mes processus</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
+                <v-dialog v-model="dialogProcessus" max-width="500px">
                   <template v-slot:activator="{ on }">
                     <v-btn color="primary" dark class="mb-2" v-on="on"
                       >Créer un processus</v-btn
@@ -103,8 +156,10 @@
                   <v-card>
                     <v-card-title>
                       <span class="headline">{{ formTitle }}</span>
+                      <v-spacer></v-spacer>
+                      <v-icon>mdi-pencil</v-icon>
                     </v-card-title>
-
+                    <v-divider></v-divider>
                     <v-card-text>
                       <v-container>
                         <v-row>
@@ -112,14 +167,8 @@
                             <v-text-field
                               v-model="editedItem.name"
                               label="Nom du processus"
+                              required
                             ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              :items="editedItem.calories"
-                              label="Ordre"
-                              solo
-                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -130,7 +179,7 @@
                       <v-btn color="blue darken-1" text @click="close"
                         >Cancel</v-btn
                       >
-                      <v-btn color="blue darken-1" text @click="save"
+                      <v-btn color="blue darken-1" text @click="save(processus)"
                         >Save</v-btn
                       >
                     </v-card-actions>
@@ -139,7 +188,7 @@
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">
+              <v-icon small class="mr-2" @click="editItem(item, 'Processus')">
                 mdi-pencil
               </v-icon>
               <v-icon small @click="deleteItem(item)">
@@ -150,29 +199,99 @@
               <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template>
           </v-data-table>
+          <div class="text-center pt-2">
+            <v-pagination
+              v-model="pageProcessus"
+              :length="pageCountProcessus"
+            ></v-pagination>
+          </div>
         </v-col>
+        <!-- detail workflow -->
+        <v-dialog v-model="dialogDetailWorkflow" max-width="500px">
+          <v-card class="pb-4">
+            <v-card-title>
+              Détails
+              <v-spacer></v-spacer><v-icon>mdi-eye</v-icon>
+            </v-card-title>
+            <v-card-subtitle class="pt-2">
+              {{ workflowDate }}
+            </v-card-subtitle>
+            <v-divider class="my-4"></v-divider>
+            <v-simple-table class="ma-2">
+              <template v-slot:default>
+                <thead>
+                  <tr v-if="showAlertNoProcessus === false">
+                    <th class="text-left">Nom du processus</th>
+                    <th class="text-left">Ordre d'éxecution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="process in processusByWorkflow"
+                    :key="process.name"
+                  >
+                    <td>{{ process.name }}</td>
+                    <td>{{ process.order }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+            <div v-if="showAlertNoProcessus" class="text-center">
+              <v-alert type="info" class="ma-6">
+                Aucun processus associé
+              </v-alert>
+            </div>
+          </v-card>
+        </v-dialog>
       </v-row>
+      <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+        {{ snackbarMessage }}
+        <v-btn dark text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-container>
   </v-layout>
 </template>
 
 <script>
+import ProcessData from '../data/Processus.json'
+import WorkflowData from '../data/Workflow.json'
 export default {
   data: () => ({
-    dialog: false,
-    headers: [
+    dialogWorkflow: false,
+    dialogProcessus: false,
+    dialogDetailWorkflow: false,
+    selectedProcessus: [],
+    itemselect: '',
+    snackbarMessage: '',
+    snackbar: false,
+    colorsnackbar: '',
+    headersWorkflow: [
       {
         text: 'Nom',
         align: 'start',
         sortable: false,
         value: 'name'
       },
-      { text: 'Ordre', value: 'calories' },
+      { text: 'Actions', value: 'actions', sortable: false },
+      { text: 'Modifié le', value: 'updated_at', sortable: false }
+    ],
+    headersProcessus: [
+      {
+        text: 'Nom',
+        align: 'start',
+        sortable: false,
+        value: 'name'
+      },
+      { text: "Ordre d'éxecution", value: 'order' },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     workflows: [],
     processus: [],
+    processusByWorkflow: [],
     editedIndex: -1,
+    showAlertNoProcessus: false,
     editedItem: {
       name: '',
       calories: 0,
@@ -186,14 +305,25 @@ export default {
       fat: 0,
       carbs: 0,
       protein: 0
-    }
+    },
+    page: 1,
+    pageCount: 0,
+    pageProcessus: 1,
+    pageCountProcessus: 0,
+    itemsPerPage: 10,
+    itemsPerPageProcessus: 10,
+    nameRules: [
+      (v) => !!v || 'Name is required',
+      (v) => (v && v.length <= 10) || 'Name must be less than 10 characters'
+    ],
+    workflowDate: ''
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1
-        ? "Ajout d'un processus"
-        : "Edition d'un processus"
+        ? "Ajout d'un workflow"
+        : "Edition d'un workflow"
     }
   },
 
@@ -209,70 +339,18 @@ export default {
 
   methods: {
     initialize() {
-      this.processus = [
-        {
-          name: 'Pré-Contrôle du HF',
-          calories: '01',
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: 'Initialisation',
-          calories: '02',
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: 'Packaging des dépendances',
-          calories: '03',
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: "Analyse d'impact",
-          calories: '04',
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: "Tests d'intégration",
-          calories: '05',
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: 'Tests des processus critiques',
-          calories: '06',
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: 'TNR Standard',
-          calories: '07',
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: 'Livraison',
-          calories: '08',
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        }
-      ]
+      this.processus = ProcessData
+      this.workflows = WorkflowData
     },
 
-    editItem(item) {
+    editItem(item, val) {
       this.editedIndex = this.processus.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      if (val === 'Workflow') {
+        this.dialogWorkflow = true
+      } else {
+        this.dialogProcessus = true
+      }
     },
 
     deleteItem(item) {
@@ -282,20 +360,60 @@ export default {
     },
 
     close() {
-      this.dialog = false
+      this.dialogWorkflow = false
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       }, 300)
     },
 
-    save() {
+    save(val) {
+      console.log(val)
       if (this.editedIndex > -1) {
-        Object.assign(this.processus[this.editedIndex], this.editedItem)
+        Object.assign(this.workflows[this.editedIndex], this.editedItem)
       } else {
-        this.processus.push(this.editedItem)
+        this.workflows.push(this.editedItem)
       }
       this.close()
+    },
+
+    showDetail(item) {
+      this.dialogDetailWorkflow = true
+      this.workflowDate = item.name
+      this.showAlertNoProcessus = false
+      this.processusByWorkflow = []
+      if (item.processus.length > 0) {
+        for (let i = 0; i < item.processus.length; i++) {
+          const details = {
+            name: item.processus[i].name,
+            order: item.processus[i].order
+          }
+          this.processusByWorkflow.push(details)
+        }
+      } else {
+        this.showAlertNoProcessus = true
+      }
+    },
+
+    affectItem(item) {
+      if (this.selectedProcessus.length !== 0) {
+        item.processus = []
+        this.selectedProcessus.forEach((element) => {
+          item.processus.push(element)
+        })
+        this.snackbar = true
+        this.colorsnackbar = 'success'
+        this.snackbarMessage = 'Affectation effectué avec succès'
+      } else {
+        this.snackbar = true
+        this.colorsnackbar = 'error'
+        this.snackbarMessage =
+          'Il est nécessaire de selectionné au minimum un processus pour pouvoir en affecter à un workflow'
+      }
+    },
+
+    test(event) {
+      console.log(event)
     }
   }
 }
