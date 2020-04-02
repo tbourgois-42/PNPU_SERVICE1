@@ -10,6 +10,7 @@ using System.IO.Pipes;
 using PNPUCore.Database;
 using System.Collections.Specialized;
 using System.Web;
+using PNPUTools;
 
 namespace WcfService1
 {
@@ -45,14 +46,14 @@ namespace WcfService1
             return test;
         }
 
-        public List<InfoClient> GetInfoAllClient()
+        public string GetInfoAllClient()
         {
-            throw new NotImplementedException();
+            return RequestTool.GetAllInfoClient();
         }
 
         public string GetInfoOneClient(string ClientName)
         {
-            throw new NotImplementedException();
+            return RequestTool.GetInfoOneClient(ClientName);
         }
 
         public string GetProcessusCritiquesAllCLient()

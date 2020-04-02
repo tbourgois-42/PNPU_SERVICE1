@@ -43,5 +43,34 @@ namespace PNPUTools.DataManager
              return dataSet;
         }
 
+        public static DataSet GetDatas(string sRequest, string sConnectionString)
+        {
+            DataSet dataSet = null;
+
+            try
+            {
+                using (SqlConnection connection =
+                 new SqlConnection(sConnectionString))
+                {
+                    connection.Open();
+                    SqlDataAdapter adapter =
+                        new SqlDataAdapter(sRequest, connection);
+
+                    // Open the connection and fill the DataSet.
+
+
+                    dataSet = new DataSet();
+                    adapter.Fill(dataSet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // A gérer la mise à jour du log
+                //Console.WriteLine(ex.Message);
+                dataSet = null;
+            }
+            return dataSet;
+        }
+
     }
 }

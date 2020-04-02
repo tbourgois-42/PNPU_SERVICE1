@@ -19,7 +19,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "clients")]
-        List<InfoClient> GetInfoAllClient();
+        string GetInfoAllClient();
 
         [OperationContract]
         [WebInvoke(Method = "GET",
