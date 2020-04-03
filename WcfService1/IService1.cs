@@ -1,4 +1,5 @@
 using PNPUCore.Database;
+using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "clients")]
-        string GetInfoAllClient();
+        IEnumerable<InfoClientStep> GetInfoAllClient();
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -27,6 +28,34 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "clients/{ClientName}")]
         string GetInfoOneClient(string ClientName);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "process")]
+        IEnumerable<PNPU_PROCESS> GetAllProcesses();
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "process/{processId}")]
+        PNPU_PROCESS getProcess(string processId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "workflow")]
+        IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow();
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "workflow/{workflowId}")]
+        PNPU_WORKFLOW getWorkflow(string workflowId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",

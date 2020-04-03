@@ -11,6 +11,7 @@ using PNPUCore.Database;
 using System.Collections.Specialized;
 using System.Web;
 using PNPUTools;
+using PNPUTools.DataManager;
 
 namespace WcfService1
 {
@@ -46,14 +47,35 @@ namespace WcfService1
             return test;
         }
 
-        public string GetInfoAllClient()
+        public IEnumerable<InfoClientStep> GetInfoAllClient()
         {
             return RequestTool.GetAllInfoClient();
+            //return RequestTool.GetAllStep();
         }
 
         public string GetInfoOneClient(string ClientName)
         {
             return RequestTool.GetInfoOneClient(ClientName);
+        }
+
+        public IEnumerable<PNPU_PROCESS> GetAllProcesses()
+        {
+            return RequestTool.GetAllProcesses();
+        }
+
+        public PNPU_PROCESS getProcess(string processId)
+        {
+            return RequestTool.GetProcess(processId);
+        }
+
+        public IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
+        {
+            return RequestTool.GetAllWorkFLow();
+        }
+
+        public PNPU_WORKFLOW getWorkflow(string workflowId)
+        {
+            return RequestTool.getWorkflow(workflowId);
         }
 
         public string GetProcessusCritiquesAllCLient()
@@ -120,6 +142,8 @@ namespace WcfService1
 
             return result;
         }
+
+
     }
 
 

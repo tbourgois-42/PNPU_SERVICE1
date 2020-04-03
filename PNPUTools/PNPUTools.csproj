@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="RequestTool.cs" />
     <Compile Include="DataManagerAccess.cs" />
     <Compile Include="DataManagerSQLServer.cs" />
