@@ -62,203 +62,9 @@
       </v-col>
     </v-col>
     <v-col cols="2">
-      <v-card class="mb-4">
-        <v-card-title class="d-flex justify-space-between subtitle-1"
-          >Lancement workflow<v-icon>mdi-cog-box</v-icon></v-card-title
-        >
-        <v-divider class="mx-4"></v-divider>
-        <v-btn
-          class="my-4 ml-6"
-          color="primary"
-          @click="dialog = !dialog"
-          v-on="on"
-        >
-          <v-icon left>mdi-play</v-icon>Lancer
-        </v-btn>
-      </v-card>
-      <!-- Lancer un process -->
-      <v-dialog v-model="dialog" max-width="600px">
-        <v-card>
-          <v-card-title class="headline">Lancement du workflow</v-card-title>
-          <v-card-subtitle class="mt-1">{{ workflowDate }}</v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" sm="12" md="12">
-                  <v-select
-                    v-model="txtTypologie"
-                    :items="typologie"
-                    :rules="[verifyTypologie()]"
-                    label="Typologie"
-                    chips
-                    multiple
-                    solo
-                  ></v-select>
-                  <v-select
-                    v-model="txtClient"
-                    :items="lstClient"
-                    label="Client"
-                    chips
-                    multiple
-                    solo
-                  ></v-select>
-                </v-col>
-                <v-col cols="12" sm="12" md="12">
-                  <v-file-input
-                    v-model="files"
-                    color="primary"
-                    counter
-                    label=".mdb .zip"
-                    multiple
-                    placeholder="Selection des fichiers"
-                    prepend-icon="mdi-paperclip"
-                    outlined
-                    :show-size="1000"
-                    accept=".zip, .mdb, .7zip, .rar"
-                    :rules="[controleAcceptFile()]"
-                  >
-                    <template v-slot:selection="{ index, text }">
-                      <v-chip v-if="index < 2" color="primary" dark label small>
-                        {{ text }}
-                      </v-chip>
-
-                      <span
-                        v-else-if="index === 2"
-                        class="overline grey--text text--darken-3 mx-2"
-                      >
-                        +{{ files.length - 2 }} Fichier(s)
-                      </span>
-                    </template>
-                  </v-file-input>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="error" @click="close"
-              ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
-            >
-            <v-btn color="primary" @click="testpost" :disabled="launchWorkflow"
-              ><v-icon left>mdi-play</v-icon> Lancer</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <!-- Fin Lancer un process -->
-      <v-card class="mx-auto" max-width="374">
-        <v-card-title class="d-flex justify-space-between subtitle-1">
-          Avancement par typologie<v-icon>mdi-progress-clock</v-icon>
-        </v-card-title>
-        <v-divider class="mx-4"></v-divider>
-        <v-card-text>
-          <div class="mb-4 subtitle">
-            Saas Dédié<v-icon
-              v-if="progressSaaSDedie === 100"
-              class="mx-4"
-              color="success"
-              small
-              >mdi-check-decagram</v-icon
-            >
-          </div>
-          <div>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-progress-linear
-                  height="10"
-                  :value="progressSaaSDedie"
-                  striped
-                  class="my-4"
-                  :color="colorCircularSaaSDedie"
-                  v-on="on"
-                ></v-progress-linear>
-              </template>
-              <span>{{ progressSaaSDedie }}</span>
-            </v-tooltip>
-          </div>
-          <div class="mb-4 subtitle">
-            Saas Désynchronisé<v-icon
-              v-if="progressSaaSDesynchronise === 100"
-              class="mx-4"
-              color="success"
-              small
-              >mdi-check-decagram</v-icon
-            >
-          </div>
-          <div>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-progress-linear
-                  height="10"
-                  :value="progressSaaSDesynchronise"
-                  striped
-                  class="my-4"
-                  :color="colorCircularSaaSDesync"
-                  v-on="on"
-                ></v-progress-linear>
-              </template>
-              <span>{{ progressSaaSDesynchronise }}</span>
-            </v-tooltip>
-          </div>
-          <div class="mb-4 subtitle">
-            Plateforme<v-icon
-              v-if="progressPlateforme === 100"
-              class="mx-4"
-              color="success"
-              small
-              >mdi-check-decagram</v-icon
-            >
-          </div>
-
-          <div>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-progress-linear
-                  height="10"
-                  :value="progressPlateforme"
-                  striped
-                  class="mt-4"
-                  :color="colorCircularSaaSPlat"
-                  v-on="on"
-                ></v-progress-linear>
-              </template>
-              <span>{{ progressPlateforme }}</span>
-            </v-tooltip>
-          </div>
-        </v-card-text>
-      </v-card>
-      <v-card class="my-4">
-        <v-card-title class="d-flex justify-space-between subtitle-1"
-          >Mes indicateurs<v-icon>mdi-filter</v-icon></v-card-title
-        >
-        <v-divider class="mx-4"></v-divider>
-        <v-chip class="ml-4 mt-4" color="grey" text-color="white">
-          <v-avatar left class="grey darken-4">{{ countInProgress }}</v-avatar>
-          En cours
-        </v-chip>
-        <v-chip class="ml-4 mt-4" color="error" text-color="white">
-          <v-avatar left class="red darken-4">{{ countInError }}</v-avatar> En
-          erreur
-        </v-chip>
-        <v-chip class="ml-4 mb-4 mt-4" color="success" text-color="white">
-          <v-avatar left class="green darken-4">{{ countDone }}</v-avatar>
-          Terminé
-        </v-chip>
-        <v-chip class="ml-5 mb-4 mt-4" color="warning" text-color="white">
-          <v-avatar left class="orange darken-4">{{ countManuel }}</v-avatar>
-          Manuel
-        </v-chip>
-      </v-card>
-      <v-snackbar v-model="snackbar" color="success" :timeout="6000" top>
-        {{ snackbarMessage }}
-        <v-btn dark text @click="snackbar = false">
-          Close
-        </v-btn>
-      </v-snackbar>
-      <v-card> test {{ getapi.AlaconResult }} </v-card>
-      <v-card> test {{ getapi.GetTypoOneClientResult }} </v-card>
+      <CardLaunchWorkflow :clients="items" :typologie="typologie" />
+      <CardProgressTypologie :clients="items" />
+      <CardIndicateurs :clients="items" />
     </v-col>
     <v-col cols="12">
       <v-pagination
@@ -275,10 +81,19 @@
 <script>
 import axios from 'axios'
 import CardPnpu from '../components/Card.vue'
+import CardLaunchWorkflow from '../components/CardLaunchWorkflow'
+import CardIndicateurs from '../components/CardIndicateurs'
+import CardProgressTypologie from '../components/CardProgressTypologie'
 import ClientData from '../data/Clients.json'
 import Workflow from '../data/Workflow.json'
+import TestClients from '../data/TestClients.json'
 export default {
-  components: { CardPnpu },
+  components: {
+    CardPnpu,
+    CardLaunchWorkflow,
+    CardProgressTypologie,
+    CardIndicateurs
+  },
   data: () => ({
     items: ClientData,
     workflows: Workflow,
@@ -290,55 +105,15 @@ export default {
     maxStep: 8,
     search: '',
     filter: '',
-    colorCircularSaaSPlat: 'red lighten-2',
-    colorCircularSaaSDedie: 'teal lighten-2',
-    colorCircularSaaSDesync: 'lime lighten-2',
-    progressSaaSDedie: '',
-    progressSaaSDesynchronise: '',
-    progressPlateforme: '',
-    dialog: false,
     typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
-    snackbarMessage: '',
-    snackbar: false,
-    txtTypologie: '',
-    launchWorkflow: false,
-    files: '',
-    getapi: '',
-    txtClient: '',
-    lstClient: [],
-    verifyTypologie() {
-      if (
-        this.txtTypologie.length > 1 &&
-        this.txtTypologie.includes('SaaS Dédié')
-      ) {
-        this.launchWorkflow = true
-        return 'Impossible de sélectionner SaaS Dédié avec une autre typologie'
-      } else if (
-        this.txtTypologie.length === 1 &&
-        this.txtTypologie.includes('SaaS Dédié')
-      ) {
-        this.launchWorkflow = false
-        this.items.forEach((element) => {
-          if (this.lstClient.includes(element.client) === false) {
-            if (
-              this.txtTypologie === 'SaaS dédié' &&
-              this.txtTypologie.includes('SaaS Dédié')
-            ) {
-              this.lstClient.push(element.client)
-            }
-          }
-        })
-        console.log(this.lstClient)
-        console.log(this.typologie)
-      }
-    },
-    controleAcceptFile() {}
+    getapi: ''
   }),
   created() {
     axios
-      .get('http://localhost:63267/Service1.svc/typologie/sanef')
+      .get('http://localhost:63267/Service1.svc/Clients')
       .then((res) => {
-        this.getapi = res.data
+        this.getapi = TestClients.GetInfoAllClientResult
+        console.log(this.getapi)
       })
       .catch((err) => {
         console.log(err)
@@ -349,7 +124,10 @@ export default {
     this.totalPages()
   },
   mounted() {
-    this.calcProgessByTypologie()
+    this.getapi = TestClients.GetInfoAllClientResult
+    console.log(this.getapi)
+    // this.getapi = TestClients.GetInfoAllClientResult.Clients[0].CLIENT_NAME
+    // console.log(TestClients)
   },
   methods: {
     updatePage(pageNumber) {
@@ -364,73 +142,9 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.items.length / this.pageSize)
-    },
-    calcProgessByTypologie() {
-      let progressSDedie = 0
-      let progressSDesync = 0
-      let progressPlat = 0
-      let nbClientDesync = 0
-      let nbClientPlat = 0
-      let nbClientDedie = 0
-      this.items.forEach((element) => {
-        if (element.typologie === 'SaaS Désynchronisé') {
-          progressSDesync = progressSDesync + element.percent
-          nbClientDesync = nbClientDesync + 1
-        }
-        if (element.typologie === 'SaaS Dédié') {
-          progressSDedie = progressSDedie + element.percent
-          nbClientDedie = nbClientDedie + 1
-        }
-        if (element.typologie === 'Plateforme') {
-          progressPlat = progressPlat + element.percent
-          nbClientPlat = nbClientPlat + 1
-        }
-      })
-      this.progressPlateforme = Math.round(
-        (progressPlat / (nbClientPlat * 100)) * 100
-      )
-      this.progressSaaSDedie = Math.round(
-        (progressSDedie / (nbClientDedie * 100)) * 100
-      )
-      this.progressSaaSDesynchronise = Math.round(
-        (progressSDesync / (nbClientDesync * 100)) * 100
-      )
-    },
-    testpost() {
-      axios
-        .post('http://localhost:63267/Service1.svc/TestPost', {
-          title: 'foo'
-        })
-        .then((response) => {
-          console.log(response.status)
-          if (response.status === 201) {
-            this.snackbar = true
-            this.snackbarMessage = 'Lancement effectué avec succès'
-          }
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
-    },
-    close() {
-      this.dialog = false
     }
   },
   computed: {
-    countDone() {
-      return this.items.filter((items) => items.step === this.maxStep).length
-    },
-    countInProgress() {
-      return this.items.filter((items) => items.textStatus === 'En cours')
-        .length
-    },
-    countInError() {
-      return this.items.filter((items) => items.textStatus === 'En erreur')
-        .length
-    },
-    countManuel() {
-      return this.items.filter((items) => items.textStatus === 'Manuel').length
-    },
     filteredItems() {
       if (this.filter === 'InProgress') {
         return this.items.filter((items) => items.textStatus === 'En cours')

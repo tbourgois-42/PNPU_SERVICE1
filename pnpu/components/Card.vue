@@ -16,10 +16,10 @@
     <v-hover v-slot="{ hover }">
       <v-card
         :elevation="hover ? 6 : 1"
-        class="d-flex justify-lg-space-between transition-swing cursor"
+        class="d-flex justify-space-between transition-swing cursor"
         transition="slide-y-transition"
-        max-height="174"
-        min-width="300"
+        min-width="330"
+        max-width="330"
       >
         <div>
           <v-card-title class="headline subtitle-2 text-uppercase">
