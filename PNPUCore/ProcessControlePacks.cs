@@ -3,6 +3,7 @@ using PNPUCore.Controle;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 
 
@@ -14,7 +15,7 @@ namespace PNPUCore.Process
     class ProcessControlePacks : IProcess
     {
         private readonly object listOfMockControl;
-        private List<string> listMDB;
+        public List<string> listMDB { get; set; }
         public string MDBCourant { get; set; }
         private string sRapport;
         private PNPUCore.Rapport.Process RapportProcess;
@@ -44,9 +45,10 @@ namespace PNPUCore.Process
 
             //Pour test MHUM
             listControl.Clear();
-            listMDB.Add( "D:\\PNPU\\02_8.1_HF2003_PLFR_HP.mdb");
-            listMDB.Add("D:\\PNPU\\8.1_HF2003_PLFR_PAY.mdb");
-            listMDB.Add("D:\\PNPU\\TEST.mdb");
+            foreach (string sfichier in Directory.GetFiles("D:\\PNPU","*.mdb"))
+                listMDB.Add(sfichier);
+
+
             listControl.Add(new ControleCatalogueTable(this));
             listControl.Add(new ControleCmdInterdites(this));
             listControl.Add(new ControleDonneesReplace(this));
@@ -82,6 +84,32 @@ namespace PNPUCore.Process
                 RapportProcess.Source.Add(RapportSource);
             }
 
+            // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
+            ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
+            Rapport.Source RapportSource2 = new Rapport.Source();
+            RapportSource2.Id = string.Empty;
+            foreach (string sMdb in listMDB)
+            {
+                if (RapportSource2.Id != string.Empty)
+                    RapportSource2.Id += " \\ ";
+                RapportSource2.Id += System.IO.Path.GetFileName(sMdb);
+            }
+            RapportSource2.Controle = new List<Rapport.Controle>();
+            Rapport.Controle RapportControle2 = new Rapport.Controle();
+            RapportControle2.Id = cdmControleDependancesMDB.ToString();
+            RapportControle2.Message = new List<string>();
+            RapportControleCourant = RapportControle2;
+            cdmControleDependancesMDB.MakeControl();
+            RapportSource2.Controle.Add(RapportControle2);
+            RapportProcess.Source.Add(RapportSource2);
+
+            //MHUM pour vérifier les dépendances j'écris le résultat dans un fichier
+            StreamWriter swFichierResultat = new StreamWriter("d:\\PNPU\\dependances.csv", false);
+            foreach (string sLigne in RapportControle2.Message)
+            {
+                swFichierResultat.WriteLine(sLigne);
+            }
+            swFichierResultat.Close();
         }
 
         /// <summary>  
