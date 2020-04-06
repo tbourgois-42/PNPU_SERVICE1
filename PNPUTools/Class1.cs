@@ -207,6 +207,7 @@ namespace PNPUTools.DataManager
 		public string PROCESS_LABEL { get; set; }
 		public int ORDER_ID { get; set; }
 		public decimal PERCENTAGE_COMPLETUDE { get; set; }
+		public string TYPOLOGY { get; set; }
 
 		public InfoClientStep() { }
 	}
