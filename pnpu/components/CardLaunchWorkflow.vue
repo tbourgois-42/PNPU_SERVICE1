@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-card class="mb-4">
+    <v-card class="mb-4" min-width="277">
       <v-card-title class="d-flex justify-space-between subtitle-1"
         >Lancement workflow<v-icon>mdi-cog-box</v-icon></v-card-title
       >
@@ -11,7 +11,7 @@
         @click="dialog = !dialog"
         v-on="on"
       >
-        <v-icon left>mdi-play</v-icon>Lancer
+        <v-icon left>mdi-play</v-icon>Lancer un workflow
       </v-btn>
     </v-card>
     <!-- Lancer un process -->
@@ -70,6 +70,7 @@
                   </template>
                 </v-file-input>
               </v-col>
+              <input type="file" @change="selectFile" />
             </v-row>
           </v-container>
         </v-card-text>
@@ -79,7 +80,7 @@
           <v-btn color="error" @click="close"
             ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
           >
-          <v-btn color="primary" @click="testpost" :disabled="launchWorkflow"
+          <v-btn color="primary" @click="sendFile()" :disabled="launchWorkflow"
             ><v-icon left>mdi-play</v-icon> Lancer</v-btn
           >
         </v-card-actions>
@@ -96,7 +97,7 @@
 <script>
 import axios from 'axios'
 export default {
-  props: ['workflowDate', 'clients', 'typologie'],
+  props: ['workflowDate', 'Clients', 'typologie'],
   data: () => ({
     txtTypologie: '',
     lstClient: [],
@@ -115,7 +116,7 @@ export default {
         this.txtTypologie.includes('SaaS Dédié')
       ) {
         this.launchWorkflow = false
-        this.clients.forEach((element) => {
+        this.Clients.forEach((element) => {
           if (this.lstClient.includes(element.client) === false) {
             if (
               this.txtTypologie === 'SaaS dédié' &&
@@ -131,7 +132,9 @@ export default {
     },
     controleAcceptFile() {},
     snackbarMessage: '',
-    snackbar: false
+    snackbar: false,
+    file: '',
+    selectedFile: null
   }),
 
   methods: {
@@ -154,6 +157,21 @@ export default {
         .catch(function(error) {
           console.log(error)
         })
+    },
+
+    selectFile(event) {
+      console.log(event.target.files[0])
+      this.selectedFile = event.target.files[0]
+    },
+
+    async sendFile() {
+      const fd = new FormData()
+      fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
+      try {
+        await axios.post('/upload', fd)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
