@@ -1,4 +1,4 @@
-using PNPU_WS;
+
 using PNPUCore.Database;
 using PNPUTools.DataManager;
 using System;
@@ -120,12 +120,6 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "uploadFile")]
         void UploadFile(Stream stream);
-
-        
-
-        [OperationContract(Name = "OptionsMyFunction")]
-        [WebInvoke(Method = "OPTIONS", UriTemplate = "uploadFile", ResponseFormat = WebMessageFormat.Json)]
-        string preflightRequestT();
     }
 
 }

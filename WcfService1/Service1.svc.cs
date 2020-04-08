@@ -12,7 +12,6 @@ using System.Collections.Specialized;
 using System.Web;
 using PNPUTools;
 using PNPUTools.DataManager;
-using PNPU_WS;
 using System.Web.Hosting;
 
 namespace WcfService1
