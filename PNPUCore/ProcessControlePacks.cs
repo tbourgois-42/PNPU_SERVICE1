@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
-
+using System.Globalization;
 
 namespace PNPUCore.Process
 {
@@ -17,6 +16,7 @@ namespace PNPUCore.Process
         private readonly object listOfMockControl;
         public List<string> listMDB { get; set; }
         public string MDBCourant { get; set; }
+        public decimal WORKFLOW_ID { get; set; }
         private string sRapport;
         private PNPUCore.Rapport.Process RapportProcess;
         private PNPUCore.Rapport.Controle RapportControleCourant;
@@ -25,9 +25,10 @@ namespace PNPUCore.Process
         /// Constructeur de la classe. 
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
-        public ProcessControlePacks(PNPUCore.Rapport.Process rapportProcess)
+        public ProcessControlePacks(PNPUCore.Rapport.Process rapportProcess, decimal workflow_ID)
         {
             RapportProcess = rapportProcess;
+            WORKFLOW_ID = workflow_ID;
         }
 
         /// <summary>  
@@ -38,17 +39,22 @@ namespace PNPUCore.Process
             List<IControle> listControl =  ListControls.listOfMockControl;
             listMDB = new List<string>();
             sRapport = string.Empty;
-
+            string[] tMDB = null;
             RapportProcess.Id = this.ToString();
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.Source = new List<Rapport.Source>();
 
             //Pour test MHUM
             listControl.Clear();
-            foreach (string sfichier in Directory.GetFiles("D:\\PNPU","*.mdb"))
-                listMDB.Add(sfichier);
-
-
+            /*foreach (string sfichier in Directory.GetFiles("D:\\PNPU","*.mdb"))
+                listMDB.Add(sfichier);*/
+            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
+            foreach(String sFichier in tMDB)
+            {
+                listMDB.Add(sFichier);
+            }
+               
             listControl.Add(new ControleCatalogueTable(this));
             listControl.Add(new ControleCmdInterdites(this));
             listControl.Add(new ControleDonneesReplace(this));
@@ -91,7 +97,7 @@ namespace PNPUCore.Process
             foreach (string sMdb in listMDB)
             {
                 if (RapportSource2.Id != string.Empty)
-                    RapportSource2.Id += " \\ ";
+                    RapportSource2.Id += " - ";
                 RapportSource2.Id += System.IO.Path.GetFileName(sMdb);
             }
             RapportSource2.Controle = new List<Rapport.Controle>();
@@ -137,9 +143,9 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
         /// <returns>Retourne l'instance du process créé.</returns>
-        internal static IProcess CreateProcess(PNPUCore.Rapport.Process rapportProcess)
+        internal static IProcess CreateProcess(PNPUCore.Rapport.Process rapportProcess, decimal WORKFLOW_ID)
         {
-            return new ProcessControlePacks(rapportProcess);
+            return new ProcessControlePacks(rapportProcess,WORKFLOW_ID);
         }
     }
 }

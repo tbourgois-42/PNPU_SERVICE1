@@ -10,13 +10,14 @@ using System.Windows.Forms;
 using System.IO;
 using System.IO.Pipes;
 
+
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
         NamedPipeClientStream npcsPipeClient = null;
         StreamString ssStreamString = null;
-        
+
 
         public Form1()
         {
@@ -68,8 +69,31 @@ namespace WindowsFormsApp1
         // Test de lancement du process de controle des packs
         private void bntCtrlPack_Click(object sender, EventArgs e)
         {
-             ssStreamString.WriteString("Test");
+            ssStreamString.WriteString("Test");
             label1.Text = ssStreamString.ReadString();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+
+            gereMDBDansBDD.AjouteFichiersMDBBDD(Directory.GetFiles("D:\\PNPU\\TEST", "*.mdb"), 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string[] sFichiers=null;
+            string sResultat = string.Empty;
+
+            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+
+            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref sFichiers, 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
+            foreach (string sNom in sFichiers)
+                sResultat += "\n" + sNom;
+
+            MessageBox.Show(sResultat);
         }
     }
     public class StreamString

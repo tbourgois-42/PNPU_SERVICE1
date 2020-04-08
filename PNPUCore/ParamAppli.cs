@@ -61,6 +61,16 @@ namespace PNPUCore
         /// Chaine de connexion à la base de référence.
         /// </summary> 
         public static string ConnectionStringBaseRef { get; }
+        
+        /// <summary>  
+        /// Chaine de connexion à la base de de l'application.
+        /// </summary> 
+        public static string ConnectionStringBaseAppli { get; }
+        
+        /// <summary>
+        /// Dossier temporaire utilisé pour l'application.
+        /// </summary>
+        public static string DossierTemporaire { get; }
 
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
@@ -76,6 +86,8 @@ namespace PNPUCore
             ListeCmdF = new List<string> { "CREATE TABLE", "CREATE VIEW" };
             ListeCmdB = new List<string> { "KILL" };
             ConnectionStringBaseRef = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
+            ConnectionStringBaseAppli = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
+            DossierTemporaire = "D:\\PNPU\\TEMPO";
 
             // A lire dans base de ref
             if (ConnectionStringBaseRef == string.Empty)

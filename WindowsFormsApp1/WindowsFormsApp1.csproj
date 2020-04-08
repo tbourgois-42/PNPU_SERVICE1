@@ -120,5 +120,11 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PNPUTools\PNPUTools.csproj">
+      <Project>{b0256ca4-bb09-4f83-a5aa-b1017c09607f}</Project>
+      <Name>PNPUTools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -41,7 +41,7 @@ namespace PNPUCore
             switch (process)
             {
                 case "ProcessControlePacks" :
-                    return ProcessControlePacks.CreateProcess(rapportProcess);
+                    return ProcessControlePacks.CreateProcess(rapportProcess,12345);
 
                 default:
                     return ProcessMock.CreateProcess();
