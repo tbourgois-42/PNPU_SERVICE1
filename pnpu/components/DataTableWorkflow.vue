@@ -9,6 +9,8 @@
       hide-default-footer
       class="elevation-1"
       @page-count="pageCount = $event"
+      :loading="loadingData"
+      loading-text="Chargement des workflows"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -33,7 +35,7 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="12">
                       <v-text-field
-                        v-model="editedItem.name"
+                        v-model="editedItem.WORKFLOW_LABEL"
                         label="Nom du workflow"
                         required
                       ></v-text-field>
@@ -103,22 +105,15 @@
           {{ workflowDate }}
         </v-card-subtitle>
         <v-divider class="my-4"></v-divider>
-        <v-simple-table class="ma-2">
-          <template v-slot:default>
-            <thead>
-              <tr v-if="showAlertNoProcessus === false">
-                <th class="text-left">Nom du processus</th>
-                <th class="text-left">Ordre d'éxecution</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="process in processusByWorkflow" :key="process.name">
-                <td>{{ process.name }}</td>
-                <td>{{ process.order }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+        <v-data-table
+          :headers="headersProcessus"
+          :items="WorkflowProcesses"
+          :loading="loadingWorkflowProcesses"
+          loading-text="Chargement des processus associés..."
+          hide-default-footer
+          class="ma-2"
+        >
+        </v-data-table>
         <div v-if="showAlertNoProcessus" class="text-center">
           <v-alert type="info" class="ma-6">
             Aucun processus associé
@@ -137,7 +132,6 @@
 
 <script>
 import axios from 'axios'
-import WorkflowData from '../data/Workflow.json'
 export default {
   props: ['selectedProcessus'],
   data: () => ({
@@ -148,32 +142,43 @@ export default {
     snackbarMessage: '',
     snackbar: false,
     colorsnackbar: '',
-    processusByWorkflow: [],
+    WorkflowProcesses: [],
     headersWorkflow: [
       {
         text: 'Nom',
         align: 'start',
         sortable: false,
-        value: 'name'
+        value: 'WORKFLOW_LABEL'
       },
       { text: 'Actions', value: 'actions', sortable: false },
       { text: 'Modifié le', value: 'updated_at', sortable: false }
+    ],
+    headersProcessus: [
+      {
+        text: 'Nom',
+        align: 'start',
+        sortable: false,
+        value: 'PROCESS_LABEL'
+      },
+      { text: "Ordre d'éxecution", value: 'ORDER_ID' }
     ],
     workflows: [],
     page: 1,
     itemsPerPage: 10,
     pageCount: 0,
     editedItem: {
-      name: '',
+      WORKFLOW_LABEL: '',
       actions: 0,
       updated_at: 0
     },
     defaultItem: {
-      name: '',
+      WORKFLOW_LABEL: '',
       actions: 0,
       updated_at: 0
     },
-    workflowDate: ''
+    workflowDate: '',
+    loadingData: true,
+    loadingWorkflowProcesses: true
   }),
 
   computed: {
@@ -185,7 +190,7 @@ export default {
   },
 
   watch: {
-    dialog(val) {
+    dialogWorkflow(val) {
       val || this.close()
     }
   },
@@ -197,12 +202,14 @@ export default {
   methods: {
     async initialize() {
       try {
-        const res = await axios.get('../data/Workflows.json')
-        this.workflows = res
+        const res = await axios.get(
+          'http://localhost:63267/Service1.svc/workflow'
+        )
+        this.workflows = res.data.GetAllWorkFLowResult
+        this.loadingData = false
       } catch (e) {
         console.log(e)
       }
-      this.workflows = WorkflowData
     },
 
     editItem(item) {
@@ -213,8 +220,18 @@ export default {
 
     deleteItem(item) {
       const index = this.workflows.indexOf(item)
-      confirm('Are you sure you want to delete this item?') &&
-        this.workflows.splice(index, 1)
+      console.log(item.WORKFLOW_ID)
+      if (confirm('Etes-vous sûr de supprimer ce workflow ?') === true) {
+        axios
+          .delete('/workflow/' + item.WORKFLOW_ID)
+          .then(function(response) {
+            console.log(response)
+            this.workflows.splice(index, 1)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
     },
 
     close() {
@@ -227,30 +244,55 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.workflows[this.editedIndex], this.editedItem)
+        // Object.assign(this.workflows[this.editedIndex], this.editedItem)
+        axios
+          .put('/workflow/update', {
+            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
+          })
+          .then(function(response) {
+            console.log(response)
+            Object.assign(this.workflows[this.editedIndex], this.editedItem)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
       } else {
-        this.workflows.push(this.editedItem)
+        console.log('ajout', this.editedItem.WORKFLOW_LABEL)
+        if (this.editedItem.WORKFLOW_LABEL !== '') {
+          axios
+            .post('/workflow/insert', {
+              WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
+            })
+            .then(function(response) {
+              console.log(response)
+              this.workflows.push(this.editedItem)
+            })
+            .catch(function(error) {
+              console.log(error)
+            })
+        }
       }
       this.close()
     },
 
-    showDetail(item) {
+    async showDetail(item) {
       this.dialogDetailWorkflow = true
-      this.workflowDate = item.name
+      this.workflowDate = item.WORKFLOW_LABEL
       this.showAlertNoProcessus = false
-      this.processusByWorkflow = []
-      if (item.processus !== undefined) {
-        if (item.processus.length > 0) {
-          for (let i = 0; i < item.processus.length; i++) {
-            const details = {
-              name: item.processus[i].name,
-              order: item.processus[i].order
-            }
-            this.processusByWorkflow.push(details)
-          }
-        }
-      } else {
-        this.showAlertNoProcessus = true
+      this.WorkflowProcesses = []
+      try {
+        const res = await axios.get(
+          'http://localhost:63267/Service1.svc/workflow/' +
+            item.WORKFLOW_ID +
+            '/processus'
+        )
+        this.loadingWorkflowProcesses = false
+        this.WorkflowProcesses = res.data.GetWorkflowProcessesResult
+        this.WorkflowProcesses.length === 0
+          ? (this.showAlertNoProcessus = true)
+          : (this.showAlertNoProcessus = false)
+      } catch (e) {
+        console.log(e)
       }
     },
 

@@ -6,7 +6,7 @@
         client: clientName,
         step: currentStep,
         workflowDate: workflowDate,
-        textStatus: textStatus
+        textStatus: localtextStatus
       }
     }"
     append
@@ -18,17 +18,18 @@
         :elevation="hover ? 6 : 1"
         class="d-flex justify-space-between transition-swing cursor"
         transition="slide-y-transition"
-        min-width="330"
-        max-width="330"
+        min-width="370"
+        max-width="370"
       >
         <div>
           <v-card-title class="headline subtitle-2 text-uppercase">
             {{ clientName }}
           </v-card-title>
-          <v-card-subtitle
-            >Step {{ currentStep }} / {{ maxStep }}</v-card-subtitle
+          <v-card-subtitle class="pb-0">ID {{ localIDORGA }}</v-card-subtitle>
+          <span class="ma-0 pl-4 subtitle-2 body-2"
+            >Step {{ currentStep }} / {{ maxStep }}</span
           >
-          <v-card-subtitle>{{ clientTypolgie }}</v-card-subtitle>
+          <v-card-subtitle>{{ localclientTypolgie }}</v-card-subtitle>
           <v-chip
             v-if="currentStep == 10"
             color="green lighten-1"
@@ -40,23 +41,23 @@
           </v-chip>
           <v-chip
             v-else-if="currentStep < 10"
-            :color="colorIconStatus"
+            :color="localcolorIconStatus"
             class="ml-3 mb-3"
             text-color="white"
           >
-            <v-icon left color="white">{{ iconStatus }}</v-icon>
-            {{ textStatus }}
+            <v-icon left color="white">{{ localiconStatus }}</v-icon>
+            {{ localtextStatus }}
           </v-chip>
         </div>
         <v-progress-circular
           :rotate="-90"
           :size="120"
           :width="10"
-          :value="percentCircular"
-          :color="colorCircular"
+          :value="localpercentCircular"
+          :color="localcolorCircular"
           class="ma-5"
         >
-          {{ percentCircular }}
+          {{ localpercentCircular }}
         </v-progress-circular>
       </v-card>
     </v-hover>
@@ -76,7 +77,19 @@ export default {
     textStatus: { type: String },
     percentCircular: { type: Number, default: 0 },
     colorCircular: { type: String, default: 'primary' },
-    workflowDate: { type: String, default: '' }
+    workflowDate: { type: String, default: '' },
+    IDORGA: { type: String, default: '' }
+  },
+  data() {
+    return {
+      localcolorCircular: this.colorCircular,
+      localiconStatus: this.iconStatus,
+      localcolorIconStatus: this.colorIconStatus,
+      localpercentCircular: this.percentCircular,
+      localtextStatus: this.textStatus,
+      localclientTypolgie: this.clientTypolgie,
+      localIDORGA: this.IDORGA
+    }
   },
   beforeMount() {
     this.getStatusClient()
@@ -84,38 +97,45 @@ export default {
   },
   methods: {
     getStatusClient() {
-      switch (this.textStatus) {
-        case 'Terminé':
-          this.colorIconStatus = 'success'
-          this.iconStatus = 'mdi-check-circle'
-          this.percentCircular = 100
+      switch (this.localtextStatus) {
+        case 'COMPLETED':
+          this.localcolorIconStatus = 'success'
+          this.localiconStatus = 'mdi-check-circle'
+          this.localpercentCircular = 100
+          this.localtextStatus = 'Terminé'
           break
-        case 'Manuel':
-          this.colorIconStatus = 'warning'
-          this.iconStatus = 'mdi-hand'
+        case 'WARNING':
+          this.localcolorIconStatus = 'warning'
+          this.localiconStatus = 'mdi-hand'
+          this.localtextStatus = 'Manuel'
           break
-        case 'En cours':
-          this.colorIconStatus = 'grey lighten-1'
-          this.iconStatus = 'mdi-progress-clock'
+        case 'IN PROGRESS':
+          this.localcolorIconStatus = 'grey lighten-1'
+          this.localiconStatus = 'mdi-progress-clock'
+          this.localtextStatus = 'En cours'
           break
-        case 'En erreur':
-          this.colorIconStatus = 'error'
-          this.iconStatus = 'mdi-close-circle'
+        case 'ERROR':
+          this.localcolorIconStatus = 'error'
+          this.localiconStatus = 'mdi-close-circle'
+          this.localtextStatus = 'En erreur'
           break
         default:
-          console.log('Sorry, we are out of ' + this.textStatus + '.')
+          console.log('Sorry, we are out of ' + this.localtextStatus + '.')
       }
     },
     setColorByTypologie() {
-      switch (this.clientTypolgie) {
-        case 'SaaS Dédié':
-          this.colorCircular = 'teal lighten-2'
+      switch (this.localclientTypolgie) {
+        case 'SAAS DEDIE':
+          this.localcolorCircular = 'teal lighten-2'
+          this.localclientTypolgie = 'SaaS Dédié'
           break
-        case 'SaaS Désynchronisé':
-          this.colorCircular = 'lime lighten-2'
+        case 'SAAS DESYNCHRONISE':
+          this.localcolorCircular = 'lime lighten-2'
+          this.localclientTypolgie = 'SaaS Désynchronisé'
           break
-        case 'Plateforme':
-          this.colorCircular = 'red lighten-2'
+        case 'SAAS MUTUALISE':
+          this.localcolorCircular = 'red lighten-2'
+          this.localclientTypolgie = 'SaaS Mutualisé'
           break
       }
     }

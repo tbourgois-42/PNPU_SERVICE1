@@ -10,6 +10,8 @@
       show-select
       @page-count="pageCountProcessus = $event"
       @input="$emit('getValue', $event)"
+      :loading="loadingData"
+      loading-text="Chargement des processus"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -34,12 +36,12 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="12">
                       <v-text-field
-                        v-model="editedItem.name"
+                        v-model="editedItem.PROCESS_LABEL"
                         label="Nom du processus"
                         required
                       ></v-text-field>
                       <v-text-field
-                        v-model="editedItem.order"
+                        v-model="editedItem.ID_PROCESS"
                         label="Ordre d'éxecution"
                         required
                       ></v-text-field>
@@ -80,7 +82,6 @@
 
 <script>
 import axios from 'axios'
-import ProcessData from '../data/Processus.json'
 export default {
   data: () => ({
     headersProcessus: [
@@ -88,9 +89,9 @@ export default {
         text: 'Nom',
         align: 'start',
         sortable: false,
-        value: 'name'
+        value: 'PROCESS_LABEL'
       },
-      { text: "Ordre d'éxecution", value: 'order' },
+      { text: "Ordre d'éxecution", value: 'ID_PROCESS' },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     processus: [],
@@ -109,7 +110,8 @@ export default {
     defaultItem: {
       name: '',
       order: 0
-    }
+    },
+    loadingData: true
   }),
 
   created() {
@@ -117,7 +119,7 @@ export default {
   },
 
   watch: {
-    dialog(val) {
+    dialogProcessus(val) {
       val || this.close()
     }
   },
@@ -125,12 +127,14 @@ export default {
   methods: {
     async initialize() {
       try {
-        const res = await axios.get('../data/Processus.json')
-        this.processus = res
+        const res = await axios.get(
+          'http://localhost:63267/Service1.svc/process'
+        )
+        this.processus = res.data.GetAllProcessesResult
+        this.loadingData = false
       } catch (e) {
         console.log(e)
       }
-      this.processus = ProcessData
     },
 
     editItem(item) {
@@ -141,8 +145,17 @@ export default {
 
     deleteItem(item) {
       const index = this.processus.indexOf(item)
-      confirm('Are you sure you want to delete this item?') &&
-        this.processus.splice(index, 1)
+      if (confirm('Etes-vous sûr de supprimer ce processus ?') === true) {
+        axios
+          .delete('/process/' + item.ID_PROCESS)
+          .then(function(response) {
+            console.log(response)
+            this.processus.splice(index, 1)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
     },
 
     close() {
@@ -155,9 +168,30 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.processus[this.editedIndex], this.editedItem)
+        axios
+          .put('/processus/update', {
+            PROCESS_LABEL: this.editedItem.PROCESS_LABEL
+          })
+          .then(function(response) {
+            Object.assign(this.processus[this.editedIndex], this.editedItem)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
       } else {
-        this.processus.push(this.editedItem)
+        console.log('ajout', this.editedItem.WORKFLOW_LABEL)
+        if (this.editedItem.PROCESS_LABEL !== '') {
+          axios
+            .post('/processus/insert', {
+              PROCESS_LABEL: this.editedItem.PROCESS_LABEL
+            })
+            .then(function(response) {
+              this.processus.push(this.editedItem)
+            })
+            .catch(function(error) {
+              console.log(error)
+            })
+        }
       }
       this.close()
     }

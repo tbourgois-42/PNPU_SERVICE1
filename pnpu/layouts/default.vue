@@ -36,7 +36,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" app flat dark color="primary">
+    <v-app-bar :clipped-left="clipped" app flat dark dense color="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn text to="/">
         <v-toolbar-title class="title"
@@ -53,7 +53,7 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer :fixed="fixed" app dark color="primary">
+    <v-footer :fixed="fixed" app dark dense color="primary">
       <span>&copy; {{ new Date().getFullYear() }} - Cegid</span>
     </v-footer>
   </v-app>

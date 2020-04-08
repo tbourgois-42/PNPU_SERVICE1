@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-card class="mb-4" min-width="277">
+    <v-card class="mb-4 mt-3" min-width="277">
       <v-card-title class="d-flex justify-space-between subtitle-1"
         >Lancement workflow<v-icon>mdi-cog-box</v-icon></v-card-title
       >
@@ -142,23 +142,6 @@ export default {
       this.dialog = false
     },
 
-    testpost() {
-      axios
-        .post('http://localhost:63267/Service1.svc/TestPost', {
-          title: 'foo'
-        })
-        .then((response) => {
-          console.log(response.status)
-          if (response.status === 201) {
-            this.snackbar = true
-            this.snackbarMessage = 'Lancement effectué avec succès'
-          }
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
-    },
-
     selectFile(event) {
       console.log(event.target.files[0])
       this.selectedFile = event.target.files[0]
@@ -168,7 +151,15 @@ export default {
       const fd = new FormData()
       fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
       try {
-        await axios.post('http://localhost:63267/Service1.svc/uploadFile', fd)
+        await axios.post('http://localhost:63267/Service1.svc/uploadFile', fd, {
+          onUploadProgress: (uploadEvent) => {
+            console.log(
+              'Upload progress: ' +
+                Math.round((uploadEvent.loaded / uploadEvent.total) * 100) +
+                '%'
+            )
+          }
+        })
       } catch (err) {
         console.log(err)
       }
