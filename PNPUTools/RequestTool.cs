@@ -27,6 +27,8 @@ namespace PNPUTools
         static string requestAllWorkflow = "select * from PNPU_WORKFLOW";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
+        static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
+         
         public static IEnumerable<InfoClientStep> GetAllInfoClient()
         {
             
@@ -102,6 +104,18 @@ namespace PNPUTools
 
             
             IEnumerable<PNPU_STEP> listTest = table.DataTableToList<PNPU_STEP>();
+
+            return listTest;
+        }
+
+        public static IEnumerable<PNPU_WORKFLOWPROCESSES> GetWorkflowProcesses(string workflowId)
+        {
+            string OrderBy = " ORDER BY PS.ORDER_ID";
+
+            DataSet result = DataManagerSQLServer.GetDatas(requestGetWorkflowProcesses + workflowId + OrderBy, connectionStringCapitalDev);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<PNPU_WORKFLOWPROCESSES> listTest = table.DataTableToList<PNPU_WORKFLOWPROCESSES>();
 
             return listTest;
         }

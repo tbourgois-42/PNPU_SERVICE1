@@ -1,4 +1,3 @@
-
 using PNPUCore.Database;
 using PNPUTools.DataManager;
 using System;
@@ -62,6 +61,13 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "workflow/{workflowId}/processus")]
+        IEnumerable<PNPU_WORKFLOWPROCESSES> GetWorkflowProcesses(string workflowId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "processuscritique")]
         string GetProcessusCritiquesAllCLient();
 
@@ -108,6 +114,13 @@ namespace WcfService1
         string RunWorkflow(string WorkflowName);
 
         [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Alacon/{test}")]
+        string Alacon(string test);
+
+        [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
@@ -120,6 +133,10 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "uploadFile")]
         void UploadFile(Stream stream);
-    }
 
+        [OperationContract(Name = "OptionsMyFunction")]
+        [WebInvoke(Method = "OPTIONS", UriTemplate = "uploadFile", ResponseFormat = WebMessageFormat.Json)]
+        string preflightRequest();
+
+    }
 }
