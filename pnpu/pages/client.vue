@@ -15,7 +15,7 @@
       </v-flex>
       <v-divider class="my-2 mx-4" inset></v-divider>
 
-      <v-alert v-if="textStatus == 'Erreur'" type="error">
+      <v-alert v-if="textStatus == 'En erreur'" type="error">
         Le process <strong>***</strong> a renvoyé une erreur de type
         <strong>***</strong>. Pour plus de détail veuillez vous référer aux
         données de Logs ci-dessous.

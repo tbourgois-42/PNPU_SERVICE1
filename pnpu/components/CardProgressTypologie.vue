@@ -1,8 +1,12 @@
 <template>
   <v-layout>
-    <v-card>
+    <v-card min-width="277">
       <v-card-title class="d-flex justify-space-between subtitle-1">
-        Avancement par typologie<v-icon>mdi-progress-clock</v-icon>
+        Avancement par typologie<v-btn
+          icon
+          @click.prevent="filterIndicators('NO FILTER')"
+          ><v-icon>{{ iconFilter }}</v-icon></v-btn
+        >
       </v-card-title>
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
@@ -55,7 +59,7 @@
           </v-tooltip>
         </div>
         <div class="mb-4 subtitle">
-          Plateforme<v-icon
+          SaaS Mutualisé<v-icon
             v-if="progressPlateforme === 100"
             class="mx-4"
             color="success"
@@ -86,18 +90,30 @@
 
 <script>
 export default {
-  props: ['clients'],
-  data: () => ({
-    progressSaaSDedie: '',
-    progressSaaSDesynchronise: '',
-    progressPlateforme: '',
-    colorCircularSaaSPlat: 'red lighten-2',
-    colorCircularSaaSDedie: 'teal lighten-2',
-    colorCircularSaaSDesync: 'lime lighten-2'
-  }),
+  props: {
+    Clients: {
+      type: Array
+    }
+  },
 
-  mounted() {
-    this.calcProgessByTypologie()
+  data() {
+    return {
+      progressSaaSDedie: '',
+      progressSaaSDesynchronise: '',
+      progressPlateforme: '',
+      colorCircularSaaSPlat: 'red lighten-2',
+      colorCircularSaaSDedie: 'teal lighten-2',
+      colorCircularSaaSDesync: 'lime lighten-2',
+      localClients: '',
+      iconFilter: 'mdi-filter'
+    }
+  },
+
+  watch: {
+    Clients() {
+      this.localClients = this.Clients
+      this.calcProgessByTypologie()
+    }
   },
 
   methods: {
@@ -108,17 +124,15 @@ export default {
       let nbClientDesync = 0
       let nbClientPlat = 0
       let nbClientDedie = 0
-      this.clients.forEach((element) => {
-        if (element.typologie === 'SaaS Désynchronisé') {
-          progressSDesync = progressSDesync + element.percent
+      this.localClients.forEach((element) => {
+        if (element.TYPOLOGY === 'SAAS DESYNCHRONISE') {
+          progressSDesync = progressSDesync + element.PERCENTAGE_COMPLETUDE
           nbClientDesync = nbClientDesync + 1
-        }
-        if (element.typologie === 'SaaS Dédié') {
-          progressSDedie = progressSDedie + element.percent
+        } else if (element.TYPOLOGY === 'SAAS DEDIE') {
+          progressSDedie = progressSDedie + element.PERCENTAGE_COMPLETUDE
           nbClientDedie = nbClientDedie + 1
-        }
-        if (element.typologie === 'Plateforme') {
-          progressPlat = progressPlat + element.percent
+        } else if (element.TYPOLOGY === 'SAAS MUTUALISE') {
+          progressPlat = progressPlat + element.PERCENTAGE_COMPLETUDE
           nbClientPlat = nbClientPlat + 1
         }
       })
