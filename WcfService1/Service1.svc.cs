@@ -144,6 +144,10 @@ namespace WcfService1
             return result;
         }
 
+        public IEnumerable<PNPU_WORKFLOWPROCESSES> GetWorkflowProcesses(string workflowId)
+        {
+            return RequestTool.GetWorkflowProcesses(workflowId);
+        }
 
         public string preflightRequest()
         {

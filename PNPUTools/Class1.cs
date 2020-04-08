@@ -229,6 +229,15 @@ namespace PNPUTools.DataManager
 		}
 	}
 
+	public class PNPU_WORKFLOWPROCESSES
+	{
+		public decimal ORDER_ID { get; set; }
+		public string PROCESS_LABEL { get; set; }
+		public string IS_LOOPABLE { get; set; }
+		public decimal ID_PROCESS { get; set; }
+		public PNPU_WORKFLOWPROCESSES() { }
+	}
+
 	public static class Helper
 	{
 		private static readonly IDictionary<Type, ICollection<PropertyInfo>> _Properties =
