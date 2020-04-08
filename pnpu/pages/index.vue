@@ -79,14 +79,12 @@
 </template>
 
 <script>
-import axios from 'axios'
 import CardPnpu from '../components/Card.vue'
 import CardLaunchWorkflow from '../components/CardLaunchWorkflow'
 import CardIndicateurs from '../components/CardIndicateurs'
 import CardProgressTypologie from '../components/CardProgressTypologie'
 import ClientData from '../data/Clients.json'
 import Workflow from '../data/Workflow.json'
-import TestClients from '../data/TestClients.json'
 export default {
   components: {
     CardPnpu,
@@ -108,26 +106,9 @@ export default {
     typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
     getapi: ''
   }),
-  created() {
-    axios
-      .get('http://localhost:63267/Service1.svc/Clients')
-      .then((res) => {
-        this.getapi = TestClients.GetInfoAllClientResult
-        console.log(this.getapi)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  },
   beforeMount() {
     this.updateVisibleItems()
     this.totalPages()
-  },
-  mounted() {
-    this.getapi = TestClients.GetInfoAllClientResult
-    console.log(this.getapi)
-    // this.getapi = TestClients.GetInfoAllClientResult.Clients[0].CLIENT_NAME
-    // console.log(TestClients)
   },
   methods: {
     updatePage(pageNumber) {

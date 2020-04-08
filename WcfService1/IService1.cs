@@ -1,3 +1,4 @@
+using PNPU_WS;
 using PNPUCore.Database;
 using PNPUTools.DataManager;
 using System;
@@ -113,7 +114,18 @@ namespace WcfService1
             UriTemplate = "Workflow/CreateWorkflow/")]
         bool CreateWorkflow(Stream input);
 
+        [OperationContract(Name = "PostData")]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "uploadFile")]
+        void UploadFile(Stream stream);
 
+        
+
+        [OperationContract(Name = "OptionsMyFunction")]
+        [WebInvoke(Method = "OPTIONS", UriTemplate = "uploadFile", ResponseFormat = WebMessageFormat.Json)]
+        string preflightRequestT();
     }
 
 }

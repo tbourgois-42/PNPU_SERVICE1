@@ -168,7 +168,7 @@ export default {
       const fd = new FormData()
       fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
       try {
-        await axios.post('/upload', fd)
+        await axios.post('http://localhost:63267/Service1.svc/uploadFile', fd)
       } catch (err) {
         console.log(err)
       }

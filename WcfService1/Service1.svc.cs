@@ -12,6 +12,8 @@ using System.Collections.Specialized;
 using System.Web;
 using PNPUTools;
 using PNPUTools.DataManager;
+using PNPU_WS;
+using System.Web.Hosting;
 
 namespace WcfService1
 {
@@ -144,6 +146,28 @@ namespace WcfService1
         }
 
 
+        public string preflightRequest()
+        {
+            return "OK";
+        }
+
+        public void UploadFile(Stream stream)
+        {
+            string FileName = "toto.mdb";
+            string FilePath = Path.Combine(HostingEnvironment.MapPath("~/"), FileName);
+
+            int length = 0;
+            using (FileStream writer = new FileStream(FilePath, FileMode.Create))
+            {
+                int readCount;
+                var buffer = new byte[8192];
+                while ((readCount = stream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    writer.Write(buffer, 0, readCount);
+                    length += readCount;
+                }
+            }
+        }
     }
 
 
