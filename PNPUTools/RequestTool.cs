@@ -131,7 +131,7 @@ namespace PNPUTools
 
         public static string DeleteWorkflow(string workflowID)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
                 try
                 {
