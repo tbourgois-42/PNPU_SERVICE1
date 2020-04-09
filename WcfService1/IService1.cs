@@ -128,10 +128,6 @@ namespace WcfService1
             UriTemplate = "Workflow/CreateWorkflow/")]
         string CreateWorkflow(PNPU_WORKFLOW input);
 
-        [OperationContract(Name = "OptionsCreateWorkflow")]
-        [WebInvoke(Method = "OPTIONS", UriTemplate = "Workflow/CreateWorkflow/", ResponseFormat = WebMessageFormat.Json)]
-        string preflightRequest();
-
         [OperationContract]
         [WebInvoke(Method = "PUT",
             ResponseFormat = WebMessageFormat.Json,
@@ -140,9 +136,13 @@ namespace WcfService1
             UriTemplate = "Workflow/{workflowID}")]
         string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID);
 
-        [OperationContract(Name = "OptionsModifyWorkflow")]
-        [WebInvoke(Method = "OPTIONS", UriTemplate = "Workflow/{workflowID}", ResponseFormat = WebMessageFormat.Json)]
-        string preflightRequestModifyWorkflow(string workflowID);
+        [OperationContract]
+        [WebInvoke(Method = "DELETE",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "Workflow/{workflowID}/Delete")]
+        string DeleteWorkflow(string workflowID);
 
         [OperationContract(Name = "PostData")]
         [WebInvoke(Method = "POST",
@@ -151,9 +151,9 @@ namespace WcfService1
             UriTemplate = "uploadFile")]
         void UploadFile(Stream stream);
 
-        [OperationContract(Name = "OptionsMyFunction")]
-        [WebInvoke(Method = "OPTIONS", UriTemplate = "uploadFile", ResponseFormat = WebMessageFormat.Json)]
-        string preflightRequestUpload();
+        [OperationContract]
+        [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
+        void preflightRequest();
 
     }
 }

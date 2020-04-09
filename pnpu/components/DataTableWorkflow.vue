@@ -203,12 +203,13 @@ export default {
 
   methods: {
     async initialize() {
+      const vm = this
       try {
         const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/workflow`)
         this.workflows = res.data.GetAllWorkFLowResult
         this.loadingData = false
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        vm.showSnackbar('error', `${error} !`)
       }
     },
 
@@ -219,17 +220,32 @@ export default {
     },
 
     deleteItem(item) {
+      console.log(item)
       const index = this.workflows.indexOf(item)
-      console.log(item.WORKFLOW_ID)
       if (confirm('Etes-vous sûr de supprimer ce workflow ?') === true) {
+        const vm = this
         axios
-          .delete('/workflow/' + item.WORKFLOW_ID)
+          .delete(
+            `${process.env.WEB_SERVICE_WCF}/workflow/` +
+              item.WORKFLOW_ID +
+              `/Delete`
+          )
           .then(function(response) {
-            console.log(response)
-            this.workflows.splice(index, 1)
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Modification impossible - HTTP error ${response.status} !`
+              )
+            } else {
+              vm.showSnackbar(
+                'success',
+                'Suppression du workflow effectuée avec succès !'
+              )
+              vm.workflows.splice(index, 1)
+            }
           })
           .catch(function(error) {
-            console.log(error)
+            vm.showSnackbar('error', `${error} !`)
           })
       }
     },
@@ -259,15 +275,16 @@ export default {
                 'error',
                 `Modification impossible - HTTP error ${response.status} !`
               )
+            } else {
+              Object.assign(vm.workflows[vm.editedIndex], vm.editedItem)
+              vm.showSnackbar(
+                'success',
+                'Modification du workflow effectuée avec succès !'
+              )
             }
-            Object.assign(vm.workflows[vm.editedIndex], vm.editedItem)
-            vm.showSnackbar(
-              'success',
-              'Modification du workflow effectuée avec succès !'
-            )
           })
           .catch(function(error) {
-            console.log(error)
+            vm.showSnackbar('error', `${error} !`)
           })
       } else if (this.editedItem.WORKFLOW_LABEL !== '') {
         const vm = this
@@ -282,22 +299,25 @@ export default {
                 'error',
                 `Création impossible - HTTP error ${response.status} !`
               )
+            } else {
+              vm.editedItem.WORKFLOW_ID = vm.workflows.length + 1
+              console.log(vm.editedItem)
+              vm.workflows.push(vm.editedItem)
+              vm.showSnackbar(
+                'success',
+                'Création du workflow effectuée avec succès !'
+              )
             }
-            vm.editedItem.WORKFLOW_ID = vm.workflows.length + 1
-            vm.workflows.push(vm.editedItem)
-            vm.showSnackbar(
-              'success',
-              'Création du workflow effectuée avec succès !'
-            )
           })
           .catch(function(error) {
-            console.log(error)
+            vm.showSnackbar('error', `${error} !`)
           })
       }
       this.close()
     },
 
     async showDetail(item) {
+      const vm = this
       this.dialogDetailWorkflow = true
       this.workflowDate = item.WORKFLOW_LABEL
       this.showAlertNoProcessus = false
@@ -313,8 +333,8 @@ export default {
         this.WorkflowProcesses.length === 0
           ? (this.showAlertNoProcessus = true)
           : (this.showAlertNoProcessus = false)
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        vm.showSnackbar('error', `${error} !`)
       }
     },
 

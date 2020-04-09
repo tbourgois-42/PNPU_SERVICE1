@@ -131,6 +131,27 @@ namespace PNPUTools
             }
         }
 
+        public static string DeleteWorkflow(string workflowID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_WORKFLOW WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
         public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
         {
             DataSet result = DataManagerSQLServer.GetDatas(requestAllWorkflow, connectionStringCapitalDev);

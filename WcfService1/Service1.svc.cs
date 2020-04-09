@@ -125,7 +125,6 @@ namespace WcfService1
 
         public string CreateWorkflow(PNPU_WORKFLOW input)
         {
-            //DO something cool! 
             return RequestTool.CreateWorkflow(input);
         }
 
@@ -134,9 +133,8 @@ namespace WcfService1
             return RequestTool.GetWorkflowProcesses(workflowId);
         }
 
-        public string preflightRequest()
+        public void preflightRequest()
         {
-            return "OK";
         }
 
         public void UploadFile(Stream stream)
@@ -157,20 +155,16 @@ namespace WcfService1
             }
         }
 
-        public string preflightRequestUpload()
-        {
-            return "OK";
-        }
-
         public string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
         {
             return RequestTool.ModifyWorkflow(input, workflowID);
         }
 
-        public string preflightRequestModifyWorkflow(string workflowID)
+        public string DeleteWorkflow(string workflowID)
         {
-            return "OK";
+            return RequestTool.DeleteWorkflow(workflowID);
         }
+
     }
 
 
