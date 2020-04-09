@@ -125,7 +125,11 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Workflow/CreateWorkflow/")]
-        bool CreateWorkflow(Stream input);
+        bool CreateWorkflow(PNPU_WORKFLOW input);
+
+        [OperationContract(Name = "OptionsMyFunction")]
+        [WebInvoke(Method = "OPTIONS", UriTemplate = "Workflow/CreateWorkflow/", ResponseFormat = WebMessageFormat.Json)]
+        string preflightRequest();
 
         [OperationContract(Name = "PostData")]
         [WebInvoke(Method = "POST",
@@ -136,7 +140,7 @@ namespace WcfService1
 
         [OperationContract(Name = "OptionsMyFunction")]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "uploadFile", ResponseFormat = WebMessageFormat.Json)]
-        string preflightRequest();
+        string preflightRequestUpload();
 
     }
 }
