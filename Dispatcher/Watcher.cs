@@ -55,23 +55,27 @@ namespace PNUDispatcher
                 sMessage = ssStreamString.ReadString();
                 Console.WriteLine(sMessage);
 
-                if (IsValideJSON(sMessage) == false)
+                /*if (IsValideJSON(sMessage) == false)
                     sMessageResultat = "KO";
                 else {
-                    sMessageResultat = "OK";
-                    Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
-                    thread.Start();
-                }
+                    sMessageResultat = "OK";*/
+
+                string[] listParam = sMessage.Split('/');
+                Thread thread = new Thread(() => LaunchProcessFunction(listParam[0], int.Parse(listParam[1]), listParam[2]));
+
+                //Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
+                thread.Start();
+            
 
                 ssStreamString.WriteString(sMessageResultat);
             }
             
         }
 
-        private static void LaunchProcessFunction()
+        private static void LaunchProcessFunction(string clientName, int workflowId, string process)
         {
             var launcher = new Launcher();
-            launcher.Launch("toto", "ProcessControlePacks");
+            launcher.Launch(clientName, workflowId, process);
         }
 
         /// <summary>  

@@ -151,15 +151,19 @@ export default {
       const fd = new FormData()
       fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
       try {
-        await axios.post('http://localhost:63267/Service1.svc/uploadFile', fd, {
-          onUploadProgress: (uploadEvent) => {
-            console.log(
-              'Upload progress: ' +
-                Math.round((uploadEvent.loaded / uploadEvent.total) * 100) +
-                '%'
-            )
+        await axios.post(
+          'http://localhost:63267/Service1.svc/worflow/1/uploadFile',
+          fd,
+          {
+            onUploadProgress: (uploadEvent) => {
+              console.log(
+                'Upload progress: ' +
+                  Math.round((uploadEvent.loaded / uploadEvent.total) * 100) +
+                  '%'
+              )
+            }
           }
-        })
+        )
       } catch (err) {
         console.log(err)
       }

@@ -26,22 +26,22 @@ namespace PNPUCore
         /// </summary>  
         /// <param name="clientName">Client pour lequel on lance le preocess.</param>
         /// <param name="processName">Nom du process à lancer.</param>
-        public void Launch(String clientName, String processName)
+        public void Launch(String clientName, int workflowId, String processName)
         {
-            IProcess process = CreateProcess(processName, clientName);
+            IProcess process = CreateProcess(clientName, workflowId, processName);
 
             LaunchProcess(process);
         }
 
 
-        IProcess CreateProcess(String process, String client)
+        IProcess CreateProcess(String process, int workflowId, String client)
         {
             PNPUCore.Rapport.Process rapportProcess = new Rapport.Process();
 
             switch (process)
             {
                 case "ProcessControlePacks" :
-                    return ProcessControlePacks.CreateProcess(rapportProcess,12345);
+                    return ProcessControlePacks.CreateProcess(rapportProcess, workflowId);
 
                 default:
                     return ProcessMock.CreateProcess();

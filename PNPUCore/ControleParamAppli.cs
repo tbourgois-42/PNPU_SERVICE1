@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PNPUTools.DataManager;
+using PNPUTools;
 using System.Data;
 
 namespace PNPUCore.Controle
