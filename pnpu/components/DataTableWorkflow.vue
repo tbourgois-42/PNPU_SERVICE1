@@ -168,11 +168,13 @@ export default {
     pageCount: 0,
     editedItem: {
       WORKFLOW_LABEL: '',
+      WORKFLOW_ID: 0,
       actions: 0,
       updated_at: 0
     },
     defaultItem: {
       WORKFLOW_LABEL: '',
+      WORKFLOW_ID: 0,
       actions: 0,
       updated_at: 0
     },
@@ -202,9 +204,7 @@ export default {
   methods: {
     async initialize() {
       try {
-        const res = await axios.get(
-          'http://localhost:63267/Service1.svc/workflow'
-        )
+        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/workflow`)
         this.workflows = res.data.GetAllWorkFLowResult
         this.loadingData = false
       } catch (e) {
@@ -244,9 +244,8 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        // Object.assign(this.workflows[this.editedIndex], this.editedItem)
         axios
-          .put('/workflow/update', {
+          .put(`${process.env.WEB_SERVICE_WCF}/workflow/update`, {
             WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
           })
           .then(function(response) {
@@ -256,21 +255,30 @@ export default {
           .catch(function(error) {
             console.log(error)
           })
-      } else {
-        console.log('ajout', this.editedItem.WORKFLOW_LABEL)
-        if (this.editedItem.WORKFLOW_LABEL !== '') {
-          axios
-            .post('/workflow/insert', {
-              WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
-            })
-            .then(function(response) {
-              console.log(response)
-              this.workflows.push(this.editedItem)
-            })
-            .catch(function(error) {
-              console.log(error)
-            })
-        }
+      } else if (this.editedItem.WORKFLOW_LABEL !== '') {
+        const vm = this
+        axios
+          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, {
+            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL,
+            WORKFLOW_ID: this.workflows.length + 1
+          })
+          .then(function(response) {
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Création impossible - HTTP error ${response.status} !`
+              )
+            }
+            vm.editedItem.WORKFLOW_ID = vm.workflows.length + 1
+            vm.workflows.push(vm.editedItem)
+            vm.showSnackbar(
+              'success',
+              'Création du workflow effectuée avec succès !'
+            )
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
       }
       this.close()
     },
@@ -282,7 +290,7 @@ export default {
       this.WorkflowProcesses = []
       try {
         const res = await axios.get(
-          'http://localhost:63267/Service1.svc/workflow/' +
+          `${process.env.WEB_SERVICE_WCF}/workflow/` +
             item.WORKFLOW_ID +
             '/processus'
         )
@@ -313,6 +321,12 @@ export default {
             'Il est nécessaire de selectionner au minimum un processus pour pouvoir les affecter à un workflow'
         }
       }
+    },
+
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }
