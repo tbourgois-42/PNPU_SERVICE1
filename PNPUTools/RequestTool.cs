@@ -76,7 +76,7 @@ namespace PNPUTools
 
         public static string CreateWorkflow(PNPU_WORKFLOW input)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
                 try
                 {
@@ -109,7 +109,7 @@ namespace PNPUTools
 
         public static string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
                 try
                 {
