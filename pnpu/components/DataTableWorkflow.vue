@@ -244,13 +244,27 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
+        const vm = this
         axios
-          .put(`${process.env.WEB_SERVICE_WCF}/workflow/update`, {
-            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
-          })
+          .put(
+            `${process.env.WEB_SERVICE_WCF}/workflow/` +
+              this.editedItem.WORKFLOW_ID,
+            {
+              WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
+            }
+          )
           .then(function(response) {
-            console.log(response)
-            Object.assign(this.workflows[this.editedIndex], this.editedItem)
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Modification impossible - HTTP error ${response.status} !`
+              )
+            }
+            Object.assign(vm.workflows[vm.editedIndex], vm.editedItem)
+            vm.showSnackbar(
+              'success',
+              'Modification du workflow effectuée avec succès !'
+            )
           })
           .catch(function(error) {
             console.log(error)

@@ -161,6 +161,16 @@ namespace WcfService1
         {
             return "OK";
         }
+
+        public string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
+        {
+            return RequestTool.ModifyWorkflow(input, workflowID);
+        }
+
+        public string preflightRequestModifyWorkflow(string workflowID)
+        {
+            return "OK";
+        }
     }
 
 

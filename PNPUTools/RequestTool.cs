@@ -30,7 +30,6 @@ namespace PNPUTools
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
 
-        static string requestPostCreateWorkflow = "INSERT INTO PNPU_WORKFLOW (ID_ORGANIZATION, WORKFLOW_ID, WORKFLOW_LABEL)";
 
         public static IEnumerable<InfoClientStep> GetAllInfoClient()
         {
@@ -108,6 +107,28 @@ namespace PNPUTools
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 
             return listTest.First();
+        }
+
+        public static string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_WORKFLOW SET WORKFLOW_LABEL = @WORKFLOW_LABEL WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
+                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
         }
 
         public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
