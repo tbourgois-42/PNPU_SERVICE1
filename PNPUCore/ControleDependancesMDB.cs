@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PNPUTools.DataManager;
 using System.Data;
 using System.IO;
+using PNPUTools;
 
 namespace PNPUCore.Controle
 {

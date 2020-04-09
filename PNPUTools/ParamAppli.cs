@@ -4,7 +4,7 @@ using System.Text;
 using PNPUTools.DataManager;
 using System.Data;
 
-namespace PNPUCore
+namespace PNPUTools
 {
 
     /// <summary>  
@@ -66,7 +66,9 @@ namespace PNPUCore
         /// Chaine de connexion à la base de de l'application.
         /// </summary> 
         public static string ConnectionStringBaseAppli { get; }
-        
+
+        public static string ConnectionStringSupport { get; }
+
         /// <summary>
         /// Dossier temporaire utilisé pour l'application.
         /// </summary>
@@ -86,9 +88,10 @@ namespace PNPUCore
             ListeCmdF = new List<string> { "CREATE TABLE", "CREATE VIEW" };
             ListeCmdB = new List<string> { "KILL" };
             ConnectionStringBaseRef = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
-            ConnectionStringBaseAppli = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
-            DossierTemporaire = "D:\\PNPU\\TEMPO";
+            ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+            ConnectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
 
+            DossierTemporaire = "C:\\TEMPO";
             // A lire dans base de ref
             if (ConnectionStringBaseRef == string.Empty)
             {

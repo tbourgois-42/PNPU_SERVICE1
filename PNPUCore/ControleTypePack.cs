@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using PNPUTools.DataManager;
 using System.Data;
+using PNPUTools;
+
 
 namespace PNPUCore.Controle
 {

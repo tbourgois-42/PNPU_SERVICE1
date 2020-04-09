@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Globalization;
+using PNPUTools;
 
 namespace PNPUCore.Process
 {
@@ -108,14 +109,6 @@ namespace PNPUCore.Process
             cdmControleDependancesMDB.MakeControl();
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
-
-            //MHUM pour vérifier les dépendances j'écris le résultat dans un fichier
-            StreamWriter swFichierResultat = new StreamWriter("d:\\PNPU\\dependances.csv", false);
-            foreach (string sLigne in RapportControle2.Message)
-            {
-                swFichierResultat.WriteLine(sLigne);
-            }
-            swFichierResultat.Close();
         }
 
         /// <summary>  

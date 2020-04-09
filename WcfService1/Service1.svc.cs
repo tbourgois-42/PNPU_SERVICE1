@@ -13,6 +13,7 @@ using System.Web;
 using PNPUTools;
 using PNPUTools.DataManager;
 using System.Web.Hosting;
+using AntsCode.Util;
 
 namespace WcfService1
 {
@@ -23,7 +24,7 @@ namespace WcfService1
         private static NamedPipeClientStream npcsPipeClient = null;
         private static StreamString ssStreamString = null;
 
-        public string LaunchProcess(string ProcFile)
+        public string LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
             {
@@ -32,7 +33,8 @@ namespace WcfService1
                 ssStreamString = new StreamString(npcsPipeClient);
             }
 
-            ssStreamString.WriteString(ProcFile);
+           
+            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
             return (ssStreamString.ReadString());
         }
@@ -137,22 +139,31 @@ namespace WcfService1
         {
         }
 
-        public void UploadFile(Stream stream)
+        public void UploadFile(Stream stream, string workflowId_)
         {
-            string FileName = "toto.mdb";
-            string FilePath = Path.Combine(HostingEnvironment.MapPath("~/"), FileName);
+            MultipartParser parser = new MultipartParser(stream);
 
-            int length = 0;
-            using (FileStream writer = new FileStream(FilePath, FileMode.Create))
-            {
-                int readCount;
-                var buffer = new byte[8192];
-                while ((readCount = stream.Read(buffer, 0, buffer.Length)) != 0)
-                {
-                    writer.Write(buffer, 0, readCount);
-                    length += readCount;
-                }
-            }
+            int workflowId = int.Parse(workflowId_);
+            
+            //EST CE QUE LE DOSSIER TEMP EXISTE
+            if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+                Directory.CreateDirectory(ParamAppli.DossierTemporaire);
+
+            string FileName = parser.Filename;
+            string FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
+
+            File.WriteAllBytes(FilePath, parser.FileContents);
+
+            GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
+            //AJOUT DU ZIP DE MDB DANS LA BDD
+            gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli);
+
+            //Launch process
+            LaunchProcess("ProcessControlePacks", workflowId, "ALL");
+
+            //SUPPRESSION DU FICHIER
+            File.Delete(FilePath);
+
         }
 
         public string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)

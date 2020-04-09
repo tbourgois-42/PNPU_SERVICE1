@@ -144,12 +144,12 @@ namespace WcfService1
             UriTemplate = "Workflow/{workflowID}/Delete")]
         string DeleteWorkflow(string workflowID);
 
-        [OperationContract(Name = "PostData")]
+        [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "uploadFile")]
-        void UploadFile(Stream stream);
+            UriTemplate = "worflow/{WorkflowId}/uploadFile")]
+        void UploadFile(Stream stream, string WorkflowId);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
