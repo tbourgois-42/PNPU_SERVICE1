@@ -10,7 +10,7 @@ using System.Data;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler qu'aucun pack ne modifie d'objet techno. 
+    /// Cette classe permet de contrôler qu'aucun pack ne modifie d'objet techno. 
     /// </summary>  
     class ControleObjetTechno : IControle
     {

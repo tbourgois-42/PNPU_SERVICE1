@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,7 +27,8 @@ namespace PNPUTools
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
-         
+
+
         public static IEnumerable<InfoClientStep> GetAllInfoClient()
         {
             
@@ -72,6 +74,28 @@ namespace PNPUTools
             return listTest;
         }
 
+        public static string CreateWorkflow(PNPU_WORKFLOW input)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW (ID_ORGANIZATION, WORKFLOW_ID, WORKFLOW_LABEL) VALUES('0000', @WORKFLOW_ID, @WORKFLOW_LABEL)", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
         public static PNPU_WORKFLOW getWorkflow(string workflowId)
         {
             DataSet result = DataManagerSQLServer.GetDatas(requestOneWorkflow + "'" + workflowId + "'", ParamAppli.ConnectionStringBaseAppli);
@@ -81,6 +105,28 @@ namespace PNPUTools
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 
             return listTest.First();
+        }
+
+        public static string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(connectionStringCapitalDev))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_WORKFLOW SET WORKFLOW_LABEL = @WORKFLOW_LABEL WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
+                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
         }
 
         public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
@@ -100,7 +146,7 @@ namespace PNPUTools
             DataSet result = DataManagerSQLServer.GetDatas(requestAllStep, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
-            
+
             IEnumerable<PNPU_STEP> listTest = table.DataTableToList<PNPU_STEP>();
 
             return listTest;

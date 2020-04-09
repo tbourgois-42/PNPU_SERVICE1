@@ -10,7 +10,7 @@ using PNPUTools;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler que les ID_SYNONYME des items livrés ne sont pas dans les plages réservées aux clients. 
+    /// Cette classe permet de contrôler que les ID_SYNONYME des items livrés ne sont pas dans les plages réservées aux clients. 
     /// </summary>  
     class ControleIDSynonym : IControle
     {

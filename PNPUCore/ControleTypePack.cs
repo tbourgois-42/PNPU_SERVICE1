@@ -11,7 +11,7 @@ using PNPUTools;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
+    /// Cette classe permet de contrôler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
     /// </summary>  
     class ControleTypePack : IControle
     {

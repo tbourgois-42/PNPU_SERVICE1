@@ -123,13 +123,22 @@ namespace WcfService1
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "workflow/createWorkflow/")]
-        bool CreateWorkflow(PNPU_WORKFLOW input);
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "Workflow/CreateWorkflow/")]
+        string CreateWorkflow(PNPU_WORKFLOW input);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
         string preflightRequest();
+
+        [OperationContract]
+        [WebInvoke(Method = "PUT",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "Workflow/{workflowID}")]
+        string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID);
 
         [OperationContract]
         [WebInvoke(Method = "POST",

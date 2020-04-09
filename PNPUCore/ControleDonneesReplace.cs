@@ -9,7 +9,7 @@ using System.Data;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler que des données sont présentes pour toutes les commandes REPLACE. 
+    /// Cette classe permet de contrôler que des données sont présentes pour toutes les commandes REPLACE. 
     /// </summary>  
     class ControleDonneesReplace : IControle
     {

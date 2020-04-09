@@ -10,7 +10,7 @@ using PNPUTools;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
+    /// Cette classe permet de controler que les commandes des packs ne font pas partie de la liste des commandes interdites. 
     /// </summary>  
     class ControleCmdInterdites : IControle
     {

@@ -17,8 +17,8 @@ using AntsCode.Util;
 
 namespace WcfService1
 {
-    // REMARQUE : vous pouvez utiliser la commande Renommer du menu Refactoriser pour changer le nom de classe "Service1" dans le code, le fichier svc et le fichier de configuration.
-    // REMARQUE : pour lancer le client test WCF afin de tester ce service, sélectionnez Service1.svc ou Service1.svc.cs dans l'Explorateur de solutions et démarrez le débogage.
+    // REMARQUE : vous pouvez utiliser la commande Renommer du menu Refactoriser pour changer le nom de classe "Service1" dans le code, le fichier svc et le fichier de configuration. 
+    // REMARQUE : pour lancer le client test WCF afin de tester ce service, sélectionnez Service1.svc ou Service1.svc.cs dans l'Explorateur de solutions et démarrez le débogage. 
     public class Service1 : IService1
     {
         private static NamedPipeClientStream npcsPipeClient = null;
@@ -53,7 +53,7 @@ namespace WcfService1
         public IEnumerable<InfoClientStep> GetInfoAllClient()
         {
             return RequestTool.GetAllInfoClient();
-            //return RequestTool.GetAllStep();
+            //return RequestTool.GetAllStep(); 
         }
 
         public string GetInfoOneClient(string ClientName)
@@ -125,12 +125,10 @@ namespace WcfService1
             return (ssStreamString.ReadString());
         }
 
-        public bool CreateWorkflow(PNPU_WORKFLOW input)
+        public string CreateWorkflow(PNPU_WORKFLOW input)
         {
-            bool result = true;
-           //DO something cool!
-
-            return result;
+            //DO something cool! 
+            return RequestTool.CreateWorkflow(input);
         }
 
         public IEnumerable<PNPU_WORKFLOWPROCESSES> GetWorkflowProcesses(string workflowId)
@@ -169,6 +167,11 @@ namespace WcfService1
             //SUPPRESSION DU FICHIER
             File.Delete(FilePath);
 
+        }
+
+        public string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
+        {
+            return RequestTool.ModifyWorkflow(input, workflowID);
         }
 
     }
