@@ -123,23 +123,10 @@ namespace WcfService1
             return (ssStreamString.ReadString());
         }
 
-        public bool CreateWorkflow(Stream input)
+        public bool CreateWorkflow(PNPU_WORKFLOW input)
         {
-            bool result = false;
-            WorkFlow newWorkflow = new WorkFlow();
-
-            /*using (StreamReader sr = new StreamReader(input))
-            {
-                NameValueCollection qs = HttpUtility.ParseQueryString(sr.ReadToEnd());
-                newBooking.DateBooking = DateTime.Parse(qs["dateBooking"].ToString());
-                newBooking.NbGuest = int.Parse(qs["nbGuest"].ToString());
-            }
-
-            if (newBooking != null && !MenuRepository.Bookings.Any(bo => bo.DateBooking.Equals(newBooking.DateBooking)))
-            {
-                result = true;
-                MenuRepository.Bookings.Add(newBooking);
-            }*/
+            bool result = true;
+           //DO something cool!
 
             return result;
         }
@@ -170,6 +157,11 @@ namespace WcfService1
                     length += readCount;
                 }
             }
+        }
+
+        public string preflightRequestUpload()
+        {
+            return "OK";
         }
     }
 
