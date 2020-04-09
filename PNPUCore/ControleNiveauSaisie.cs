@@ -9,7 +9,7 @@ using System.Data;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler si les niveaux de saisie d'un item existant changent.
+    /// Cette classe permet de contrôler si les niveaux de saisie d'un item existant n'ont pas été supprimés.
     /// </summary>  
     class ControleNiveauSaisie : IControle
     {

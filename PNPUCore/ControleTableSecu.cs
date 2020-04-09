@@ -9,7 +9,7 @@ using System.Data;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler que les tables livrées dans le packs sont sécurisées. 
+    /// Cette classe permet de contrôler que les tables livrées dans le packs sont sécurisées. 
     /// </summary>  
     class ControleTableSecu : IControle
     {
