@@ -88,8 +88,8 @@ export default {
   },
 
   watch: {
-    Clients() {
-      this.localClients = this.Clients
+    clients() {
+      this.localClients = this.clients
     }
   },
 
