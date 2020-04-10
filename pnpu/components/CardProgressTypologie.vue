@@ -91,8 +91,9 @@
 <script>
 export default {
   props: {
-    Clients: {
-      type: Array
+    clients: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -110,8 +111,8 @@ export default {
   },
 
   watch: {
-    Clients() {
-      this.localClients = this.Clients
+    clients() {
+      this.localClients = this.clients
       this.calcProgessByTypologie()
     }
   },

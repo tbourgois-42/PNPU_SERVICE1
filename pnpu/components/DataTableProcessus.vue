@@ -8,10 +8,10 @@
       hide-default-footer
       class="elevation-1"
       show-select
-      @page-count="pageCountProcessus = $event"
-      @input="$emit('getValue', $event)"
       :loading="loadingData"
       loading-text="Chargement des processus"
+      @page-count="pageCountProcessus = $event"
+      @input="$emit('getValue', $event)"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -114,14 +114,22 @@ export default {
     loadingData: true
   }),
 
-  created() {
-    this.initialize()
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1
+        ? "Ajout d'un processus"
+        : "Edition d'un processus"
+    }
   },
 
   watch: {
     dialogProcessus(val) {
       val || this.close()
     }
+  },
+
+  created() {
+    this.initialize()
   },
 
   methods: {
@@ -208,14 +216,6 @@ export default {
     this.snackbar = true
     this.colorsnackbar = color
     this.snackbarMessage = message
-  },
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1
-        ? "Ajout d'un processus"
-        : "Edition d'un processus"
-    }
   }
 }
 </script>

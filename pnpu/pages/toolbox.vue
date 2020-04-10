@@ -340,31 +340,6 @@ export default {
     max: '8',
     test: ''
   }),
-  created() {
-    axios
-      .get('http://localhost:63267/Service1.svc/Alacon/1')
-      .then((res) => {
-        this.test = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  },
-  methods: {
-    testpost() {
-      axios
-        .post('http://localhost:63267/Service1.svc/Workflow/CreateWorkflow/', {
-          id: 'Fred',
-          name: 'Flintstone'
-        })
-        .then(function(response) {
-          console.log(response)
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
-    }
-  },
   computed: {
     countDone() {
       return this.items.filter((items) => items.step === '10').length
@@ -402,6 +377,31 @@ export default {
         })
       }
       return this.items
+    }
+  },
+  created() {
+    axios
+      .get('http://localhost:63267/Service1.svc/Alacon/1')
+      .then((res) => {
+        this.test = res.data
+      })
+      .catch((err) => {
+        return err
+      })
+  },
+  methods: {
+    testpost() {
+      axios
+        .post('http://localhost:63267/Service1.svc/Workflow/CreateWorkflow/', {
+          id: 'Fred',
+          name: 'Flintstone'
+        })
+        .then(function(response) {
+          return response
+        })
+        .catch(function(error) {
+          return error
+        })
     }
   }
 }

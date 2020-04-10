@@ -74,11 +74,11 @@ export default {
     clientTypolgie: { type: String, default: 'clientTypolgie' },
     colorIconStatus: { type: String, default: 'grey lighten-1' },
     iconStatus: { type: String, default: 'mdi-progress-clock' },
-    textStatus: { type: String },
+    textStatus: { type: String, default: null },
     percentCircular: { type: Number, default: 0 },
     colorCircular: { type: String, default: 'primary' },
     workflowDate: { type: String, default: '' },
-    IDORGA: { type: String, default: '' }
+    idorga: { type: String, default: '' }
   },
   data() {
     return {

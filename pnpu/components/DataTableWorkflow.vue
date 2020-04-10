@@ -8,9 +8,9 @@
       :items-per-page="itemsPerPage"
       hide-default-footer
       class="elevation-1"
-      @page-count="pageCount = $event"
       :loading="loadingData"
       loading-text="Chargement des workflows"
+      @page-count="pageCount = $event"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -133,7 +133,12 @@
 <script>
 import axios from 'axios'
 export default {
-  props: ['selectedProcessus'],
+  props: {
+    selectedProcessus: {
+      type: Array,
+      default: () => []
+    }
+  },
   data: () => ({
     dialogWorkflow: false,
     dialogDetailWorkflow: false,
@@ -220,7 +225,6 @@ export default {
     },
 
     deleteItem(item) {
-      console.log(item)
       const index = this.workflows.indexOf(item)
       if (confirm('Etes-vous sûr de supprimer ce workflow ?') === true) {
         const vm = this
@@ -301,7 +305,6 @@ export default {
               )
             } else {
               vm.editedItem.WORKFLOW_ID = vm.workflows.length + 1
-              console.log(vm.editedItem)
               vm.workflows.push(vm.editedItem)
               vm.showSnackbar(
                 'success',

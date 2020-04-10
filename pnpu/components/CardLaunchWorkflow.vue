@@ -81,7 +81,7 @@
           <v-btn color="error" @click="close"
             ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
           >
-          <v-btn color="primary" @click="sendFile()" :disabled="launchWorkflow"
+          <v-btn color="primary" :disabled="launchWorkflow" @click="sendFile()"
             ><v-icon left>mdi-play</v-icon> Lancer</v-btn
           >
         </v-card-actions>
@@ -98,7 +98,20 @@
 <script>
 import axios from 'axios'
 export default {
-  props: ['workflowDate', 'Clients', 'typologie'],
+  props: {
+    workflowDate: {
+      type: String,
+      default: ''
+    },
+    clients: {
+      type: Array,
+      default: () => []
+    },
+    typologie: {
+      type: Array,
+      default: () => []
+    }
+  },
   data: () => ({
     txtTypologie: '',
     lstClient: [],
@@ -117,7 +130,7 @@ export default {
         this.txtTypologie.includes('SaaS Dédié')
       ) {
         this.launchWorkflow = false
-        this.Clients.forEach((element) => {
+        this.clients.forEach((element) => {
           if (this.lstClient.includes(element.client) === false) {
             if (
               this.txtTypologie === 'SaaS dédié' &&
@@ -127,8 +140,6 @@ export default {
             }
           }
         })
-        console.log(this.lstClient)
-        console.log(this.typologie)
       }
     },
     controleAcceptFile() {},
@@ -170,7 +181,7 @@ export default {
           }
         )
       } catch (err) {
-        console.log(err)
+        return err
       }
     }
   }

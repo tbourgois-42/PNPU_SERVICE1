@@ -63,9 +63,9 @@
         </v-col>
       </v-col>
       <v-col cols="2">
-        <CardLaunchWorkflow :Clients="items" :typologie="typologie" />
-        <CardProgressTypologie :Clients="items" />
-        <CardIndicateurs :Clients="items" @getIndicators="getIndicators" />
+        <CardLaunchWorkflow :clients="items" :typologie="typologie" />
+        <CardProgressTypologie :clients="items" />
+        <CardIndicateurs :clients="items" @getIndicators="getIndicators" />
       </v-col>
       <v-col cols="12" class="justify-center">
         <v-pagination
@@ -112,28 +112,32 @@ export default {
     getapi: '',
     filteredIndicators: []
   }),
+
   computed: {},
-  created() {},
-  beforeMount() {
-    this.updateVisibleItems()
-    this.totalPages()
-  },
-  mounted() {
-    this.initialize()
-  },
+
   watch: {
     filteredIndicators() {
       this.updateVisibleItems()
     }
   },
+
+  created() {},
+
+  beforeMount() {
+    this.updateVisibleItems()
+    this.totalPages()
+  },
+
+  mounted() {
+    this.initialize()
+  },
+
   methods: {
     updatePage(pageNumber) {
       this.currentPage = pageNumber
       this.updateVisibleItems()
     },
     updateVisibleItems() {
-      console.log('visibleitems', this.items)
-      console.log('filteredIndicators', this.filteredIndicators)
       if (this.filteredIndicators.length > 0) {
         this.visibleItems = this.filteredIndicators.slice(
           (this.currentPage - 1) * this.pageSize,
@@ -157,12 +161,11 @@ export default {
         this.items = res.data.GetInfoAllClientResult
         this.updateVisibleItems()
       } catch (e) {
-        console.log(e)
+        return e
       }
     },
     getIndicators(value) {
       this.filteredIndicators = value
-      console.log('getIndicatorsIndex', value)
     }
   }
 }

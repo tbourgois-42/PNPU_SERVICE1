@@ -9,37 +9,37 @@
       >
       <v-divider class="mx-4"></v-divider>
       <v-chip
-        @click.prevent="filterIndicators('IN PROGRESS')"
         class="ml-4 mt-4"
         color="grey"
         text-color="white"
+        @click.prevent="filterIndicators('IN PROGRESS')"
       >
         <v-avatar left class="grey darken-4">{{ countInProgress }}</v-avatar>
         En cours
       </v-chip>
       <v-chip
-        @click.prevent="filterIndicators('ERROR')"
         class="ml-4 mt-4"
         color="error"
         text-color="white"
+        @click.prevent="filterIndicators('ERROR')"
       >
         <v-avatar left class="red darken-4">{{ countInError }}</v-avatar> En
         erreur
       </v-chip>
       <v-chip
-        @click.prevent="filterIndicators('COMPLETED')"
         class="ml-4 mb-4 mt-4"
         color="success"
         text-color="white"
+        @click.prevent="filterIndicators('COMPLETED')"
       >
         <v-avatar left class="green darken-4">{{ countDone }}</v-avatar>
         Terminé
       </v-chip>
       <v-chip
-        @click.prevent="filterIndicators('WARNING')"
         class="ml-5 mb-4 mt-4"
         color="warning"
         text-color="white"
+        @click.prevent="filterIndicators('WARNING')"
       >
         <v-avatar left class="orange darken-4">{{ countManuel }}</v-avatar>
         Manuel
@@ -51,8 +51,9 @@
 <script>
 export default {
   props: {
-    Clients: {
-      type: Array
+    clients: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -63,6 +64,28 @@ export default {
     ClientsFiltered: [],
     iconFilter: 'mdi-filter'
   }),
+
+  computed: {
+    countDone() {
+      return this.localClients.filter(
+        (client) => client.ID_STATUT === 'COMPLETED'
+      ).length
+    },
+    countInProgress() {
+      return this.localClients.filter(
+        (client) => client.ID_STATUT === 'IN PROGRESS'
+      ).length
+    },
+    countInError() {
+      return this.localClients.filter((client) => client.ID_STATUT === 'ERROR')
+        .length
+    },
+    countManuel() {
+      return this.localClients.filter(
+        (client) => client.ID_STATUT === 'WARNING'
+      ).length
+    }
+  },
 
   watch: {
     Clients() {
@@ -94,28 +117,6 @@ export default {
         this.iconFilter = 'mdi-filter'
       }
       this.$emit('getIndicators', this.ClientsFiltered)
-    }
-  },
-
-  computed: {
-    countDone() {
-      return this.localClients.filter(
-        (client) => client.ID_STATUT === 'COMPLETED'
-      ).length
-    },
-    countInProgress() {
-      return this.localClients.filter(
-        (client) => client.ID_STATUT === 'IN PROGRESS'
-      ).length
-    },
-    countInError() {
-      return this.localClients.filter((client) => client.ID_STATUT === 'ERROR')
-        .length
-    },
-    countManuel() {
-      return this.localClients.filter(
-        (client) => client.ID_STATUT === 'WARNING'
-      ).length
     }
   }
 }
