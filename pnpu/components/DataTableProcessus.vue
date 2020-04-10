@@ -126,14 +126,13 @@ export default {
 
   methods: {
     async initialize() {
+      const vm = this
       try {
-        const res = await axios.get(
-          'http://localhost:63267/Service1.svc/process'
-        )
+        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/process`)
         this.processus = res.data.GetAllProcessesResult
         this.loadingData = false
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        vm.showSnackbar('error', `${error} !`)
       }
     },
 
@@ -145,15 +144,19 @@ export default {
 
     deleteItem(item) {
       const index = this.processus.indexOf(item)
+      const vm = this
       if (confirm('Etes-vous sûr de supprimer ce processus ?') === true) {
         axios
-          .delete('/process/' + item.ID_PROCESS)
+          .delete(
+            `${process.env.WEB_SERVICE_WCF}/process/` +
+              item.ID_PROCESS +
+              `/Delete`
+          )
           .then(function(response) {
-            console.log(response)
             this.processus.splice(index, 1)
           })
           .catch(function(error) {
-            console.log(error)
+            vm.showSnackbar('error', `${error} !`)
           })
       }
     },
@@ -168,33 +171,43 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
+        const vm = this
         axios
-          .put('/processus/update', {
-            PROCESS_LABEL: this.editedItem.PROCESS_LABEL
-          })
+          .put(
+            `${process.env.WEB_SERVICE_WCF}/process/` +
+              this.editedItem.ID_PROCESS,
+            {
+              PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
+              ID_PROCESS: this.editedItem.ID_PROCESS
+            }
+          )
           .then(function(response) {
             Object.assign(this.processus[this.editedIndex], this.editedItem)
           })
           .catch(function(error) {
-            console.log(error)
+            vm.showSnackbar('error', `${error} !`)
           })
-      } else {
-        console.log('ajout', this.editedItem.WORKFLOW_LABEL)
-        if (this.editedItem.PROCESS_LABEL !== '') {
-          axios
-            .post('/processus/insert', {
-              PROCESS_LABEL: this.editedItem.PROCESS_LABEL
-            })
-            .then(function(response) {
-              this.processus.push(this.editedItem)
-            })
-            .catch(function(error) {
-              console.log(error)
-            })
-        }
+      } else if (this.editedItem.PROCESS_LABEL !== '') {
+        const vm = this
+        axios
+          .post(`${process.env.WEB_SERVICE_WCF}/process/CreateProcess/`, {
+            PROCESS_LABEL: this.editedItem.PROCESS_LABEL
+          })
+          .then(function(response) {
+            this.processus.push(this.editedItem)
+          })
+          .catch(function(error) {
+            vm.showSnackbar('error', `${error} !`)
+          })
       }
       this.close()
     }
+  },
+
+  showSnackbar(color, message) {
+    this.snackbar = true
+    this.colorsnackbar = color
+    this.snackbarMessage = message
   },
 
   computed: {

@@ -345,14 +345,12 @@ export default {
           this.selectedProcessus.forEach((element) => {
             item.processus.push(element)
           })
-          this.snackbar = true
-          this.colorsnackbar = 'success'
-          this.snackbarMessage = 'Affectation effectué avec succès'
+          this.showSnackbar('success', 'Affectation effectué avec succès')
         } else {
-          this.snackbar = true
-          this.colorsnackbar = 'error'
-          this.snackbarMessage =
+          this.showSnackbar(
+            'error',
             'Il est nécessaire de selectionner au minimum un processus pour pouvoir les affecter à un workflow'
+          )
         }
       }
     },
