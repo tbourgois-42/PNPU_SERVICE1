@@ -55,6 +55,7 @@
                   :show-size="1000"
                   accept=".zip, .mdb, .7zip, .rar"
                   :rules="[controleAcceptFile()]"
+                  @change="selectFile"
                 >
                   <template v-slot:selection="{ index, text }">
                     <v-chip v-if="index < 2" color="primary" dark label small>
@@ -143,8 +144,12 @@ export default {
     },
 
     selectFile(event) {
+      event.forEach((element) => {
+        this.selectedFile = element
+      })
+      /* console.log(event[0])
       console.log(event.target.files[0])
-      this.selectedFile = event.target.files[0]
+      this.selectedFile = event.target.files[0] */
     },
 
     async sendFile() {
@@ -152,7 +157,7 @@ export default {
       fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
       try {
         await axios.post(
-          'http://localhost:63267/Service1.svc/worflow/1/uploadFile',
+          `${process.env.WEB_SERVICE_WCF}/worflow/1/uploadFile`,
           fd,
           {
             onUploadProgress: (uploadEvent) => {
