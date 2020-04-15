@@ -34,7 +34,6 @@
                   solo
                 ></v-select>
                 <v-select
-                  v-model="txtClient"
                   :items="lstClient"
                   label="Client"
                   chips
@@ -47,14 +46,14 @@
                   v-model="files"
                   color="primary"
                   counter
-                  label=".mdb .zip"
-                  multiple
+                  label=".zip"
                   placeholder="Selection des fichiers"
                   prepend-icon="mdi-paperclip"
                   outlined
+                  multiple
                   :show-size="1000"
-                  accept=".zip, .mdb, .7zip, .rar"
-                  :rules="[controleAcceptFile()]"
+                  accept=".zip, .7zip, .rar"
+                  :rules="controleAcceptFile()"
                   @change="selectFile"
                 >
                   <template v-slot:selection="{ index, text }">
@@ -71,7 +70,6 @@
                   </template>
                 </v-file-input>
               </v-col>
-              <input type="file" @change="selectFile" />
             </v-row>
           </v-container>
         </v-card-text>
@@ -87,7 +85,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-snackbar v-model="snackbar" color="success" :timeout="6000" top>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
       {{ snackbarMessage }}
       <v-btn dark text @click="snackbar = false">
         Close
@@ -118,6 +116,17 @@ export default {
     files: '',
     launchWorkflow: false,
     dialog: false,
+    controleAcceptFile() {
+      if (this.selectedFile !== null) {
+        if (this.selectedFile.type !== 'application/x-zip-compressed') {
+          this.launchWorkflow = true
+          this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
+          return ' '
+        } else {
+          this.launchWorkflow = false
+        }
+      }
+    },
     verifyTypologie() {
       if (
         this.txtTypologie.length > 1 &&
@@ -125,29 +134,28 @@ export default {
       ) {
         this.launchWorkflow = true
         return 'Impossible de sélectionner SaaS Dédié avec une autre typologie'
-      } else if (
-        this.txtTypologie.length === 1 &&
-        this.txtTypologie.includes('SaaS Dédié')
-      ) {
+      } else {
         this.launchWorkflow = false
-        this.clients.forEach((element) => {
-          if (this.lstClient.includes(element.client) === false) {
-            if (
-              this.txtTypologie === 'SaaS dédié' &&
-              this.txtTypologie.includes('SaaS Dédié')
-            ) {
-              this.lstClient.push(element.client)
-            }
-          }
-        })
       }
     },
-    controleAcceptFile() {},
     snackbarMessage: '',
     snackbar: false,
-    file: '',
+    colorsnackbar: '',
     selectedFile: null
   }),
+
+  watch: {
+    txtTypologie() {
+      this.lstClient = []
+      this.clients.forEach((c) => {
+        this.txtTypologie.forEach((t) => {
+          if (t.replace(/é/g, 'e').toUpperCase() === c.TYPOLOGY) {
+            this.lstClient.push(c.CLIENT_ID)
+          }
+        })
+      })
+    }
+  },
 
   methods: {
     close() {
@@ -158,31 +166,34 @@ export default {
       event.forEach((element) => {
         this.selectedFile = element
       })
-      /* console.log(event[0])
-      console.log(event.target.files[0])
-      this.selectedFile = event.target.files[0] */
     },
 
     async sendFile() {
       const fd = new FormData()
-      fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
-      try {
-        await axios.post(
-          `${process.env.WEB_SERVICE_WCF}/worflow/1/uploadFile`,
-          fd,
-          {
-            onUploadProgress: (uploadEvent) => {
-              console.log(
-                'Upload progress: ' +
-                  Math.round((uploadEvent.loaded / uploadEvent.total) * 100) +
-                  '%'
-              )
-            }
-          }
+      if (this.selectedFile !== null) {
+        fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
+        try {
+          await axios.post(
+            `${process.env.WEB_SERVICE_WCF}/worflow/1/uploadFile`,
+            fd
+          )
+          this.showSnackbar('success', 'Lancement effectué avec succès')
+          this.close()
+        } catch (error) {
+          this.showSnackbar('error', `${error} !`)
+        }
+      } else {
+        this.showSnackbar(
+          'error',
+          'Impossible de lancer un workflow sans sélectionner de fichier'
         )
-      } catch (err) {
-        return err
       }
+    },
+
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }
