@@ -57,7 +57,7 @@
               :currentStep="item.ORDER_ID"
               :percentCircular="item.PERCENTAGE_COMPLETUDE"
               :workflowDate="workflowDate"
-              :IDORGA="item.ORDER_ID"
+              :idorga="item.ID_ORGANIZATION"
             />
           </transition>
         </v-col>
@@ -110,7 +110,11 @@ export default {
     filter: '',
     typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
     getapi: '',
-    filteredIndicators: []
+    filteredIndicators: [],
+    colorIconStatus: '',
+    iconStatus: '',
+    percentCircular: '',
+    textStatus: ''
   }),
 
   computed: {},
@@ -138,6 +142,7 @@ export default {
       this.updateVisibleItems()
     },
     updateVisibleItems() {
+      this.visibleItems = []
       if (this.filteredIndicators.length > 0) {
         this.visibleItems = this.filteredIndicators.slice(
           (this.currentPage - 1) * this.pageSize,
@@ -155,9 +160,7 @@ export default {
     },
     async initialize() {
       try {
-        const res = await axios.get(
-          'http://localhost:63267/Service1.svc/Clients'
-        )
+        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/Clients`)
         this.items = res.data.GetInfoAllClientResult
         this.updateVisibleItems()
       } catch (e) {

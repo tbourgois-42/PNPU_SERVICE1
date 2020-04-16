@@ -35,17 +35,25 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="12">
-                      <v-text-field
-                        v-model="editedItem.PROCESS_LABEL"
-                        label="Nom du processus"
-                        required
-                      ></v-text-field>
-                      <v-select
-                        :items="loopableItems"
-                        v-model="editedItem.IS_LOOPABLE"
-                        label="Réitération"
-                        required
-                      ></v-select>
+                      <v-form ref="form" v-model="valid" lazy-validation>
+                        <v-text-field
+                          v-model="editedItem.PROCESS_LABEL"
+                          label="Nom du processus"
+                          :rules="[
+                            (v) => !!v || 'Le nom du processus est obligatoire'
+                          ]"
+                          required
+                        ></v-text-field>
+                        <v-select
+                          v-model="editedItem.IS_LOOPABLE"
+                          :items="loopableItems"
+                          :rules="[
+                            (v) => !!v || 'Le champ réitération est obligatoire'
+                          ]"
+                          label="Réitération"
+                          required
+                        ></v-select>
+                      </v-form>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -54,7 +62,13 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save()">Save</v-btn>
+                <v-btn
+                  :disabled="!valid"
+                  color="blue darken-1"
+                  text
+                  @click="save()"
+                  >Save</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -122,7 +136,8 @@ export default {
       ID_PROCESS: '',
       IS_LOOPABLE: ''
     },
-    loadingData: true
+    loadingData: true,
+    valid: true
   }),
 
   computed: {
@@ -230,6 +245,8 @@ export default {
             IS_LOOPABLE: this.editedItem.IS_LOOPABLE
           })
           .then((response) => {
+            debugger
+            console.log(response.config.data[0].PROCESS_LABEL)
             this.processus.push({
               PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
               ID_PROCESS: response.data,
