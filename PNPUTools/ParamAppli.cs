@@ -61,12 +61,25 @@ namespace PNPUTools
         /// Chaine de connexion à la base de référence.
         /// </summary> 
         public static string ConnectionStringBaseRef { get; }
-        
+
         /// <summary>  
-        /// Chaine de connexion à la base de de l'application.
+        /// Chaine de connexion à la base de référence SAAS dédié.
+        /// </summary>
+        public static string ConnectionStringBaseRefDedie { get; }
+
+        /// <summary>  
+        /// Chaine de connexion à la base de référence SAAS mutualisé / désynchro.
+        /// </summary>
+        public static string ConnectionStringBaseRefPlateforme { get; }
+
+        /// <summary>  
+        /// Chaine de connexion à la base de l'application.
         /// </summary> 
         public static string ConnectionStringBaseAppli { get; }
-
+        
+        /// <summary>  
+        /// Chaine de connexion à la base de du support.
+        /// </summary> 
         public static string ConnectionStringSupport { get; }
 
         /// <summary>
@@ -79,34 +92,88 @@ namespace PNPUTools
         /// </summary>  
         static ParamAppli()
         {
-            // Pour tests, à remplacer par le chargement du paramétrage
-            ListeCmdInterdite = new List<string> { "TRANSFER 'SECURITY", "KILL 'SECURITY", "REPLACE M4RSC_APPROLE" };
-            ListeCleInterdite = new List<string> { "ENC_CONN_STR_RAMDL", "FILESERVICE_URI", "M2M_PROXY_HOST" };
-            ListeSectionInterdite = new List<string> { "AUTHENTICATION", "PORTS" };
-            ListeCmdL = new List<string> { "TRANSFER", "COMPILE" };
-            ListeCmdD = new List<string> { "APPEND", "REPLACE" };
-            ListeCmdF = new List<string> { "CREATE TABLE", "CREATE VIEW" };
-            ListeCmdB = new List<string> { "KILL" };
-            ConnectionStringBaseRef = "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;";
-            ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
-            ConnectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
+            DataSet dsDataSet = null;
+            DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
-            DossierTemporaire = "C:\\TEMPO";
-            // A lire dans base de ref
-            if (ConnectionStringBaseRef == string.Empty)
+            ListeCmdInterdite = new List<string>();
+            ListeCleInterdite = new List<string>();
+            ListeSectionInterdite = new List<string>();
+            ListeCmdL = new List<string>();
+            ListeCmdD = new List<string>();
+            ListeCmdF = new List<string>();
+            ListeCmdB = new List<string>();
+            ListeLimInf = new List<int>();
+            ListeLimSup = new List<int>();
+
+
+            try
             {
-                ListeLimInf = new List<int> { 5001, 10301, 11301 };
-                ListeLimSup = new List<int> { 9999, 10999, 11999 };
-            }
-            else
-            {
-                try
+                ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+                dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
+
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    ListeLimInf = new List<int>();
-                    ListeLimSup = new List<int>();
+                    foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                    {
+                        switch (drRow[0].ToString().Substring(0, 7))
+                        {
+                            case "INTERD_":
+                                ListeCmdInterdite.Add(drRow[1].ToString());
+                                break;
 
-                    DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
-                    DataSet dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRef);
+                            case "PACK_B_":
+                                ListeCmdB.Add(drRow[1].ToString());
+                                break;
+
+                            case "PACK_D_":
+                                ListeCmdD.Add(drRow[1].ToString());
+                                break;
+
+                            case "PACK_F_":
+                                ListeCmdF.Add(drRow[1].ToString());
+                                break;
+
+                            case "PACK_L_":
+                                ListeCmdL.Add(drRow[1].ToString());
+                                break;
+
+                            case "PARKEY_":
+                                ListeCleInterdite.Add(drRow[1].ToString());
+                                break;
+
+                            case "PARSEC_":
+                                ListeSectionInterdite.Add(drRow[1].ToString());
+                                break;
+
+                            case "BASREFD":
+                                ConnectionStringBaseRefDedie = drRow[1].ToString();
+                                break;
+
+                            case "BASREFP":
+                                ConnectionStringBaseRefPlateforme = drRow[1].ToString();
+                                break;
+
+                            case "BASESUP":
+                                ConnectionStringSupport = drRow[1].ToString();
+                                break;
+
+                            case "DOSTEMP":
+                                DossierTemporaire = drRow[1].ToString();
+                                break;
+
+                        }
+
+                    }
+                }
+
+
+                // Pour l'instant il n'y a qu'une base de référence. Ensuite à valorisé en fonction de la typologie
+                ConnectionStringBaseRef = ConnectionStringBaseRefPlateforme;
+
+                // Pour l'instant n'existe que sur la base plateforme
+                if (ConnectionStringBaseRefPlateforme != string.Empty)
+                {
+                     dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -116,11 +183,12 @@ namespace PNPUTools
                             ListeLimSup.Add(Int32.Parse(drRow[1].ToString()));
                         }
                     }
+  
                 }
-                catch (Exception ex)
-                {
+            }
+            catch (Exception ex)
+            {
 
-                }
             }
 
         }

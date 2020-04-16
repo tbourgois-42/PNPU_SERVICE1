@@ -60,6 +60,7 @@ namespace PNPUCore.Process
             listControl.Add(new ControleCmdInterdites(this));
             listControl.Add(new ControleDonneesReplace(this));
             listControl.Add(new ControleIDSynonym(this));
+            listControl.Add(new ControleItemsTotaux(this));
             listControl.Add(new ControleNiveauHeritage(this));
             listControl.Add(new ControleNiveauSaisie(this));
             listControl.Add(new ControleObjetTechno(this));
@@ -106,7 +107,7 @@ namespace PNPUCore.Process
             RapportControle2.Id = cdmControleDependancesMDB.ToString();
             RapportControle2.Message = new List<string>();
             RapportControleCourant = RapportControle2;
-            cdmControleDependancesMDB.MakeControl();
+            RapportControle2.Result= cdmControleDependancesMDB.MakeControl();
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
         }

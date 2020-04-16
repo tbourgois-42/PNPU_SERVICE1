@@ -51,7 +51,7 @@ namespace PNPUCore.Controle
 
                 // La modification d'un M4O peut provenir de la livraison d'un M4O, d'une NODE, NODE STRUCTURE ou d'un item. On recherche tous ces éléments.
                 sRequete = "select A.ID_PACKAGE, A.ID_CLASS,A.ID_OBJECT FROM M4RDL_PACK_CMDS A ";
-                sRequete += "WHERE (A.ID_PACKAGE LIKE '%_L' OR A.ID_PACKAGE LIKE '%_B') AND A.ID_CLASS IN ('META4OBJECT','NODE STRUCTURE','NODE','ITEM') AND A.CMD_ACTIVE = -1 ";
+                sRequete += "WHERE (A.ID_PACKAGE LIKE '%_L' OR A.ID_PACKAGE LIKE '%_B') AND A.ID_CLASS IN ('META4OBJECT & NODE STRUCTURES','META4OBJECT','NODE STRUCTURE','NODE','ITEM') AND A.CMD_ACTIVE = -1 ";
                 sRequete += "ORDER BY ID_PACKAGE ";
                 sIDPackageCourant = String.Empty;
                 DataSet dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
@@ -75,6 +75,7 @@ namespace PNPUCore.Controle
                         
                         switch (drRow[1].ToString())
                         {
+                            case "META4OBJECT & NODE STRUCTURES":
                             case "META4OBJECT":
                                 if (lListeM4O.Contains(drRow[2].ToString()) == false)
                                     lListeM4O.Add(drRow[2].ToString());
