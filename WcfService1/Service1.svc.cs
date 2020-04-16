@@ -176,6 +176,20 @@ namespace WcfService1
             return RequestTool.DeleteWorkflow(workflowID);
         }
 
+        public string DeleteProcess(string processID)
+        {
+            return RequestTool.DeleteProcess(processID);
+        }
+
+        public string CreateProcess(PNPU_PROCESS input)
+        {
+            return RequestTool.CreateProcess(input);
+        }
+
+        public string ModifyProcessus(PNPU_PROCESS input, string processID)
+        {
+            return RequestTool.ModifyProcessus(input, processID);
+        }
     }
 
 

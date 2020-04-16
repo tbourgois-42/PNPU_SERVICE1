@@ -129,6 +129,14 @@ namespace WcfService1
         string CreateWorkflow(PNPU_WORKFLOW input);
 
         [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "process/CreateProcess/")]
+        string CreateProcess(PNPU_PROCESS input);
+
+        [OperationContract]
         [WebInvoke(Method = "PUT",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
@@ -137,12 +145,28 @@ namespace WcfService1
         string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID);
 
         [OperationContract]
+        [WebInvoke(Method = "PUT",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "process/{processID}")]
+        string ModifyProcessus(PNPU_PROCESS input, string processID);
+
+        [OperationContract]
         [WebInvoke(Method = "DELETE",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             RequestFormat = WebMessageFormat.Json,
             UriTemplate = "Workflow/{workflowID}/Delete")]
         string DeleteWorkflow(string workflowID);
+
+        [OperationContract]
+        [WebInvoke(Method = "DELETE",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "process/{processID}/Delete")]
+        string DeleteProcess(string processID);
 
         [OperationContract]
         [WebInvoke(Method = "POST",

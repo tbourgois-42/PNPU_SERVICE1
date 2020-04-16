@@ -40,11 +40,12 @@
                         label="Nom du processus"
                         required
                       ></v-text-field>
-                      <v-text-field
-                        v-model="editedItem.ID_PROCESS"
-                        label="Ordre d'éxecution"
+                      <v-select
+                        :items="loopableItems"
+                        v-model="editedItem.IS_LOOPABLE"
+                        label="Réitération"
                         required
-                      ></v-text-field>
+                      ></v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -77,6 +78,12 @@
         :length="pageCountProcessus"
       ></v-pagination>
     </div>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-col>
 </template>
 
@@ -91,10 +98,12 @@ export default {
         sortable: false,
         value: 'PROCESS_LABEL'
       },
-      { text: "Ordre d'éxecution", value: 'ID_PROCESS' },
+      { text: 'Identifiant', value: 'ID_PROCESS', sortable: true },
+      { text: 'Réitération', value: 'IS_LOOPABLE', sortable: true },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     processus: [],
+    loopableItems: ['0', '1'],
     pageProcessus: 1,
     itemsPerPageProcessus: 10,
     pageCountProcessus: 0,
@@ -104,12 +113,14 @@ export default {
     snackbarMessage: '',
     editedIndex: -1,
     editedItem: {
-      name: '',
-      order: 0
+      PROCESS_LABEL: '',
+      ID_PROCESS: '',
+      IS_LOOPABLE: ''
     },
     defaultItem: {
-      name: '',
-      order: 0
+      PROCESS_LABEL: '',
+      ID_PROCESS: '',
+      IS_LOOPABLE: ''
     },
     loadingData: true
   }),
@@ -161,7 +172,18 @@ export default {
               `/Delete`
           )
           .then(function(response) {
-            this.processus.splice(index, 1)
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Modification impossible - ${response.status} !`
+              )
+            } else {
+              vm.processus.splice(index, 1)
+              vm.showSnackbar(
+                'success',
+                'Suppression du processus effectuée avec succès !'
+              )
+            }
           })
           .catch(function(error) {
             vm.showSnackbar('error', `${error} !`)
@@ -186,11 +208,16 @@ export default {
               this.editedItem.ID_PROCESS,
             {
               PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
-              ID_PROCESS: this.editedItem.ID_PROCESS
+              ID_PROCESS: this.editedItem.ID_PROCESS,
+              IS_LOOPABLE: this.editedItem.IS_LOOPABLE
             }
           )
           .then(function(response) {
-            Object.assign(this.processus[this.editedIndex], this.editedItem)
+            Object.assign(vm.processus[vm.editedIndex], vm.editedItem)
+            vm.showSnackbar(
+              'success',
+              'Modification du processus effectuée avec succès !'
+            )
           })
           .catch(function(error) {
             vm.showSnackbar('error', `${error} !`)
@@ -199,23 +226,32 @@ export default {
         const vm = this
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/process/CreateProcess/`, {
-            PROCESS_LABEL: this.editedItem.PROCESS_LABEL
+            PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
+            IS_LOOPABLE: this.editedItem.IS_LOOPABLE
           })
-          .then(function(response) {
-            this.processus.push(this.editedItem)
+          .then((response) => {
+            this.processus.push({
+              PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
+              ID_PROCESS: response.data,
+              IS_LOOPABLE: this.editedItem.IS_LOOPABLE
+            })
+            vm.showSnackbar(
+              'success',
+              'Création du processus effectuée avec succès !'
+            )
           })
-          .catch(function(error) {
+          .catch((error) => {
             vm.showSnackbar('error', `${error} !`)
           })
       }
       this.close()
-    }
-  },
+    },
 
-  showSnackbar(color, message) {
-    this.snackbar = true
-    this.colorsnackbar = color
-    this.snackbarMessage = message
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
+    }
   }
 }
 </script>

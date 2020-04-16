@@ -72,5 +72,38 @@ namespace PNPUTools.DataManager
             return dataSet;
         }
 
+        public static string GetLastInsertedPK(string sTable, string sConnectionString)
+        {
+            DataSet dataSet = null;
+            string LastInsertedPK = "";
+            string sRequest = "SELECT IDENT_CURRENT('" + sTable + "') AS [IDENT_CURRENT]";
+
+            try
+            {
+                using (SqlConnection connection =
+                 new SqlConnection(sConnectionString))
+                {
+                    connection.Open();
+                    SqlDataAdapter adapter =
+                        new SqlDataAdapter(sRequest, connection);
+
+                    // Open the connection and fill the DataSet.
+
+
+                    dataSet = new DataSet();
+                    adapter.Fill(dataSet);
+                    // On récupère la dernière PK généré en automatique par la BDD
+                    LastInsertedPK = dataSet.Tables[0].Rows[0][0].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // A gérer la mise à jour du log
+                //Console.WriteLine(ex.Message);
+                dataSet = null;
+            }
+            return LastInsertedPK;
+        }
+
     }
 }

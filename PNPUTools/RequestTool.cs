@@ -101,7 +101,6 @@ namespace PNPUTools
             DataSet result = DataManagerSQLServer.GetDatas(requestOneWorkflow + "'" + workflowId + "'", ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
-
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 
             return listTest.First();
@@ -118,6 +117,78 @@ namespace PNPUTools
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
                         cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
+        public static string ModifyProcessus(PNPU_PROCESS input, string processID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_PROCESS SET PROCESS_LABEL = @PROCESS_LABEL, IS_LOOPABLE = @IS_LOOPABLE WHERE ID_PROCESS = @ID_PROCESS AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
+                        cmd.Parameters.Add("@PROCESS_LABEL", SqlDbType.VarChar, 254).Value = input.PROCESS_LABEL;
+                        cmd.Parameters.Add("@IS_LOOPABLE", SqlDbType.VarChar, 254).Value = input.IS_LOOPABLE;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
+        public static string CreateProcess(PNPU_PROCESS input)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                string LastInsertedPK = "";
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_PROCESS (ID_ORGANIZATION, PROCESS_LABEL, IS_LOOPABLE) VALUES('0000', @PROCESS_LABEL, @IS_LOOPABLE)", conn))
+                    {
+                        cmd.Parameters.Add("@PROCESS_LABEL", SqlDbType.VarChar, 254).Value = input.PROCESS_LABEL;
+                        cmd.Parameters.Add("@IS_LOOPABLE", SqlDbType.VarChar, 254).Value = input.IS_LOOPABLE;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            LastInsertedPK = DataManagerSQLServer.GetLastInsertedPK("PNPU_PROCESS", ParamAppli.ConnectionStringBaseAppli);
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                
+                return LastInsertedPK;
+            }
+        }
+
+        public static string DeleteProcess(string processID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_PROCESS WHERE ID_PROCESS = @ID_PROCESS AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
                 }
