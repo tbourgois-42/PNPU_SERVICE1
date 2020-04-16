@@ -23,7 +23,7 @@ namespace PNPUTools
         static string requestAllProcess = "select * from PNPU_PROCESS";
         static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
 
-        static string requestAllWorkflow = "select * from PNPU_WORKFLOW";
+        static string requestAllWorkflow = "SELECT PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
@@ -78,21 +78,25 @@ namespace PNPUTools
         {
             using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
+                string LastInsertedPK = "";
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW (ID_ORGANIZATION, WORKFLOW_ID, WORKFLOW_LABEL) VALUES('0000', @WORKFLOW_ID, @WORKFLOW_LABEL)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW (ID_ORGANIZATION, WORKFLOW_LABEL) VALUES('0000', @WORKFLOW_LABEL)", conn))
                     {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
                         cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
                         int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            LastInsertedPK = DataManagerSQLServer.GetLastInsertedPK("PNPU_WORKFLOW", ParamAppli.ConnectionStringBaseAppli);
+                        }
                     }
                 }
                 catch (SqlException ex)
                 {
                     return ex.ToString();
                 }
-                return "Requête traitée avec succès et création d’un document.";
+                return LastInsertedPK;
             }
         }
 
@@ -117,6 +121,29 @@ namespace PNPUTools
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
                         cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
+        public static string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_STEP (ID_ORGANIZATION, ORDER_ID, ID_PROCESS, WORKFLOW_ID) VALUES('0000', @ORDER_ID, @ID_PROCESS, @WORKFLOW_ID)", conn))
+                    {
+                        cmd.Parameters.Add("@ORDER_ID", SqlDbType.Int).Value = input.ID_ORDER;
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 254).Value = input.ID_PROCESS;
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.VarChar, 254).Value = input.ID_WORKFLOW;
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
                 }

@@ -177,12 +177,14 @@ namespace PNPUTools.DataManager
 	{
 		public decimal WORKFLOW_ID { get; set; }
 		public string WORKFLOW_LABEL { get; set; }
+		public decimal NB_PROCESS { get; set; }
 
 		public PNPU_WORKFLOW() { }
-		public PNPU_WORKFLOW(decimal WORKFLOW_ID_, string WORKFLOW_LABEL_)
+		public PNPU_WORKFLOW(decimal WORKFLOW_ID_, string WORKFLOW_LABEL_, decimal NB_PROCESS_)
 		{
 			this.WORKFLOW_ID = WORKFLOW_ID_;
 			this.WORKFLOW_LABEL = WORKFLOW_LABEL_;
+			this.NB_PROCESS = NB_PROCESS_;
 		}
 	}
 

@@ -5,6 +5,7 @@
       :items="processus"
       :page.sync="pageProcessus"
       :items-per-page="itemsPerPageProcessus"
+      item-key="ID_PROCESS"
       hide-default-footer
       class="elevation-1"
       show-select
@@ -245,8 +246,6 @@ export default {
             IS_LOOPABLE: this.editedItem.IS_LOOPABLE
           })
           .then((response) => {
-            debugger
-            console.log(response.config.data[0].PROCESS_LABEL)
             this.processus.push({
               PROCESS_LABEL: this.editedItem.PROCESS_LABEL,
               ID_PROCESS: response.data,

@@ -167,7 +167,7 @@ export default {
         value: 'WORKFLOW_LABEL'
       },
       { text: 'Actions', value: 'actions', sortable: false },
-      { text: 'Modifié le', value: 'updated_at', sortable: false }
+      { text: 'Nombre de processus', value: 'NB_PROCESS', sortable: false }
     ],
     headersProcessus: [
       {
@@ -186,13 +186,13 @@ export default {
       WORKFLOW_LABEL: '',
       WORKFLOW_ID: 0,
       actions: 0,
-      updated_at: 0
+      NB_PROCESS: 0
     },
     defaultItem: {
       WORKFLOW_LABEL: '',
       WORKFLOW_ID: 0,
       actions: 0,
-      updated_at: 0
+      NB_PROCESS: 0
     },
     workflowDate: '',
     loadingData: true,
@@ -306,8 +306,7 @@ export default {
         const vm = this
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, {
-            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL,
-            WORKFLOW_ID: this.workflows.length + 1
+            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
           })
           .then(function(response) {
             if (response.status !== 200) {
@@ -316,8 +315,11 @@ export default {
                 `Création impossible - HTTP error ${response.status} !`
               )
             } else {
-              vm.editedItem.WORKFLOW_ID = vm.workflows.length + 1
-              vm.workflows.push(vm.editedItem)
+              vm.workflows.push({
+                WORKFLOW_LABEL: vm.editedItem.WORKFLOW_LABEL,
+                WORKFLOW_ID: response.data,
+                NB_PROCESS: 0
+              })
               vm.showSnackbar(
                 'success',
                 'Création du workflow effectuée avec succès !'
@@ -357,10 +359,28 @@ export default {
       if (this.selectedProcessus !== undefined) {
         if (this.selectedProcessus.length !== 0) {
           item.processus = []
-          this.selectedProcessus.forEach((element) => {
+          const vm = this
+          this.selectedProcessus.forEach((element, index) => {
+            const oneProcessus = {
+              ID_WORKFLOW: item.WORKFLOW_ID,
+              ID_PROCESS: element.ID_PROCESS,
+              ID_ORDER: index,
+              NB_PROCESS: vm.selectedProcessus.lenght
+            }
+            axios
+              .post(
+                `${process.env.WEB_SERVICE_WCF}/Workflow/` + item.WORKFLOW_ID,
+                oneProcessus
+              )
+              .then(function(response) {
+                item.NB_PROCESS = vm.selectedProcessus.length
+              })
+              .catch(function(error) {
+                vm.showSnackbar('error', `${error} !`)
+              })
             item.processus.push(element)
+            this.showSnackbar('success', 'Affectation effectué avec succès')
           })
-          this.showSnackbar('success', 'Affectation effectué avec succès')
         } else {
           this.showSnackbar(
             'error',

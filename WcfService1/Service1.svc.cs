@@ -190,6 +190,11 @@ namespace WcfService1
         {
             return RequestTool.ModifyProcessus(input, processID);
         }
+
+        public string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID)
+        {
+            return RequestTool.AffectWorkflowsProcesses(input, workflowID);
+        }
     }
 
 

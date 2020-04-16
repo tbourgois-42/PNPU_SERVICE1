@@ -133,6 +133,14 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "Workflow/{workflowID}")]
+        string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
             UriTemplate = "process/CreateProcess/")]
         string CreateProcess(PNPU_PROCESS input);
 
