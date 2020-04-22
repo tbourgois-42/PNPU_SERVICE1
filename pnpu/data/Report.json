@@ -1,0 +1,132 @@
+[
+    {
+        "id": "PNPUCore.Process.ProcessControlePacks",
+        "debut": "25/03/20 18:48:39",
+        "fin": "25/03/20 18:48:40",
+        "source": [
+            {
+                "id": "02_8.1_HF2003_PLFR_HP.mdb",
+                "controle": [
+                    {
+                        "id": "PNPUCore.Controle.ControleCmdInterdites",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleIDSynonym",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleParamAppli",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTacheSecu",
+                        "result": false,
+                        "message": [
+                            {
+                                "message": "Tâche SFR_RECAP_ANN_PAS non sécurisée."
+                }
+                ]
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTableSecu",
+                        "result": false,
+                        "message": [
+                            {
+                                "message": "Table SFR_SEPA_XML_NOMMAGE non sécurisée."
+                }
+                ]
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTypePack",
+                        "result": false,
+                        "message": [
+                            {
+                                "message": "La commande 1 du pack 8.1_HF2003_SFR_143626_L est interdite."
+                },
+                            {
+                                "message": "La commande 2 du pack 8.1_HF2003_SFR_143626_L est interdite."
+                },
+                            {
+                                "message": "La commande 3 du pack 8.1_HF2003_SFR_143626_L est interdite."
+                },
+                            {
+                                "message": "La commande 26 du pack 8.1_HF2003_SFR_143626_L est interdite."
+                },
+                            {
+                                "message": "La commande 3 du pack 8.1_HF2003_SFR_139306_D est interdite."
+                },
+                            {
+                                "message": "La commande 1 du pack 8.1_HF2003_SFR_139306_F est interdite."
+                }
+                ]
+            }
+            ]
+        },
+            {
+                "id": "8.1_HF2003_PLFR_PAY.mdb",
+                "controle": [
+                    {
+                        "id": "PNPUCore.Controle.ControleCmdInterdites",
+                        "result": false,
+                        "message": [
+                            {
+                                "message": "La commande 3 du pack 8.1_HF2003_PLFR_123079_L est interdite dans D:\\PNPU\\8.1_HF2003_PLFR_PAY.mdb"
+                }
+                ]
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleIDSynonym",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleParamAppli",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTacheSecu",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTableSecu",
+                        "result": true,
+                        "message": []
+            },
+                    {
+                        "id": "PNPUCore.Controle.ControleTypePack",
+                        "result": false,
+                        "message": [
+                            {
+                                "message": "La commande 2 du pack 8.1_HF2003_PLFR_148843_D est interdite."
+                },
+                            {
+                                "message": "La commande 2 du pack 8.1_HF2003_SFR_145375_D est interdite."
+                },
+                            {
+                                "message": "La commande 2 du pack 8.1_HF2003_PLFR_137306_D est interdite."
+                },
+                            {
+                                "message": "La commande 2 du pack 8.1_HF2003_PLFR_74326_D est interdite."
+                },
+                            {
+                                "message": "La commande 1 du pack 8.1_HF2003_PLFR_137306_F est interdite."
+                },
+                            {
+                                "message": "La commande 1 du pack 8.1_HF2003_PLFR_142091_F est interdite."
+                },
+                            {
+                                "message": "La commande 1 du pack 8.1_HF2003_PLFR_74326_F est interdite."
+                }
+                ]
+            }
+            ]
+        }
+        ]
+    }
+]
