@@ -26,7 +26,7 @@
                 </v-menu>
               </v-list-item-title>
               <v-list-item-subtitle>
-                Workflow {{ workflowDate }}
+                {{ workflowDate }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -57,6 +57,7 @@
               :currentStep="item.ORDER_ID"
               :percentCircular="item.PERCENTAGE_COMPLETUDE"
               :workflowDate="workflowDate"
+              :workflowID="workflowID"
               :idorga="item.ID_ORGANIZATION"
             />
           </transition>
@@ -100,7 +101,8 @@ export default {
     itemstest: ClientData,
     items: [],
     workflows: Workflow,
-    workflowDate: '03/2020',
+    workflowDate: 'Workflow Saas dédié janvier 2020',
+    workflowID: '1',
     title: 'Dashboard',
     pageSize: 12,
     currentPage: 1,
