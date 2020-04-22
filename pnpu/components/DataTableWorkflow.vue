@@ -166,8 +166,9 @@ export default {
         sortable: false,
         value: 'WORKFLOW_LABEL'
       },
-      { text: 'Actions', value: 'actions', sortable: false },
-      { text: 'Nombre de processus', value: 'NB_PROCESS', sortable: false }
+      { text: 'Identifiant', value: 'WORKFLOW_ID', sortable: true },
+      { text: 'Nombre de processus', value: 'NB_PROCESS', sortable: false },
+      { text: 'Actions', value: 'actions', sortable: false }
     ],
     headersProcessus: [
       {
