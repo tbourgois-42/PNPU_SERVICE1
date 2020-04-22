@@ -36,6 +36,7 @@ namespace PNPUTools
             DataTable table = result.Tables[0];
 
 
+
             IEnumerable<InfoClientStep> listTest = table.DataTableToList<InfoClientStep>();
 
             return listTest;
@@ -180,30 +181,12 @@ namespace PNPUTools
 
         public static string CreateProcess(PNPU_PROCESS input)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                string LastInsertedPK = "";
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_PROCESS (ID_ORGANIZATION, PROCESS_LABEL, IS_LOOPABLE) VALUES('0000', @PROCESS_LABEL, @IS_LOOPABLE)", conn))
-                    {
-                        cmd.Parameters.Add("@PROCESS_LABEL", SqlDbType.VarChar, 254).Value = input.PROCESS_LABEL;
-                        cmd.Parameters.Add("@IS_LOOPABLE", SqlDbType.VarChar, 254).Value = input.IS_LOOPABLE;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            LastInsertedPK = DataManagerSQLServer.GetLastInsertedPK("PNPU_PROCESS", ParamAppli.ConnectionStringBaseAppli);
-                        }
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                
-                return LastInsertedPK;
-            }
+            // string[] sParameters = { "PROCESS_LABEL", "IS_LOOPABLE" };
+            string sRequest = "INSERT INTO PNPU_PROCESS (ID_ORGANIZATION, PROCESS_LABEL, IS_LOOPABLE) VALUES('0000', @PROCESS_LABEL, @IS_LOOPABLE)";
+            string sTable = "PNPU_PROCESS";
+            string result = DataManagerSQLServer.SendTransactionWithGetLastPKid(sRequest, input, sTable);
+
+            return result;
         }
 
         public static string DeleteProcess(string processID)
@@ -235,6 +218,11 @@ namespace PNPUTools
                 {
                     conn.Open();
                     using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_WORKFLOW WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_STEP WHERE WORKFLOW_ID = @WORKFLOW_ID", conn))
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
                         int rowsAffected = cmd.ExecuteNonQuery();
