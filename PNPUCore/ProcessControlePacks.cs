@@ -1,5 +1,4 @@
-﻿using PNPUCore.Control;
-using PNPUCore.Controle;
+﻿using PNPUCore.Controle;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,32 +11,27 @@ namespace PNPUCore.Process
     /// <summary>  
     /// Cette classe correspond au process de contrôle des mdb. 
     /// </summary>  
-    class ProcessControlePacks : IProcess
+    class ProcessControlePacks : Process, IProcess
     {
-        private readonly object listOfMockControl;
         public List<string> listMDB { get; set; }
         public string MDBCourant { get; set; }
-        public decimal WORKFLOW_ID { get; set; }
-        private string sRapport;
-        private PNPUCore.Rapport.Process RapportProcess;
-        private PNPUCore.Rapport.Controle RapportControleCourant;
 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
-        public ProcessControlePacks(PNPUCore.Rapport.Process rapportProcess, decimal workflow_ID)
+
+        public ProcessControlePacks(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
-            RapportProcess = rapportProcess;
-            WORKFLOW_ID = workflow_ID;
         }
 
         /// <summary>  
         /// Méthode principale du process qui appelle les différents contrôles. 
-         /// </summary>  
-        public void ExecuteMainProcess()
+        /// </summary>  
+        public new void ExecuteMainProcess()
         {
-            List<IControle> listControl =  ListControls.listOfMockControl;
+            List<IControle> listControl = new List<IControle>();
+            bool GlobalResult = false;
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
@@ -46,7 +40,7 @@ namespace PNPUCore.Process
             RapportProcess.Source = new List<Rapport.Source>();
 
             //Pour test MHUM
-            listControl.Clear();
+            //listControl.Clear();
             /*foreach (string sfichier in Directory.GetFiles("D:\\PNPU","*.mdb"))
                 listMDB.Add(sfichier);*/
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
@@ -81,11 +75,16 @@ namespace PNPUCore.Process
                     RapportControle.Id = controle.ToString();
                     RapportControle.Message = new List<string>();
                     RapportControleCourant = RapportControle;
-                    
+
                     if (controle.MakeControl() == false)
+                    {
+                        GlobalResult = false;
                         RapportControle.Result = false;
+                    }
                     else
+                    {
                         RapportControle.Result = true;
+                    }
 
                     RapportSource.Controle.Add(RapportControle);
                 }
@@ -110,36 +109,20 @@ namespace PNPUCore.Process
             RapportControle2.Result= cdmControleDependancesMDB.MakeControl();
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
+
+            //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
+            if (GlobalResult)
+                GenerateHistoric();
+
         }
 
-        /// <summary>  
-        /// Méthode générant le rapport du déroulement du process au format JSON.
-        /// <returns>Retourne le rapport au format JSON dans une chaine de caractères.</returns>
-        /// </summary>  
-        public string FormatReport()
+        private void GenerateHistoric()
         {
-            RapportProcess.Fin = DateTime.Now;
-            return (RapportProcess.ToJSONRepresentation());
-            
-        }
+            //récupérer la liste des clients concernés
 
-        /// <summary>  
-        /// Méthode appelée par les contrôle pour ajouter un message dans le rapport d'exécution du process.
-        /// <param name="sMessage">Message à ajouter dans le rapport d'exécution du process.</param>
-        /// </summary>  
-        public void AjouteRapport(string sMessage)
-        {
-            RapportControleCourant.Message.Add(sMessage);
-        }
-
-        /// <summary>  
-        /// Méthode appelée par le launcher pour créé le process. 
-        /// </summary>  
-        /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
-        /// <returns>Retourne l'instance du process créé.</returns>
-        internal static IProcess CreateProcess(PNPUCore.Rapport.Process rapportProcess, decimal WORKFLOW_ID)
-        {
-            return new ProcessControlePacks(rapportProcess,WORKFLOW_ID);
+            //Boucler sur la liste des clients
+                //Générer le PNPU_H_WORKFLOW
+                //Générer la ligne PNPU_H_STEP
         }
     }
 }

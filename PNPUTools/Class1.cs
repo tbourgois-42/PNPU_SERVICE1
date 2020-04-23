@@ -48,8 +48,9 @@ namespace PNPUTools.DataManager
 		public DateTime LAUNCHING_DATE { get; set; }
 		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
+		public string TYPOLOGY { get; set; }
 
-		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_)
+		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_, string TYPOLOGY_)
 		{
 			this.ITERATION = ITERATION_;
 			this.WORKFLOW_ID = WORKFLOW_ID_;
@@ -59,6 +60,7 @@ namespace PNPUTools.DataManager
 			this.LAUNCHING_DATE = LAUNCHING_DATE_;
 			this.ENDING_DATE = ENDING_DATE_;
 			this.ID_STATUT = ID_STATUT_;
+			this.TYPOLOGY = TYPOLOGY_;
 		}
 	}
 

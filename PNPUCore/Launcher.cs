@@ -1,5 +1,6 @@
 ﻿using PNPUCore.Database;
 using PNPUCore.Process;
+using PNPUTools;
 using System;
 using System.Collections.Generic;
 
@@ -38,15 +39,25 @@ namespace PNPUCore
         {
             PNPUCore.Rapport.Process rapportProcess = new Rapport.Process();
 
-            switch (process)
+            if (process == ParamAppli.ProcessControlePacks)
+                return ProcessControlePacks.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessAnalyseImpact)
+                return ProcessAnalyseImpact.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessGestionDependance)
+                return ProcessGestionDependance.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessIntegration)
+                return ProcessIntegration.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessProcessusCritique)
+                return ProcessProcessusCritique.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessTNR)
+                return ProcessTNR.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessLivraison)
+                return ProcessLivraison.CreateProcess(workflowId, client);
+            else
             {
-                case "ProcessControlePacks" :
-                    return ProcessControlePacks.CreateProcess(rapportProcess, workflowId);
-
-                default:
-                    return ProcessMock.CreateProcess();
+                //TODO : GENERATE EXCEPTION
+                return ProcessMock.CreateProcess(workflowId, client);
+            }
             }
         }
-
-    }
 }

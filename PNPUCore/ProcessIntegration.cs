@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-
 namespace PNPUCore.Process
 {
-    class ProcessMock : Process, IProcess
+    internal class ProcessIntegration : Process, IProcess
     {
 
         /// <summary>  
@@ -13,7 +12,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessMock(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessIntegration(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
         }
 
@@ -31,7 +30,7 @@ namespace PNPUCore.Process
 
 
             Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Id = "IdRapport - ProcessMock";
+            RapportSource.Id = "IdRapport - ProcessIntegration";
             RapportSource.Controle = new List<Rapport.Controle>();
             foreach (PControle controle in listControl)
             {

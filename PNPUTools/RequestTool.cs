@@ -101,6 +101,56 @@ namespace PNPUTools
             }
         }
 
+        public static string CreateWorkflowHistoric(PNPU_H_WORKFLOW input)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values ('PNPU', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, null, 'IN PROGRESS')", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
+        public static string CreateStepHistoric(PNPU_H_STEP input)
+        {
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values('1', @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, null, 'IN PROGRESS', @TYPOLOGY)", conn))
+                    {
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
+                        cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
+                        cmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = input.USER_ID;
+                        cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Int).Value = input.LAUNCHING_DATE ;
+                        cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return ex.ToString();
+                }
+                return "Requête traitée avec succès et création d’un document.";
+            }
+        }
+
         public static PNPU_WORKFLOW getWorkflow(string workflowId)
         {
             DataSet result = DataManagerSQLServer.GetDatas(requestOneWorkflow + "'" + workflowId + "'", ParamAppli.ConnectionStringBaseAppli);

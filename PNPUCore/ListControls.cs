@@ -1,10 +1,10 @@
 ﻿using PNPUCore.Controle;
 using System.Collections.Generic;
 
-namespace PNPUCore.Control
+namespace PNPUCore.Controle
 {
     class ListControls
     {
-        internal static List<IControle> listOfMockControl = new List<IControle>() { new ControleMock(), new ControleMock()};
+        internal static List<PControle> listOfMockControl = new List<PControle>() { new ControleMock(), new ControleMock()};
     }
 }

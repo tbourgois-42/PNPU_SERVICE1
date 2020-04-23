@@ -5,11 +5,29 @@ using System.Text;
 
 namespace PNPUCore.Controle
 {
-    class ControleMock : IControle
+    class ControleMock : PControle, IControle
     {
-        public bool MakeControl()
+
+        public ControleMock()
         {
-            return true;
+        }
+
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+
+        public new bool MakeControl()
+        {
+            Random rnd = new Random();
+            int random = rnd.Next(1, 101);
+            if (random < 95)
+                return true;
+            else
+            {
+                this.GetProcessControle().AjouteRapport("Flûte une erreur...");
+                return false;
+            }
         }
     }
 }

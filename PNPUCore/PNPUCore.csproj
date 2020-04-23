@@ -53,7 +53,13 @@
     <Compile Include="ControleNiveauSaisie.cs" />
     <Compile Include="ControleNiveauHeritage.cs" />
     <Compile Include="ControleDonneesReplace.cs" />
+    <Compile Include="ProcessAnalyseImpact.cs" />
     <Compile Include="ProcessControlePacks.cs" />
+    <Compile Include="ProcessGestionDependance.cs" />
+    <Compile Include="ProcessIntegration.cs" />
+    <Compile Include="ProcessLivraison.cs" />
+    <Compile Include="ProcessProcessusCritique.cs" />
+    <Compile Include="ProcessTNR.cs" />
     <Compile Include="Rapport.cs" />
     <Compile Include="WorkFlow.cs" />
     <Compile Include="ControleTypePack.cs" />
