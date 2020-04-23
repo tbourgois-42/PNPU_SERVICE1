@@ -16,6 +16,11 @@ namespace PNPUCore.Process
         {
         }
 
+        internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
+        {
+            return new ProcessProcessusCritique(WORKFLOW_ID, CLIENT_ID);
+        }
+
         /// <summary>  
         /// Méthode principale du process qui appelle les différents contrôles. 
         /// </summary>  
