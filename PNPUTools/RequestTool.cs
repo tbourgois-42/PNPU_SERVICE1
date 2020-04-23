@@ -112,7 +112,7 @@ namespace PNPUTools
                     using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values ('PNPU', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, null, 'IN PROGRESS')", conn))
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
+                        //cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
                 }
