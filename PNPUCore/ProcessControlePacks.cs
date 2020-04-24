@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using PNPUTools;
+using PNPUCore.Rapport;
 
 namespace PNPUCore.Process
 {
@@ -68,10 +69,10 @@ namespace PNPUCore.Process
                 MDBCourant = sMDB;
                 Rapport.Source RapportSource = new Rapport.Source();
                 RapportSource.Id = System.IO.Path.GetFileName(sMDB);
-                RapportSource.Controle = new List<Rapport.Controle>();
+                RapportSource.Controle = new List<RControle>();
                 foreach (IControle controle in listControl)
                 {
-                    Rapport.Controle RapportControle = new Rapport.Controle();
+                    RControle RapportControle = new RControle();
                     RapportControle.Id = controle.ToString();
                     RapportControle.Message = new List<string>();
                     RapportControleCourant = RapportControle;
@@ -101,8 +102,8 @@ namespace PNPUCore.Process
                     RapportSource2.Id += " - ";
                 RapportSource2.Id += System.IO.Path.GetFileName(sMdb);
             }
-            RapportSource2.Controle = new List<Rapport.Controle>();
-            Rapport.Controle RapportControle2 = new Rapport.Controle();
+            RapportSource2.Controle = new List<RControle>();
+            RControle RapportControle2 = new RControle();
             RapportControle2.Id = cdmControleDependancesMDB.ToString();
             RapportControle2.Message = new List<string>();
             RapportControleCourant = RapportControle2;
