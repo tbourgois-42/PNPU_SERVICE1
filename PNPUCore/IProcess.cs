@@ -27,7 +27,7 @@ namespace PNPUCore.Process
 
         public ProcessCore(decimal wORKFLOW_ID, string cLIENT_ID)
         {
-            RProcess RapportProcess = new RProcess();
+            RapportProcess = new RProcess();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
         }
