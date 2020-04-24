@@ -37,8 +37,6 @@ namespace PNPUCore
 
         IProcess CreateProcess(String process, int workflowId, String client)
         {
-            PNPUCore.Rapport.Process rapportProcess = new Rapport.Process();
-
             if (process == ParamAppli.ProcessControlePacks)
                 return ProcessControlePacks.CreateProcess(workflowId, client);
             else if (process == ParamAppli.ProcessAnalyseImpact)

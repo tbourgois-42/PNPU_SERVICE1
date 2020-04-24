@@ -1,10 +1,11 @@
 ﻿using PNPUCore.Controle;
+using PNPUCore.Rapport;
 using System;
 using System.Collections.Generic;
 
 namespace PNPUCore.Process
 {
-    internal class ProcessAnalyseImpact : Process, IProcess
+    internal class ProcessAnalyseImpact : ProcessCore, IProcess
     {
 
         /// <summary>  
@@ -36,11 +37,11 @@ namespace PNPUCore.Process
 
             Rapport.Source RapportSource = new Rapport.Source();
             RapportSource.Id = "IdRapport - ProcessAnalyseImpact";
-            RapportSource.Controle = new List<Rapport.Controle>();
+            RapportSource.Controle = new List<RControle>();
             foreach (PControle controle in listControl)
             {
                 controle.SetProcessControle(this);
-                Rapport.Controle RapportControle = new Rapport.Controle();
+                RControle RapportControle = new RControle();
                 RapportControle.Id = controle.ToString();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;

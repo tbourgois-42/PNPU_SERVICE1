@@ -9,10 +9,10 @@ using System.IO;
 
 namespace PNPUCore.Rapport
 {
-    class Traitement
+    class RTraitement
     {
         private string id;
-        private List<Process> process;
+        private List<RProcess> process;
         private DateTime debut;
         private DateTime fin;
 
@@ -22,7 +22,7 @@ namespace PNPUCore.Rapport
             get { return this.id; }
         }
 
-        public List<Process> Process
+        public List<RProcess> Process
         {
             set { this.process = value; }
             get { return this.process; }
@@ -41,7 +41,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class Process
+    class RProcess
     {
         private string id;
         private List<Source> source;
@@ -133,7 +133,7 @@ namespace PNPUCore.Rapport
     class Source
     {
         private string id;
-        private List<Controle> controle;
+        private List<RControle> controle;
 
         public String Id
         {
@@ -141,14 +141,14 @@ namespace PNPUCore.Rapport
             get { return this.id; }
         }
 
-        public List<Controle> Controle
+        public List<RControle> Controle
         {
             set { this.controle = value; }
             get { return this.controle; }
         }
     }
 
-    class Controle
+    class RControle
     {
         private string id;
         private bool result { get; set; }

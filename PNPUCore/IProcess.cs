@@ -1,5 +1,5 @@
 ﻿using System;
-
+using PNPUCore.Rapport;
 namespace PNPUCore.Process
 {
     public interface IProcess
@@ -11,23 +11,23 @@ namespace PNPUCore.Process
         void AjouteRapport(string v);
     }
 
-    public class Process : IProcess
+    class ProcessCore : IProcess
     {
         public decimal WORKFLOW_ID { get; set; }
         public string CLIENT_ID { get; set; }
 
-        internal string sRapport;
-        internal PNPUCore.Rapport.Process RapportProcess;
-        internal PNPUCore.Rapport.Controle RapportControleCourant;
+        public string sRapport;
+        public RProcess RapportProcess;
+        public RControle RapportControleCourant;
 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public Process(decimal wORKFLOW_ID, string cLIENT_ID)
+        public ProcessCore(decimal wORKFLOW_ID, string cLIENT_ID)
         {
-            PNPUCore.Rapport.Process rapportProcess = new Rapport.Process();
+            RProcess RapportProcess = new RProcess();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
         }
@@ -57,7 +57,7 @@ namespace PNPUCore.Process
         /// <returns>Retourne l'instance du process créé.</returns>
         internal static IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
         {
-            return new Process(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessCore(WORKFLOW_ID, CLIENT_ID);
         }
 
         public void ExecuteMainProcess()

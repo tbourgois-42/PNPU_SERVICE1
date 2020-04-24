@@ -11,7 +11,7 @@ namespace PNPUCore.Process
     /// <summary>  
     /// Cette classe correspond au process de contrôle des mdb. 
     /// </summary>  
-    class ProcessControlePacks : Process, IProcess
+    class ProcessControlePacks : ProcessCore, IProcess
     {
         public List<string> listMDB { get; set; }
         public string MDBCourant { get; set; }
@@ -118,7 +118,7 @@ namespace PNPUCore.Process
 
         internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
         {
-            return new ProcessAnalyseImpact(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessControlePacks(WORKFLOW_ID, CLIENT_ID);
         }
         private void GenerateHistoric()
         {
