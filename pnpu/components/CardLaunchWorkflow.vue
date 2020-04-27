@@ -25,6 +25,14 @@
             <v-row>
               <v-col cols="12" sm="12" md="12">
                 <v-select
+                  v-model="txtWorkflow"
+                  :items="lstWorkflows"
+                  label="Workflow"
+                  chips
+                  solo
+                  @input="getSelectedWorkflow()"
+                ></v-select>
+                <v-select
                   v-model="txtTypologie"
                   :items="typologie"
                   :rules="[verifyTypologie()]"
@@ -39,6 +47,7 @@
                   chips
                   multiple
                   solo
+                  @input="getSelectedClient($event)"
                 ></v-select>
               </v-col>
               <v-col cols="12" sm="12" md="12">
@@ -108,6 +117,10 @@ export default {
     typologie: {
       type: Array,
       default: () => []
+    },
+    workflowID: {
+      type: String,
+      default: ''
     }
   },
   data: () => ({
@@ -116,6 +129,9 @@ export default {
     files: '',
     launchWorkflow: false,
     dialog: false,
+    txtWorkflow: '',
+    workflows: [],
+    lstSelectedClient: [],
     controleAcceptFile() {
       if (this.selectedFile !== null) {
         if (this.selectedFile.type !== 'application/x-zip-compressed') {
@@ -141,7 +157,9 @@ export default {
     snackbarMessage: '',
     snackbar: false,
     colorsnackbar: '',
-    selectedFile: null
+    selectedFile: null,
+    lstWorkflows: [],
+    idSelectedWorkflow: ''
   }),
 
   watch: {
@@ -155,6 +173,10 @@ export default {
         })
       })
     }
+  },
+
+  created() {
+    this.initialize()
   },
 
   methods: {
@@ -172,9 +194,14 @@ export default {
       const fd = new FormData()
       if (this.selectedFile !== null) {
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
+        fd.append('typology', this.txtTypologie)
+        fd.append('clients', this.lstSelectedClient)
         try {
           await axios.post(
-            `${process.env.WEB_SERVICE_WCF}/worflow/1/uploadFile`,
+            `${process.env.WEB_SERVICE_WCF}/worflow/` +
+              this.idSelectedWorkflow +
+              `/uploadFile`,
+
             fd
           )
           this.showSnackbar('success', 'Lancement effectué avec succès')
@@ -188,6 +215,31 @@ export default {
           'Impossible de lancer un workflow sans sélectionner de fichier'
         )
       }
+    },
+
+    async initialize() {
+      const vm = this
+      try {
+        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/workflow`)
+        this.workflows = res.data.GetAllWorkFLowResult
+        this.workflows.forEach((element) => {
+          this.lstWorkflows.push(element.WORKFLOW_LABEL)
+        })
+      } catch (error) {
+        vm.showSnackbar('error', `${error} !`)
+      }
+    },
+
+    getSelectedWorkflow() {
+      this.workflows.forEach((element) => {
+        if (element.WORKFLOW_LABEL === this.txtWorkflow) {
+          this.idSelectedWorkflow = element.WORKFLOW_ID
+        }
+      })
+    },
+
+    getSelectedClient(values) {
+      this.lstSelectedClient = values
     },
 
     showSnackbar(color, message) {

@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using PNPUCore.Rapport;
+using PNPUTools;
+using PNPUTools.DataManager;
+
 namespace PNPUCore.Process
 {
     public interface IProcess
@@ -9,6 +14,10 @@ namespace PNPUCore.Process
 
         String FormatReport();
         void AjouteRapport(string v);
+        bool SaveReportInBDD(string json, IProcess process);
+        decimal WORKFLOW_ID { get; set; }
+        string CLIENT_ID { get; set; }
+
     }
 
     class ProcessCore : IProcess
@@ -73,6 +82,61 @@ namespace PNPUCore.Process
         {
             RapportProcess.Fin = DateTime.Now;
             return (RapportProcess.ToJSONRepresentation());
+        }
+
+        public bool SaveReportInBDD(string json, IProcess process)
+        {
+            string processName = (RapportProcess.Id).Split('.')[2];
+            string processId = "";
+
+            if (processName == "ProcessControlePacks")
+            {
+                processId = ParamAppli.ProcessControlePacks;
+            } else if (processName == "ProcessInit")
+            {
+                processId = ParamAppli.ProcessInit;
+            } else if (processName == "ProcessGestionDependance")
+            {
+                processId = ParamAppli.ProcessGestionDependance;
+            } else if (processName == "ProcessAnalyseImpact")
+            {
+                processId = ParamAppli.ProcessAnalyseImpact;
+            } else if (processName == "ProcessIntegration")
+            {
+                processId = ParamAppli.ProcessIntegration;
+            } else if (processName == "ProcessProcessusCritique")
+            {
+                processId = ParamAppli.ProcessProcessusCritique;
+            } else if (processName == "ProcessTNR")
+            {
+                processId = ParamAppli.ProcessTNR;
+            } else if (processName == "ProcessLivraison")
+            {
+                processId = ParamAppli.ProcessLivraison;
+            }
+
+            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_H_REPORT (ID_ORGANIZATION, ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE, CLIENT_ID1) VALUES('0000', @ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE, @CLIENT_ID1)", conn))
+                    {
+                        cmd.Parameters.Add("@ITERATION", SqlDbType.Int, 10).Value = 1;
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int, 15).Value = process.WORKFLOW_ID;
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = processId;
+                        cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
+                        cmd.Parameters.Add("@JSON_TEMPLATE", SqlDbType.Text).Value = json.Replace("\r\n", "");
+                        cmd.Parameters.Add("@CLIENT_ID1", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    return false;
+                }
+                return true;
+            }
         }
     }
 }

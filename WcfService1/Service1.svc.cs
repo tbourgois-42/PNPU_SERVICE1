@@ -50,10 +50,15 @@ namespace WcfService1
             return test;
         }
 
-        public IEnumerable<InfoClientStep> GetInfoAllClient()
+        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_)
         {
-            return RequestTool.GetAllInfoClient();
+            int workflowId = int.Parse(workflowId_);
+            return RequestTool.GetAllInfoClient(workflowId);
             //return RequestTool.GetAllStep(); 
+        }
+        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
+        {
+            return RequestTool.GetHWorkflow();
         }
 
         public string GetInfoOneClient(string ClientName)
@@ -196,6 +201,13 @@ namespace WcfService1
         public string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID)
         {
             return RequestTool.AffectWorkflowsProcesses(input, workflowID);
+        }
+
+        public IEnumerable<PNPU_H_REPORT> getReport(string idProcess_, string workflowId_, string clientId)
+        {
+            decimal workflowId = decimal.Parse(workflowId_);
+            decimal idProcess = decimal.Parse(idProcess_);
+            return RequestTool.getReport(idProcess, workflowId, clientId);
         }
     }
 

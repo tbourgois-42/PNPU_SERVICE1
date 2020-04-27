@@ -26,17 +26,36 @@ namespace PNPUTools
         static string requestAllWorkflow = "SELECT PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
-        static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
-
+        static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
+        static string requestHistoricWorkflow = "SELECT PHW.ID_ORGANIZATION, PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ORDER BY PHW.WORKFLOW_ID";
         static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
 
-        public static IEnumerable<InfoClientStep> GetAllInfoClient()
+        public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
         {
-            
-            DataSet result = DataManagerSQLServer.GetDatas(requestAllInfoClient, ParamAppli.ConnectionStringBaseAppli);
+            DataSet result = DataManagerSQLServer.GetDatas(requestHistoricWorkflow, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
 
+            IEnumerable<PNPU_H_WORKFLOW> listTest = table.DataTableToList<PNPU_H_WORKFLOW>();
+
+            return listTest;
+        }
+
+        public static IEnumerable<InfoClientStep> GetAllInfoClient(decimal WORKFLOW_ID)
+        {
+            // Par défault on charge sur le dashboard le dernier Workflow en cours
+            string defaultWorkflowID = "(SELECT TOP(1) PHW.WORKFLOW_ID FROM PNPU_H_WORKFLOW PHW WHERE PHW.ENDING_DATE = '1800/01/01' ORDER BY ENDING_DATE)";
+
+            string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
+
+            string request = "SELECT PHS.ID_ORGANIZATION, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PS.ORDER_ID, ";
+            request += "PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE " ;
+            request += "FROM PNPU_H_STEP PHS, PNPU_STEP PS, PNPU_STEP PS2 WHERE PHS.LAUNCHING_DATE = (SELECT MAX(PHS2.LAUNCHING_DATE) FROM PNPU_H_STEP PHS2 WHERE PHS.ID_ORGANIZATION = PHS2.ID_ORGANIZATION AND PHS.WORKFLOW_ID = PHS2.WORKFLOW_ID AND PHS.CLIENT_ID = PHS2.CLIENT_ID) AND PHS.WORKFLOW_ID = " + filtre + " ";
+            request += "AND PS.ID_ORGANIZATION = PS2.ID_ORGANIZATION AND PS.ORDER_ID = PS2.ORDER_ID AND PS.ID_PROCESS = PS2.ID_PROCESS AND PS.WORKFLOW_ID = PS2.WORKFLOW_ID AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID AND PS.ID_PROCESS = PHS.ID_PROCESS ";
+            request += "GROUP BY PHS.ID_ORGANIZATION, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PHS.ID_PROCESS, PS.ID_PROCESS, PS.ORDER_ID ORDER BY PHS.CLIENT_ID";
+            
+            DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
 
             IEnumerable<InfoClientStep> listTest = table.DataTableToList<InfoClientStep>();
 
@@ -120,6 +139,21 @@ namespace PNPUTools
                 }
                 return LastInsertedPK;
             }
+        }
+
+        public static IEnumerable<PNPU_H_REPORT> getReport(decimal idProcess, decimal workflowId, string clientId)
+        {
+            String sRequest = "SELECT ID_ORGANIZATION, ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE FROM PNPU_H_REPORT ";
+            sRequest += "WHERE ID_PROCESS = @ID_PROCESS AND WORKFLOW_ID = @WORKFLOW_ID AND CLIENT_ID = @CLIENT_ID";
+
+            DataSet result = DataManagerSQLServer.GetDatasWithParams(sRequest, ParamAppli.ConnectionStringBaseAppli, idProcess, workflowId, clientId);
+            DataTable table = result.Tables[0];
+
+
+            IEnumerable<PNPU_H_REPORT> listTest = table.DataTableToList<PNPU_H_REPORT>();
+
+            return listTest;
+
         }
 
         public static string CreateWorkflowHistoric(PNPU_H_WORKFLOW input)

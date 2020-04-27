@@ -28,6 +28,11 @@ namespace PNPUTools.DataManager
 		public string CLIENT_ID { get; set; }
 		public string JSON_TEMPLATE { get; set; }
 
+		public PNPU_H_REPORT()
+		{
+
+		}
+
 		public PNPU_H_REPORT(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string JSON_TEMPLATE_)
 		{
 			this.ITERATION = ITERATION_;
@@ -66,9 +71,11 @@ namespace PNPUTools.DataManager
 
 	public class PNPU_H_WORKFLOW
 	{
+		public string ID_ORGANIZATION { get; set; }
 		public decimal ID_H_WORKFLOW { get; set; }
 		public string CLIENT_ID { get; set; }
 		public decimal WORKFLOW_ID { get; set; }
+		public string WORKFLOW_LABEL { get; set; }
 		public DateTime LAUNCHING_DATE { get; set; }
 		public DateTime ENDING_DATE { get; set; }
 		public string STATUT_GLOBAL { get; set; }
@@ -206,13 +213,19 @@ namespace PNPUTools.DataManager
 
 	public class InfoClientStep
 	{
-		public string CLIENT_ID { get; set; }
+		public string ID_ORGANIZATION { get; set; }
+		public int ITERATION { get; set; }
+		public decimal WORKFLOW_ID { get; set; }
 		public DateTime LAUNCHING_DATE { get; set; }
+		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
-		public string PROCESS_LABEL { get; set; }
+		public string CLIENT_ID { get; set; }
+		public string TYPOLOGY { get; set; }
 		public int ORDER_ID { get; set; }
 		public decimal PERCENTAGE_COMPLETUDE { get; set; }
-		public string TYPOLOGY { get; set; }
+		public decimal NB_PROCESS { get; set; }
+		public decimal ID_PROCESS { get; set; }
+
 		public InfoClientStep() { }
 	}
 

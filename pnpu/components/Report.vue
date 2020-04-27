@@ -5,8 +5,8 @@
         <v-card class="mx-auto" max-width="500">
           <v-sheet class="pa-4 primary">
             <v-text-field
-              append-icon="mdi-magnify"
               v-model="search"
+              append-icon="mdi-magnify"
               label="Chercher un élément"
               dark
               flat
@@ -88,6 +88,7 @@
             </v-simple-table>
           </v-card>
         </transition>
+        {{ data }}
       </v-col>
     </v-row>
   </v-layout>
@@ -96,6 +97,16 @@
 <script>
 import Report from '../data/Report.json'
 export default {
+  props: {
+    idPROCESS: {
+      type: String,
+      default: '1'
+    },
+    data: {
+      type: String,
+      default: ''
+    }
+  },
   data: () => ({
     rapport: Report,
     headers: [
@@ -322,16 +333,6 @@ export default {
   },
 
   created() {
-    /* console.log('this.item', this.rapport)
-    let str = JSON.stringify(this.rapport)
-    str = str.replace(/source/g, 'Children')
-    str = str.replace(/controle/g, 'Children')
-    str = str.replace(/message/g, 'Children')
-
-    // object = JSON.parse(str)
-    console.log('str', str)
-    this.items = JSON.parse(str)
-    console.log('this.items', this.items) */
     this.selectedItemTable = this.items[0].children
     this.titleTable = this.items[0].name
   },

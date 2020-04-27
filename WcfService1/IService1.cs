@@ -19,8 +19,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "clients")]
-        IEnumerable<InfoClientStep> GetInfoAllClient();
+            UriTemplate = "clients/dashboard/{workflowId}")]
+        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -35,6 +35,13 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "process")]
         IEnumerable<PNPU_PROCESS> GetAllProcesses();
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "workflow/historic")]
+        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow();
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -56,6 +63,13 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "workflow/{workflowId}")]
         PNPU_WORKFLOW getWorkflow(string workflowId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "report/{workflowId}/{idProcess}/{clientId}")]
+        IEnumerable<PNPU_H_REPORT> getReport(string idProcess, string workflowId, string clientId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",

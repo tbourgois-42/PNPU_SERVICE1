@@ -14,19 +14,21 @@
                     </v-btn>
                   </template>
 
-                  <v-list v-model="workflows.name">
+                  <v-list v-model="workflows.WORKFLOW_LABEL">
                     <v-list-item
                       v-for="(workflow, id) in workflows"
                       :key="id"
-                      @click="() => (workflowDate = workflow.name)"
+                      @click="majDashboard(workflow)"
                     >
-                      <v-list-item-title>{{ workflow.name }}</v-list-item-title>
+                      <v-list-item-title>{{
+                        workflow.WORKFLOW_LABEL
+                      }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ workflowDate }}
+                {{ workflowDiplayed }} | {{ workflowStatut }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -56,7 +58,7 @@
               :textStatus="item.ID_STATUT"
               :currentStep="item.ORDER_ID"
               :percentCircular="item.PERCENTAGE_COMPLETUDE"
-              :workflowDate="workflowDate"
+              :workflowDate="workflowDiplayed"
               :workflowID="workflowID"
               :idorga="item.ID_ORGANIZATION"
             />
@@ -64,7 +66,11 @@
         </v-col>
       </v-col>
       <v-col cols="2">
-        <CardLaunchWorkflow :clients="items" :typologie="typologie" />
+        <CardLaunchWorkflow
+          :clients="items"
+          :typologie="typologie"
+          :workflowID="workflowID"
+        />
         <CardProgressTypologie :clients="items" />
         <CardIndicateurs :clients="items" @getIndicators="getIndicators" />
       </v-col>
@@ -78,6 +84,12 @@
         ></v-pagination>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-layout>
 </template>
 
@@ -87,8 +99,6 @@ import CardPnpu from '../components/Card.vue'
 import CardLaunchWorkflow from '../components/CardLaunchWorkflow'
 import CardIndicateurs from '../components/CardIndicateurs'
 import CardProgressTypologie from '../components/CardProgressTypologie'
-import ClientData from '../data/Clients.json'
-import Workflow from '../data/Workflow.json'
 export default {
   components: {
     CardPnpu,
@@ -97,26 +107,27 @@ export default {
     CardIndicateurs
   },
   data: () => ({
-    // items: ClientData,
-    itemstest: ClientData,
     items: [],
-    workflows: Workflow,
-    workflowDate: 'Workflow Saas dédié janvier 2020',
-    workflowID: '1',
+    workflows: '',
+    workflowDiplayed: '',
+    workflowStatut: '',
+    workflowID: '0',
     title: 'Dashboard',
     pageSize: 12,
     currentPage: 1,
     visibleItems: [],
-    maxStep: 8,
+    maxStep: 7,
     search: '',
     filter: '',
     typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
-    getapi: '',
     filteredIndicators: [],
     colorIconStatus: '',
     iconStatus: '',
     percentCircular: '',
-    textStatus: ''
+    textStatus: '',
+    snackbarMessage: '',
+    snackbar: false,
+    colorsnackbar: ''
   }),
 
   computed: {},
@@ -160,17 +171,72 @@ export default {
     totalPages() {
       return Math.ceil(this.items.length / this.pageSize)
     },
-    async initialize() {
-      try {
-        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/Clients`)
-        this.items = res.data.GetInfoAllClientResult
-        this.updateVisibleItems()
-      } catch (e) {
-        return e
-      }
+    initialize() {
+      const vm = this
+      axios
+        .get(
+          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` + this.workflowID
+        )
+        .then(function(response) {
+          vm.items = response.data.GetInfoAllClientResult
+          if (response.data.GetInfoAllClientResult.length > 0) {
+            vm.workflowID = response.data.GetInfoAllClientResult[0].WORKFLOW_ID.toString()
+            vm.getHistoricWorkflow()
+          }
+          vm.updateVisibleItems()
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
     },
     getIndicators(value) {
       this.filteredIndicators = value
+    },
+    getHistoricWorkflow() {
+      const vm = this
+      axios
+        .get(`${process.env.WEB_SERVICE_WCF}/workflow/historic`)
+        .then(function(response) {
+          vm.workflows = response.data.GetHWorkflowResult
+          vm.workflowID = response.data.GetHWorkflowResult[0].WORKFLOW_ID.toString()
+          vm.workflows.forEach((element) => {
+            if (element.WORKFLOW_ID.toString() === vm.workflowID) {
+              vm.workflowDiplayed = element.WORKFLOW_LABEL
+              vm.workflowStatut = element.STATUT_GLOBAL
+            }
+          })
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
+    },
+
+    majDashboard(item) {
+      const vm = this
+      axios
+        .get(
+          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` + item.WORKFLOW_ID
+        )
+        .then(function(response) {
+          vm.items = response.data.GetInfoAllClientResult
+          vm.workflowID = item.WORKFLOW_ID.toString()
+          vm.workflows.forEach((element) => {
+            if (element.WORKFLOW_ID.toString() === vm.workflowID) {
+              vm.workflowDiplayed = element.WORKFLOW_LABEL
+              vm.workflowStatut = element.STATUT_GLOBAL
+            }
+          })
+          vm.updateVisibleItems()
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
+    },
+
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

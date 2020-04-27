@@ -72,6 +72,38 @@ namespace PNPUTools.DataManager
             return dataSet;
         }
 
+        public static DataSet GetDatasWithParams(string sRequest, string sConnectionString, decimal idProcess, decimal workflowId, string clientId)
+        {
+            DataSet dataSet = null;
+
+            try
+            {
+                using (SqlConnection connection =
+                 new SqlConnection(sConnectionString))
+                {
+                    connection.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+
+                    // Open the connection and fill the DataSet.
+                    SqlCommand command = new SqlCommand(sRequest, connection);
+                    command.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = idProcess;
+                    command.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int, 15).Value = workflowId;
+                    command.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 64).Value = clientId;
+                    adapter.SelectCommand = command;
+
+                    dataSet = new DataSet();
+                    adapter.Fill(dataSet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // A gérer la mise à jour du log
+                //Console.WriteLine(ex.Message);
+                dataSet = null;
+            }
+            return dataSet;
+        }
+
         public static string GetLastInsertedPK(string sTable, string sConnectionString)
         {
             DataSet dataSet = null;

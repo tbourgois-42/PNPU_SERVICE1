@@ -15,25 +15,6 @@
       </v-flex>
       <v-divider class="my-2 mx-4" inset></v-divider>
 
-      <!--<v-alert v-if="textStatus == 'En erreur'" type="error">
-        Le process <strong>***</strong> a renvoyé une erreur de type
-        <strong>***</strong>. Pour plus de détail veuillez vous référer aux
-        données de Logs ci-dessous.
-      </v-alert>
-      <v-alert v-if="textStatus == 'Terminé'" type="success">
-        Le workflow <strong>{{ workflowDate }}</strong> s'est déroulé avec
-        succès ! Les rapports d'éxécutions sont disponibles ci-dessous.
-      </v-alert>
-      <v-alert v-if="textStatus == 'Manuel'" type="warning">
-        Le process <strong>***</strong> nécesite l'intervention d'un utilisateur
-        pour pouvoir passer à l'étape suivante.
-      </v-alert>
-      <v-alert v-if="textStatus == 'En cours'" type="info">
-        Le workflow <strong>{{ workflowDate }}</strong> est en cours d'éxécution
-        sur <strong>l'étape {{ etape }}</strong
-        >.
-      </v-alert>-->
-
       <v-stepper v-model="e1" class="mt-6" @change="getSelectedStep($event)">
         <v-stepper-header>
           <template v-for="(step, idxStep) in steps">
@@ -64,13 +45,21 @@
                 </v-card-title>
                 <v-card-subtitle class="pb-0">{{
                   step.PROCESS_LABEL
-                }}</v-card-subtitle>
-              </v-card>
+                }}</v-card-subtitle> </v-card
+              ><v-btn
+                v-if="currentID_STATUT === 'mdi-hand'"
+                depressed
+                class="mr-4 mt-2 pr-4"
+                color="error"
+                @click="stopWorkflow()"
+                ><v-icon left>mdi-hand</v-icon> Stopper le workflow
+              </v-btn>
               <v-btn
                 v-if="currentID_STATUT === 'mdi-hand'"
                 depressed
                 class="mr-4 mt-2 pr-4"
                 color="warning"
+                @click="continueWorkflow()"
                 ><v-icon left>mdi-hand</v-icon> Valider le processus
               </v-btn>
 
@@ -79,8 +68,13 @@
               </v-btn>
             </v-col>
             <v-divider class="mx-4 mb-4"></v-divider>
-            <Report v-if="e1 === 0" />
-            <v-col v-else cols="12">
+            <!-- v-if="e1 === 0" -->
+            <Report
+              v-if="test.length > 0"
+              :idPROCESS="currentID_PROCESS"
+              :data="test"
+            />
+            <v-col else cols="12">
               <v-alert
                 v-if="currentID_STATUT === 'mdi-hand'"
                 icon="mdi-information-outline"
@@ -99,7 +93,11 @@
                 du Workflow. Pour plus d'information veuillez consulter le
                 rapport d'éxecution ci-dessous</v-alert
               >
-              <v-alert v-else icon="mdi-information-outline" text color="info"
+              <v-alert
+                v-else-if="test.length === 0"
+                icon="mdi-information-outline"
+                text
+                color="info"
                 >Ce processus n'est pas terminé. Aucun rapport n'est disponible
                 pour le moment</v-alert
               >
@@ -107,6 +105,12 @@
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
+      <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+        {{ snackbarMessage }}
+        <v-btn dark text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-container>
   </v-app>
 </template>
@@ -124,7 +128,12 @@ export default {
       workflowDate: '',
       workflowID: '',
       textStatus: '',
-      currentID_STATUT: ''
+      currentID_STATUT: '',
+      currentID_PROCESS: '',
+      snackbarMessage: '',
+      snackbar: false,
+      colorsnackbar: '',
+      test: ''
     }
   },
 
@@ -152,13 +161,15 @@ export default {
 
   methods: {
     getSelectedStep(val) {
+      const vm = this
       this.e1 = val
       this.steps.forEach((element, idx) => {
         if (idx === val) {
-          this.currentID_STATUT = element.ICON
+          vm.currentID_STATUT = element.ICON
+          vm.currentID_PROCESS = element.ID_PROCESS
+          this.getReportFromDB()
         }
       })
-      console.log('currentID_STATUT', this.currentID_STATUT)
     },
 
     async getWorkflowProcesses() {
@@ -187,10 +198,97 @@ export default {
           this.steps[this.e1 - 1].ICON = 'mdi-pencil'
           this.steps[this.e1 - 1].ID_STATUT = 'IN PROGRESS'
         }
-        console.log(this.steps)
       } catch (e) {
         return e
       }
+    },
+
+    stopWorkflow() {
+      if (
+        confirm('Etes-vous sûr de bien vouloir stopper le workflow ?') === true
+      ) {
+        const vm = this
+        axios
+          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/Client/Stop`, {
+            WORKFLOW_ID: this.workflowID,
+            CLIENT_ID: this.client
+          })
+          .then(function(response) {
+            console.log(response)
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Modification impossible - HTTP error ${response.status} !`
+              )
+            } else {
+              vm.showSnackbar(
+                'success',
+                'Le workflow a été stoppé avec succès !'
+              )
+            }
+          })
+          .catch(function(error) {
+            vm.showSnackbar('error', `${error} !`)
+          })
+      }
+    },
+
+    continueWorkflow() {
+      if (
+        confirm(
+          'Etes-vous sûr de bien vouloir valider manuellement le processus ?'
+        ) === true
+      ) {
+        const vm = this
+        axios
+          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/Client/Continue`, {
+            WORKFLOW_ID: this.workflowID,
+            CLIENT_ID: this.client
+          })
+          .then(function(response) {
+            console.log(response)
+            if (response.status !== 200) {
+              vm.showSnackbar(
+                'error',
+                `Modification impossible - HTTP error ${response.status} !`
+              )
+            } else {
+              vm.showSnackbar(
+                'success',
+                'Le processus a été manuellement validé avec succès !'
+              )
+            }
+          })
+          .catch(function(error) {
+            vm.showSnackbar('error', `${error} !`)
+          })
+      }
+    },
+
+    getReportFromDB() {
+      const vm = this
+      axios
+        .get(
+          `${process.env.WEB_SERVICE_WCF}/report/` +
+            vm.workflowID +
+            `/` +
+            vm.currentID_PROCESS +
+            `/` +
+            vm.client
+        )
+        .then(function(response) {
+          vm.test = response.data.getReportResult
+          console.log(vm.test)
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
+    },
+
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

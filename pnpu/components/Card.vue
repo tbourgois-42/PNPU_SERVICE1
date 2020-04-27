@@ -6,7 +6,8 @@
         client: clientName,
         step: currentStep,
         workflowDate: workflowDate,
-        textStatus: localtextStatus
+        textStatus: localtextStatus,
+        workflowID: workflowID
       }
     }"
     append
@@ -78,7 +79,8 @@ export default {
     percentCircular: { type: Number, default: 0 },
     colorCircular: { type: String, default: 'primary' },
     workflowDate: { type: String, default: '' },
-    idorga: { type: String, default: '' }
+    idorga: { type: String, default: '' },
+    workflowID: { type: String, default: '' }
   },
   data() {
     return {
