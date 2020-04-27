@@ -6,23 +6,23 @@ using System.Collections.Generic;
 
 namespace PNPUCore.Process
 {
-    internal class ProcessAnalyseImpact : ProcessCore, IProcess
+    internal class ProcessInit : ProcessCore, IProcess
     {
+
 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessAnalyseImpact(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessInit(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
         }
 
         internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
         {
-            return new ProcessAnalyseImpact(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessInit(WORKFLOW_ID, CLIENT_ID);
         }
-
         /// <summary>  
         /// Méthode principale du process qui appelle les différents contrôles. 
         /// </summary>  
@@ -37,7 +37,7 @@ namespace PNPUCore.Process
 
 
             Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Id = "IdRapport - ProcessAnalyseImpact";
+            RapportSource.Id = "IdRapport - ProcessInit";
             RapportSource.Controle = new List<RControle>();
             foreach (IControle controle in listControl)
             {
@@ -66,7 +66,7 @@ namespace PNPUCore.Process
 
             if (GlobalResult == true)
             {
-                String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
+                String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessInit);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
             }
 
@@ -74,7 +74,7 @@ namespace PNPUCore.Process
 
         private void GenerateHistoric()
         {
-            //TODO récupérer la liste des clients concernés
+            //récupérer la liste des clients concernés
 
             //Boucler sur la liste des clients
             //Générer le PNPU_H_WORKFLOW

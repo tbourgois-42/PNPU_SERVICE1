@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de controler que des clés et des sections dans les paramètres applicatifs ne sont pas livrés dans un pack. 
     /// </summary>  
-    class ControleParamAppli : IControle
+    class ControleParamAppli : PControle, IControle
     {
         string sCLE = string.Empty;
         string sSECTION = string.Empty;

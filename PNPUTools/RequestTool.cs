@@ -28,6 +28,7 @@ namespace PNPUTools
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
 
+        static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
 
         public static IEnumerable<InfoClientStep> GetAllInfoClient()
         {
@@ -40,6 +41,26 @@ namespace PNPUTools
             IEnumerable<InfoClientStep> listTest = table.DataTableToList<InfoClientStep>();
 
             return listTest;
+        }
+
+        public static string GetNextProcess(decimal wORKFLOW_ID, string processTNR)
+        {
+
+            string finalRequest = string.Format(requestGetNextProcess, wORKFLOW_ID, processTNR);
+            DataSet result = DataManagerSQLServer.GetDatas(finalRequest, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+
+
+            IEnumerable<PNPU_STEP> listTest = table.DataTableToList<PNPU_STEP>();
+            if (listTest.Count() == 0)
+            {
+                return ParamAppli.ProcessFinished;
+            }
+            else
+            {
+                return listTest.First().ID_PROCESS;
+            }
         }
 
         public static string GetInfoOneClient(string clientName)

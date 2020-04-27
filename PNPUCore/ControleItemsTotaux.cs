@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que tous les items présent dans les totaux livrés existent. 
     /// </summary>  
-    class ControleItemsTotaux : IControle
+    class ControleItemsTotaux : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

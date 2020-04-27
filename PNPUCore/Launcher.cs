@@ -41,6 +41,8 @@ namespace PNPUCore
                 return ProcessControlePacks.CreateProcess(workflowId, client);
             else if (process == ParamAppli.ProcessAnalyseImpact)
                 return ProcessAnalyseImpact.CreateProcess(workflowId, client);
+            else if (process == ParamAppli.ProcessInit)
+                return ProcessInit.CreateProcess(workflowId, client);
             else if (process == ParamAppli.ProcessGestionDependance)
                 return ProcessGestionDependance.CreateProcess(workflowId, client);
             else if (process == ParamAppli.ProcessIntegration)

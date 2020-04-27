@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace PNPUTools
 {
-    class LauncherViaDIspatcher
+    public class LauncherViaDIspatcher
     {
         private static NamedPipeClientStream npcsPipeClient = null;
         private static StreamString ssStreamString = null;
 
-        public string LaunchProcess(string ProcFile, int workflowId, String clientId)
+        public static void LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
             {
@@ -25,7 +25,6 @@ namespace PNPUTools
 
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
-            return (ssStreamString.ReadString());
         }
 
     }

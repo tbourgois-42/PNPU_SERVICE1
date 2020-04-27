@@ -13,7 +13,7 @@ namespace PNPUCore.Controle
     /// Cette classe permet de controler qu'il n'y a pas livraison d'un héritage d'un M4O ou d'une présentation alors qu'elle est déja héritée en standard. 
     /// Cela permet de vérifier que c'est bien le niveau standard le plus bas qui est hérité dans le pack.
     /// </summary>  
-    class ControleNiveauHeritage : IControle
+    class ControleNiveauHeritage : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

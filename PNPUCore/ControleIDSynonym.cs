@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les ID_SYNONYME des items livrés ne sont pas dans les plages réservées aux clients. 
     /// </summary>  
-    class ControleIDSynonym : IControle
+    class ControleIDSynonym : PControle, IControle
     {
         private string sPathMdb = string.Empty;
         private List<int> lLIM_INF;

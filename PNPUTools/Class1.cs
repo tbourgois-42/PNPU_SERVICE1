@@ -151,6 +151,7 @@ namespace PNPUTools.DataManager
 		public int ID_ORDER { get; set; }
 		public string ID_PROCESS { get; set; }
 		public string ID_WORKFLOW { get; set; }
+		public string PROCESS_LABEL { get; set; }
 
 		public PNPU_STEP()
 		{ }
@@ -231,6 +232,7 @@ namespace PNPUTools.DataManager
 			this.IS_LOOPABLE = IS_LOOPABLE_;
 		}
 	}
+
 
 	public class PNPU_WORKFLOWPROCESSES
 	{

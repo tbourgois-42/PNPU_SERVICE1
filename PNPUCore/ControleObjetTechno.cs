@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler qu'aucun pack ne modifie d'objet techno. 
     /// </summary>  
-    class ControleObjetTechno : IControle
+    class ControleObjetTechno : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

@@ -9,8 +9,9 @@ namespace PNPUCore.Controle
 
     interface IControle
     {
-
         Boolean MakeControl();
+        IProcess GetProcessControle();
+        void SetProcessControle(IProcess value);
     }
 
     public class PControle : IControle

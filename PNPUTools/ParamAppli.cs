@@ -95,8 +95,9 @@ namespace PNPUTools
         public static string ProcessTNR { get; }
         public static string ProcessLivraison { get; }
         public static string ProcessControlePacks { get; }
+        public static string ProcessFinished { get; set; }
 
-        
+        public static string ProcessInit { get; set; }
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
         /// </summary>  
@@ -105,13 +106,15 @@ namespace PNPUTools
             DataSet dsDataSet = null;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
-            ProcessAnalyseImpact = "ProcesAnalyseImpact";
-            ProcessGestionDependance = "ProcessGestionDependance";
-            ProcessIntegration = "ProcessIntegration";
-            ProcessProcessusCritique = "ProcessProcessusCritique";
-            ProcessTNR = "ProcessTNR";
-            ProcessLivraison = "ProcessLivraison";
-            ProcessControlePacks = "ProcessControlePacks";
+            ProcessInit = "2";
+            ProcessAnalyseImpact = "4";
+            ProcessGestionDependance = "3";
+            ProcessIntegration = "5";
+            ProcessProcessusCritique = "6";
+            ProcessTNR = "7";
+            ProcessLivraison = "8";
+            ProcessControlePacks = "1";
+            ProcessFinished = "-1";
             DossierTemporaire = "C:\\TEMPO";
             // A lire dans base de ref
             ListeCmdInterdite = new List<string>();

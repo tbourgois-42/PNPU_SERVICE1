@@ -13,7 +13,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de controler les dépendances entre les packs des mdb. 
     /// </summary>  
-    class ControleDependancesMDB : IControle
+    class ControleDependancesMDB : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

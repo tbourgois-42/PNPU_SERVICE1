@@ -11,7 +11,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que des données sont présentes pour toutes les commandes REPLACE. 
     /// </summary>  
-    class ControleDonneesReplace : IControle
+    class ControleDonneesReplace : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
 

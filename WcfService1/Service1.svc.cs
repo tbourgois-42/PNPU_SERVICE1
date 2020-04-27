@@ -113,16 +113,18 @@ namespace WcfService1
 
         public string RunWorkflow(string WorkflowName)
         {
-            if (npcsPipeClient == null)
-            {
+            //if (npcsPipeClient == null)
+            //{
                 npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
                 npcsPipeClient.Connect();
                 ssStreamString = new StreamString(npcsPipeClient);
-            }
+            //}
 
             ssStreamString.WriteString(WorkflowName);
 
-            return (ssStreamString.ReadString());
+            string result = (ssStreamString.ReadString());
+            npcsPipeClient.Close();
+            return result;
         }
 
         public string CreateWorkflow(PNPU_WORKFLOW input)
@@ -159,7 +161,7 @@ namespace WcfService1
             gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli);
 
             //Launch process
-            LaunchProcess("ProcessControlePacks", workflowId, "ALL");
+            LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, "ALL");
 
             //SUPPRESSION DU FICHIER
             File.Delete(FilePath);

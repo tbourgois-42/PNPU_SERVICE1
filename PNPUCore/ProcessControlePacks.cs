@@ -112,8 +112,13 @@ namespace PNPUCore.Process
             RapportProcess.Source.Add(RapportSource2);
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            if (GlobalResult)
-                GenerateHistoric();
+            GenerateHistoric();
+
+            //if (GlobalResult == true)
+            //{
+                String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+            //}
 
         }
 

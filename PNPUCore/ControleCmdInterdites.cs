@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de controler que les commandes des packs ne font pas partie de la liste des commandes interdites. 
     /// </summary>  
-    class ControleCmdInterdites : IControle
+    class ControleCmdInterdites : PControle, IControle
     {
         private List<string> lL_INTERDIT;
         private PNPUCore.Process.ProcessControlePacks Process;

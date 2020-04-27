@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les tables livrées dans le packs sont bien présentes dans le catalogue des tables. 
     /// </summary>  
-    class ControleCatalogueTable : IControle
+    class ControleCatalogueTable : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

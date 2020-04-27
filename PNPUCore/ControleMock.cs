@@ -19,9 +19,14 @@ namespace PNPUCore.Controle
 
         public new bool MakeControl()
         {
+
+
+            
             Random rnd = new Random();
-            int random = rnd.Next(1, 101);
-            if (random < 95)
+            int random = rnd.Next(5000, 15000);
+            System.Threading.Thread.Sleep(random);
+            random = rnd.Next(1, 101);
+            if (random < 80)
                 return true;
             else
             {

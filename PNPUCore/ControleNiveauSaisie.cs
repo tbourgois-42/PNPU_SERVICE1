@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler si les niveaux de saisie d'un item existant n'ont pas été supprimés.
     /// </summary>  
-    class ControleNiveauSaisie : IControle
+    class ControleNiveauSaisie : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;

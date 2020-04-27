@@ -46,31 +46,40 @@ namespace PNUDispatcher
             string sMessage = string.Empty;
             string sMessageResultat = string.Empty;
 
-            npssPipeClient = new NamedPipeServerStream("PNPU_PIPE");
-            npssPipeClient.WaitForConnection();
-            ssStreamString = new StreamString(npssPipeClient);
+            
 
-            while(true)
+            while (true)
             {
+                npssPipeClient = new NamedPipeServerStream("PNPU_PIPE");
+                npssPipeClient.WaitForConnection();
+                ssStreamString = new StreamString(npssPipeClient);
+
                 sMessage = ssStreamString.ReadString();
                 Console.WriteLine(sMessage);
 
-                /*if (IsValideJSON(sMessage) == false)
+                if (IsValideJSON(sMessage) == false)
                     sMessageResultat = "KO";
                 else {
-                    sMessageResultat = "OK";*/
+                    sMessageResultat = "OK";
 
-                string[] listParam = sMessage.Split('/');
-                Thread thread = new Thread(() => LaunchProcessFunction(listParam[0], int.Parse(listParam[1]), listParam[2]));
+                    string[] listParam = sMessage.Split('/');
 
-                //Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
-                thread.Start();
-            
+                    LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);
 
-                ssStreamString.WriteString(sMessageResultat);
+                    ssStreamString.WriteString("OK");
+                }
+                npssPipeClient.Close();
             }
-            
         }
+
+        private static void LaunchProcess(string clientName, int workflowId, string process)
+        {
+            Thread thread = new Thread(() => LaunchProcessFunction(clientName, workflowId, process));
+
+            //Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
+            thread.Start();
+        }
+
 
         private static void LaunchProcessFunction(string clientName, int workflowId, string process)
         {
@@ -88,12 +97,12 @@ namespace PNUDispatcher
 
             return true;
         }
-
-
-
+        
     }
 
-    public class StreamString
+
+
+        public class StreamString
     {
         private Stream ioStream;
         private UnicodeEncoding streamEncoding;

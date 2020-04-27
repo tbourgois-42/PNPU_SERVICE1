@@ -1,5 +1,6 @@
 ﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
+using PNPUTools;
 using System;
 using System.Collections.Generic;
 
@@ -26,7 +27,7 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            List<PControle> listControl = ListControls.listOfMockControl;
+            List<IControle> listControl = ListControls.listOfMockControl;
             bool GlobalResult = false;
             sRapport = string.Empty;
             RapportProcess.Id = this.ToString();
@@ -37,8 +38,9 @@ namespace PNPUCore.Process
             Rapport.Source RapportSource = new Rapport.Source();
             RapportSource.Id = "IdRapport - ProcessGestionDependance";
             RapportSource.Controle = new List<RControle>();
-            foreach (PControle controle in listControl)
+            foreach (IControle controle in listControl)
             {
+                controle.SetProcessControle(this);
                 RControle RapportControle = new RControle();
                 RapportControle.Id = controle.ToString();
                 RapportControle.Message = new List<string>();
@@ -59,8 +61,13 @@ namespace PNPUCore.Process
             RapportProcess.Source.Add(RapportSource);
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            if (GlobalResult)
-                GenerateHistoric();
+            GenerateHistoric();
+
+            if (GlobalResult == true)
+            {
+                String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessGestionDependance);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+            }
 
         }
 

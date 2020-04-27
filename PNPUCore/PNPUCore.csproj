@@ -56,6 +56,7 @@
     <Compile Include="ProcessAnalyseImpact.cs" />
     <Compile Include="ProcessControlePacks.cs" />
     <Compile Include="ProcessGestionDependance.cs" />
+    <Compile Include="ProcessInit.cs" />
     <Compile Include="ProcessIntegration.cs" />
     <Compile Include="ProcessLivraison.cs" />
     <Compile Include="ProcessProcessusCritique.cs" />

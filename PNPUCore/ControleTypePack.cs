@@ -13,7 +13,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
     /// </summary>  
-    class ControleTypePack : IControle
+    class ControleTypePack : PControle, IControle
     {
         private List<string> lCMD_L;
         private List<string> lCMD_D;
