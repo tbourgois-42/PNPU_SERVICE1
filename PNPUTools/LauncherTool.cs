@@ -15,16 +15,32 @@ namespace PNPUTools
 
         public static void LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
-            if (npcsPipeClient == null)
-            {
-                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-                npcsPipeClient.Connect();
-                ssStreamString = new StreamString(npcsPipeClient);
-            }
+            /*npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
+            npcsPipeClient.Connect();
+            ssStreamString = new StreamString(npcsPipeClient);
 
 
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
+            npcsPipeClient.WaitForPipeDrain();
+            string result = ssStreamString.ReadString();
+            npcsPipeClient.Flush();
+            npcsPipeClient.Close();*/
+            //Watcher test;
 
+            if (npcsPipeClient == null)
+            {
+                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
+
+            }
+
+            npcsPipeClient.Connect();
+            ssStreamString = new StreamString(npcsPipeClient);
+            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
+
+
+            string result = ssStreamString.ReadString();
+            npcsPipeClient.Dispose();
+            //return result;
         }
 
     }

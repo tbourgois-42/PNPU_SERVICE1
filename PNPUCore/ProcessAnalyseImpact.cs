@@ -29,10 +29,11 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = ListControls.listOfMockControl;
-            bool GlobalResult = false;
+            bool GlobalResult = true;
             sRapport = string.Empty;
             RapportProcess.Id = this.ToString();
             RapportProcess.Debut = DateTime.Now;
+            RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
 
 
@@ -47,7 +48,7 @@ namespace PNPUCore.Process
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
 
-                if (controle.MakeControl() == false)
+                if (!controle.MakeControl())
                 {
                     GlobalResult = false;
                     RapportControle.Result = false;
@@ -64,7 +65,7 @@ namespace PNPUCore.Process
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             GenerateHistoric();
 
-            if (GlobalResult == true)
+            if (GlobalResult)
             {
                 String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);

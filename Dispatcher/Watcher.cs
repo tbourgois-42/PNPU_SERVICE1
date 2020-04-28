@@ -45,30 +45,28 @@ namespace PNUDispatcher
         {
             string sMessage = string.Empty;
             string sMessageResultat = string.Empty;
-
-            
+            npssPipeClient = new NamedPipeServerStream("PNPU_PIPE");
+            ssStreamString = new StreamString(npssPipeClient);
 
             while (true)
             {
-                npssPipeClient = new NamedPipeServerStream("PNPU_PIPE");
                 npssPipeClient.WaitForConnection();
-                ssStreamString = new StreamString(npssPipeClient);
-
                 sMessage = ssStreamString.ReadString();
                 Console.WriteLine(sMessage);
 
                 if (IsValideJSON(sMessage) == false)
                     sMessageResultat = "KO";
-                else {
+                else 
                     sMessageResultat = "OK";
 
-                    string[] listParam = sMessage.Split('/');
+                string[] listParam = sMessage.Split('/');
 
-                    LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);
+                LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);
 
-                    ssStreamString.WriteString("OK");
-                }
-                npssPipeClient.Close();
+                ssStreamString.WriteString("OK");
+                npssPipeClient.Flush();
+                npssPipeClient.Dispose();
+                //npssPipeClient.Disconnect();
             }
         }
 

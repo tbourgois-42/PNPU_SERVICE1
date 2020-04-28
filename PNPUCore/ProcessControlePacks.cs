@@ -32,12 +32,13 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = new List<IControle>();
-            bool GlobalResult = false;
+            bool GlobalResult = true;
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
             RapportProcess.Id = this.ToString();
             RapportProcess.Debut = DateTime.Now;
+            RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
 
             //Pour test MHUM
@@ -116,8 +117,16 @@ namespace PNPUCore.Process
 
             //if (GlobalResult == true)
             //{
-                String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+            
+
+            string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
+
+            String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
+            foreach(string clienId in listClientId)
+            {
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
+
+            }
             //}
 
         }

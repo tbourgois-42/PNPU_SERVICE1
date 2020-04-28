@@ -15,6 +15,7 @@ namespace WcfService1
     [ServiceContract]
     public interface IService1
     {
+
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,

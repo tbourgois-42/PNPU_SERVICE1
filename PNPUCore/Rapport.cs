@@ -57,6 +57,8 @@ namespace PNPUCore.Rapport
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue(this.Id);
+            jw.WritePropertyName("id-client");
+            jw.WriteValue(this.IdClient);
             jw.WritePropertyName("debut");
             jw.WriteValue(this.Debut.ToString("dd/MM/yy H:mm:ss"));
             jw.WritePropertyName("fin");
@@ -128,6 +130,10 @@ namespace PNPUCore.Rapport
             set { this.fin = value; }
             get { return this.fin; }
         }
+
+
+        public string IdClient { get; internal set; }
+
     }
 
     class Source
@@ -146,6 +152,7 @@ namespace PNPUCore.Rapport
             set { this.controle = value; }
             get { return this.controle; }
         }
+
     }
 
     class RControle

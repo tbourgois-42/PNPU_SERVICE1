@@ -23,14 +23,14 @@ namespace PNPUCore.Controle
 
             
             Random rnd = new Random();
-            int random = rnd.Next(5000, 15000);
+            int random = rnd.Next(0, 5000);
             System.Threading.Thread.Sleep(random);
             random = rnd.Next(1, 101);
-            if (random < 80)
+            if (random < 95)
                 return true;
             else
             {
-                this.GetProcessControle().AjouteRapport("Flûte une erreur...");
+                this.GetProcessControle().AjouteRapport("Erreur sur le controle MOCK");
                 return false;
             }
         }

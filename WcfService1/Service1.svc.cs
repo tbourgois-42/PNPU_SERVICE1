@@ -14,6 +14,7 @@ using PNPUTools;
 using PNPUTools.DataManager;
 using System.Web.Hosting;
 using AntsCode.Util;
+using System.Configuration;
 
 namespace WcfService1
 {
@@ -24,19 +25,27 @@ namespace WcfService1
         private static NamedPipeClientStream npcsPipeClient = null;
         private static StreamString ssStreamString = null;
 
+        public static void Configure(ServiceConfiguration config)
+        {
+            config.LoadFromConfiguration(ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = @"C:\Users\tbou\Source\Repos\PNPU_SERVICE1\WcfService1\Web.config" }, ConfigurationUserLevel.None));
+        }
+
         public string LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
             {
                 npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-                npcsPipeClient.Connect();
-                ssStreamString = new StreamString(npcsPipeClient);
+
             }
 
-           
+            npcsPipeClient.Connect();
+            ssStreamString = new StreamString(npcsPipeClient);
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
-            return (ssStreamString.ReadString());
+            
+            string result = ssStreamString.ReadString();
+            npcsPipeClient.Close();
+            return result;
         }
 
 
