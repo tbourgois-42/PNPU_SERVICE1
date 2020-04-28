@@ -25,11 +25,6 @@ namespace WcfService1
         private static NamedPipeClientStream npcsPipeClient = null;
         private static StreamString ssStreamString = null;
 
-        public static void Configure(ServiceConfiguration config)
-        {
-            config.LoadFromConfiguration(ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = @"C:\Users\tbou\Source\Repos\PNPU_SERVICE1\WcfService1\Web.config" }, ConfigurationUserLevel.None));
-        }
-
         public string LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
