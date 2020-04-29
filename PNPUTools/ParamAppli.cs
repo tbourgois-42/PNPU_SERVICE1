@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using PNPUTools.DataManager;
 using System.Data;
+using System.IO.Pipes;
 
 namespace PNPUTools
 {
@@ -88,16 +89,21 @@ namespace PNPUTools
         public static string DossierTemporaire { get; }
 
 
-        public static string ProcessAnalyseImpact { get; }
-        public static string ProcessGestionDependance { get; }
-        public static string ProcessIntegration { get; }
-        public static string ProcessProcessusCritique { get; }
-        public static string ProcessTNR { get; }
-        public static string ProcessLivraison { get; }
-        public static string ProcessControlePacks { get; }
-        public static string ProcessFinished { get; set; }
+        public const string ProcessControlePacks = "1";
+        public const string ProcessInit = "2";
+        public const string ProcessGestionDependance = "3";
+        public const string ProcessAnalyseImpact = "4";
+        public const string ProcessIntegration = "5";
+        public const string ProcessProcessusCritique = "6";
+        public const string ProcessTNR = "7";
+        public const string ProcessLivraison = "8";
+ 
+        public const string ProcessFinished = "-1";
 
-        public static string ProcessInit { get; set; }
+
+
+        public static NamedPipeClientStream npcsPipeClient;
+
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
         /// </summary>  
@@ -106,16 +112,9 @@ namespace PNPUTools
             DataSet dsDataSet = null;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
-            ProcessInit = "2";
-            ProcessAnalyseImpact = "4";
-            ProcessGestionDependance = "3";
-            ProcessIntegration = "5";
-            ProcessProcessusCritique = "6";
-            ProcessTNR = "7";
-            ProcessLivraison = "8";
-            ProcessControlePacks = "1";
-            ProcessFinished = "-1";
-            DossierTemporaire = "C:\\TEMPO";
+
+            npcsPipeClient = null;
+            
             // A lire dans base de ref
             ListeCmdInterdite = new List<string>();
             ListeCleInterdite = new List<string>();

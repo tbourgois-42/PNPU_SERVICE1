@@ -10,37 +10,27 @@ namespace PNPUTools
 {
     public class LauncherViaDIspatcher
     {
-        private static NamedPipeClientStream npcsPipeClient = null;
         private static StreamString ssStreamString = null;
 
         public static void LaunchProcess(string ProcFile, int workflowId, String clientId)
         {
-            /*npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-            npcsPipeClient.Connect();
-            ssStreamString = new StreamString(npcsPipeClient);
+            if (ProcFile == ParamAppli.ProcessFinished)
+                return;
 
+            if (ParamAppli.npcsPipeClient == null)
+                ParamAppli.npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE2");
 
-            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
-            npcsPipeClient.WaitForPipeDrain();
-            string result = ssStreamString.ReadString();
-            npcsPipeClient.Flush();
-            npcsPipeClient.Close();*/
-            //Watcher test;
+            if (ParamAppli.npcsPipeClient.IsConnected == false)
+                ParamAppli.npcsPipeClient.Connect();
+         
 
-            if (npcsPipeClient == null)
-            {
-                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-
-            }
-
-            npcsPipeClient.Connect();
-            ssStreamString = new StreamString(npcsPipeClient);
+            if (ssStreamString == null)
+                ssStreamString = new StreamString(ParamAppli.npcsPipeClient);
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
 
             string result = ssStreamString.ReadString();
-            npcsPipeClient.Dispose();
-            //return result;
+             //return result;
         }
 
     }

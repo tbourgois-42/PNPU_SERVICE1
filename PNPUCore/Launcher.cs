@@ -38,27 +38,38 @@ namespace PNPUCore
 
         IProcess CreateProcess(String process, int workflowId, String client)
         {
-            if (process == ParamAppli.ProcessControlePacks)
-                return ProcessControlePacks.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessAnalyseImpact)
-                return ProcessAnalyseImpact.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessInit)
-                return ProcessInit.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessGestionDependance)
-                return ProcessGestionDependance.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessIntegration)
-                return ProcessIntegration.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessProcessusCritique)
-                return ProcessProcessusCritique.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessTNR)
-                return ProcessTNR.CreateProcess(workflowId, client);
-            else if (process == ParamAppli.ProcessLivraison)
-                return ProcessLivraison.CreateProcess(workflowId, client);
-            else
+
+            switch (process)
             {
-                //TODO : GENERATE EXCEPTION
-                return ProcessMock.CreateProcess(workflowId, client);
+                case ParamAppli.ProcessControlePacks:
+                    return ProcessControlePacks.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessAnalyseImpact:
+                    return ProcessAnalyseImpact.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessInit:
+                    return ProcessInit.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessGestionDependance:
+                    return ProcessGestionDependance.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessIntegration:
+                    return ProcessIntegration.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessProcessusCritique:
+                    return ProcessProcessusCritique.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessTNR:
+                    return ProcessTNR.CreateProcess(workflowId, client);
+
+                case ParamAppli.ProcessLivraison:
+                    return ProcessLivraison.CreateProcess(workflowId, client);
+
+                default:
+                    return ProcessMock.CreateProcess(workflowId, client);
+
             }
-            }
+             
         }
+    }
 }

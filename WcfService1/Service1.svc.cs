@@ -22,7 +22,7 @@ namespace WcfService1
     // REMARQUE : pour lancer le client test WCF afin de tester ce service, sélectionnez Service1.svc ou Service1.svc.cs dans l'Explorateur de solutions et démarrez le débogage. 
     public class Service1 : IService1
     {
-        private static NamedPipeClientStream npcsPipeClient = null;
+        private static NamedPipeClientStream npcsPipeClient;
         private static StreamString ssStreamString = null;
 
         public string LaunchProcess(string ProcFile, int workflowId, String clientId)
@@ -30,17 +30,16 @@ namespace WcfService1
             if (npcsPipeClient == null)
             {
                 npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
-
+                npcsPipeClient.Connect();
             }
 
-            npcsPipeClient.Connect();
-            ssStreamString = new StreamString(npcsPipeClient);
+            if (ssStreamString == null)
+                ssStreamString = new StreamString(npcsPipeClient);
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
             
             string result = ssStreamString.ReadString();
-            npcsPipeClient.Close();
-            return result;
+             return result;
         }
 
 
@@ -122,18 +121,19 @@ namespace WcfService1
 
         public string RunWorkflow(string WorkflowName)
         {
-            //if (npcsPipeClient == null)
-            //{
+            if (npcsPipeClient == null)
+            {
                 npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
                 npcsPipeClient.Connect();
-                ssStreamString = new StreamString(npcsPipeClient);
-            //}
+            }
 
+            if (ssStreamString == null)
+                ssStreamString = new StreamString(npcsPipeClient);
+            
             ssStreamString.WriteString(WorkflowName);
 
             string result = (ssStreamString.ReadString());
-            npcsPipeClient.Close();
-            return result;
+             return result;
         }
 
         public string CreateWorkflow(PNPU_WORKFLOW input)
