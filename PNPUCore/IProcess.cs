@@ -18,12 +18,17 @@ namespace PNPUCore.Process
         decimal WORKFLOW_ID { get; set; }
         string CLIENT_ID { get; set; }
 
+        string STATUT { get; set; }
+
+        int PROCESS_ID { get; set; }
     }
 
     class ProcessCore : IProcess
     {
         public decimal WORKFLOW_ID { get; set; }
         public string CLIENT_ID { get; set; }
+        public string STATUT { get; set; }
+        public int PROCESS_ID { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;
@@ -87,33 +92,6 @@ namespace PNPUCore.Process
         public bool SaveReportInBDD(string json, IProcess process)
         {
             string processName = (RapportProcess.Id).Split('.')[2];
-            string processId = "";
-
-            if (processName == "ProcessControlePacks")
-            {
-                processId = ParamAppli.ProcessControlePacks;
-            } else if (processName == "ProcessInit")
-            {
-                processId = ParamAppli.ProcessInit;
-            } else if (processName == "ProcessGestionDependance")
-            {
-                processId = ParamAppli.ProcessGestionDependance;
-            } else if (processName == "ProcessAnalyseImpact")
-            {
-                processId = ParamAppli.ProcessAnalyseImpact;
-            } else if (processName == "ProcessIntegration")
-            {
-                processId = ParamAppli.ProcessIntegration;
-            } else if (processName == "ProcessProcessusCritique")
-            {
-                processId = ParamAppli.ProcessProcessusCritique;
-            } else if (processName == "ProcessTNR")
-            {
-                processId = ParamAppli.ProcessTNR;
-            } else if (processName == "ProcessLivraison")
-            {
-                processId = ParamAppli.ProcessLivraison;
-            }
 
             using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
@@ -124,7 +102,7 @@ namespace PNPUCore.Process
                     {
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int, 10).Value = 1;
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int, 15).Value = process.WORKFLOW_ID;
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = processId;
+                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = process.PROCESS_ID;
                         cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
                         cmd.Parameters.Add("@JSON_TEMPLATE", SqlDbType.Text).Value = json.Replace("\r\n", "");
                         cmd.Parameters.Add("@CLIENT_ID1", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
@@ -137,6 +115,12 @@ namespace PNPUCore.Process
                 }
                 return true;
             }
+        }
+
+        internal void GenerateHistoric(PNPU_H_WORKFLOW historicWorkflow, PNPU_H_STEP historicStep)
+        {
+            RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
+            RequestTool.CreateUpdateStepHistoric(historicStep);
         }
     }
 }

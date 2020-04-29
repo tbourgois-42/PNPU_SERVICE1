@@ -29,6 +29,8 @@ namespace PNPUTools
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
         static string requestHistoricWorkflow = "SELECT PHW.ID_ORGANIZATION, PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ORDER BY PHW.WORKFLOW_ID";
         static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
+        private static string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = ";
+        private static string requestGetStepHistoric = "select * from PNPU_H_STEP where WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3}";
 
         public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
         {
@@ -62,10 +64,10 @@ namespace PNPUTools
             return listTest;
         }
 
-        public static string GetNextProcess(decimal wORKFLOW_ID, string processTNR)
+        public static int GetNextProcess(decimal wORKFLOW_ID, int processId)
         {
 
-            string finalRequest = string.Format(requestGetNextProcess, wORKFLOW_ID, processTNR);
+            string finalRequest = string.Format(requestGetNextProcess, wORKFLOW_ID, processId);
             DataSet result = DataManagerSQLServer.GetDatas(finalRequest, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
@@ -156,53 +158,100 @@ namespace PNPUTools
 
         }
 
-        public static string CreateWorkflowHistoric(PNPU_H_WORKFLOW input)
+        public static string CreateUpdateWorkflowHistoric(PNPU_H_WORKFLOW input)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            int workFlowId = Decimal.ToInt32(input.WORKFLOW_ID);
+            if (historicWorkflowExist(workFlowId))
             {
-                try
+                //Update for the moment do nothing
+                return "Requête traitée avec succès et création/mis à jour d'un historique de workflow";
+            }
+            else
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                 {
-
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values ('PNPU', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, null, 'IN PROGRESS')", conn))
+                    try
                     {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                        //cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
-                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        conn.Open();
+
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values ('9999', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT)", conn))
+                        {
+                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
+                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.DateTime).Value = input.LAUNCHING_DATE;
+                            cmd.Parameters.Add("@STATUT", SqlDbType.VarChar, 254).Value = input.STATUT_GLOBAL;
+                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime).Value = input.ENDING_DATE;
+
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                        }
                     }
+                    catch (SqlException ex)
+                    {
+                        return ex.ToString();
+                    }
+                    return "Requête traitée avec succès et création/mis à jour d'un historique de workflow";
                 }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
             }
         }
 
-        public static string CreateStepHistoric(PNPU_H_STEP input)
+        public static string CreateUpdateStepHistoric(PNPU_H_STEP input)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            if (historicStepExist(input))
             {
-                try
+                using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                 {
-
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values('1', @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, null, 'IN PROGRESS', @TYPOLOGY)", conn))
+                    try
                     {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
-                        cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
-                        cmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = input.USER_ID;
-                        cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Int).Value = input.LAUNCHING_DATE ;
-                        cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
-                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        conn.Open();
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("update PNPU_H_STEP set ENDING_DATE = @ENDING_DATE  ID_STATUT = @ID_STATUT where ITERATION = @ITERATION AND WORKFLOW_ID = @WORKFLOW_ID AND ID_PROCESS = @ID_PROCESS AND CLIENT_ID = @CLIENT_ID", conn))
+                        {
+                            cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
+                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                            cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
+                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
+                            cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
+                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.VarChar, 254).Value = input.ENDING_DATE;
+
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                        }
                     }
+                    catch (SqlException ex)
+                    {
+                        return ex.ToString();
+                    }
+                    return "Requête traitée avec succès et création d’un document.";
                 }
-                catch (SqlException ex)
+            }
+            else
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                 {
-                    return ex.ToString();
+                    try
+                    {
+
+                        conn.Open();
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values('1', @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, null, 'IN PROGRESS', @TYPOLOGY)", conn))
+                        {
+                            cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
+                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
+                            cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
+                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
+                            cmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = input.USER_ID;
+                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Int).Value = input.LAUNCHING_DATE;
+                            cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
+                            cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
+
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        return ex.ToString();
+                    }
+                    return "Requête traitée avec succès et création d’un document.";
                 }
-                return "Requête traitée avec succès et création d’un document.";
             }
         }
 
@@ -214,6 +263,40 @@ namespace PNPUTools
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 
             return listTest.First();
+        }
+
+        public static PNPU_H_WORKFLOW getWorkflowHistoric(int workflowId)
+        {
+            DataSet result = DataManagerSQLServer.GetDatas(requestOneWorkflowHistoric + "'" + workflowId + "'", ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<PNPU_H_WORKFLOW> listTest = table.DataTableToList<PNPU_H_WORKFLOW>();
+            if (listTest.Count() >= 1)
+                return listTest.First();
+            else
+                return null;
+        }
+
+        public static bool historicWorkflowExist(int workflowId)
+        {
+            return getWorkflowHistoric(workflowId) != null;
+        }
+
+        public static PNPU_H_STEP getStepHistoric(PNPU_H_STEP step)
+        {
+            DataSet result = DataManagerSQLServer.GetDatas(string.Format(requestGetStepHistoric, step.WORKFLOW_ID, step.CLIENT_ID, step.ID_PROCESS, step.ITERATION), ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<PNPU_H_STEP> listTest = table.DataTableToList<PNPU_H_STEP>();
+            if (listTest.Count() >= 1)
+                return listTest.First();
+            else
+                return null;
+        }
+
+        public static bool historicStepExist(PNPU_H_STEP step)
+        {
+            return getStepHistoric(step) != null;
         }
 
         public static string ModifyWorkflow(PNPU_WORKFLOW input, string workflowID)
@@ -375,6 +458,7 @@ namespace PNPUTools
 
             return listTest;
         }
+
     }
 
 }

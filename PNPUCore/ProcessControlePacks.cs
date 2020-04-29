@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using PNPUTools;
+using PNPUTools.DataManager;
+
 using PNPUCore.Rapport;
 
 namespace PNPUCore.Process
@@ -24,6 +26,7 @@ namespace PNPUCore.Process
 
         public ProcessControlePacks(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
+            this.PROCESS_ID = ParamAppli.ProcessControlePacks;
         }
 
         /// <summary>  
@@ -47,11 +50,11 @@ namespace PNPUCore.Process
                 listMDB.Add(sfichier);*/
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
             gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
-            foreach(String sFichier in tMDB)
+            foreach (String sFichier in tMDB)
             {
                 listMDB.Add(sFichier);
             }
-               
+
             listControl.Add(new ControleCatalogueTable(this));
             listControl.Add(new ControleCmdInterdites(this));
             listControl.Add(new ControleDonneesReplace(this));
@@ -66,7 +69,7 @@ namespace PNPUCore.Process
             listControl.Add(new ControleTypePack(this));
 
             foreach (string sMDB in listMDB)
-             {
+            {
                 MDBCourant = sMDB;
                 Rapport.Source RapportSource = new Rapport.Source();
                 RapportSource.Id = System.IO.Path.GetFileName(sMDB);
@@ -108,40 +111,53 @@ namespace PNPUCore.Process
             RapportControle2.Id = cdmControleDependancesMDB.ToString();
             RapportControle2.Message = new List<string>();
             RapportControleCourant = RapportControle2;
-            RapportControle2.Result= cdmControleDependancesMDB.MakeControl();
+            RapportControle2.Result = cdmControleDependancesMDB.MakeControl();
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            GenerateHistoric();
-
-            //if (GlobalResult == true)
-            //{
-            
-
             string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
 
-            String NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
+            historicWorkflow.ENDING_DATE = RapportProcess.Debut;
+            historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
+            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+
+            RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
+
+            foreach (string clienId in listClientId) { 
+                PNPU_H_STEP historicStep = new PNPU_H_STEP();
+                historicStep.ID_PROCESS = this.PROCESS_ID;
+                historicStep.ITERATION = 1;
+                historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
+                historicStep.CLIENT_ID = clienId;
+                historicStep.USER_ID = "PNPUADM";
+                historicStep.LAUNCHING_DATE = RapportProcess.Debut;
+                historicStep.ENDING_DATE = RapportProcess.Fin;
+                if (GlobalResult)
+                {
+                    historicStep.ID_STATUT = ParamAppli.StatutCompleted;
+                }
+                else
+                {
+                    historicStep.ID_STATUT = ParamAppli.StatutError;
+                }
+                RequestTool.CreateUpdateStepHistoric(historicStep);
+            }
+
+            int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
 
             }
-            //}
-
         }
 
         internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
         {
             return new ProcessControlePacks(WORKFLOW_ID, CLIENT_ID);
-        }
-        private void GenerateHistoric()
-        {
-            //récupérer la liste des clients concernés
-
-            //Boucler sur la liste des clients
-                //Générer le PNPU_H_WORKFLOW
-                //Générer la ligne PNPU_H_STEP
         }
     }
 }

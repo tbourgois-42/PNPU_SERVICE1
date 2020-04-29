@@ -55,6 +55,10 @@ namespace PNPUTools.DataManager
 		public string ID_STATUT { get; set; }
 		public string TYPOLOGY { get; set; }
 
+		public PNPU_H_STEP()
+		{
+
+		}
 		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_, string TYPOLOGY_)
 		{
 			this.ITERATION = ITERATION_;
@@ -156,14 +160,14 @@ namespace PNPUTools.DataManager
 	public class PNPU_STEP
 	{
 		public int ID_ORDER { get; set; }
-		public string ID_PROCESS { get; set; }
+		public int ID_PROCESS { get; set; }
 		public string ID_WORKFLOW { get; set; }
 		public string PROCESS_LABEL { get; set; }
 
 		public PNPU_STEP()
 		{ }
 
-		public PNPU_STEP(int ID_ORDER_, string ID_PROCESS_, string ID_WORKFLOW_)
+		public PNPU_STEP(int ID_ORDER_, int ID_PROCESS_, string ID_WORKFLOW_)
 		{
 			this.ID_ORDER = ID_ORDER_;
 			this.ID_PROCESS = ID_PROCESS_;

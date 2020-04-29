@@ -25,7 +25,7 @@ namespace AntsCode.Util
         private void Parse(Stream stream, Encoding encoding)
         {
             this.Success = false;
-
+            
             // Read the stream into a byte array
             byte[] data = ToByteArray(stream);
 

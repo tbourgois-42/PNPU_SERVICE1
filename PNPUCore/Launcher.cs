@@ -28,15 +28,15 @@ namespace PNPUCore
         /// </summary>  
         /// <param name="clientName">Client pour lequel on lance le preocess.</param>
         /// <param name="processName">Nom du process à lancer.</param>
-        public void Launch(String clientName, int workflowId, String processName)
+        public void Launch(String clientName, int workflowId, int processId)
         {
-            IProcess process = CreateProcess(clientName, workflowId, processName);
+            IProcess process = CreateProcess(processId, workflowId, clientName);
 
             LaunchProcess(process);
         }
 
 
-        IProcess CreateProcess(String process, int workflowId, String client)
+        IProcess CreateProcess(int process, int workflowId, String client)
         {
 
             switch (process)

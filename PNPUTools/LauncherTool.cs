@@ -12,7 +12,7 @@ namespace PNPUTools
     {
         private static StreamString ssStreamString = null;
 
-        public static void LaunchProcess(string ProcFile, int workflowId, String clientId)
+        public static void LaunchProcess(int ProcFile, int workflowId, String clientId)
         {
             if (ProcFile == ParamAppli.ProcessFinished)
                 return;

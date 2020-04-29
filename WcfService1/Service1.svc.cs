@@ -25,7 +25,7 @@ namespace WcfService1
         private static NamedPipeClientStream npcsPipeClient;
         private static StreamString ssStreamString = null;
 
-        public string LaunchProcess(string ProcFile, int workflowId, String clientId)
+        public string LaunchProcess(int ProcId, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
             {
