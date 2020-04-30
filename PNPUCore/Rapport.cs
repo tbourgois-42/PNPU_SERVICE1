@@ -48,28 +48,36 @@ namespace PNPUCore.Rapport
         private List<Source> source;
         private DateTime debut;
         private DateTime fin;
-        private bool result { get; set; }
+        private string result;
+
+        private string DetermineFormat(int iNombre)
+        {
+            string sFormat = "0";
+            for (int i = 10; i <= iNombre; i *= 10)
+                sFormat += "0";
+
+            return sFormat;
+        }
 
         public String ToJSONRepresentation()
         {
             StringBuilder sb = new StringBuilder();
             JsonWriter jw = new JsonTextWriter(new StringWriter(sb));
 
-
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue(this.name);
+            jw.WriteValue("'" + this.name + "'");
             /*jw.WritePropertyName("id-client");
             jw.WriteValue(this.IdClient);*/
             jw.WritePropertyName("result");
-            jw.WriteValue(this.result);
+            jw.WriteValue("'" + this.result +"'");
             jw.WritePropertyName("debut");
-            jw.WriteValue(this.Debut.ToString("dd/MM/yy H:mm:ss"));
+            jw.WriteValue("'" + this.Debut.ToString("dd/MM/yy H:mm:ss") + "'");
             jw.WritePropertyName("fin");
-            jw.WriteValue(this.Fin.ToString("dd/MM/yy H:mm:ss"));
+            jw.WriteValue("'" + this.Fin.ToString("dd/MM/yy H:mm:ss") + "'");
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -77,12 +85,12 @@ namespace PNPUCore.Rapport
             for (int i = 0; i < Source.Count; i++)
             {
                 string sIDSource;
-                sIDSource = (i + 2).ToString();
+                sIDSource = (i + 2).ToString(DetermineFormat(Source.Count + 1));
                 jw.WriteStartObject();
                 jw.WritePropertyName("id");
-                jw.WriteValue((i+2).ToString());
+                jw.WriteValue(sIDSource);
                 jw.WritePropertyName("name");
-                jw.WriteValue(Source[i].Name);
+                jw.WriteValue("'" + Source[i].Name + "'");
 
                 if (Source[i].Controle.Count >0)
                 { 
@@ -91,14 +99,14 @@ namespace PNPUCore.Rapport
                     for (int j = 0; j < Source[i].Controle.Count; j++)
                     {
                         string sIDControle;
-                        sIDControle = sIDSource + (j + 1).ToString();
+                        sIDControle = sIDSource + (j + 1).ToString(DetermineFormat(Source[i].Controle.Count));
                         jw.WriteStartObject();
                         jw.WritePropertyName("id");
                         jw.WriteValue(sIDControle);
                         jw.WritePropertyName("name");
-                        jw.WriteValue(Source[i].Controle[j].Name);
+                        jw.WriteValue("'" + Source[i].Controle[j].Name + "'");
                         jw.WritePropertyName("result");
-                        jw.WriteValue(Source[i].Controle[j].Result);
+                        jw.WriteValue("'" + Source[i].Controle[j].Result + "'");
 
                         if (Source[i].Controle[j].Message.Count > 0)
                         {
@@ -108,12 +116,12 @@ namespace PNPUCore.Rapport
                             for (int k = 0; k < Source[i].Controle[j].Message.Count; k++)
                             {
                                 string sIDMessage;
-                                sIDMessage = sIDControle + (k + 1).ToString("000");
+                                sIDMessage = sIDControle + (k + 1).ToString(DetermineFormat(Source[i].Controle[j].Message.Count));
                                 jw.WriteStartObject();
                                 jw.WritePropertyName("id");
                                 jw.WriteValue(sIDMessage);
                                 jw.WritePropertyName("name");
-                                jw.WriteValue(Source[i].Controle[j].Message[k]);
+                                jw.WriteValue("'" + Source[i].Controle[j].Message[k] +"'");
                                 jw.WriteEndObject();
                             }
                             jw.WriteEndArray();
@@ -133,68 +141,8 @@ namespace PNPUCore.Rapport
             jw.WriteEndObject();
 
             sb = sb.Replace("\"", "");
-            sb = sb.Replace("'", "''");
             return sb.ToString();
         }
-
-        /*       public String ToJSONRepresentation()
-               {
-                   StringBuilder sb = new StringBuilder();
-                   JsonWriter jw = new JsonTextWriter(new StringWriter(sb));
-
-                   jw.Formatting = Formatting.Indented;
-                   jw.WriteStartObject();
-                   jw.WritePropertyName("id");
-                   jw.WriteValue(this.Id);
-                   jw.WritePropertyName("id-client");
-                   jw.WriteValue(this.IdClient);
-                   jw.WritePropertyName("debut");
-                   jw.WriteValue(this.Debut.ToString("dd/MM/yy H:mm:ss"));
-                   jw.WritePropertyName("fin");
-                   jw.WriteValue(this.Fin.ToString("dd/MM/yy H:mm:ss"));
-
-                   jw.WritePropertyName("source");
-                   jw.WriteStartArray();
-
-                   for (int i = 0; i < Source.Count; i++)
-                   {
-                       jw.WriteStartObject();
-                       jw.WritePropertyName("id");
-                       jw.WriteValue(Source[i].Id);
-
-                       jw.WritePropertyName("controle");
-                       jw.WriteStartArray();
-                       for (int j = 0; j < Source[i].Controle.Count; j++)
-                       {
-                           jw.WriteStartObject();
-                           jw.WritePropertyName("id");
-                           jw.WriteValue(Source[i].Controle[j].Id);
-                           jw.WritePropertyName("result");
-                           jw.WriteValue(Source[i].Controle[j].Result);
-
-                           jw.WritePropertyName("message");
-                           jw.WriteStartArray();
-                           for (int k = 0; k < Source[i].Controle[j].Message.Count; k++)
-                           {
-                               jw.WriteStartObject();
-                               jw.WritePropertyName("message");
-                               jw.WriteValue(Source[i].Controle[j].Message[k]);
-                               jw.WriteEndObject();
-                           }
-                           jw.WriteEndArray();
-                           jw.WriteEndObject();
-                       }
-                       jw.WriteEndArray();
-                       jw.WriteEndObject();
-                   }
-
-                   jw.WriteEndArray();
-
-                   jw.WriteEndObject();
-
-                   return sb.ToString();
-               }*/
-
 
         public String Id
         {
@@ -225,6 +173,11 @@ namespace PNPUCore.Rapport
             get { return this.fin; }
         }
 
+        public String Result
+        {
+            set { this.result = value; }
+            get { return this.result; }
+        }
 
         public string IdClient { get; internal set; }
 

@@ -66,6 +66,7 @@ namespace PNPUCore.Process
             }
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
+            RapportProcess.Result = GlobalResult;
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();

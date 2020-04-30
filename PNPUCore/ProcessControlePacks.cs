@@ -119,6 +119,8 @@ namespace PNPUCore.Process
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
             RapportProcess.Fin = DateTime.Now;
+            RapportProcess.Result = GlobalResult;
+            
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
 
@@ -149,7 +151,7 @@ namespace PNPUCore.Process
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
+               LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
 
             }
         }
