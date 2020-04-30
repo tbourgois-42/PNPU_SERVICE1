@@ -61,7 +61,7 @@ namespace PNPUCore.Process
         /// </summary>  
         public void AjouteRapport(string sMessage)
         {
-            RapportControleCourant.Message.Add(sMessage);
+            RapportControleCourant.Message.Add("'" + sMessage + "'");
         }
 
         /// <summary>  

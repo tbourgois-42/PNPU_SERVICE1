@@ -39,7 +39,7 @@ namespace PNPUCore.Process
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
-            RapportProcess.Id = this.ToString();
+            RapportProcess.Name = this.ToString();
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
@@ -72,12 +72,12 @@ namespace PNPUCore.Process
             {
                 MDBCourant = sMDB;
                 Rapport.Source RapportSource = new Rapport.Source();
-                RapportSource.Id = System.IO.Path.GetFileName(sMDB);
+                RapportSource.Name = System.IO.Path.GetFileName(sMDB);
                 RapportSource.Controle = new List<RControle>();
                 foreach (IControle controle in listControl)
                 {
                     RControle RapportControle = new RControle();
-                    RapportControle.Id = controle.ToString();
+                    RapportControle.Name = controle.ToString();
                     RapportControle.Message = new List<string>();
                     RapportControleCourant = RapportControle;
 
@@ -99,16 +99,16 @@ namespace PNPUCore.Process
             // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
             Rapport.Source RapportSource2 = new Rapport.Source();
-            RapportSource2.Id = string.Empty;
+            RapportSource2.Name = string.Empty;
             foreach (string sMdb in listMDB)
             {
-                if (RapportSource2.Id != string.Empty)
-                    RapportSource2.Id += " - ";
-                RapportSource2.Id += System.IO.Path.GetFileName(sMdb);
+                if (RapportSource2.Name != string.Empty)
+                    RapportSource2.Name += " - ";
+                RapportSource2.Name += System.IO.Path.GetFileName(sMdb);
             }
             RapportSource2.Controle = new List<RControle>();
             RControle RapportControle2 = new RControle();
-            RapportControle2.Id = cdmControleDependancesMDB.ToString();
+            RapportControle2.Name = cdmControleDependancesMDB.ToString();
             RapportControle2.Message = new List<string>();
             RapportControleCourant = RapportControle2;
             RapportControle2.Result = cdmControleDependancesMDB.MakeControl();
