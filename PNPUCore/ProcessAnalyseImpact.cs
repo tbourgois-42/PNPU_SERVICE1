@@ -31,20 +31,20 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             bool GlobalResult = true;
             sRapport = string.Empty;
-            RapportProcess.Id = this.ToString();
+            RapportProcess.Name = this.ToString();
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
 
 
             Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Id = "IdRapport - ProcessAnalyseImpact";
+            RapportSource.Name = "IdRapport - ProcessAnalyseImpact";
             RapportSource.Controle = new List<RControle>();
             foreach (IControle controle in listControl)
             {
                 controle.SetProcessControle(this);
                 RControle RapportControle = new RControle();
-                RapportControle.Id = controle.ToString();
+                RapportControle.Name = controle.ToString();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
 

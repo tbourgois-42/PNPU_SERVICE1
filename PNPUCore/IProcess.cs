@@ -56,7 +56,7 @@ namespace PNPUCore.Process
         /// </summary>  
         public void AjouteRapport(string sMessage)
         {
-            RapportControleCourant.Message.Add(sMessage);
+            RapportControleCourant.Message.Add("'" + sMessage + "'");
         }
 
         /// <summary>  
@@ -86,7 +86,7 @@ namespace PNPUCore.Process
 
         public bool SaveReportInBDD(string json, IProcess process)
         {
-            string processName = (RapportProcess.Id).Split('.')[2];
+            string processName = (RapportProcess.Name).Split('.')[2];
             string processId = "";
 
             if (processName == "ProcessControlePacks")
