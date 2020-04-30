@@ -34,9 +34,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             int iID_SYNONYM;
             string sPathMdb = Process.MDBCourant;
 
@@ -61,7 +61,7 @@ namespace PNPUCore.Controle
                         }
                         if (bPlageOK == false)
                         {
-                            bResultat = false;
+                            bResultat = ParamAppli.StatutError;
                             Process.AjouteRapport("L'ID_SYNONYM de l'item " + drRow[0].ToString() + "(" + drRow[1].ToString() + ") est dans les plages réservées client.");
                                 
                         }
@@ -71,7 +71,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PNPUTools.DataManager;
 using System.Data;
+using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -28,9 +29,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete = string.Empty;
 
@@ -105,14 +106,14 @@ namespace PNPUCore.Controle
                                         if (drRow2[0].ToString() == "0")
                                         {
                                             Process.AjouteRapport("Replace sur la table " + sTable + " dans le pack " + drRow[0].ToString() + " sans donnée dans le mdb(filtre: " + sWhere + ")");
-                                            bResultat = false;
+                                            bResultat = ParamAppli.StatutError;
                                         }
                                     }
                                 }
                                 else
                                 {
                                     Process.AjouteRapport("Replace sur la table " + sTable + " dans le pack " + drRow[0].ToString() + " sans donnée dans le mdb(filtre: " + sWhere + ")");
-                                    bResultat = false;
+                                    bResultat = ParamAppli.StatutError;
                                 }
                             }
                             if (iIndex >= 0)
@@ -126,7 +127,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

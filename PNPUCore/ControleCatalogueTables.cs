@@ -31,9 +31,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             Dictionary<string,string> dListeAControler = new Dictionary<string,string>();
@@ -96,7 +96,7 @@ namespace PNPUCore.Controle
                     foreach(string sCle in dListeAControler.Keys)
                     {
                         Process.AjouteRapport("Livraison de la table " + sCle + " dans le pack " + dListeAControler[sCle] + " sans mise à jour du catalogue des tables.");
-                        bResultat = false;
+                        bResultat = ParamAppli.StatutError;
                     }
                 }
 
@@ -105,7 +105,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

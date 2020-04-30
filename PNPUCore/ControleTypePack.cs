@@ -38,9 +38,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. Elle va appeler la méthode ControleUnTypack pour chaque type de pack (L, B, D et F).
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             DataManagerAccess dmaManagerAccess = null;
 
 
@@ -50,29 +50,29 @@ namespace PNPUCore.Controle
 
                 if (ControleUnTypack("_L", lCMD_L, dmaManagerAccess) == false)
                 {
-                    bResultat = false;
+                    bResultat = ParamAppli.StatutError;
                 }
 
                 if (ControleUnTypack("_D", lCMD_D, dmaManagerAccess) == false)
                 {
-                    bResultat = false;
+                    bResultat = ParamAppli.StatutError;
                 }
 
                 if (ControleUnTypack("_F", lCMD_F, dmaManagerAccess) == false)
                 {
-                    bResultat = false;
+                    bResultat = ParamAppli.StatutError;
                 }
 
                 if (ControleUnTypack("_B", lCMD_B, dmaManagerAccess) == false)
                 {
-                    bResultat = false;
+                    bResultat = ParamAppli.StatutError;
                 }
 
             }
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

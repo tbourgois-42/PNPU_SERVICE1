@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using PNPUTools.DataManager;
 using System.Data;
-
+using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -27,9 +27,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
 
             DataManagerAccess dmaManagerAccess = null;
@@ -40,7 +40,7 @@ namespace PNPUCore.Controle
                 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    bResultat = false;
+                    bResultat = ParamAppli.StatutError;
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         Process.AjouteRapport("Tâche " + drRow[0].ToString() + " non sécurisée.");
@@ -50,7 +50,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

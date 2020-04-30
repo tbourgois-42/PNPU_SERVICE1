@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
 
     interface IControle
     {
-        Boolean MakeControl();
+        string MakeControl();
         IProcess GetProcessControle();
         void SetProcessControle(IProcess value);
     }
@@ -28,7 +28,7 @@ namespace PNPUCore.Controle
             processControle = value;
         }
 
-        public bool MakeControl()
+        public string MakeControl()
         {
             throw new NotImplementedException();
         }

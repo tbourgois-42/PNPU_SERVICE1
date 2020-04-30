@@ -35,7 +35,7 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = new List<IControle>();
-            bool GlobalResult = true;
+            string GlobalResult = ParamAppli.StatutOk;
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
@@ -80,16 +80,20 @@ namespace PNPUCore.Process
                     RapportControle.Name = controle.ToString();
                     RapportControle.Message = new List<string>();
                     RapportControleCourant = RapportControle;
+                    string statutControle = controle.MakeControl();
+                    //ERROR > WARNING > OK
+                    if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
+                    {
+                        GlobalResult = statutControle;
 
-                    if (controle.MakeControl() == false)
-                    {
-                        GlobalResult = false;
-                        RapportControle.Result = false;
                     }
-                    else
+                    else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
                     {
-                        RapportControle.Result = true;
+                        GlobalResult = statutControle;
                     }
+
+                    RapportControle.Result = statutControle;
+                    
 
                     RapportSource.Controle.Add(RapportControle);
                 }
@@ -114,14 +118,14 @@ namespace PNPUCore.Process
             RapportControle2.Result = cdmControleDependancesMDB.MakeControl();
             RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource2);
-
+            RapportProcess.Fin = DateTime.Now;
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
 
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
-            historicWorkflow.ENDING_DATE = RapportProcess.Debut;
+            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
             historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
 
@@ -136,14 +140,9 @@ namespace PNPUCore.Process
                 historicStep.USER_ID = "PNPUADM";
                 historicStep.LAUNCHING_DATE = RapportProcess.Debut;
                 historicStep.ENDING_DATE = RapportProcess.Fin;
-                if (GlobalResult)
-                {
-                    historicStep.ID_STATUT = ParamAppli.StatutCompleted;
-                }
-                else
-                {
-                    historicStep.ID_STATUT = ParamAppli.StatutError;
-                }
+                historicStep.TYPOLOGY = "SAAS DEDIE";
+                historicStep.ID_STATUT = GlobalResult;
+                
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }
 

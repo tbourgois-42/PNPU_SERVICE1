@@ -45,9 +45,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sCommandPack = string.Empty;
             string sPathMdb = Process.MDBCourant;
 
@@ -79,7 +79,7 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             // TODO Loguer les paramètres applicatyif livrés à tort
-                            bResultat = false;
+                            bResultat = ParamAppli.StatutError;
                             Process.AjouteRapport("Livraison du paramètre applicatif " + drRow[0].ToString() + " interdite.");
 
                         }
@@ -89,7 +89,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

@@ -175,7 +175,7 @@ namespace PNPUTools
 
                         conn.Open();
 
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values ('9999', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT)", conn))
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL, ID_H_WORKFLOW) values ('9999', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT, -1)", conn))
                         {
                             cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
                             cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
@@ -205,14 +205,14 @@ namespace PNPUTools
                     {
 
                         conn.Open();
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("update PNPU_H_STEP set ENDING_DATE = @ENDING_DATE  ID_STATUT = @ID_STATUT where ITERATION = @ITERATION AND WORKFLOW_ID = @WORKFLOW_ID AND ID_PROCESS = @ID_PROCESS AND CLIENT_ID = @CLIENT_ID", conn))
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("update PNPU_H_STEP set ENDING_DATE = @ENDING_DATE,  ID_STATUT = @ID_STATUT where ITERATION = @ITERATION AND WORKFLOW_ID = @WORKFLOW_ID AND ID_PROCESS = @ID_PROCESS AND CLIENT_ID = @CLIENT_ID", conn))
                         {
                             cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
                             cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
                             cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
-                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
+                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
                             cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
-                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.VarChar, 254).Value = input.ENDING_DATE;
+                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime, 254).Value = input.ENDING_DATE;
 
                             int rowsAffected = cmd.ExecuteNonQuery();
                         }
@@ -232,14 +232,15 @@ namespace PNPUTools
                     {
 
                         conn.Open();
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values('1', @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, null, 'IN PROGRESS', @TYPOLOGY)", conn))
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, @ENDING_DATE, @ID_STATUT, @TYPOLOGY)", conn))
                         {
                             cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
                             cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
                             cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
-                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.Int).Value = input.CLIENT_ID;
-                            cmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = input.USER_ID;
-                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Int).Value = input.LAUNCHING_DATE;
+                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
+                            cmd.Parameters.Add("@USER_ID", SqlDbType.VarChar, 254).Value = input.USER_ID;
+                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Date).Value = input.LAUNCHING_DATE;
+                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.Date).Value = input.ENDING_DATE;
                             cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
                             cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
 

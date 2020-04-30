@@ -31,9 +31,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete = string.Empty;
             DataSet dsDataSet = null;
@@ -206,20 +206,20 @@ namespace PNPUCore.Controle
                                         Process.AjouteRapport("Perte des niveaux de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
                                     else
                                         Process.AjouteRapport("Perte du niveau de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
-                                    bResultat = false;
+                                    bResultat = ParamAppli.StatutError;
                                 }
                             }
                         }
                     }
                 }
                 else
-                    bResultat = true;
+                    bResultat = ParamAppli.StatutOk;
 
             }
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

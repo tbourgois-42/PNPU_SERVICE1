@@ -31,9 +31,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sCommandPack = string.Empty;
             int iCpt = 0;
             bool bTrouve;
@@ -63,7 +63,7 @@ namespace PNPUCore.Controle
                             if (sCommandPack.IndexOf(lL_INTERDIT[iCpt++]) >= 0)
                             {
                                 bTrouve = true;
-                                bResultat = false;
+                                bResultat = ParamAppli.StatutError;
                                 double dConv;
 
                                 try
@@ -86,7 +86,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

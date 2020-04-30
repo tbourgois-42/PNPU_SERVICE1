@@ -38,10 +38,10 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
-             string sPathMdb = Process.MDBCourant;
+            string bResultat = ParamAppli.StatutOk;
+            string sPathMdb = Process.MDBCourant;
             string sRequete = string.Empty;
             DataSet dsDataSet = null;
 
@@ -67,7 +67,7 @@ namespace PNPUCore.Controle
                         {
                             int j = 0;
 
-                            bResultat = false;
+                            bResultat = ParamAppli.StatutError;
                             while (j < (lObjetsHeritesSTD.Count - 1) && (lObjetsHeritesSTD[j][0] != drRow[0].ToString())) j++;
                             if (lObjetsHeritesSTD[j][0] != drRow[0].ToString())
                                 Process.AjouteRapport("Héritage de l'objet " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'il est hérité au niveau standard.");
@@ -90,7 +90,7 @@ namespace PNPUCore.Controle
                         {
                             int j = 0;
 
-                            bResultat = false;
+                            bResultat = ParamAppli.StatutError;
                             while (j < (lPresentsHeritesSTD.Count - 1) && (lPresentsHeritesSTD[j][0] != drRow[0].ToString())) j++;
                             if (lPresentsHeritesSTD[j][0] != drRow[0].ToString())
                                 Process.AjouteRapport("Héritage de la présentation " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'elle est héritée au niveau standard.");
@@ -104,7 +104,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

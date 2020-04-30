@@ -31,9 +31,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             List<string[]> lListeAControler = new List<string[]>();
@@ -120,7 +120,7 @@ namespace PNPUCore.Controle
                     
                      if (lListeAControler.Count > 0)
                     {
-                        bResultat = false;
+                        bResultat = ParamAppli.StatutError;
                         foreach (string[] sElements  in lListeAControler)
                             Process.AjouteRapport("Le total " + sElements[1] + " utilise un item inexistant (" + sElements[0] +").");
                     }
@@ -131,7 +131,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

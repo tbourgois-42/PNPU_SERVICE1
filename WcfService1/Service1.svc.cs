@@ -35,8 +35,8 @@ namespace WcfService1
 
             if (ssStreamString == null)
                 ssStreamString = new StreamString(npcsPipeClient);
-            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
-
+            ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);
+            
             
             string result = ssStreamString.ReadString();
              return result;

@@ -87,18 +87,21 @@ namespace PNPUTools
         /// Dossier temporaire utilisé pour l'application.
         /// </summary>
         public static string DossierTemporaire { get; }
+        public static string StatutCompleted { get; set; }
+        public static string StatutError { get; set; }
+        public static string StatutOk { get; set; }
+        public static string StatutWarning { get; set; }
 
-
-        public const string ProcessControlePacks = "1";
-        public const string ProcessInit = "2";
-        public const string ProcessGestionDependance = "3";
-        public const string ProcessAnalyseImpact = "4";
-        public const string ProcessIntegration = "5";
-        public const string ProcessProcessusCritique = "6";
-        public const string ProcessTNR = "7";
-        public const string ProcessLivraison = "8";
+        public const int ProcessControlePacks = 1;
+        public const int ProcessInit = 2;
+        public const int ProcessGestionDependance = 3;
+        public const int ProcessAnalyseImpact = 4;
+        public const int ProcessIntegration = 5;
+        public const int ProcessProcessusCritique = 6;
+        public const int ProcessTNR = 7;
+        public const int ProcessLivraison = 8;
  
-        public const string ProcessFinished = "-1";
+        public const int ProcessFinished = -1;
 
 
 
@@ -114,7 +117,11 @@ namespace PNPUTools
 
 
             npcsPipeClient = null;
-            
+
+            StatutCompleted = "COMPLETED";
+            StatutError = "ERROR";
+            StatutWarning = "WARNING";
+
             // A lire dans base de ref
             ListeCmdInterdite = new List<string>();
             ListeCleInterdite = new List<string>();

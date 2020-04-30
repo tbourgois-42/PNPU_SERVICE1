@@ -31,9 +31,9 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             string sIDPackageCourant;
@@ -66,7 +66,7 @@ namespace PNPUCore.Controle
                             if ((sIDPackageCourant != String.Empty) && (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0))
                             {
                                  if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
-                                    bResultat = false;
+                                    bResultat = ParamAppli.StatutError;
                                 lListeM4O.Clear();
                                 lListeNODESTRUCTURE.Clear();
                             }
@@ -106,7 +106,7 @@ namespace PNPUCore.Controle
                     if (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0)
                     {
                         if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
-                            bResultat = false;
+                            bResultat = ParamAppli.StatutError;
                         lListeM4O.Clear();
                         lListeNODESTRUCTURE.Clear();
                     }
@@ -117,7 +117,7 @@ namespace PNPUCore.Controle
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                bResultat = ParamAppli.StatutError;
             }
 
             return bResultat;

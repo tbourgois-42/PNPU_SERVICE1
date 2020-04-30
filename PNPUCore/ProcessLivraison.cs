@@ -32,7 +32,7 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = ListControls.listOfMockControl;
-            bool GlobalResult = true;
+            string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportProcess.Name = this.ToString();
             RapportProcess.Debut = DateTime.Now;
@@ -51,20 +51,22 @@ namespace PNPUCore.Process
                 RapportControle.Name = controle.ToString();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
-
-                if (controle.MakeControl() == false)
+                string statutControle = controle.MakeControl();
+                //ERROR > WARNING > OK
+                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
                 {
-                    GlobalResult = false;
-                    RapportControle.Result = false;
-                }
-                else
-                {
-                    RapportControle.Result = true;
-                }
+                    GlobalResult = statutControle;
 
+                }
+                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+                {
+                    GlobalResult = statutControle;
+                }
+                RapportControle.Result = statutControle;
                 RapportSource.Controle.Add(RapportControle);
             }
             RapportProcess.Source.Add(RapportSource);
+            RapportProcess.Fin = DateTime.Now;
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
@@ -79,20 +81,14 @@ namespace PNPUCore.Process
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
             historicStep.CLIENT_ID = this.CLIENT_ID;
             historicStep.USER_ID = "PNPUADM";
+            historicStep.TYPOLOGY = "SAAS DEDIE";
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;
             historicStep.ENDING_DATE = RapportProcess.Fin;
-            if (GlobalResult)
-            {
-                historicStep.ID_STATUT = ParamAppli.StatutCompleted;
-            }
-            else
-            {
-                historicStep.ID_STATUT = ParamAppli.StatutError;
-            }
+            historicStep.ID_STATUT = GlobalResult;
 
             GenerateHistoric(historicWorkflow, historicStep);
 
-            if (GlobalResult)
+            if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessLivraison);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);

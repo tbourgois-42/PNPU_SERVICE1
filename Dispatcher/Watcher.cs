@@ -84,7 +84,7 @@ namespace PNUDispatcher
              }
         }
 
-        private static void LaunchProcess(string clientName, int workflowId, string process)
+        private static void LaunchProcess(string clientName, int workflowId, int process)
         {
             Thread thread = new Thread(() => LaunchProcessFunction(clientName, workflowId, process));
 
@@ -93,7 +93,7 @@ namespace PNUDispatcher
         }
 
 
-        private static void LaunchProcessFunction(string clientName, int workflowId, string process)
+        private static void LaunchProcessFunction(string clientName, int workflowId, int process)
         {
             var launcher = new Launcher();
             launcher.Launch(clientName, workflowId, process);
@@ -108,7 +108,7 @@ namespace PNUDispatcher
                 {
                     string[] listParam = qFIFO.Dequeue().Split('/');
 
-                    LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);
+                    LaunchProcess(listParam[2], int.Parse(listParam[1]), int.Parse(listParam[0]));
                     if (qFIFO.Count == 0)
                         System.Threading.Thread.Sleep(200);
                 }
