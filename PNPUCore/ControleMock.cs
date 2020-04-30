@@ -28,7 +28,7 @@ namespace PNPUCore.Controle
             System.Threading.Thread.Sleep(random);
             random = rnd.Next(1, 101);
             if (random < 98)
-                return ParamAppli.StatutCompleted;
+                return ParamAppli.StatutOk;
             else if (random >=98 && random < 99)
             {
                 this.GetProcessControle().AjouteRapport("Warning sur le controle MOCK");
