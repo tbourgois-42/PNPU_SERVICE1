@@ -260,7 +260,7 @@ namespace PNPUCore.Rapport
     {
         private string id;
         private string name;
-        private bool result { get; set; }
+        private string result { get; set; }
         private List<string> message { get; set; }
     
         public String Id
@@ -275,7 +275,7 @@ namespace PNPUCore.Rapport
             get { return this.name; }
         }
 
-        public Boolean Result
+        public string Result
         {
             set { this.result = value; }
             get { return this.result; }

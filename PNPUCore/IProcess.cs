@@ -91,8 +91,6 @@ namespace PNPUCore.Process
 
         public bool SaveReportInBDD(string json, IProcess process)
         {
-            string processName = (RapportProcess.Id).Split('.')[2];
-
             using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
                 try
