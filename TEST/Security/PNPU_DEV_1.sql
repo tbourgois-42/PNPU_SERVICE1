@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [PNPU_DEV]
+    WITH PASSWORD = N'm!<mwf||hpn3iq||r@|{||ebmsFT7_&#$!~<2Hhbhipfz7fq', SID = 0x2B6C2C418CB6B944BAA2581A206DFE13, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

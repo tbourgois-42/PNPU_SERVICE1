@@ -75,7 +75,6 @@ namespace PNPUTools.DataManager
 
 	public class PNPU_H_WORKFLOW
 	{
-		public string ID_ORGANIZATION { get; set; }
 		public decimal ID_H_WORKFLOW { get; set; }
 		public string CLIENT_ID { get; set; }
 		public decimal WORKFLOW_ID { get; set; }
@@ -217,7 +216,6 @@ namespace PNPUTools.DataManager
 
 	public class InfoClientStep
 	{
-		public string ID_ORGANIZATION { get; set; }
 		public int ITERATION { get; set; }
 		public decimal WORKFLOW_ID { get; set; }
 		public DateTime LAUNCHING_DATE { get; set; }

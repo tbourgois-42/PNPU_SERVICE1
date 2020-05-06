@@ -23,11 +23,11 @@ namespace PNPUTools
         static string requestAllProcess = "select * from PNPU_PROCESS";
         static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
 
-        static string requestAllWorkflow = "SELECT PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY PW.ID_ORGANIZATION, PW.WORKFLOW_ID, PW.WORKFLOW_LABEL";
+        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
-        static string requestHistoricWorkflow = "SELECT PHW.ID_ORGANIZATION, PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ORDER BY PHW.WORKFLOW_ID";
+        static string requestHistoricWorkflow = "SELECT PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ORDER BY PHW.WORKFLOW_ID";
         static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
         private static string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = ";
         private static string requestGetStepHistoric = "select * from PNPU_H_STEP where WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3}";
@@ -50,11 +50,11 @@ namespace PNPUTools
 
             string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
 
-            string request = "SELECT PHS.ID_ORGANIZATION, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PS.ORDER_ID, ";
+            string request = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PS.ORDER_ID, ";
             request += "PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE " ;
-            request += "FROM PNPU_H_STEP PHS, PNPU_STEP PS, PNPU_STEP PS2 WHERE PHS.LAUNCHING_DATE = (SELECT MAX(PHS2.LAUNCHING_DATE) FROM PNPU_H_STEP PHS2 WHERE PHS.ID_ORGANIZATION = PHS2.ID_ORGANIZATION AND PHS.WORKFLOW_ID = PHS2.WORKFLOW_ID AND PHS.CLIENT_ID = PHS2.CLIENT_ID) AND PHS.WORKFLOW_ID = " + filtre + " ";
-            request += "AND PS.ID_ORGANIZATION = PS2.ID_ORGANIZATION AND PS.ORDER_ID = PS2.ORDER_ID AND PS.ID_PROCESS = PS2.ID_PROCESS AND PS.WORKFLOW_ID = PS2.WORKFLOW_ID AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID AND PS.ID_PROCESS = PHS.ID_PROCESS ";
-            request += "GROUP BY PHS.ID_ORGANIZATION, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PHS.ID_PROCESS, PS.ID_PROCESS, PS.ORDER_ID ORDER BY PHS.CLIENT_ID";
+            request += "FROM PNPU_H_STEP PHS, PNPU_STEP PS, PNPU_STEP PS2 WHERE PHS.LAUNCHING_DATE = (SELECT MAX(PHS2.LAUNCHING_DATE) FROM PNPU_H_STEP PHS2 WHERE PHS.WORKFLOW_ID = PHS2.WORKFLOW_ID AND PHS.CLIENT_ID = PHS2.CLIENT_ID) AND PHS.WORKFLOW_ID = " + filtre + " ";
+            request += " AND PS.ORDER_ID = PS2.ORDER_ID AND PS.ID_PROCESS = PS2.ID_PROCESS AND PS.WORKFLOW_ID = PS2.WORKFLOW_ID AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID AND PS.ID_PROCESS = PHS.ID_PROCESS ";
+            request += "GROUP BY  PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PHS.ID_PROCESS, PS.ID_PROCESS, PS.ORDER_ID ORDER BY PHS.CLIENT_ID";
             
             DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
@@ -125,7 +125,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW (ID_ORGANIZATION, WORKFLOW_LABEL) VALUES('0000', @WORKFLOW_LABEL)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW ( WORKFLOW_LABEL) VALUES( @WORKFLOW_LABEL)", conn))
                     {
                         cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
                         int rowsAffected = cmd.ExecuteNonQuery();
@@ -145,7 +145,7 @@ namespace PNPUTools
 
         public static IEnumerable<PNPU_H_REPORT> getReport(decimal idProcess, decimal workflowId, string clientId)
         {
-            String sRequest = "SELECT ID_ORGANIZATION, ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE FROM PNPU_H_REPORT ";
+            String sRequest = "SELECT ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE FROM PNPU_H_REPORT ";
             sRequest += "WHERE ID_PROCESS = @ID_PROCESS AND WORKFLOW_ID = @WORKFLOW_ID AND CLIENT_ID = @CLIENT_ID";
 
             DataSet result = DataManagerSQLServer.GetDatasWithParams(sRequest, ParamAppli.ConnectionStringBaseAppli, idProcess, workflowId, clientId);
@@ -175,7 +175,7 @@ namespace PNPUTools
 
                         conn.Open();
 
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW (ID_ORGANIZATION, CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL, ID_H_WORKFLOW) values ('9999', @CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT, -1)", conn))
+                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW ( CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values (@CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT)", conn))
                         {
                             cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
                             cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
@@ -307,7 +307,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_WORKFLOW SET WORKFLOW_LABEL = @WORKFLOW_LABEL WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_WORKFLOW SET WORKFLOW_LABEL = @WORKFLOW_LABEL WHERE WORKFLOW_ID = @WORKFLOW_ID ", conn))
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
                         cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
@@ -329,7 +329,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_STEP (ID_ORGANIZATION, ORDER_ID, ID_PROCESS, WORKFLOW_ID) VALUES('0000', @ORDER_ID, @ID_PROCESS, @WORKFLOW_ID)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_STEP ( ORDER_ID, ID_PROCESS, WORKFLOW_ID) VALUES( @ORDER_ID, @ID_PROCESS, @WORKFLOW_ID)", conn))
                     {
                         cmd.Parameters.Add("@ORDER_ID", SqlDbType.Int).Value = input.ID_ORDER;
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 254).Value = input.ID_PROCESS;
@@ -352,7 +352,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_PROCESS SET PROCESS_LABEL = @PROCESS_LABEL, IS_LOOPABLE = @IS_LOOPABLE WHERE ID_PROCESS = @ID_PROCESS AND ID_ORGANIZATION = '0000'", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_PROCESS SET PROCESS_LABEL = @PROCESS_LABEL, IS_LOOPABLE = @IS_LOOPABLE WHERE ID_PROCESS = @ID_PROCESS", conn))
                     {
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
                         cmd.Parameters.Add("@PROCESS_LABEL", SqlDbType.VarChar, 254).Value = input.PROCESS_LABEL;
@@ -371,7 +371,7 @@ namespace PNPUTools
         public static string CreateProcess(PNPU_PROCESS input)
         {
             // string[] sParameters = { "PROCESS_LABEL", "IS_LOOPABLE" };
-            string sRequest = "INSERT INTO PNPU_PROCESS (ID_ORGANIZATION, PROCESS_LABEL, IS_LOOPABLE) VALUES('0000', @PROCESS_LABEL, @IS_LOOPABLE)";
+            string sRequest = "INSERT INTO PNPU_PROCESS ( PROCESS_LABEL, IS_LOOPABLE) VALUES( @PROCESS_LABEL, @IS_LOOPABLE)";
             string sTable = "PNPU_PROCESS";
             string result = DataManagerSQLServer.SendTransactionWithGetLastPKid(sRequest, input, sTable);
 
@@ -385,7 +385,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_PROCESS WHERE ID_PROCESS = @ID_PROCESS AND ID_ORGANIZATION = '0000'", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_PROCESS WHERE ID_PROCESS = @ID_PROCESS", conn))
                     {
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
                         int rowsAffected = cmd.ExecuteNonQuery();
@@ -406,7 +406,7 @@ namespace PNPUTools
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_WORKFLOW WHERE WORKFLOW_ID = @WORKFLOW_ID AND ID_ORGANIZATION = '0000'", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_WORKFLOW WHERE WORKFLOW_ID = @WORKFLOW_ID ", conn))
                     {
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
                         int rowsAffected = cmd.ExecuteNonQuery();
