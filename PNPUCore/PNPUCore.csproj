@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="ControleItemsTotaux.cs" />
     <Compile Include="ControleDependancesMDB.cs" />
     <Compile Include="ControleObjetTechno.cs" />

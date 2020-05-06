@@ -21,14 +21,20 @@ namespace PNPUCore.Process
         string STATUT { get; set; }
 
         int PROCESS_ID { get; set; }
+
+        string BASE { get; set; }
+
+        string SERVER { get; set; }
     }
 
-    class ProcessCore : IProcess
+    internal class ProcessCore : IProcess
     {
         public decimal WORKFLOW_ID { get; set; }
         public string CLIENT_ID { get; set; }
         public string STATUT { get; set; }
         public int PROCESS_ID { get; set; }
+        public string BASE { get; set; }
+        public string SERVER { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;

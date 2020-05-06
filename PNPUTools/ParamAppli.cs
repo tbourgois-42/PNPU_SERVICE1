@@ -91,6 +91,8 @@ namespace PNPUTools
         public const string StatutCompleted = "COMPLETED";
         public const string StatutError = "ERROR";
         public const string StatutWarning = "WARNING";
+        public static string LogLevel = "DEBUG";
+
 
         public const int ProcessControlePacks = 1;
         public const int ProcessInit = 2;
