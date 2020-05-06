@@ -25,6 +25,8 @@ namespace PNPUCore.Controle
         {
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie que le mdb standard ne livre pas d'élément techno. Les éléments techno ne doivent être livrés uniquement dans les HF Technos";
+            LibControle = "Contrôle livraison d'objets techno";
         }
 
          /// <summary>  

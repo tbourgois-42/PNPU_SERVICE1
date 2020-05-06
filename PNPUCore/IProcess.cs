@@ -9,7 +9,6 @@ namespace PNPUCore.Process
 {
     public interface IProcess
     {
-
         void ExecuteMainProcess();
 
         String FormatReport();
@@ -25,6 +24,7 @@ namespace PNPUCore.Process
 
     class ProcessCore : IProcess
     {
+        public string LibProcess { get; set; }
         public decimal WORKFLOW_ID { get; set; }
         public string CLIENT_ID { get; set; }
         public string STATUT { get; set; }
@@ -61,7 +61,8 @@ namespace PNPUCore.Process
         /// </summary>  
         public void AjouteRapport(string sMessage)
         {
-            sMessage = sMessage.Replace("'", "''");
+            if (ParamAppli.SimpleCotesReport == true)
+                sMessage = sMessage.Replace("'", "''");
             RapportControleCourant.Message.Add(sMessage);
         }
 

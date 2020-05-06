@@ -64,20 +64,26 @@ namespace PNPUCore.Rapport
             StringBuilder sb = new StringBuilder();
             JsonWriter jw = new JsonTextWriter(new StringWriter(sb));
 
+            
+            string sCote = string.Empty;
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+                sCote = "'";
+
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue("'" + this.name + "'");
+            jw.WriteValue(sCote + this.name + sCote);
             /*jw.WritePropertyName("id-client");
             jw.WriteValue(this.IdClient);*/
             jw.WritePropertyName("result");
-            jw.WriteValue("'" + this.result +"'");
+            jw.WriteValue(sCote + this.result + sCote);
             jw.WritePropertyName("debut");
-            jw.WriteValue("'" + this.Debut.ToString("dd/MM/yy H:mm:ss") + "'");
+            jw.WriteValue(sCote + this.Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
-            jw.WriteValue("'" + this.Fin.ToString("dd/MM/yy H:mm:ss") + "'");
+            jw.WriteValue(sCote + this.Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -90,7 +96,19 @@ namespace PNPUCore.Rapport
                 jw.WritePropertyName("id");
                 jw.WriteValue(sIDSource);
                 jw.WritePropertyName("name");
-                jw.WriteValue("'" + Source[i].Name + "'");
+                jw.WriteValue(sCote + Source[i].Name + sCote);
+                jw.WritePropertyName("result");
+                jw.WriteValue(sCote + Source[i].Result + sCote);
+
+
+                // Cas particulier des dépedances
+                if (Source[i].Name == "Contrôle des dépendances inter packages")
+                {
+                    jw.WritePropertyName("children");
+                    jw.WriteStartArray();
+                    jw.WriteEndArray();
+                }
+
 
                 if (Source[i].Controle.Count >0)
                 { 
@@ -104,14 +122,16 @@ namespace PNPUCore.Rapport
                         jw.WritePropertyName("id");
                         jw.WriteValue(sIDControle);
                         jw.WritePropertyName("name");
-                        jw.WriteValue("'" + Source[i].Controle[j].Name + "'");
+                        jw.WriteValue(sCote + Source[i].Controle[j].Name + sCote);
+                        jw.WritePropertyName("Tooltip");
+                        jw.WriteValue(sCote + Source[i].Controle[j].Tooltip + sCote);
                         jw.WritePropertyName("result");
-                        jw.WriteValue("'" + Source[i].Controle[j].Result + "'");
+                        jw.WriteValue(sCote + Source[i].Controle[j].Result + sCote);
 
                         if (Source[i].Controle[j].Message.Count > 0)
                         {
 
-                            jw.WritePropertyName("children");
+                            jw.WritePropertyName("message");
                             jw.WriteStartArray();
                             for (int k = 0; k < Source[i].Controle[j].Message.Count; k++)
                             {
@@ -121,7 +141,7 @@ namespace PNPUCore.Rapport
                                 jw.WritePropertyName("id");
                                 jw.WriteValue(sIDMessage);
                                 jw.WritePropertyName("name");
-                                jw.WriteValue("'" + Source[i].Controle[j].Message[k] +"'");
+                                jw.WriteValue(sCote + Source[i].Controle[j].Message[k] + sCote);
                                 jw.WriteEndObject();
                             }
                             jw.WriteEndArray();
@@ -140,7 +160,8 @@ namespace PNPUCore.Rapport
 
             jw.WriteEndObject();
 
-            sb = sb.Replace("\"", "");
+            if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+                sb = sb.Replace("\"", "");
             return sb.ToString();
         }
 
@@ -187,6 +208,7 @@ namespace PNPUCore.Rapport
     {
         private string id;
         private string name;
+        private string result { get; set; }
         private List<RControle> controle;
 
         public String Id
@@ -207,12 +229,19 @@ namespace PNPUCore.Rapport
             get { return this.controle; }
         }
 
+        public string Result
+        {
+            set { this.result = value; }
+            get { return this.result; }
+        }
+
     }
 
     class RControle
     {
         private string id;
         private string name;
+        private string tooltip { get; set; }
         private string result { get; set; }
         private List<string> message { get; set; }
     
@@ -226,6 +255,12 @@ namespace PNPUCore.Rapport
         {
             set { this.name = value; }
             get { return this.name; }
+        }
+
+        public String Tooltip
+        {
+            set { this.tooltip = value; }
+            get { return this.tooltip; }
         }
 
         public string Result

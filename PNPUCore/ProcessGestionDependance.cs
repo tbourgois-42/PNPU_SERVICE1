@@ -32,7 +32,7 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportProcess.Name = this.ToString();
+            RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
@@ -45,7 +45,8 @@ namespace PNPUCore.Process
             {
                 controle.SetProcessControle(this);
                 RControle RapportControle = new RControle();
-                RapportControle.Name = controle.ToString();
+                RapportControle.Name = controle.GetLibControle();
+                RapportControle.Tooltip = controle.GetTooltipControle();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
                 string statutControle = controle.MakeControl();
@@ -61,12 +62,12 @@ namespace PNPUCore.Process
                     GlobalResult = statutControle;
                 }
 
-                RapportControle.Result = statutControle;
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
                 RapportSource.Controle.Add(RapportControle);
             }
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
-            RapportProcess.Result = GlobalResult;
+            RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();

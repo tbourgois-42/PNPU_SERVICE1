@@ -28,9 +28,11 @@ namespace PNPUCore.Controle
             lLIM_INF = ParamAppli.ListeLimInf;
             lLIM_SUP = ParamAppli.ListeLimSup;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie si les items livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client";
+            LibControle = "Contrôle des ID Synoym";
         }
 
-         /// <summary>  
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
