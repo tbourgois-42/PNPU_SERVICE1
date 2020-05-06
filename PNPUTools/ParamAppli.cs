@@ -141,7 +141,9 @@ namespace PNPUTools
 
             try
             {
-                ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+                //ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+
+                ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
