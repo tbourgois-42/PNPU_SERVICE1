@@ -48,7 +48,8 @@ namespace PNPUCore.Process
             {
                 controle.SetProcessControle(this);
                 RControle RapportControle = new RControle();
-                RapportControle.Name = controle.ToString();
+                RapportControle.Name = controle.GetLibControle();
+                RapportControle.Tooltip = controle.GetTooltipControle();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
                 string statutControle = controle.MakeControl();
@@ -62,7 +63,7 @@ namespace PNPUCore.Process
                 {
                     GlobalResult = statutControle;
                 }
-                RapportControle.Result = statutControle;
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
 
                 RapportSource.Controle.Add(RapportControle);
             }

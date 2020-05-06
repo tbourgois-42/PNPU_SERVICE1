@@ -31,6 +31,8 @@ namespace PNPUCore.Controle
         {
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            ToolTipControle = "Vérifie que les éléments livrés sont au niveau d'héritage le plus fin";
+            LibControle = "Contrôle des niveaux d'héritage";
             ChargeM4OPresHerites();
         }
 

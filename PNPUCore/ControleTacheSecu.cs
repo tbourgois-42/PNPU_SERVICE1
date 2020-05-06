@@ -21,6 +21,8 @@ namespace PNPUCore.Controle
         public ControleTacheSecu(PNPUCore.Process.IProcess pProcess)
         {
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie que les tâches livrées sont sécurisées";
+            LibControle = "Contrôle de sécurité sur les tâches";
         }
 
         /// <summary>  

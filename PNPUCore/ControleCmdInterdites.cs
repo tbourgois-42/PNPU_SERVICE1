@@ -25,6 +25,8 @@ namespace PNPUCore.Controle
         {
             lL_INTERDIT = ParamAppli.ListeCmdInterdite;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie si le mdb standard ne contient pas de commande interdite";
+            LibControle = "Contrôle des commandes interdites";
         }
 
          /// <summary>  

@@ -26,9 +26,10 @@ namespace PNPUCore.Controle
         {
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = "Contrôle des dépendances inter packages";
         }
 
-         /// <summary>  
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  

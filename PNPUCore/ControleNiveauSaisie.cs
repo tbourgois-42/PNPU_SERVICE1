@@ -25,6 +25,8 @@ namespace PNPUCore.Controle
         {
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            ToolTipControle = "Vérifie qu'il n'y a pas de perte de niveau de saisie entre le mdb standard et la base client";
+            LibControle = "Contrôle des niveaux de saisies";
         }
 
          /// <summary>  

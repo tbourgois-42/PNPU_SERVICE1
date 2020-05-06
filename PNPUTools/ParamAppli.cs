@@ -105,9 +105,11 @@ namespace PNPUTools
  
         public const int ProcessFinished = -1;
 
-
+        public const bool SimpleCotesReport = false;
 
         public static NamedPipeClientStream npcsPipeClient;
+
+        public static Dictionary<string, string> TranscoSatut;
 
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
@@ -117,6 +119,11 @@ namespace PNPUTools
             DataSet dsDataSet = null;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
+            TranscoSatut = new Dictionary<string, string>();
+            TranscoSatut.Add(StatutOk, "mdi-check-circle");
+            TranscoSatut.Add(StatutCompleted, "mdi-check-circle");
+            TranscoSatut.Add(StatutError, "mdi-alert-circle");
+            TranscoSatut.Add(StatutWarning, "mdi-alert");
 
             npcsPipeClient = null;
 
