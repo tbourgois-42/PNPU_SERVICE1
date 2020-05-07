@@ -15,6 +15,7 @@ using PNPUTools.DataManager;
 using System.Web.Hosting;
 using AntsCode.Util;
 using System.Configuration;
+using HttpMultipartParser;
 
 namespace WcfService1
 {
@@ -152,7 +153,14 @@ namespace WcfService1
 
         public void UploadFile(Stream stream, string workflowId_)
         {
-            MultipartParser parser = new MultipartParser(stream);
+            var parser = MultipartFormDataParser.Parse(stream);
+
+            string typology = parser.GetParameterValue("typology");
+            string clients = parser.GetParameterValue("clients");
+
+            // Files are stored in a list:
+            FilePart file = parser.Files.First();
+            string FileName = file.FileName;
 
             int workflowId = int.Parse(workflowId_);
             
@@ -160,10 +168,13 @@ namespace WcfService1
             if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
                 Directory.CreateDirectory(ParamAppli.DossierTemporaire);
 
-            string FileName = parser.Filename;
             string FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
 
-            File.WriteAllBytes(FilePath, parser.FileContents);
+            using (FileStream fileStream = File.Create(FilePath))
+            {
+                file.Data.Seek(0, SeekOrigin.Begin);
+                file.Data.CopyTo(fileStream);
+            }
 
             GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
             //AJOUT DU ZIP DE MDB DANS LA BDD
