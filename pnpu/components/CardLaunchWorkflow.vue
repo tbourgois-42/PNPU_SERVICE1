@@ -9,7 +9,6 @@
         class="my-4 ml-6"
         color="primary"
         @click="dialog = !dialog"
-        v-on="on"
       >
         <v-icon left>mdi-play</v-icon>Lancer un workflow
       </v-btn>
@@ -49,6 +48,7 @@
                   solo
                   @input="getSelectedClient($event)"
                 ></v-select>
+                <v-checkbox v-model="packStandard" label="Package standard"></v-checkbox>
               </v-col>
               <v-col cols="12" sm="12" md="12">
                 <v-file-input
@@ -62,8 +62,7 @@
                   multiple
                   :show-size="1000"
                   accept=".zip, .7zip, .rar"
-                  :rules="controleAcceptFile()"
-                  @change="selectFile"
+                  @change="selectFile($event)"
                 >
                   <template v-slot:selection="{ index, text }">
                     <v-chip v-if="index < 2" color="primary" dark label small>
@@ -132,17 +131,6 @@ export default {
     txtWorkflow: '',
     workflows: [],
     lstSelectedClient: [],
-    controleAcceptFile() {
-      if (this.selectedFile !== null) {
-        if (this.selectedFile.type !== 'application/x-zip-compressed') {
-          this.launchWorkflow = true
-          this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
-          return ' '
-        } else {
-          this.launchWorkflow = false
-        }
-      }
-    },
     verifyTypologie() {
       if (
         this.txtTypologie.length > 1 &&
@@ -159,7 +147,8 @@ export default {
     colorsnackbar: '',
     selectedFile: null,
     lstWorkflows: [],
-    idSelectedWorkflow: ''
+    idSelectedWorkflow: '',
+    packStandard: true
   }),
 
   watch: {
@@ -185,17 +174,23 @@ export default {
     },
 
     selectFile(event) {
-      event.forEach((element) => {
-        this.selectedFile = element
-      })
+      if (event !== '') {
+        event.forEach((element) => {
+          this.selectedFile = element
+        })
+        if (this.selectedFile.type !== 'application/x-zip-compressed') {
+            this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
+        }
+      }
     },
 
     async sendFile() {
       const fd = new FormData()
-      if (this.selectedFile !== null) {
+      if (this.selectedFile !== null && this.txtTypologie !== '') {
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
         fd.append('typology', this.txtTypologie)
         fd.append('clients', this.lstSelectedClient)
+        fd.append('packStandard', this.packStandard)
         try {
           await axios.post(
             `${process.env.WEB_SERVICE_WCF}/worflow/` +
@@ -209,10 +204,15 @@ export default {
         } catch (error) {
           this.showSnackbar('error', `${error} !`)
         }
-      } else {
+      } else if (this.selectedFile === null) {
         this.showSnackbar(
           'error',
           'Impossible de lancer un workflow sans sélectionner de fichier'
+        )
+      } else if (this.txtTypologie === '') {
+        this.showSnackbar(
+          'error',
+          'Impossible de lancer un workflow sans sélectionner une typologie'
         )
       }
     },
