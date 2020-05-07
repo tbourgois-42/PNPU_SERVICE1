@@ -91,6 +91,8 @@ namespace PNPUTools
         public const string StatutCompleted = "COMPLETED";
         public const string StatutError = "ERROR";
         public const string StatutWarning = "WARNING";
+        public static string LogLevel = "DEBUG";
+
 
         public const int ProcessControlePacks = 1;
         public const int ProcessInit = 2;
@@ -103,9 +105,11 @@ namespace PNPUTools
  
         public const int ProcessFinished = -1;
 
-
+        public const bool SimpleCotesReport = false;
 
         public static NamedPipeClientStream npcsPipeClient;
+
+        public static Dictionary<string, string> TranscoSatut;
 
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
@@ -115,6 +119,11 @@ namespace PNPUTools
             DataSet dsDataSet = null;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
+            TranscoSatut = new Dictionary<string, string>();
+            TranscoSatut.Add(StatutOk, "mdi-check-circle");
+            TranscoSatut.Add(StatutCompleted, "mdi-check-circle");
+            TranscoSatut.Add(StatutError, "mdi-alert-circle");
+            TranscoSatut.Add(StatutWarning, "mdi-alert");
 
             npcsPipeClient = null;
 

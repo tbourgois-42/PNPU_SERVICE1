@@ -25,6 +25,8 @@ namespace PNPUCore.Controle
         {
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie que les tables livrées sont référencées dans le catalogue des tables";
+            LibControle = "Contrôle du catalogue des tables";
         }
 
          /// <summary>  

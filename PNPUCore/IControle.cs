@@ -1,7 +1,5 @@
 ﻿using PNPUCore.Process;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -12,15 +10,29 @@ namespace PNPUCore.Controle
         string MakeControl();
         IProcess GetProcessControle();
         void SetProcessControle(IProcess value);
+        string GetLibControle();
+        string GetTooltipControle();
     }
 
     public class PControle : IControle
     {
+        public string ToolTipControle { get; set; }
+        public string LibControle { get; set; }
         private IProcess processControle;
 
         public IProcess GetProcessControle()
         {
             return processControle;
+        }
+
+        public string GetLibControle()
+        { 
+            return LibControle; 
+        }
+
+        public string GetTooltipControle()
+        { 
+            return ToolTipControle; 
         }
 
         public void SetProcessControle(IProcess value)

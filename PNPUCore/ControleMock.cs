@@ -11,6 +11,8 @@ namespace PNPUCore.Controle
 
         public ControleMock()
         {
+            ToolTipControle = "Contrôle utilisé pour les tests";
+            LibControle = "ContrôleMock";
         }
 
         /// <summary>  
@@ -27,9 +29,9 @@ namespace PNPUCore.Controle
             int random = rnd.Next(0, 5000);
             System.Threading.Thread.Sleep(random);
             random = rnd.Next(1, 101);
-            //if (random < 98)
+            if (random < 98)
                 return ParamAppli.StatutOk;
-           /* else if (random >=98 && random < 99)
+            else if (random >=98 && random < 99)
             {
                 this.GetProcessControle().AjouteRapport("Warning sur le controle MOCK");
                 return ParamAppli.StatutWarning;
@@ -37,7 +39,7 @@ namespace PNPUCore.Controle
             else{
                 this.GetProcessControle().AjouteRapport("Erreur sur le controle MOCK");
                 return ParamAppli.StatutError;
-            }*/
+            }
         }
     }
 }

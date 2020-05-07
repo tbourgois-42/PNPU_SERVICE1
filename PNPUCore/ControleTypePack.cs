@@ -27,6 +27,8 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleTypePack(PNPUCore.Process.IProcess pProcess)
         {
+            ToolTipControle = "Vérifie la cohérence des types de packages livrés. Exemple: Script de création de colonne physique dans un pack logique.";
+            LibControle = "Contrôle des types de packages";
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             lCMD_L = ParamAppli.ListeCmdL;
             lCMD_D = ParamAppli.ListeCmdD;

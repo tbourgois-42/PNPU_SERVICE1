@@ -23,6 +23,8 @@ namespace PNPUCore.Controle
         public ControleTableSecu(PNPUCore.Process.IProcess pProcess)
         {
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie que les tables livrées sont sécurisées";
+            LibControle = "Contrôle de sécurité sur les tables";
         }
 
         /// <summary>  

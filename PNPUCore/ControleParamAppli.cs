@@ -24,7 +24,9 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleParamAppli(PNPUCore.Process.IProcess pProcess)
         {
-            foreach(string cle in ParamAppli.ListeCleInterdite)
+            ToolTipControle = "Vérifie que le mdb standard ne livre pas des paramètres applicatifs non autorisés";
+            LibControle = "Contrôle des paramètres applicatifs";
+            foreach (string cle in ParamAppli.ListeCleInterdite)
             {
                 if (sCLE != string.Empty)
                     sCLE += ",";

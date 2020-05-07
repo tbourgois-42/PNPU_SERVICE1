@@ -25,6 +25,8 @@ namespace PNPUCore.Controle
         {
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ToolTipControle = "Vérifie que les éléments utilisés dans les totaux livrés existent";
+            LibControle = "Contrôle des totaux";
         }
 
          /// <summary>  
