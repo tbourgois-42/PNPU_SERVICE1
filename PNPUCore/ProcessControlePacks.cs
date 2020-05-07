@@ -41,15 +41,16 @@ namespace PNPUCore.Process
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
+
+            //POUR TEST 
+            /*this.CLIENT_ID = "101";
+            this.STANDARD = false;*/
+
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
 
-            //Pour test MHUM
-            //listControl.Clear();
-            /*foreach (string sfichier in Directory.GetFiles("D:\\PNPU","*.mdb"))
-                listMDB.Add(sfichier);*/
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
             gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
             foreach (String sFichier in tMDB)
@@ -57,19 +58,7 @@ namespace PNPUCore.Process
                 listMDB.Add(sFichier);
             }
 
-            listControl.Add(new ControleCatalogueTable(this));
-            listControl.Add(new ControleCmdInterdites(this));
-            listControl.Add(new ControleDonneesReplace(this));
-            listControl.Add(new ControleIDSynonym(this));
-            listControl.Add(new ControleIDSynonymExistant(this));
-            listControl.Add(new ControleItemsTotaux(this));
-            listControl.Add(new ControleNiveauHeritage(this));
-            listControl.Add(new ControleNiveauSaisie(this));
-            listControl.Add(new ControleObjetTechno(this));
-            listControl.Add(new ControleParamAppli(this));
-            listControl.Add(new ControleTacheSecu(this));
-            listControl.Add(new ControleTableSecu(this));
-            listControl.Add(new ControleTypePack(this));
+            GetListControle(ref listControl);
 
             foreach (string sMDB in listMDB)
             {
@@ -118,13 +107,6 @@ namespace PNPUCore.Process
             // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
             Rapport.Source RapportSource2 = new Rapport.Source();
-            /*RapportSource2.Name = string.Empty;
-            foreach (string sMdb in listMDB)
-            {
-                if (RapportSource2.Name != string.Empty)
-                    RapportSource2.Name += " - ";
-                RapportSource2.Name += System.IO.Path.GetFileName(sMdb);
-            }*/
             RapportSource2.Name = "Contrôle des dépendances inter packages";
             RapportSource2.Controle = new List<RControle>();
             RControle RapportControle2 = new RControle();
