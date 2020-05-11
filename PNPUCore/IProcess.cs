@@ -147,7 +147,7 @@ namespace PNPUCore.Process
         {
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
             DataSet dsDataSet;
-            string sRequete = "SELECT ID_CONTROLE FROM PNPU_CONTROLE WHERE ID_PROCESS =" + this.PROCESS_ID.ToString();
+            string sRequete = "SELECT ID_CONTROLE, CONTROLE_LABEL, TYPOLOGY, RUN_STANDARD, ID_PROCESS, ERROR_TYPE, TOOLTIP FROM PNPU_CONTROLE WHERE ID_PROCESS =" + this.PROCESS_ID.ToString();
 
             if ((this.CLIENT_ID != string.Empty) && (this.CLIENT_ID != "ALL"))
             {
@@ -178,7 +178,7 @@ namespace PNPUCore.Process
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                 {
                     string sControle = drRow[0].ToString();
-                    IControle iControle = (IControle)Activator.CreateInstance(Type.GetType(sControle), this);
+                    IControle iControle = (IControle)Activator.CreateInstance(Type.GetType(sControle), this, drRow);
                     listControl.Add(iControle);
                 }
             }

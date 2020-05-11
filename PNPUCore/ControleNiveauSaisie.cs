@@ -29,7 +29,21 @@ namespace PNPUCore.Controle
             LibControle = "Contrôle des niveaux de saisies";
         }
 
-         /// <summary>  
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleNiveauSaisie(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -208,14 +222,12 @@ namespace PNPUCore.Controle
                                         Process.AjouteRapport("Perte des niveaux de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
                                     else
                                         Process.AjouteRapport("Perte du niveau de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
-                                    bResultat = ParamAppli.StatutError;
+                                    bResultat = ResultatErreur;
                                 }
                             }
                         }
                     }
                 }
-                else
-                    bResultat = ParamAppli.StatutOk;
 
             }
             catch (Exception ex)

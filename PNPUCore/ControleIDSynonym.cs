@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PNPUTools.DataManager;
 using System.Data;
 using PNPUTools;
+using System.Security.Permissions;
 
 namespace PNPUCore.Controle
 {
@@ -18,7 +19,7 @@ namespace PNPUCore.Controle
         private List<int> lLIM_INF;
         private List<int> lLIM_SUP;
         private PNPUCore.Process.ProcessControlePacks Process;
-
+ 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -30,6 +31,21 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si les items livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client";
             LibControle = "Contrôle des ID Synoym";
+        }
+
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleIDSynonym(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            lLIM_INF = ParamAppli.ListeLimInf;
+            lLIM_SUP = ParamAppli.ListeLimSup;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
         }
 
         /// <summary>  
@@ -63,7 +79,7 @@ namespace PNPUCore.Controle
                         }
                         if (bPlageOK == false)
                         {
-                            bResultat = ParamAppli.StatutError;
+                            bResultat = ResultatErreur;
                             Process.AjouteRapport("L'ID_SYNONYM de l'item " + drRow[0].ToString() + "(" + drRow[1].ToString() + ") est dans les plages réservées client.");
                                 
                         }

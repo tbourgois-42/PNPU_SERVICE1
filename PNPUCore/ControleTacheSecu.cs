@@ -26,6 +26,19 @@ namespace PNPUCore.Controle
         }
 
         /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleTacheSecu(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -42,7 +55,7 @@ namespace PNPUCore.Controle
                 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    bResultat = ParamAppli.StatutError;
+                    bResultat = ResultatErreur;
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         Process.AjouteRapport("Tâche " + drRow[0].ToString() + " non sécurisée.");

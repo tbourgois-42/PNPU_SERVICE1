@@ -12,8 +12,6 @@ namespace PNPUCore
     /// </summary>  
     public class Launcher
     {
-        List<InfoClient> listClient;
-
 
         void LaunchProcess(IProcess process)
         {

@@ -29,14 +29,28 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleNiveauHeritage(PNPUCore.Process.IProcess pProcess)
         {
-            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les éléments livrés sont au niveau d'héritage le plus fin";
             LibControle = "Contrôle des niveaux d'héritage";
             ChargeM4OPresHerites();
         }
 
-         /// <summary>  
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleNiveauHeritage(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -69,7 +83,7 @@ namespace PNPUCore.Controle
                         {
                             int j = 0;
 
-                            bResultat = ParamAppli.StatutError;
+                            bResultat = ResultatErreur;
                             while (j < (lObjetsHeritesSTD.Count - 1) && (lObjetsHeritesSTD[j][0] != drRow[0].ToString())) j++;
                             if (lObjetsHeritesSTD[j][0] != drRow[0].ToString())
                                 Process.AjouteRapport("Héritage de l'objet " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'il est hérité au niveau standard.");
@@ -92,7 +106,7 @@ namespace PNPUCore.Controle
                         {
                             int j = 0;
 
-                            bResultat = ParamAppli.StatutError;
+                            bResultat = ResultatErreur;
                             while (j < (lPresentsHeritesSTD.Count - 1) && (lPresentsHeritesSTD[j][0] != drRow[0].ToString())) j++;
                             if (lPresentsHeritesSTD[j][0] != drRow[0].ToString())
                                 Process.AjouteRapport("Héritage de la présentation " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'elle est héritée au niveau standard.");
