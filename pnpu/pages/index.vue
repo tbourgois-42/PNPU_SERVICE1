@@ -367,7 +367,7 @@ export default {
           vm.maxStep = response.data.GetMaxStepWorkflowResult
         })
         .catch(function(error) {
-          vm.showSnackbar('error', `${error} ! Impossible de récupérer le nombre de step du workflow ${vm.workflowDiplayed}`)
+          vm.showSnackbar('error', `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`)
         })
     },
 
