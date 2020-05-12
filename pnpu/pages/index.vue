@@ -192,8 +192,18 @@ export default {
   computed: {},
 
   watch: {
+
     filteredIndicators() {
       this.updateVisibleItems()
+    },
+    
+    search() {
+      this.visibleItems = []
+      this.items.forEach(element => {
+        if (element.CLIENT_ID.toUpperCase().match(this.search.toUpperCase()) !== null) {
+          this.visibleItems.push(element)
+        }
+      })
     }
   },
 
@@ -245,6 +255,7 @@ export default {
       this.updateVisibleItems()
     },
     updateVisibleItems() {
+      console.log(this.search)
       this.visibleItems = []
       if (this.filteredIndicators.length > 0) {
         this.visibleItems = this.filteredIndicators.slice(
