@@ -62,60 +62,76 @@
               :workflowID="workflowID"
               :idorga="item.ID_ORGANIZATION"
             />-->
-            <v-hover v-slot="{ hover }">
-              <v-card
-                :elevation="hover ? 6 : 1"
-                class="mx-auto transition-swing cursor"
-                outlined
-              >
-                <v-col class="d-flex">
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title class="title">{{ item.CLIENT_ID }}</v-list-item-title>
-                      <v-list-item-subtitle class="pb-1">ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle>
-                      <v-list-item-subtitle class="pb-2">Step {{ item.ORDER_ID }}/ {{ maxStep }}</v-list-item-subtitle>
-                      <v-list-item-subtitle>
-                        <!--<v-chip color="teal lighten-2" text-color="white" class="pl-2" label>-->
-                        <v-chip :color="item.colorCircular" text-color="white" class="pl-2" label>
-                          <v-icon left>mdi-label</v-icon>
-                          {{ item.TYPOLOGY }}
-                        </v-chip>
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-progress-circular
-                    :size="75"
-                    :width="5"
-                    :value="item.PERCENTAGE_COMPLETUDE"
-                    :color="item.colorCircular"
-                    class="mt-2 mr-2"
-                  >
-                    {{ item.PERCENTAGE_COMPLETUDE }}
-                  </v-progress-circular>
-                </v-col>         
-                <v-divider class="mx-4"></v-divider>
-                <v-card-actions class="ma-1 mx-4 d-flex justify-start">
-                  <v-chip
-                    :color="item.colorIconStatus"
-                    class="ml-1 mr-2"
-                    text-color="white"
-                    label
-                  >
-                    <v-icon left color="white">mdi-check-circle</v-icon>
-                    {{ item.ID_STATUT }}
-                  </v-chip>
-                  <v-chip class="pl-2" label>
-                    <v-avatar
-                      left
-                      color="grey lighten-1"
+            <nuxt-link
+              :to="{
+                name: 'client',
+                params: {
+                  client: item.CLIENT_ID,
+                  step: item.ORDER_ID,
+                  workflowDate: workflowDiplayed,
+                  textStatus: item.ID_STATUT,
+                  workflowID: workflowID
+                }
+              }"
+              append
+              tag="span"
+              class="route"
+            >
+              <v-hover v-slot="{ hover }">
+                <v-card
+                  :elevation="hover ? 6 : 1"
+                  class="mx-auto transition-swing cursor"
+                  outlined
+                >
+                  <v-col class="d-flex">
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title class="title">{{ item.CLIENT_ID }}</v-list-item-title>
+                        <v-list-item-subtitle class="pb-1">ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle>
+                        <v-list-item-subtitle class="pb-2">Step {{ item.ORDER_ID }}/ {{ maxStep }}</v-list-item-subtitle>
+                        <v-list-item-subtitle>
+                          <!--<v-chip color="teal lighten-2" text-color="white" class="pl-2" label>-->
+                          <v-chip :color="item.colorCircular" text-color="white" class="pl-2" label>
+                            <v-icon left>mdi-label</v-icon>
+                            {{ item.TYPOLOGY }}
+                          </v-chip>
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-progress-circular
+                      :size="75"
+                      :width="5"
+                      :value="item.PERCENTAGE_COMPLETUDE"
+                      :color="item.colorCircular"
+                      class="mt-2 mr-2"
                     >
-                      15
-                    </v-avatar>
-                    Localisation
-                  </v-chip>
-                </v-card-actions>
-              </v-card>
-            </v-hover>
+                      {{ item.PERCENTAGE_COMPLETUDE }}
+                    </v-progress-circular>
+                  </v-col>         
+                  <v-divider class="mx-4"></v-divider>
+                  <v-card-actions class="ma-1 mx-4 d-flex justify-start">
+                    <v-chip
+                      :color="item.colorIconStatus"
+                      class="ml-1 mr-2"
+                      text-color="white"
+                      label
+                    >
+                      <v-icon left color="white">mdi-check-circle</v-icon>
+                      {{ item.ID_STATUT }}
+                    </v-chip>
+                    <v-chip class="pl-2" label>
+                      <v-avatar
+                        left
+                        color="grey lighten-1"
+                      >
+                        15
+                      </v-avatar>
+                      Localisation
+                    </v-chip>
+                  </v-card-actions>
+                </v-card>
+              </v-hover>
+            </nuxt-link>
           </transition>
         </v-col>
       </v-col>
@@ -196,7 +212,7 @@ export default {
     filteredIndicators() {
       this.updateVisibleItems()
     },
-    
+
     search() {
       this.visibleItems = []
       this.items.forEach(element => {
