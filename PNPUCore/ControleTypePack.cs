@@ -37,6 +37,24 @@ namespace PNPUCore.Controle
         }
 
         /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleTypePack(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+            lCMD_L = ParamAppli.ListeCmdL;
+            lCMD_D = ParamAppli.ListeCmdD;
+            lCMD_F = ParamAppli.ListeCmdF;
+            lCMD_B = ParamAppli.ListeCmdB;
+
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. Elle va appeler la méthode ControleUnTypack pour chaque type de pack (L, B, D et F).
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -52,22 +70,22 @@ namespace PNPUCore.Controle
 
                 if (ControleUnTypack("_L", lCMD_L, dmaManagerAccess) == false)
                 {
-                    bResultat = ParamAppli.StatutError;
+                    bResultat = ResultatErreur;
                 }
 
                 if (ControleUnTypack("_D", lCMD_D, dmaManagerAccess) == false)
                 {
-                    bResultat = ParamAppli.StatutError;
+                    bResultat = ResultatErreur;
                 }
 
                 if (ControleUnTypack("_F", lCMD_F, dmaManagerAccess) == false)
                 {
-                    bResultat = ParamAppli.StatutError;
+                    bResultat = ResultatErreur;
                 }
 
                 if (ControleUnTypack("_B", lCMD_B, dmaManagerAccess) == false)
                 {
-                    bResultat = ParamAppli.StatutError;
+                    bResultat = ResultatErreur;
                 }
 
             }

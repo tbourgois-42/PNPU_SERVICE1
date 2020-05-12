@@ -27,9 +27,24 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les tables livrées sont référencées dans le catalogue des tables";
             LibControle = "Contrôle du catalogue des tables";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
-         /// <summary>  
+        /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleCatalogueTable(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -98,7 +113,7 @@ namespace PNPUCore.Controle
                     foreach(string sCle in dListeAControler.Keys)
                     {
                         Process.AjouteRapport("Livraison de la table " + sCle + " dans le pack " + dListeAControler[sCle] + " sans mise à jour du catalogue des tables.");
-                        bResultat = ParamAppli.StatutError;
+                        bResultat = ResultatErreur;
                     }
                 }
 

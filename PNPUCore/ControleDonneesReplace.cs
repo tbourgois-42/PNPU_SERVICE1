@@ -28,6 +28,19 @@ namespace PNPUCore.Controle
         }
 
         /// <summary>  
+        /// Constructeur de la classe. 
+        /// </summary>  
+        /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
+        /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
+        public ControleDonneesReplace(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        {
+             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            LibControle = drRow[1].ToString();
+            ToolTipControle = drRow[6].ToString();
+            ResultatErreur = drRow[5].ToString();
+        }
+
+        /// <summary>  
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
@@ -108,14 +121,14 @@ namespace PNPUCore.Controle
                                         if (drRow2[0].ToString() == "0")
                                         {
                                             Process.AjouteRapport("Replace sur la table " + sTable + " dans le pack " + drRow[0].ToString() + " sans donnée dans le mdb(filtre: " + sWhere + ")");
-                                            bResultat = ParamAppli.StatutError;
+                                            bResultat = ResultatErreur;
                                         }
                                     }
                                 }
                                 else
                                 {
                                     Process.AjouteRapport("Replace sur la table " + sTable + " dans le pack " + drRow[0].ToString() + " sans donnée dans le mdb(filtre: " + sWhere + ")");
-                                    bResultat = ParamAppli.StatutError;
+                                    bResultat = ResultatErreur;
                                 }
                             }
                             if (iIndex >= 0)

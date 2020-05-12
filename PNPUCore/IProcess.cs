@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
+using PNPUCore.Controle;
 
 namespace PNPUCore.Process
 {
@@ -24,6 +26,10 @@ namespace PNPUCore.Process
         string BASE { get; set; }
 
         string SERVER { get; set; }
+
+        string TYPOLOGY { get; set; }
+
+        bool STANDARD { get; set; }
     }
 
     internal class ProcessCore : IProcess
@@ -35,6 +41,8 @@ namespace PNPUCore.Process
         public int PROCESS_ID { get; set; }
         public string BASE { get; set; }
         public string SERVER { get; set; }
+        public string TYPOLOGY { get; set; }
+        public bool STANDARD { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;
@@ -50,6 +58,7 @@ namespace PNPUCore.Process
             RapportProcess = new RProcess();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
+            STANDARD = true;
         }
 
         private void GenerateHistoric()
@@ -127,6 +136,52 @@ namespace PNPUCore.Process
         {
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
             RequestTool.CreateUpdateStepHistoric(historicStep);
+        }
+
+
+        /// <summary>
+        /// Methode permettant de récupérer dynamiquement la liste des contrôles à lancer en fonction du process, de la typologie client et du type de pack (standard ou non).
+        /// </summary>
+        /// <param name="listControl">Au retour de l'appel contient la liste des contrôles à exécuter dans le process</param>
+        protected void GetListControle(ref List<IControle> listControl)
+        {
+            DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
+            DataSet dsDataSet;
+            string sRequete = "SELECT ID_CONTROLE, CONTROLE_LABEL, TYPOLOGY, RUN_STANDARD, ID_PROCESS, ERROR_TYPE, TOOLTIP FROM PNPU_CONTROLE WHERE ID_PROCESS =" + this.PROCESS_ID.ToString();
+
+            if ((this.CLIENT_ID != string.Empty) && (this.CLIENT_ID != "ALL"))
+            {
+                try
+                {
+                    string sTypology = ParamAppli.ListeInfoClient[this.CLIENT_ID].Typology;
+                    if (sTypology != string.Empty)
+                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + sTypology + "*%'))";
+                }
+                catch (Exception)
+                { }
+            }
+            /*else if (this.TYPOLOGY != string.Empty)
+            {
+                sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
+            }
+            */
+            if (this.STANDARD == false)
+            {
+                sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
+            }
+
+            listControl.Clear();
+            dsDataSet = dmsDataManager.GetData(sRequete,ParamAppli.ConnectionStringBaseAppli);
+
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                {
+                    string sControle = drRow[0].ToString();
+                    IControle iControle = (IControle)Activator.CreateInstance(Type.GetType(sControle), this, drRow);
+                    listControl.Add(iControle);
+                }
+            }
         }
     }
 }

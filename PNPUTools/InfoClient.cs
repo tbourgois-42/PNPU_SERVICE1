@@ -1,0 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace PNPUTools
+{
+
+    public class InfoClient
+    {
+        public string ID_CLIENT { get; set; }
+        public string CLIENT_NAME { get; set; }
+        public string Typology { get; set; }
+        public string ConnectionStringQA1 { get; set; }
+        public string ConnectionStringQA2 { get; set; }
+
+        public InfoClient(string sID_CLIENT, string sCLIENT_NAME, string sTypology, string sConnectionStringQA1, string sConnectionStringQA2)
+        {
+            ID_CLIENT = sID_CLIENT;
+            CLIENT_NAME = sCLIENT_NAME;
+            Typology = sTypology;
+            ConnectionStringQA1 = sConnectionStringQA1;
+            ConnectionStringQA2 = sConnectionStringQA2;
+        }
+    }
+
+
+}

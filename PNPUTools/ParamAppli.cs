@@ -42,7 +42,7 @@ namespace PNPUTools
         /// Liste des commandes autorisées dans le packs de type "L".
         /// </summary> 
         public static List<string> ListeCmdL { get; }
-        
+
         /// <summary>  
         /// Liste des commandes autorisées dans le packs de type "D".
         /// </summary> 
@@ -77,7 +77,7 @@ namespace PNPUTools
         /// Chaine de connexion à la base de l'application.
         /// </summary> 
         public static string ConnectionStringBaseAppli { get; }
-        
+
         /// <summary>  
         /// Chaine de connexion à la base de du support.
         /// </summary> 
@@ -87,6 +87,9 @@ namespace PNPUTools
         /// Dossier temporaire utilisé pour l'application.
         /// </summary>
         public static string DossierTemporaire { get; }
+
+        public static Dictionary<string, InfoClient> ListeInfoClient {get;}
+
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";
         public const string StatutError = "ERROR";
@@ -127,6 +130,7 @@ namespace PNPUTools
 
             npcsPipeClient = null;
 
+            ListeInfoClient = new Dictionary<string, InfoClient>();
 
 
             // A lire dans base de ref
@@ -221,6 +225,20 @@ namespace PNPUTools
                         }
                     }
   
+                }
+
+                //Chargement des infos clients
+                if (ConnectionStringSupport != string.Empty)
+                {
+                    dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME,CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION WHERE SAAS is not NULL AND SAAS = CODIFICATION_ID", ConnectionStringSupport);
+
+                    if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+                    {
+                        foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                        {
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), string.Empty, string.Empty)) ;
+                        }
+                    }
                 }
             }
             catch (Exception ex)

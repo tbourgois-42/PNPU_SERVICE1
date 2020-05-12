@@ -1,5 +1,6 @@
 ﻿using PNPUCore.Process;
 using System;
+using System.Net.Http.Headers;
 
 namespace PNPUCore.Controle
 {
@@ -19,6 +20,8 @@ namespace PNPUCore.Controle
         public string ToolTipControle { get; set; }
         public string LibControle { get; set; }
         private IProcess processControle;
+        protected string ResultatErreur;
+
 
         public IProcess GetProcessControle()
         {
