@@ -6,7 +6,7 @@
         client: clientName,
         step: currentStep,
         workflowDate: workflowDate,
-        textStatus: localtextStatus,
+        textStatus: textStatus,
         workflowID: workflowID
       }
     }"
@@ -26,11 +26,11 @@
           <v-card-title class="headline subtitle-2 text-uppercase">
             {{ clientName }}
           </v-card-title>
-          <v-card-subtitle class="pb-0">ID {{ localIDORGA }}</v-card-subtitle>
+          <v-card-subtitle class="pb-0">ID {{ idorga }}</v-card-subtitle>
           <span class="ma-0 pl-4 subtitle-2 body-2"
             >Step {{ currentStep }} / {{ maxStep }}</span
           >
-          <v-card-subtitle>{{ localclientTypolgie }}</v-card-subtitle>
+          <v-card-subtitle>{{ clientTypolgie }}</v-card-subtitle>
           <v-chip
             v-if="currentStep == 10"
             color="green lighten-1"
@@ -42,24 +42,28 @@
           </v-chip>
           <v-chip
             v-else-if="currentStep < 10"
-            :color="localcolorIconStatus"
+            :color="colorIconStatus"
             class="ml-3 mb-3"
             text-color="white"
           >
-            <v-icon left color="white">{{ localiconStatus }}</v-icon>
-            {{ localtextStatus }}
+            <v-icon left color="white">{{ iconStatus }}</v-icon>
+            {{ textStatus }}
           </v-chip>
         </div>
         <v-progress-circular
           :rotate="-90"
           :size="120"
           :width="10"
-          :value="localpercentCircular"
-          :color="localcolorCircular"
+          :value="percentCircular.toFixed(2)"
+          :color="colorCircular"
           class="ma-5"
         >
-          {{ localpercentCircular }}
+          {{ percentCircular.toFixed(2) }}
         </v-progress-circular>
+        <!-- <v-card-actions>
+          <v-btn text>Button</v-btn>
+          <v-btn text>Button</v-btn>
+        </v-card-actions>-->
       </v-card>
     </v-hover>
   </nuxt-link>
@@ -75,69 +79,57 @@ export default {
     clientTypolgie: { type: String, default: 'clientTypolgie' },
     colorIconStatus: { type: String, default: 'grey lighten-1' },
     iconStatus: { type: String, default: 'mdi-progress-clock' },
-    textStatus: { type: String, default: null },
+    textStatus: { type: String, default: '' },
     percentCircular: { type: Number, default: 0 },
     colorCircular: { type: String, default: 'primary' },
     workflowDate: { type: String, default: '' },
     idorga: { type: String, default: '' },
     workflowID: { type: String, default: '' }
   },
-  data() {
-    return {
-      localcolorCircular: this.colorCircular,
-      localiconStatus: this.iconStatus,
-      localcolorIconStatus: this.colorIconStatus,
-      localpercentCircular: this.percentCircular,
-      localtextStatus: this.textStatus,
-      localclientTypolgie: this.clientTypolgie,
-      localIDORGA: this.IDORGA
-    }
-  },
-  beforeMount() {
+  mounted() {
     this.getStatusClient()
     this.setColorByTypologie()
   },
   methods: {
     getStatusClient() {
-      switch (this.localtextStatus) {
-        case 'COMPLETED':
-          this.localcolorIconStatus = 'success'
-          this.localiconStatus = 'mdi-check-circle'
-          this.localpercentCircular = 100
-          this.localtextStatus = 'Terminé'
+      switch (this.textStatus) {
+        case 'CORRECT':
+          this.colorIconStatus = 'success'
+          this.iconStatus = 'mdi-check-circle'
+          this.textStatus = 'Terminé'
           break
         case 'WARNING':
-          this.localcolorIconStatus = 'warning'
-          this.localiconStatus = 'mdi-hand'
-          this.localtextStatus = 'Manuel'
+          this.colorIconStatus = 'warning'
+          this.iconStatus = 'mdi-hand'
+          this.textStatus = 'Manuel'
           break
         case 'IN PROGRESS':
-          this.localcolorIconStatus = 'grey lighten-1'
-          this.localiconStatus = 'mdi-progress-clock'
-          this.localtextStatus = 'En cours'
+          this.colorIconStatus = 'grey lighten-1'
+          this.iconStatus = 'mdi-progress-clock'
+          this.textStatus = 'En cours'
           break
         case 'ERROR':
-          this.localcolorIconStatus = 'error'
-          this.localiconStatus = 'mdi-close-circle'
-          this.localtextStatus = 'En erreur'
+          this.colorIconStatus = 'error'
+          this.iconStatus = 'mdi-close-circle'
+          this.textStatus = 'En erreur'
           break
         default:
-          console.log('Sorry, we are out of ' + this.localtextStatus + '.')
+          console.log('Sorry, we are out of ' + this.textStatus + '.')
       }
     },
     setColorByTypologie() {
-      switch (this.localclientTypolgie) {
+      switch (this.clientTypolgie) {
         case 'SAAS DEDIE':
-          this.localcolorCircular = 'teal lighten-2'
-          this.localclientTypolgie = 'SaaS Dédié'
+          this.colorCircular = 'teal lighten-2'
+          this.clientTypolgie = 'SaaS Dédié'
           break
         case 'SAAS DESYNCHRONISE':
-          this.localcolorCircular = 'lime lighten-2'
-          this.localclientTypolgie = 'SaaS Désynchronisé'
+          this.colorCircular = 'lime lighten-2'
+          this.clientTypolgie = 'SaaS Désynchronisé'
           break
         case 'SAAS MUTUALISE':
-          this.localcolorCircular = 'red lighten-2'
-          this.localclientTypolgie = 'SaaS Mutualisé'
+          this.colorCircular = 'red lighten-2'
+          this.clientTypolgie = 'SaaS Mutualisé'
           break
       }
     }

@@ -8,7 +8,7 @@
               {{ client }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              Workflow {{ workflowDate }} | Step {{ etape }}
+              {{ workflowDate }} | Step {{ etape }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -173,30 +173,31 @@ export default {
     },
 
     async getWorkflowProcesses() {
+      const vm = this
       try {
         const res = await axios.get(
           `${process.env.WEB_SERVICE_WCF}/workflow/` +
-            this.workflowID +
+            vm.workflowID +
             `/processus`
         )
-        this.steps = res.data.GetWorkflowProcessesResult
-        for (let i = 0; i < this.e1; i++) {
-          this.steps[i].ID_STATUT = 'COMPLETED'
-          this.steps[i].ICON = 'mdi-check'
-          this.steps[i].COLOR = 'light green'
+        vm.steps = res.data.GetWorkflowProcessesResult
+        for (let i = 0; i < vm.e1; i++) {
+          vm.steps[i].ID_STATUT = 'CORRECT'
+          vm.steps[i].ICON = 'mdi-check'
+          vm.steps[i].COLOR = 'light green'
         }
-        if (this.textStatus === 'En erreur') {
-          this.steps[this.e1 - 1].COLOR = 'error'
-          this.steps[this.e1 - 1].ICON = 'mdi-alert'
-          this.steps[this.e1 - 1].ID_STATUT = 'ERROR'
-        } else if (this.textStatus === 'Manuel') {
-          this.steps[this.e1 - 1].COLOR = 'warning'
-          this.steps[this.e1 - 1].ICON = 'mdi-hand'
-          this.steps[this.e1 - 1].ID_STATUT = 'WARNING'
+        if (vm.textStatus === 'En erreur') {
+          vm.steps[vm.e1 - 1].COLOR = 'error'
+          vm.steps[vm.e1 - 1].ICON = 'mdi-alert'
+          vm.steps[vm.e1 - 1].ID_STATUT = 'ERROR'
+        } else if (vm.textStatus === 'Manuel') {
+          vm.steps[vm.e1 - 1].COLOR = 'warning'
+          vm.steps[vm.e1 - 1].ICON = 'mdi-hand'
+          vm.steps[vm.e1 - 1].ID_STATUT = 'WARNING'
         } else {
-          this.steps[this.e1 - 1].COLOR = 'primary'
-          this.steps[this.e1 - 1].ICON = 'mdi-pencil'
-          this.steps[this.e1 - 1].ID_STATUT = 'IN PROGRESS'
+          vm.steps[vm.e1 - 1].COLOR = 'primary'
+          vm.steps[vm.e1 - 1].ICON = 'mdi-pencil'
+          vm.steps[vm.e1 - 1].ID_STATUT = 'IN PROGRESS'
         }
       } catch (e) {
         return e
