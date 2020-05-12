@@ -401,4 +401,7 @@ export default {
 .slide-in-enter-active {
   transition: all 0.4s ease;
 }
+.cursor {
+  cursor: pointer;
+}
 </style>
