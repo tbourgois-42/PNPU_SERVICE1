@@ -113,19 +113,20 @@ namespace PNPUCore.Process
                 try
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_H_REPORT (ID_ORGANIZATION, ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE, CLIENT_ID1) VALUES('0000', @ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE, @CLIENT_ID1)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_H_REPORT (ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE) VALUES(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE)", conn))
                     {
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int, 10).Value = 1;
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int, 15).Value = process.WORKFLOW_ID;
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = process.PROCESS_ID;
                         cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
                         cmd.Parameters.Add("@JSON_TEMPLATE", SqlDbType.Text).Value = json.Replace("\r\n", "");
-                        cmd.Parameters.Add("@CLIENT_ID1", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
                 }
                 catch (SqlException ex)
                 {
+                    string msgError = "L'insertion du report du client " + process.CLIENT_ID + ", process " + process.PROCESS_ID + " ,workflow " + process.WORKFLOW_ID + " a échoué !";
+                    Console.WriteLine(msgError);
                     return false;
                 }
                 return true;

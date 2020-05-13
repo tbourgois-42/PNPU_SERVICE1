@@ -30,7 +30,7 @@
         class="ml-4 mb-4 mt-4"
         color="success"
         text-color="white"
-        @click.prevent="filterIndicators('COMPLETED')"
+        @click.prevent="filterIndicators('CORRECT')"
       >
         <v-avatar left class="green darken-4">{{ countDone }}</v-avatar>
         Terminé
@@ -68,7 +68,7 @@ export default {
   computed: {
     countDone() {
       return this.localClients.filter(
-        (client) => client.ID_STATUT === 'COMPLETED'
+        (client) => client.ID_STATUT === 'CORRECT'
       ).length
     },
     countInProgress() {
@@ -100,9 +100,9 @@ export default {
         this.ClientsFiltered = this.localClients.filter(
           (items) => items.ID_STATUT === 'WARNING'
         )
-      } else if (filter === 'COMPLETED') {
+      } else if (filter === 'CORRECT') {
         this.ClientsFiltered = this.localClients.filter(
-          (items) => items.ID_STATUT === 'COMPLETED'
+          (items) => items.ID_STATUT === 'CORRECT'
         )
       } else if (filter === 'ERROR') {
         this.ClientsFiltered = this.localClients.filter(
@@ -116,6 +116,7 @@ export default {
         this.ClientsFiltered = this.localClients
         this.iconFilter = 'mdi-filter'
       }
+      console.log('ClientsFiltered', this.ClientsFiltered)
       this.$emit('getIndicators', this.ClientsFiltered)
     }
   }

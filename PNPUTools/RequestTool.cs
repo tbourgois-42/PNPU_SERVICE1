@@ -46,7 +46,7 @@ namespace PNPUTools
         public static IEnumerable<InfoClientStep> GetAllInfoClient(decimal WORKFLOW_ID)
         {
             // Par défault on charge sur le dashboard le dernier Workflow en cours
-            string defaultWorkflowID = "(SELECT TOP(1) PHW.WORKFLOW_ID FROM PNPU_H_WORKFLOW PHW WHERE PHW.ENDING_DATE = '1800/01/01' ORDER BY ENDING_DATE)";
+            string defaultWorkflowID = "(SELECT TOP(1) PHW.WORKFLOW_ID FROM PNPU_H_WORKFLOW PHW, PNPU_H_WORKFLOW PHW2 WHERE PHW.ID_H_WORKFLOW = PHW2.ID_H_WORKFLOW AND PHW.LAUNCHING_DATE = (SELECT MAX(PHW2.LAUNCHING_DATE) FROM PNPU_H_WORKFLOW PHW2))";
 
             string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
 
@@ -239,8 +239,8 @@ namespace PNPUTools
                             cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
                             cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
                             cmd.Parameters.Add("@USER_ID", SqlDbType.VarChar, 254).Value = input.USER_ID;
-                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.Date).Value = input.LAUNCHING_DATE;
-                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.Date).Value = input.ENDING_DATE;
+                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.DateTime).Value = input.LAUNCHING_DATE;
+                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime).Value = input.ENDING_DATE;
                             cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
                             cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
 
