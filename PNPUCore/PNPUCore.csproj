@@ -47,6 +47,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
     <Compile Include="ControleRechercheDependancesRef.cs" />
+    <Compile Include="ControleDependanceN1.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ControleIDSynonymExistant.cs" />
     <Compile Include="ControleItemsTotaux.cs" />

@@ -11,7 +11,7 @@ using PNPUTools;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de controler les dépendances de niveau 1 entre les tâches CCT livrées dans le HF et tâches existantes sur la base de référence. 
+    /// Cette classe permet de controler les dépendances entre les tâches CCT livrées dans le HF et tâches existantes sur la base de référence. 
     /// </summary>  
     class ControleRechercheDependancesRef : PControle, IControle
     {
@@ -32,9 +32,10 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public bool MakeControl()
+        public string MakeControl()
         {
-            bool bResultat = true;
+            bool bResultat;
+            string sResultat = ParamAppli.StatutOk;
             string sRequete;
             string sNomMdb;
             DataManagerAccess dmaManagerAccess = null;
@@ -63,7 +64,7 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             sTacheCCT = drRow[0].ToString();
-                            if (lTacheCCTHF.Contains(sTacheCCT) == false)
+                            if ((sTacheCCT != string.Empty) && (lTacheCCTHF.Contains(sTacheCCT) == false))
                             {
                                 lTacheCCTHF.Add(sTacheCCT);
                                 if (bPremierElement == true)
@@ -100,14 +101,16 @@ namespace PNPUCore.Controle
                     sFiltreNiveauN1 = string.Empty;
                     bResultat = RechercheDependances(3, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
                 }
+                if (bResultat == false)
+                    sResultat = ParamAppli.StatutError;
             }
             catch (Exception ex)
             {
                 // TODO, loguer l'exception
-                bResultat = false;
+                sResultat = ParamAppli.StatutError;
             }
 
-            return bResultat;
+            return sResultat;
 
         }
 
@@ -115,7 +118,10 @@ namespace PNPUCore.Controle
         /// Le but de cette fonction est de déterminer les dépendances de de niveau 1 pour les packs livrés dans le HF.
         /// On détecte les tâches CCT dépendantes car au niveau 1 on va récupérer tout le contenu des tâches dépendantes qui manquent sur l'environnement client.
         /// </summary>
-        /// <param name="lTacheDepN2">Ce paramètre contient au retour de l'appel toutes les tâches</param>
+        /// <param name="iNiveau">Niveau de dépendance recherché.</param>
+        /// <param name="sFiltreNiveauxPrec">Liste des tâches CCT des niveaux précédents, pour ne pas avoir de dépendance cyclique</param>
+        /// <param name="sFiltreNiveauN">Liste des tâche CCT pour lesquelles on cherche les dépendances</param>
+        /// <param name="sFiltreNiveauN1">Au retour contient la liste des tâches CCT dépendantes</param>
         /// <returns></returns>
         private bool RechercheDependances(int iNiveau, string sFiltreNiveauxPrec, string sFiltreNiveauN, ref string sFiltreNiveauN1)
         {
@@ -142,15 +148,19 @@ namespace PNPUCore.Controle
 
                 if (sFiltreNiveauN != string.Empty)
                 {
-                    sRequete = "SELECT CCT_TASK_ID,CCT_OBJECT_TYPE,CCT_OBJECT_ID,CCT_PARENT_OBJ_ID,DEP_CCT_TASK_ID,DEP_CCT_OBJECT_TYPE,DEP_CCT_OBJECT_ID,DEP_CCT_PARENT_OBJ_ID,DEP_CCT_ACTION_TYPE,DEP_CCT_PACK_TYPE,DEP_CCT_COMMAND_TYPE from M4CFR_VW_CCT_DEPENDANCES where ";
-                    sRequete += "CCT_TASK_ID IN (" + sFiltreNiveauN + ") ";
-                    sRequete += "AND DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauN + ") ";
+                    sRequete = "SELECT A.CCT_TASK_ID,A.CCT_OBJECT_TYPE,A.CCT_OBJECT_ID,A.CCT_PARENT_OBJ_ID,A.DEP_CCT_TASK_ID,A.DEP_CCT_OBJECT_TYPE,A.DEP_CCT_OBJECT_ID,A.DEP_CCT_PARENT_OBJ_ID,A.DEP_CCT_ACTION_TYPE,A.DEP_CCT_PACK_TYPE,A.DEP_CCT_COMMAND_TYPE ";
+                    sRequete += "FROM M4CFR_VW_CCT_DEPENDANCES A ";
+                    sRequete += "INNER JOIN M4RDL_PACKAGES B ON (A.CCT_TASK_ID = B.CCT_TASK_ID) ";
+                    sRequete += "INNER JOIN M4RDL_RAM_PACKS C ON (C.ID_PACKAGE = B.ID_PACKAGE) ";
+                    sRequete += "WHERE A.CCT_TASK_ID IN (" + sFiltreNiveauN + ") ";
+                    sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauN + ") ";
                     if (sFiltreNiveauxPrec != string.Empty)
-                        sRequete += "AND DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauxPrec + ") ";
+                        sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauxPrec + ") ";
                     if (CCT_OBJECT_TYPE_INT != String.Empty)
-                        sRequete += "AND CCT_OBJECT_TYPE NOT IN (" + CCT_OBJECT_TYPE_INT + ") ";
-                    sRequete += "AND DEP_CCT_TASK_ID not like '%DEF%' ";
-                    sRequete += "AND CCT_OBJECT_TYPE+CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL')";
+                        sRequete += "AND A.CCT_OBJECT_TYPE NOT IN (" + CCT_OBJECT_TYPE_INT + ") ";
+                    sRequete += "AND A.DEP_CCT_TASK_ID not like '%DEF%' ";
+                    sRequete += "AND A.CCT_OBJECT_TYPE+A.CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL') ";
+                    
 
                     dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -159,6 +169,12 @@ namespace PNPUCore.Controle
                         using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                         {
                             conn.Open();
+                            sRequete = "DELETE FROM PNPU_DEP_REF WHERE ID_H_WORKFLOW = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = "+ iNiveau.ToString();
+                            using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                            {
+                                int rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
                             sRequete = "INSERT INTO PNPU_DEP_REF (";
                             sRequete += "ID_H_WORKFLOW";
                             sRequete += ",NIV_DEP";

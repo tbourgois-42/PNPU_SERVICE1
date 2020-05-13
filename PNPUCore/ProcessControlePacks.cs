@@ -41,6 +41,8 @@ namespace PNPUCore.Process
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
+            RControle RapportControle;
+            Rapport.Source RapportSource;
 
             //POUR TEST 
             /*this.CLIENT_ID = "101";
@@ -63,13 +65,13 @@ namespace PNPUCore.Process
             foreach (string sMDB in listMDB)
             {
                 MDBCourant = sMDB;
-                Rapport.Source RapportSource = new Rapport.Source();
+                RapportSource = new Rapport.Source();
                 RapportSource.Name = System.IO.Path.GetFileName(sMDB);
                 RapportSource.Controle = new List<RControle>();
                 SourceResult = ParamAppli.StatutOk;
                 foreach (IControle controle in listControl)
                 {
-                    RControle RapportControle = new RControle();
+                    RapportControle = new RControle();
                     RapportControle.Name = controle.GetLibControle();
                     RapportControle.Tooltip = controle.GetTooltipControle();
                     RapportControle.Message = new List<string>();
@@ -106,30 +108,52 @@ namespace PNPUCore.Process
 
             // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
-            Rapport.Source RapportSource2 = new Rapport.Source();
-            RapportSource2.Name = "Contrôle des dépendances inter packages";
-            RapportSource2.Controle = new List<RControle>();
-            RControle RapportControle2 = new RControle();
-            RapportControle2.Name = cdmControleDependancesMDB.ToString();
-            RapportControle2.Message = new List<string>();
-            RapportControleCourant = RapportControle2;
-            RapportControle2.Result = ParamAppli.TranscoSatut[cdmControleDependancesMDB.MakeControl()];
+            RapportSource = new Rapport.Source();
+            RapportSource.Name = "Contrôle des dépendances inter packages";
+            RapportSource.Controle = new List<RControle>();
+            RapportControle = new RControle();
+            RapportControle.Name = cdmControleDependancesMDB.ToString();
+            RapportControle.Message = new List<string>();
+            RapportControleCourant = RapportControle;
+            RapportControle.Result = ParamAppli.TranscoSatut[cdmControleDependancesMDB.MakeControl()];
             //RapportSource2.Controle.Add(RapportControle2);
-            RapportProcess.Source.Add(RapportSource2);
-            RapportProcess.Fin = DateTime.Now;
-            RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
+            RapportProcess.Source.Add(RapportSource);
 
-            // Génération du fichier des dépendances
+            // Génération du fichier CSV des dépendances
             StreamWriter swFichierDep = new StreamWriter(Path.Combine(ParamAppli.DossierTemporaire, this.WORKFLOW_ID.ToString("000000") + "_DEPENDANCES.csv"));
-            foreach (string sLig in RapportControle2.Message)
+            foreach (string sLig in RapportControle.Message)
                 swFichierDep.WriteLine(sLig);
             swFichierDep.Close();
             // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
-            RapportControle2.Message.Clear();
-            RapportSource2.Result = RapportControle2.Result;
+            RapportControle.Message.Clear();
+            RapportSource.Result = RapportControle.Result;
+
+
+            // Recherche des dépendances avec les tâches CCT sur la base de référence
+            ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
+            RapportSource = new Rapport.Source();
+            RapportSource.Name = "Recherche des dépendances avec les tâches CCT sur la base de référence";
+            RapportSource.Controle = new List<RControle>();
+            RapportControle = new RControle();
+            RapportControle.Name = cdmControleDependancesMDB.ToString();
+            RapportControle.Message = new List<string>();
+            RapportControleCourant = RapportControle;
+            RapportControle.Result = ParamAppli.TranscoSatut[crdrControleRechercheDependancesRef.MakeControl()];
+            //RapportSource2.Controle.Add(RapportControle2);
+            RapportProcess.Source.Add(RapportSource);
+
+            // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
+            RapportControle.Message.Clear();
+            RapportSource.Result = RapportControle.Result;
+
+
+
+            RapportProcess.Fin = DateTime.Now;
+            RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
+            //string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
+            string[] listClientId = new string[] { "111" };//{ "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
 
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
@@ -158,7 +182,7 @@ namespace PNPUCore.Process
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
- //              LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
+               LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
 
             }
         }

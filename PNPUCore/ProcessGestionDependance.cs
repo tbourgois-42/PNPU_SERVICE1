@@ -29,8 +29,13 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            List<IControle> listControl = ListControls.listOfMockControl;
+            List<IControle> listControl = new List<IControle>();//ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
+
+            GetListControle(ref listControl);
+            //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
+            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
+
             sRapport = string.Empty;
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
