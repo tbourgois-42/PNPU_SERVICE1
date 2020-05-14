@@ -37,10 +37,10 @@ namespace WcfService1
             if (ssStreamString == null)
                 ssStreamString = new StreamString(npcsPipeClient);
             ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);
-            
-            
+
+
             string result = ssStreamString.ReadString();
-             return result;
+            return result;
         }
 
 
@@ -130,11 +130,11 @@ namespace WcfService1
 
             if (ssStreamString == null)
                 ssStreamString = new StreamString(npcsPipeClient);
-            
+
             ssStreamString.WriteString(WorkflowName);
 
             string result = (ssStreamString.ReadString());
-             return result;
+            return result;
         }
 
         public string CreateWorkflow(PNPU_WORKFLOW input)
@@ -155,15 +155,16 @@ namespace WcfService1
         {
             var parser = MultipartFormDataParser.Parse(stream);
 
-            string typology = parser.GetParameterValue("typology");
-            string clients = parser.GetParameterValue("clients");
-
+            string typology = parser.GetParameterValue("typology"); //separate by , 
+            string clients = parser.GetParameterValue("clients"); // separate by ,
+            bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
+            
             // Files are stored in a list:
             FilePart file = parser.Files.First();
             string FileName = file.FileName;
 
             int workflowId = int.Parse(workflowId_);
-            
+
             //EST CE QUE LE DOSSIER TEMP EXISTE
             if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
                 Directory.CreateDirectory(ParamAppli.DossierTemporaire);
@@ -179,9 +180,33 @@ namespace WcfService1
             GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
             //AJOUT DU ZIP DE MDB DANS LA BDD
             gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli);
+            string clientToLaunch = "";
+
+            //Bring all client
+            if (String.IsNullOrEmpty(clients) && !String.IsNullOrEmpty(typology))
+            {
+                //REQUETE
+                int typologyId = Int32.Parse(typology);
+                IEnumerable<InfoClient> listClient = RequestTool.getClientsWithTypologies(typologyId);
+                foreach (InfoClient client in listClient)
+                {
+                    clientToLaunch = clientToLaunch + client.ID_CLIENT + ",";
+                }
+                clientToLaunch.Remove(clientToLaunch.Length - 1);
+            }
+            else if (!String.IsNullOrEmpty(clients) && !String.IsNullOrEmpty(typology))
+            {
+                //Récupérer les clients du front
+                clientToLaunch = clients;
+            }
+            else
+            {
+                //GENERATE EXCEPTION
+                throw new Exception();
+            }
 
             //Launch process
-            LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, "ALL");
+            LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch);
 
             //SUPPRESSION DU FICHIER
             File.Delete(FilePath);
@@ -223,6 +248,16 @@ namespace WcfService1
             decimal workflowId = decimal.Parse(workflowId_);
             decimal idProcess = decimal.Parse(idProcess_);
             return RequestTool.getReport(idProcess, workflowId, clientId);
+        }
+
+        public IEnumerable<InfoClient> getListClientsByTypo(string TypologyId)
+        {
+            return RequestTool.getClientsWithTypologies(Int32.Parse(TypologyId));
+        }
+
+        public IEnumerable<InfoClient> getListClients()
+        {
+            return RequestTool.getClientsWithTypologies();
         }
     }
 

@@ -154,7 +154,7 @@ namespace PNPUCore.Process
             {
                 try
                 {
-                    string sTypology = ParamAppli.ListeInfoClient[this.CLIENT_ID].Typology;
+                    string sTypology = ParamAppli.ListeInfoClient[this.CLIENT_ID].TYPOLOGY_ID;
                     if (sTypology != string.Empty)
                         sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + sTypology + "*%'))";
                 }

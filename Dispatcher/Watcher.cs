@@ -84,19 +84,19 @@ namespace PNUDispatcher
              }
         }
 
-        private static void LaunchProcess(string clientName, int workflowId, int process)
+        private static void LaunchProcess(string listclientId, int workflowId, int process)
         {
-            Thread thread = new Thread(() => LaunchProcessFunction(clientName, workflowId, process));
+            Thread thread = new Thread(() => LaunchProcessFunction(listclientId, workflowId, process));
 
             //Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
             thread.Start();
         }
 
 
-        private static void LaunchProcessFunction(string clientName, int workflowId, int process)
+        private static void LaunchProcessFunction(string listclientId, int workflowId, int process)
         {
             var launcher = new Launcher();
-            launcher.Launch(clientName, workflowId, process);
+            launcher.Launch(listclientId, workflowId, process);
         }
 
 

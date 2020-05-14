@@ -192,7 +192,7 @@ export default {
     maxStep: 7,
     search: '',
     filter: '',
-    typologie: ['SaaS Dédié', 'SaaS Mutualisé', 'SaaS Désynchronisé'],
+    typologie: [{ value: 256, text: 'SaaS Dédié' }, { value: 257, text: 'SaaS Mutualisé' }, { value: 258, text: 'SaaS Désynchronisé' }],
     filteredIndicators: [],
     colorIconStatus: '',
     iconStatus: '',

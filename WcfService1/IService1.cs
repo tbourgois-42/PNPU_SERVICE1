@@ -1,4 +1,5 @@
 using PNPUCore.Database;
+using PNPUTools;
 using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
@@ -197,6 +198,20 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "worflow/{WorkflowId}/uploadFile")]
         void UploadFile(Stream stream, string WorkflowId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "clientsByTypo/{TypologyId}")]
+        IEnumerable<InfoClient> getListClientsByTypo( string TypologyId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "clientsByTypo")]
+        IEnumerable<InfoClient> getListClients();
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

@@ -4,6 +4,7 @@ using System.Text;
 using PNPUTools.DataManager;
 using System.Data;
 using System.IO.Pipes;
+using System.Data.SqlClient;
 
 namespace PNPUTools
 {
@@ -95,6 +96,8 @@ namespace PNPUTools
         public const string StatutError = "ERROR";
         public const string StatutWarning = "WARNING";
         public static string LogLevel = "DEBUG";
+
+        public const string connectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
 
 
         public const int ProcessControlePacks = 1;
@@ -230,13 +233,13 @@ namespace PNPUTools
                 //Chargement des infos clients
                 if (ConnectionStringSupport != string.Empty)
                 {
-                    dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME,CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION WHERE SAAS is not NULL AND SAAS = CODIFICATION_ID", ConnectionStringSupport);
+                    dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME, SAAS, CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION WHERE SAAS is not NULL AND SAAS = CODIFICATION_ID", ConnectionStringSupport);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), string.Empty, string.Empty)) ;
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[3].ToString(), string.Empty, string.Empty)) ;
                         }
                     }
                 }

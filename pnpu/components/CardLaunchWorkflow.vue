@@ -41,12 +41,12 @@
                   solo
                 ></v-select>
                 <v-select
+                  v-model="clientSelected"
                   :items="lstClient"
                   label="Client"
                   chips
                   multiple
                   solo
-                  @input="getSelectedClient($event)"
                 ></v-select>
                 <v-checkbox v-model="packStandard" label="Package standard"></v-checkbox>
               </v-col>
@@ -123,8 +123,11 @@ export default {
     }
   },
   data: () => ({
-    txtTypologie: '',
+    txtTypologie: [],
+    idTypologie: '',
     lstClient: [],
+    lstClientHidden: [],
+    clientsTypo: [],
     files: '',
     launchWorkflow: false,
     dialog: false,
@@ -132,10 +135,13 @@ export default {
     workflows: [],
     lstSelectedClient: [],
     verifyTypologie() {
-      if (
-        this.txtTypologie.length > 1 &&
-        this.txtTypologie.includes('SaaS Dédié')
-      ) {
+      var saasDedieSelect = false
+      this.txtTypologie.forEach((idTypo) => {
+        if (idTypo === 256) {
+          saasDedieSelect = true
+        }
+      })
+      if (this.txtTypologie.length > 1 && saasDedieSelect) {
         this.launchWorkflow = true
         return 'Impossible de sélectionner SaaS Dédié avec une autre typologie'
       } else {
@@ -153,14 +159,15 @@ export default {
 
   watch: {
     txtTypologie() {
+      debugger
       this.lstClient = []
-      this.clients.forEach((c) => {
-        this.txtTypologie.forEach((t) => {
-          if (t.replace(/é/g, 'e').toUpperCase() === c.TYPOLOGY) {
-            this.lstClient.push(c.CLIENT_ID)
+      for (let client of this.clientsTypo) {
+        for (let idTypo of this.txtTypologie) {
+          if (idTypo.toString() === client.TYPOLOGY_ID) {
+            this.lstClient.push({ value: client.ID_CLIENT, text: client.CLIENT_NAME });
           }
-        })
-      })
+        }
+      }
     }
   },
 
@@ -186,10 +193,11 @@ export default {
 
     async sendFile() {
       const fd = new FormData()
-      if (this.selectedFile !== null && this.txtTypologie !== '') {
+      if (this.selectedFile !== null && this.txtTypologie !== -1) {
+        debugger
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
         fd.append('typology', this.txtTypologie)
-        fd.append('clients', this.lstSelectedClient)
+        fd.append('clients', this.clientSelected)
         fd.append('packStandard', this.packStandard)
         try {
           await axios.post(
@@ -209,7 +217,7 @@ export default {
           'error',
           'Impossible de lancer un workflow sans sélectionner de fichier'
         )
-      } else if (this.txtTypologie === '') {
+      } else if (this.txtTypologie === -1) {
         this.showSnackbar(
           'error',
           'Impossible de lancer un workflow sans sélectionner une typologie'
@@ -228,6 +236,17 @@ export default {
       } catch (error) {
         vm.showSnackbar('error', `${error} !`)
       }
+
+      try {
+        const res2 = await axios.get(`${process.env.WEB_SERVICE_WCF}/clientsByTypo`)
+        vm.clientsTypo = res2.data
+        /*vm.clients.forEach((element) => {
+          vm.lstClientHidden.push(element.CLIENT_NAME)
+        })*/
+      } catch (error) {
+        vm.showSnackbar('error', `${error} !`)
+      }
+
     },
 
     getSelectedWorkflow() {
@@ -236,10 +255,6 @@ export default {
           this.idSelectedWorkflow = element.WORKFLOW_ID
         }
       })
-    },
-
-    getSelectedClient(values) {
-      this.lstSelectedClient = values
     },
 
     showSnackbar(color, message) {
