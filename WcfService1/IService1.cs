@@ -153,6 +153,14 @@ namespace WcfService1
         string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID);
 
         [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "Workflow/{workflowID}/maxstep")]
+        string GetMaxStep(string workflowID);
+
+        [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
