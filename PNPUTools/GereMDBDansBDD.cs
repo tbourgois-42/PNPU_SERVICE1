@@ -17,7 +17,7 @@ namespace PNPUTools
         /// <param name="sDossierTempo">Dossier de travail pour générer le fichier zip.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns></returns>
-        public int AjouteFichiersMDBBDD(string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion)
+        public int AjouteFichiersMDBBDD(string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "")
         {
             try
             {
@@ -29,7 +29,7 @@ namespace PNPUTools
                 if (ZIP.ManageZip.CompresseListeFichiers(sFichiers, sFichierZip) == -1)
                     return -1;
 
-                if (AjouteZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion) == -1)
+                if (AjouteZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion,CLIENT_ID) == -1)
                     return -1;
 
                 File.Delete(sFichierZip);
@@ -50,20 +50,30 @@ namespace PNPUTools
         /// <param name="WORKFLOW_ID">ID du workflow pour lequel on enregistre le fichier ZIP.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns>Retourne 0 si ok, -1 en cas d'erreur.</returns>
-        public int AjouteZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion)
+        public int AjouteZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "")
         {
             try
             {
                 byte[] bytes = System.IO.File.ReadAllBytes(sFichierZip);
+                string sRequete;
 
                 using (var conn = new System.Data.SqlClient.SqlConnection(sChaineDeConnexion))
                 {
                     conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0"),conn))
+                    if (CLIENT_ID == "")
+                        sRequete = "DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID IS NULL";
+                    else
+                        sRequete = "DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID = '" + CLIENT_ID +"'";
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete,conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR)", conn))
+
+                    if (CLIENT_ID == "")
+                        sRequete = "INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR)";
+                    else
+                        sRequete = "INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB,CLIENT_ID) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR,'" + CLIENT_ID + "')";
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                     {
                         var param = new System.Data.SqlClient.SqlParameter("@VALEUR", System.Data.SqlDbType.Binary)
                         {
@@ -93,7 +103,7 @@ namespace PNPUTools
         /// <param name="sDossierTempo">Dossier de travail pour générer le fichier zip.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns></returns>
-        public int ExtraitFichiersMDBBDD(ref string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion)
+        public int ExtraitFichiersMDBBDD(ref string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "")
         {
             try
             {
@@ -131,23 +141,29 @@ namespace PNPUTools
         /// <summary>
         /// Méthode qui extrait un fichier ZIP de la BDD.
         /// </summary>
-        /// <param name="sFichierZip">Fichier Zip à insérer.</param>
+        /// <param name="sFichierZip">Fichier Zip à Extraire.</param>
         /// <param name="WORKFLOW_ID">ID du workflow pour lequel on enregistre le fichier ZIP.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns>Retourne 0 si ok, -1 en cas d'erreur.</returns>
-        public int ExtraitZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion)
+        public int ExtraitZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "")
         {
+            string sRequete;
             try
             {
                 using (var conn = new System.Data.SqlClient.SqlConnection(sChaineDeConnexion))
-                using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0"), conn))
                 {
-                    conn.Open();
-                    byte[] bytes2 = cmd.ExecuteScalar() as byte[];
-                    System.IO.File.WriteAllBytes(sFichierZip, bytes2);
-                }
+                    if (CLIENT_ID == "")
+                        sRequete = "SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID IS NULL";
+                    else
+                        sRequete = "SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID ='" + CLIENT_ID +" '";
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                    {
+                        conn.Open();
+                        byte[] bytes2 = cmd.ExecuteScalar() as byte[];
+                        System.IO.File.WriteAllBytes(sFichierZip, bytes2);
+                    }
 
-               
+                }
                 return 0;
             }
             catch (Exception ex)

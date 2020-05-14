@@ -25,6 +25,7 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les tables livrées sont sécurisées";
             LibControle = "Contrôle de sécurité sur les tables";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  

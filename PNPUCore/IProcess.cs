@@ -159,16 +159,14 @@ namespace PNPUCore.Process
             {
                 try
                 {
-                    string[] listClientId = this.CLIENT_ID.Split(',');
-                    string sTypology = "";
-
-                    if (listClientId.Length > 0)
-                    {
-                        sTypology = ParamAppli.ListeInfoClient[listClientId[0]].TYPOLOGY_ID;
-                    }
-
-                    if (sTypology != string.Empty)
-                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + sTypology + "*%'))";
+                    string sClient_ID;
+                    if (this.CLIENT_ID.Contains(",") == true)
+                        sClient_ID = this.CLIENT_ID.Split(',')[0];
+                    else
+                        sClient_ID = this.CLIENT_ID;
+                    this.TYPOLOGY = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
+                    if (this.TYPOLOGY != string.Empty)
+                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
                 }
                 catch (Exception)
                 { }

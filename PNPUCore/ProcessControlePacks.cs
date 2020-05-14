@@ -45,8 +45,8 @@ namespace PNPUCore.Process
             Rapport.Source RapportSource;
 
             //POUR TEST 
-            /*this.CLIENT_ID = "101";
-            this.STANDARD = false;*/
+            /*this.CLIENT_ID = "101";*/
+            this.STANDARD = true;
 
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
@@ -183,7 +183,7 @@ namespace PNPUCore.Process
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
-               LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
+    //           LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
 
             }
         }

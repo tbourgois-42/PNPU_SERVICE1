@@ -24,8 +24,9 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleRechercheDependancesRef(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+
         }
 
         /// <summary>  
@@ -162,7 +163,7 @@ namespace PNPUCore.Controle
                     sRequete += "AND A.CCT_OBJECT_TYPE+A.CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL') ";
                     
 
-                    dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
+                    dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
 
@@ -322,7 +323,7 @@ namespace PNPUCore.Controle
                     sRequete += "AND DEP_CCT_TASK_ID not like '%DEF%' ";
                     sRequete += "AND CCT_OBJECT_TYPE+CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL')";
 
-                    dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
+                    dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
 

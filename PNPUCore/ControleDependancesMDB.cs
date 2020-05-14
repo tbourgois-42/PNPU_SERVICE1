@@ -16,8 +16,7 @@ namespace PNPUCore.Controle
     class ControleDependancesMDB : PControle, IControle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
-
+ 
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -25,9 +24,9 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleDependancesMDB(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = "Contrôle des dépendances inter packages";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -37,12 +36,11 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleDependancesMDB(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
-            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
-        }
+         }
 
         /// <summary>  
         /// Méthode effectuant le contrôle. 
