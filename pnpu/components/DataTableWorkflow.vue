@@ -125,11 +125,6 @@
           class="ma-2"
         >
         </v-data-table>
-        <div v-if="showAlertNoProcessus" class="text-center">
-          <v-alert type="info" class="ma-6">
-            Aucun processus associé
-          </v-alert>
-        </div>
       </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
@@ -154,7 +149,6 @@ export default {
     dialogWorkflow: false,
     dialogDetailWorkflow: false,
     editedIndex: -1,
-    showAlertNoProcessus: false,
     snackbarMessage: '',
     snackbar: false,
     colorsnackbar: '',
@@ -277,6 +271,8 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
+        const index = this.editedIndex
+        const item = this.editedItem
         const vm = this
         axios
           .put(
@@ -287,18 +283,11 @@ export default {
             }
           )
           .then(function(response) {
-            if (response.status !== 200) {
-              vm.showSnackbar(
-                'error',
-                `Modification impossible - HTTP error ${response.status} !`
-              )
-            } else {
-              Object.assign(vm.workflows[vm.editedIndex], vm.editedItem)
-              vm.showSnackbar(
-                'success',
-                'Modification du workflow effectuée avec succès !'
-              )
-            }
+            Object.assign(vm.workflows[index], item)
+            vm.showSnackbar(
+              'success',
+              'Modification du workflow effectuée avec succès !'
+            )
           })
           .catch(function(error) {
             vm.showSnackbar('error', `${error} !`)
@@ -338,7 +327,6 @@ export default {
       const vm = this
       this.dialogDetailWorkflow = true
       this.workflowDate = item.WORKFLOW_LABEL
-      this.showAlertNoProcessus = false
       this.WorkflowProcesses = []
       try {
         const res = await axios.get(
@@ -348,9 +336,6 @@ export default {
         )
         this.loadingWorkflowProcesses = false
         this.WorkflowProcesses = res.data.GetWorkflowProcessesResult
-        this.WorkflowProcesses.length === 0
-          ? (this.showAlertNoProcessus = true)
-          : (this.showAlertNoProcessus = false)
       } catch (error) {
         vm.showSnackbar('error', `${error} !`)
       }

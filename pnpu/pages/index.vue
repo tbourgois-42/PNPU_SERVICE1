@@ -305,6 +305,7 @@ export default {
           if (response.data.GetInfoAllClientResult.length > 0) {
             vm.workflowID = response.data.GetInfoAllClientResult[0].WORKFLOW_ID.toString()
             vm.getWorkflowName(vm.workflowID)
+            vm.getMaxStep()
           }  
           vm.setCardInfos()
           vm.updateVisibleItems()
@@ -370,7 +371,7 @@ export default {
           vm.items = response.data.GetInfoAllClientResult
           vm.workflowID = item.WORKFLOW_ID.toString()
           vm.getWorkflowName(vm.workflowID)
-          vm.getMaxStep()  
+          vm.getMaxStep()
           vm.setCardInfos()
           vm.updateVisibleItems()
           vm.loadingData = false
@@ -391,7 +392,7 @@ export default {
           `${process.env.WEB_SERVICE_WCF}/workflow/` + vm.workflowID + `/maxstep`
         )
         .then(function(response) {
-          vm.maxStep = response.data.GetMaxStepWorkflowResult
+          vm.maxStep = response.data
         })
         .catch(function(error) {
           vm.showSnackbar('error', `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`)

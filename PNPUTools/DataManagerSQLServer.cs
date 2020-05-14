@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
 
 namespace PNPUTools.DataManager
 {
@@ -18,7 +21,7 @@ namespace PNPUTools.DataManager
         {
             DataSet dataSet = null;
 
-            try 
+            try
             {
                 using (SqlConnection connection =
                  new SqlConnection(sConnectionString))
@@ -40,7 +43,7 @@ namespace PNPUTools.DataManager
                 //Console.WriteLine(ex.Message);
                 dataSet = null;
             }
-             return dataSet;
+            return dataSet;
         }
 
         public static DataSet GetDatas(string sRequest, string sConnectionString)
@@ -195,6 +198,74 @@ namespace PNPUTools.DataManager
                 }
                 return LastInsertedPK;
             }
+        }
+        /// <summary>
+        /// Gestion des transactions SQL.
+        /// </summary>
+        /// <param name="transactionName">Nom de la transaction.</param>
+        /// <param name="reqInsert">Tableau de requêtes à traiter.</param>
+        /// <param name="sTable">Nom de la table impactée par la requête</param>
+        /// <param name="parameters">Paramètres nécessaire à la requête</param>
+        /// <returns>Retourne le dernier ID auto incrément en cas d'INSERT, autrement "Requête traité avec succès".</returns>
+        public static string ExecuteSqlTransaction(string[] reqInsert, string sTable, string[] parameters, bool getKeyAutoIndent)
+        {
+            string ReturnValue = null;
+
+            using (SqlConnection connection = new SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            {
+
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                string UniqueID = Guid.NewGuid().ToString().Substring(0,32);
+
+                transaction = connection.BeginTransaction(UniqueID);
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    foreach(string request in reqInsert)
+                    {
+                        // Requete d'insertion
+                        for (int i = 0; i < parameters.Count(); i += 2)
+                        {
+                            command.Parameters.AddWithValue(parameters[i], parameters[i + 1]);
+                        }
+                        command.CommandText = request;
+                        command.ExecuteNonQuery();
+                        // Récupère la dernière clé auto incrément
+                        if (reqInsert.Length == 1 && getKeyAutoIndent == true)
+                        {
+                            // TODO : Retourner un tableau key value des clé auto incrément en cas d'insertion multiple
+                            command.CommandText = "SELECT IDENT_CURRENT('" + sTable + "') AS [IDENT_CURRENT]";
+                            ReturnValue = command.ExecuteScalar().ToString();
+                        }
+                    }
+                    transaction.Commit();
+                    // Si on n'est pas sur une requête d'insertion on renvoi une chaine de caractère
+                    ReturnValue = (ReturnValue == null) ? "Requête traité avec succès" : ReturnValue;
+                } 
+                catch (Exception ex)
+                {
+                    ReturnValue = ex.ToString();
+
+                    // En cas d'erreur on Rollback la transaction
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception exRlbk)
+                    {
+                        // Le Rollback a échoué. Exemple, coupure de connexion avec le serveur
+                        ReturnValue = exRlbk.ToString();
+                    }
+                }
+            }
+            return ReturnValue;
         }
     }
 }

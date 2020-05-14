@@ -15,7 +15,7 @@ namespace PNPUCore.Process
 
         String FormatReport();
         void AjouteRapport(string v);
-        bool SaveReportInBDD(string json, IProcess process);
+        string SaveReportInBDD(string json, IProcess process);
         decimal WORKFLOW_ID { get; set; }
         string CLIENT_ID { get; set; }
 
@@ -106,9 +106,14 @@ namespace PNPUCore.Process
             return (RapportProcess.ToJSONRepresentation());
         }
 
-        public bool SaveReportInBDD(string json, IProcess process)
+        public string SaveReportInBDD(string json, IProcess process)
         {
-            using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
+            string[] requests = { "INSERT INTO PNPU_H_REPORT (ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE) VALUES(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE)" };
+            string[] parameters = new string[] { "@ITERATION", "1", "@WORKFLOW_ID", process.WORKFLOW_ID.ToString(), "@ID_PROCESS", process.PROCESS_ID.ToString(), "@CLIENT_ID", process.CLIENT_ID, "@JSON_TEMPLATE", json.Replace("\r\n", "") };
+
+            return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_REPORT", parameters, false);
+
+            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
             {
                 try
                 {
@@ -130,7 +135,7 @@ namespace PNPUCore.Process
                     return false;
                 }
                 return true;
-            }
+            }*/
         }
 
         internal void GenerateHistoric(PNPU_H_WORKFLOW historicWorkflow, PNPU_H_STEP historicStep)
