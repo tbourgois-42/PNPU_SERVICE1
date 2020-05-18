@@ -62,15 +62,15 @@ namespace PNPUCore
                     {
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = process.ToString();
                         cmd.Parameters.Add("@ITERATION", SqlDbType.VarChar, 254).Value = 1;
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.DateTime).Value = process.WORKFLOW_ID;
+                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = process.WORKFLOW_ID;
                         cmd.Parameters.Add("@MESSAGE", SqlDbType.VarChar, 254).Value = message;
-                        cmd.Parameters.Add("@STATUT_MESSAGE", SqlDbType.DateTime).Value = statutMessage;
+                        cmd.Parameters.Add("@STATUT_MESSAGE", SqlDbType.VarChar, 254).Value = statutMessage;
                         cmd.Parameters.Add("@ID_CONTROLE", SqlDbType.Int).Value = "";
                         cmd.Parameters.Add("@IS_CONTROLE", SqlDbType.VarChar, 254).Value = "N";
                         cmd.Parameters.Add("@DATE_LOG", SqlDbType.DateTime).Value = DateTime.Now;
                         cmd.Parameters.Add("@SERVER", SqlDbType.VarChar, 254).Value = process.SERVER;
-                        cmd.Parameters.Add("@BASE", SqlDbType.DateTime).Value = process.BASE;
-                        cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.DateTime).Value = ParamAppli.LogLevel;
+                        cmd.Parameters.Add("@BASE", SqlDbType.VarChar, 254).Value = process.BASE;
+                        cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.VarChar, 50).Value = ParamAppli.LogLevel;
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
