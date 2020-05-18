@@ -31,6 +31,7 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si les items livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client";
             LibControle = "Contrôle des ID Synoym";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  

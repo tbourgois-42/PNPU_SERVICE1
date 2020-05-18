@@ -23,10 +23,11 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleItemsTotaux(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
-            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les éléments utilisés dans les totaux livrés existent";
             LibControle = "Contrôle des totaux";
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -36,11 +37,11 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleItemsTotaux(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
-            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
         }
 
         /// <summary>  
@@ -117,7 +118,7 @@ namespace PNPUCore.Controle
                 if (lListeAControler.Count > 0)
                 {
                     DataManagerSQLServer dmsManagerSQL = new DataManagerSQLServer();
-                    dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
+                    dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)

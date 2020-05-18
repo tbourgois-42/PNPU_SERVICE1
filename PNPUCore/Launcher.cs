@@ -17,7 +17,7 @@ namespace PNPUCore
         {
             process.ExecuteMainProcess();
             String json = process.FormatReport();
-            bool saved = process.SaveReportInBDD(json, process);
+            process.SaveReportInBDD(json, process);
             Console.WriteLine(json);
         }
 

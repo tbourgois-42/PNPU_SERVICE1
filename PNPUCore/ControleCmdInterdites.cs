@@ -27,6 +27,7 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si le mdb standard ne contient pas de commande interdite";
             LibControle = "Contrôle des commandes interdites";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  

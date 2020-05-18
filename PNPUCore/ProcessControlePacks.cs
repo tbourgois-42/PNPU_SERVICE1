@@ -45,8 +45,8 @@ namespace PNPUCore.Process
             Rapport.Source RapportSource;
 
             //POUR TEST 
-            /*this.CLIENT_ID = "101";
-            this.STANDARD = false;*/
+            /*this.CLIENT_ID = "101";*/
+            this.STANDARD = true;
 
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
@@ -179,6 +179,9 @@ namespace PNPUCore.Process
                 
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }
+
+            // TEST ajout MDB
+            //gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { "D:\\PNPU\\Tests_RAMDL\\test.mdb" }, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, CLIENT_ID,1);
 
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)

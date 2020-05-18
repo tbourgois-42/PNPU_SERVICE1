@@ -259,6 +259,12 @@ namespace WcfService1
         {
             return RequestTool.getClientsWithTypologies();
         }
+
+        public string GetMaxStep(string workflowID_)
+        {
+            int workflowId = int.Parse(workflowID_);
+            return RequestTool.GetMaxStep(workflowId);
+        }
     }
 
 

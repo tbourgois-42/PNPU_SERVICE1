@@ -41,6 +41,7 @@ namespace PNPUCore.Controle
             }
 
             Process = (PNPUCore.Process.ProcessControlePacks) pProcess;
+            ResultatErreur = ParamAppli.StatutError;
          }
 
         /// <summary>  

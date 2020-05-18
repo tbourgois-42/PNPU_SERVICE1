@@ -27,6 +27,7 @@ namespace PNPUCore.Controle
              Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si les items livrés dans le mdb n'utilisent pas un ID Synonym déjà utilisé";
             LibControle = "Contrôles des ID Synonym existant";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -89,8 +90,12 @@ namespace PNPUCore.Controle
                         sRequeteSqlServer += ")";
                         DataManagerSQLServer dmasqlManagerSQL = new DataManagerSQLServer();
 
-                        // Base à changer si pas pack standard
-                        dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef);
+                        // Contrôle sur la base de référence si pack standard, sinon sur base client
+                        if (Process.STANDARD == true)
+                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
+                        else
+                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                        
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
                             bResultat = ResultatErreur;

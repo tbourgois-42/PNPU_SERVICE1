@@ -68,6 +68,7 @@ namespace PNPUCore.Process
                 }
 
                 RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+                RapportSource.Result = RapportControle.Result;
                 RapportSource.Controle.Add(RapportControle);
             }
             RapportProcess.Source.Add(RapportSource);

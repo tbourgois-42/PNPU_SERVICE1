@@ -24,9 +24,10 @@ namespace PNPUCore.Controle
         public ControleNiveauSaisie(PNPUCore.Process.IProcess pProcess)
         {
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
             ToolTipControle = "Vérifie qu'il n'y a pas de perte de niveau de saisie entre le mdb standard et la base client";
             LibControle = "Contrôle des niveaux de saisies";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -36,8 +37,8 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleNiveauSaisie(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
@@ -189,9 +190,13 @@ namespace PNPUCore.Controle
                             }
                         }
 
-                        // Recherche des niveaux de saisie dans la base de référence
+                        // Recherche des niveaux de saisie dans la base de référence ou la base client
                         dmsManagerSQL = new DataManagerSQLServer();
-                        dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ConnectionStringBaseRef);
+                        if (Process.PROCESS_ID == ParamAppli.ProcessControlePacks)
+                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ConnectionStringBaseRef);
+                        else
+                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)

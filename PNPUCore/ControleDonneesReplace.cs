@@ -25,6 +25,7 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si les données des tables présentes dans les scripts Replace Row sont bien présentes dans le mdb";
             LibControle = "Contrôle des données Replace";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
