@@ -143,9 +143,9 @@ namespace PNPUCore.Controle
                 }
 
                 //POUR TEST
-                lListeCCTManquants.Clear();
+                /*lListeCCTManquants.Clear();
                 lListeCCTManquants.Add("PLFR_74326");
-                lListeCCTManquants.Add("PLFR_137306");
+                lListeCCTManquants.Add("PLFR_137306");*/
                 //FIN POUR TEST
                 
                 // La liste ne doit contenir que les tâches CCT non instalées sur le client

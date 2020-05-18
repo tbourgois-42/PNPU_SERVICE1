@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,19 +18,22 @@ namespace PNPUTools
         /// <param name="sDossierTempo">Dossier de travail pour générer le fichier zip.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns></returns>
-        public int AjouteFichiersMDBBDD(string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "")
+        public int AjouteFichiersMDBBDD(string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "", int iNiv = 0)
         {
             try
             {
-                sDossierTempo += "\\" + WORKFLOW_ID.ToString("0000000000");
-                string sFichierZip = sDossierTempo + "\\" + WORKFLOW_ID.ToString("0000000000") + ".ZIP";
+                string sNom = WORKFLOW_ID.ToString("0000000000");
+                if (CLIENT_ID != "")
+                    sNom += "_C" + CLIENT_ID + "_N" + iNiv.ToString();
+                sDossierTempo += "\\" + sNom;
+                string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
                 if (Directory.Exists(sDossierTempo) == false)
                     Directory.CreateDirectory(sDossierTempo);
                 
                 if (ZIP.ManageZip.CompresseListeFichiers(sFichiers, sFichierZip) == -1)
                     return -1;
 
-                if (AjouteZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion,CLIENT_ID) == -1)
+                if (AjouteZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion,CLIENT_ID, iNiv) == -1)
                     return -1;
 
                 File.Delete(sFichierZip);
@@ -50,7 +54,7 @@ namespace PNPUTools
         /// <param name="WORKFLOW_ID">ID du workflow pour lequel on enregistre le fichier ZIP.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns>Retourne 0 si ok, -1 en cas d'erreur.</returns>
-        public int AjouteZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "")
+        public int AjouteZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "", int iNiv = 0)
         {
             try
             {
@@ -60,19 +64,14 @@ namespace PNPUTools
                 using (var conn = new System.Data.SqlClient.SqlConnection(sChaineDeConnexion))
                 {
                     conn.Open();
-                    if (CLIENT_ID == "")
-                        sRequete = "DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID IS NULL";
-                    else
-                        sRequete = "DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID = '" + CLIENT_ID +"'";
+                    sRequete = "DELETE FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID = '" + CLIENT_ID + "' AND NIV_DEP = '" + iNiv.ToString() + "'";
+                        
                     using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete,conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
 
-                    if (CLIENT_ID == "")
-                        sRequete = "INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR)";
-                    else
-                        sRequete = "INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB,CLIENT_ID) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR,'" + CLIENT_ID + "')";
+                    sRequete = "INSERT INTO PNPU_MDB (ID_H_WORKFLOW,MDB,CLIENT_ID, NIV_DEP) VALUES(" + WORKFLOW_ID.ToString("#########0") + ",@VALEUR,'" + CLIENT_ID + "','" + iNiv.ToString() + "')";
                     using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                     {
                         var param = new System.Data.SqlClient.SqlParameter("@VALEUR", System.Data.SqlDbType.Binary)
@@ -103,12 +102,15 @@ namespace PNPUTools
         /// <param name="sDossierTempo">Dossier de travail pour générer le fichier zip.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns></returns>
-        public int ExtraitFichiersMDBBDD(ref string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "")
+        public int ExtraitFichiersMDBBDD(ref string[] sFichiers, decimal WORKFLOW_ID, string sDossierTempo, string sChaineDeConnexion, string CLIENT_ID = "", int iNiv = 0)
         {
             try
             {
-                sDossierTempo += "\\" + WORKFLOW_ID.ToString("0000000000");
-                string sFichierZip = sDossierTempo + "\\" + WORKFLOW_ID.ToString("0000000000") + ".ZIP";
+                string sNom = WORKFLOW_ID.ToString("0000000000");
+                if (CLIENT_ID != "")
+                    sNom += "_C" + CLIENT_ID + "_N" + iNiv.ToString();
+                sDossierTempo += "\\" + sNom;
+                string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
 
                 if (Directory.Exists(sDossierTempo) == false)
                     Directory.CreateDirectory(sDossierTempo);
@@ -120,7 +122,7 @@ namespace PNPUTools
                     }
                 }
 
-                if (ExtraitZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion) == -1)
+                if (ExtraitZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion, CLIENT_ID, iNiv) == -1)
                     return -1;
 
                 if (PNPUTools.ZIP.ManageZip.DecompresseDansDossier(sFichierZip, sDossierTempo) == -1)
@@ -145,17 +147,14 @@ namespace PNPUTools
         /// <param name="WORKFLOW_ID">ID du workflow pour lequel on enregistre le fichier ZIP.</param>
         /// <param name="sChaineDeConnexion">Chaine de connexion de la base SQL Server.</param>
         /// <returns>Retourne 0 si ok, -1 en cas d'erreur.</returns>
-        public int ExtraitZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "")
+        public int ExtraitZipBDD(string sFichierZip, decimal WORKFLOW_ID, string sChaineDeConnexion, string CLIENT_ID = "", int iNiv = 0)
         {
             string sRequete;
             try
             {
                 using (var conn = new System.Data.SqlClient.SqlConnection(sChaineDeConnexion))
                 {
-                    if (CLIENT_ID == "")
-                        sRequete = "SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID IS NULL";
-                    else
-                        sRequete = "SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID ='" + CLIENT_ID +" '";
+                    sRequete = "SELECT MDB FROM PNPU_MDB WHERE ID_H_WORKFLOW = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID ='" + CLIENT_ID + "' AND NIV_DEP = '" + iNiv.ToString() + "'";
                     using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                     {
                         conn.Open();
