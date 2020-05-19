@@ -23,6 +23,7 @@ namespace PNPUCore.Controle
             Process = pProcess;
             ToolTipControle = "Récupération des tâches CCT dépendantes de niveau 1";
             LibControle = "Contrôle des dépendances de niveau 1";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -142,21 +143,21 @@ namespace PNPUCore.Controle
                 }
 
                 //POUR TEST
-                /*lListeCCTManquants.Clear();
+                lListeCCTManquants.Clear();
                 lListeCCTManquants.Add("PLFR_74326");
-                lListeCCTManquants.Add("PLFR_137306");*/
+                lListeCCTManquants.Add("PLFR_137306");
                 //FIN POUR TEST
                 
                 // La liste ne doit contenir que les tâches CCT non instalées sur le client
                 if (lListeCCTManquants.Count > 0)
                 {
                     if (DupliqueTachesCCT(lListeCCTManquants, "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID) == false)
-                        bResultat = ParamAppli.StatutError;
+                        bResultat = ResultatErreur;
                 }
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 
@@ -177,7 +178,12 @@ namespace PNPUCore.Controle
                 {
                     iCptPack++;
                     sNouvTacheCCT = sPrefixe + "_" + iCptPack.ToString("000");
+
+                    Process.AjouteRapport("Création de la tâche CCT " + sNouvTacheCCT + " pour livrer les éléments de la tâche " + sTacheCCT);
+                    
+                    // POUR TEST MHUM, je ne travaille que sur la base de ref plateforme en attendant des vraies bases de ref 
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRefPlateforme))
+                    //using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
                     {
                         conn.Open();
                         sRequete = "DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
@@ -312,6 +318,11 @@ namespace PNPUCore.Controle
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                     {
                         conn.Open();
+                        sRequete = "DELETE FROM PNPU_H_CCT WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                        {
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                        }
                         sRequete = "INSERT INTO PNPU_H_CCT (";
                         sRequete += "CCT_TASK_ID";
                         sRequete += ",CCT_TASK_ID_ORG";

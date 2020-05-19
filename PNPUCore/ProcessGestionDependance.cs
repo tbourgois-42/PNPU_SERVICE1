@@ -32,6 +32,9 @@ namespace PNPUCore.Process
             List<IControle> listControl = new List<IControle>();//ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
 
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+
+
             GetListControle(ref listControl);
             //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
             ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
@@ -54,7 +57,9 @@ namespace PNPUCore.Process
                 RapportControle.Tooltip = controle.GetTooltipControle();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
+                Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
                 string statutControle = controle.MakeControl();
+                Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
 
                 //ERROR > WARNING > OK
                 if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
@@ -68,11 +73,14 @@ namespace PNPUCore.Process
                 }
 
                 RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+                RapportSource.Result = RapportControle.Result;
                 RapportSource.Controle.Add(RapportControle);
             }
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
+
+            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();

@@ -66,9 +66,13 @@ namespace PNPUCore.Rapport
 
             
             string sCote = string.Empty;
+            string sCote2 = string.Empty;
 
             if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+            {
                 sCote = "'";
+                sCote2 = "*";
+            }
 
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
@@ -122,9 +126,9 @@ namespace PNPUCore.Rapport
                         jw.WritePropertyName("id");
                         jw.WriteValue(sIDControle);
                         jw.WritePropertyName("name");
-                        jw.WriteValue(sCote + Source[i].Controle[j].Name + sCote);
+                        jw.WriteValue(sCote2 + Source[i].Controle[j].Name + sCote2);
                         jw.WritePropertyName("Tooltip");
-                        jw.WriteValue(sCote + Source[i].Controle[j].Tooltip + sCote);
+                        jw.WriteValue(sCote2 + Source[i].Controle[j].Tooltip + sCote2);
                         jw.WritePropertyName("result");
                         jw.WriteValue(sCote + Source[i].Controle[j].Result + sCote);
 
@@ -161,7 +165,11 @@ namespace PNPUCore.Rapport
             jw.WriteEndObject();
 
             if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+            {
+            
                 sb = sb.Replace("\"", "");
+                sb = sb.Replace(sCote2, "\"");
+            }
             return sb.ToString();
         }
 

@@ -23,11 +23,11 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleCatalogueTable(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les tables livrées sont référencées dans le catalogue des tables";
             LibControle = "Contrôle du catalogue des tables";
             ResultatErreur = ParamAppli.StatutError;
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
         }
 
         /// <summary>  
@@ -37,11 +37,11 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleCatalogueTable(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
         }
 
         /// <summary>  
@@ -121,7 +121,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 

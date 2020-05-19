@@ -29,10 +29,11 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleNiveauHeritage(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les éléments livrés sont au niveau d'héritage le plus fin";
             LibControle = "Contrôle des niveaux d'héritage";
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+            ResultatErreur = ParamAppli.StatutError;
             ChargeM4OPresHerites();
         }
 
@@ -43,11 +44,12 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleNiveauHeritage(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+            ChargeM4OPresHerites();
         }
 
         /// <summary>  
@@ -119,7 +121,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 

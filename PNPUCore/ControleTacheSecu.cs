@@ -23,6 +23,7 @@ namespace PNPUCore.Controle
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les tâches livrées sont sécurisées";
             LibControle = "Contrôle de sécurité sur les tâches";
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -64,7 +65,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 

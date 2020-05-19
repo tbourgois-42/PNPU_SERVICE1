@@ -62,7 +62,7 @@ namespace PNPUTools
         /// <summary>  
         /// Chaine de connexion à la base de référence.
         /// </summary> 
-        public static string ConnectionStringBaseRef { get; }
+        public static Dictionary<string,string> ConnectionStringBaseRef { get; }
 
         /// <summary>  
         /// Chaine de connexion à la base de référence SAAS dédié.
@@ -95,6 +95,7 @@ namespace PNPUTools
         public const string StatutCompleted = "COMPLETED";
         public const string StatutError = "ERROR";
         public const string StatutWarning = "WARNING";
+        public const string StatutInfo = "INFORMATION";
         public static string LogLevel = "DEBUG";
 
         public const string connectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
@@ -111,7 +112,7 @@ namespace PNPUTools
  
         public const int ProcessFinished = -1;
 
-        public const bool SimpleCotesReport = false;
+        public const bool SimpleCotesReport = true;
 
         public static NamedPipeClientStream npcsPipeClient;
 
@@ -211,10 +212,14 @@ namespace PNPUTools
                 }
 
 
-                // Pour l'instant il n'y a qu'une base de référence. Ensuite à valorisé en fonction de la typologie
-                ConnectionStringBaseRef = ConnectionStringBaseRefPlateforme;
+                // On valorise en fonction de la typologie
+                ConnectionStringBaseRef = new Dictionary<string, string>();
+                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
+                ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("Désynchronisé", ConnectionStringBaseRefPlateforme);
 
-                // Pour l'instant n'existe que sur la base plateforme
+
+                // N'existe que sur la base plateforme
                 if (ConnectionStringBaseRefPlateforme != string.Empty)
                 {
                      dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);

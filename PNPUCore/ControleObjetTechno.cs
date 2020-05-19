@@ -23,10 +23,11 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleObjetTechno(PNPUCore.Process.IProcess pProcess)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que le mdb standard ne livre pas d'élément techno. Les éléments techno ne doivent être livrés uniquement dans les HF Technos";
             LibControle = "Contrôle livraison d'objets techno";
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+            ResultatErreur = ParamAppli.StatutError;
         }
 
         /// <summary>  
@@ -36,11 +37,12 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleObjetTechno(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef;
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+
         }
 
         /// <summary>  
@@ -132,7 +134,7 @@ namespace PNPUCore.Controle
              }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 
@@ -229,9 +231,9 @@ namespace PNPUCore.Controle
                         }
                         sRequete += ")";
 
-                        if (ParamAppli.ConnectionStringBaseRef != string.Empty)
+                        if (ConnectionStringBaseRef != string.Empty)
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
+                            dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                             {
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -296,9 +298,9 @@ namespace PNPUCore.Controle
                         }
                         sRequete += ")";
 
-                        if (ParamAppli.ConnectionStringBaseRef != string.Empty)
+                        if (ConnectionStringBaseRef != string.Empty)
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef);
+                            dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                             {
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)

@@ -30,6 +30,7 @@ namespace PNPUCore.Controle
             ToolTipControle = "Vérifie la cohérence des types de packages livrés. Exemple: Script de création de colonne physique dans un pack logique.";
             LibControle = "Contrôle des types de packages";
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            ResultatErreur = ParamAppli.StatutWarning;
             lCMD_L = ParamAppli.ListeCmdL;
             lCMD_D = ParamAppli.ListeCmdD;
             lCMD_F = ParamAppli.ListeCmdF;
@@ -91,7 +92,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 
@@ -156,7 +157,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = false;
             }
 
