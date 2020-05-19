@@ -65,7 +65,6 @@ namespace PNPUCore.Controle
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         sCommandPack = drRow[2].ToString().ToUpper().Trim();
@@ -102,7 +101,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 
