@@ -51,17 +51,6 @@
       <v-col cols="10" class="d-flex flex-wrap justify-start">
         <v-col v-for="(item, id) in visibleItems" :key="id" cols="3">
           <transition appear name="slide-in">
-            <!--<CardPnpu
-              :client-name="item.CLIENT_ID"
-              :maxStep="maxStep"
-              :clientTypolgie="item.TYPOLOGY"
-              :textStatus="item.ID_STATUT"
-              :currentStep="item.ORDER_ID"
-              :percentCircular="item.PERCENTAGE_COMPLETUDE"
-              :workflowDate="workflowDiplayed"
-              :workflowID="workflowID"
-              :idorga="item.ID_ORGANIZATION"
-            />-->
             <nuxt-link
               :to="{
                 name: 'client',
@@ -86,12 +75,23 @@
                   <v-col class="d-flex">
                     <v-list-item>
                       <v-list-item-content>
-                        <v-list-item-title class="title">{{ item.CLIENT_ID }}</v-list-item-title>
-                        <v-list-item-subtitle class="pb-1">ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle>
-                        <v-list-item-subtitle class="pb-2">Step {{ item.ORDER_ID }}/ {{ maxStep }}</v-list-item-subtitle>
+                        <v-list-item-title class="title">{{
+                          item.CLIENT_ID
+                        }}</v-list-item-title>
+                        <v-list-item-subtitle class="pb-1"
+                          >ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle
+                        >
+                        <v-list-item-subtitle class="pb-2"
+                          >Step {{ item.ORDER_ID }}/
+                          {{ maxStep }}</v-list-item-subtitle
+                        >
                         <v-list-item-subtitle>
-                          <!--<v-chip color="teal lighten-2" text-color="white" class="pl-2" label>-->
-                          <v-chip :color="item.colorCircular" text-color="white" class="pl-2" label>
+                          <v-chip
+                            :color="item.colorCircular"
+                            text-color="white"
+                            class="pl-2"
+                            label
+                          >
                             <v-icon left>mdi-label</v-icon>
                             {{ item.TYPOLOGY }}
                           </v-chip>
@@ -105,9 +105,9 @@
                       :color="item.colorCircular"
                       class="mt-2 mr-2"
                     >
-                      {{ item.PERCENTAGE_COMPLETUDE }}
+                      {{ item.PERCENTAGE_COMPLETUDE.toFixed(0) }}
                     </v-progress-circular>
-                  </v-col>         
+                  </v-col>
                   <v-divider class="mx-4"></v-divider>
                   <v-card-actions class="ma-1 mx-4 d-flex justify-start">
                     <v-chip
@@ -120,10 +120,7 @@
                       {{ item.ID_STATUT }}
                     </v-chip>
                     <v-chip class="pl-2" label>
-                      <v-avatar
-                        left
-                        color="grey lighten-1"
-                      >
+                      <v-avatar left color="grey lighten-1">
                         15
                       </v-avatar>
                       Localisation
@@ -168,20 +165,18 @@
 
 <script>
 import axios from 'axios'
-import CardPnpu from '../components/Card.vue'
 import CardLaunchWorkflow from '../components/CardLaunchWorkflow'
 import CardIndicateurs from '../components/CardIndicateurs'
 import CardProgressTypologie from '../components/CardProgressTypologie'
 export default {
   components: {
-    CardPnpu,
     CardLaunchWorkflow,
     CardProgressTypologie,
     CardIndicateurs
   },
   data: () => ({
     items: [],
-    workflows: '',
+    workflows: [],
     workflowDiplayed: '',
     workflowStatut: '',
     workflowID: '0',
@@ -192,7 +187,11 @@ export default {
     maxStep: 7,
     search: '',
     filter: '',
-    typologie: [{ value: 256, text: 'SaaS Dédié' }, { value: 257, text: 'SaaS Mutualisé' }, { value: 258, text: 'SaaS Désynchronisé' }],
+    typologie: [
+      { value: 256, text: 'SaaS Dédié' },
+      { value: 257, text: 'SaaS Mutualisé' },
+      { value: 258, text: 'SaaS Désynchronisé' }
+    ],
     filteredIndicators: [],
     colorIconStatus: '',
     iconStatus: '',
@@ -205,40 +204,48 @@ export default {
     eventEmitted: false
   }),
 
-  computed: {},
-
   watch: {
-
+    /**
+     * Met à jour l'affichage si un filtre est sélectionné.
+     */
     filteredIndicators() {
       this.updateVisibleItems()
     },
 
+    /**
+     * Recherche d'un client.
+     */
     search() {
       this.visibleItems = []
-      this.items.forEach(element => {
-        if (element.CLIENT_ID.toUpperCase().match(this.search.toUpperCase()) !== null) {
+      this.items.forEach((element) => {
+        if (
+          element.CLIENT_ID.toUpperCase().match(this.search.toUpperCase()) !==
+          null
+        ) {
           this.visibleItems.push(element)
         }
       })
     }
   },
 
-  created() {},
-
-  beforeMount() {
+  created() {
     this.updateVisibleItems()
     this.totalPages()
-  },
-
-  mounted() {
     this.getHistoricWorkflow()
     this.initialize()
     this.getMaxStep()
   },
 
+  beforeMount() {},
+
+  mounted() {},
+
   methods: {
-    setCardInfos(){
-      this.items.forEach(element => {
+    /**
+     * Met à jour les informations des cartes.
+     */
+    setCardInfos() {
+      this.items.forEach((element) => {
         switch (element.TYPOLOGY) {
           case 'SAAS DEDIE':
             element.colorCircular = 'teal lighten-2'
@@ -266,12 +273,19 @@ export default {
         }
       })
     },
+
+    /**
+     * Met à jour la page courante.
+     */
     updatePage(pageNumber) {
       this.currentPage = pageNumber
       this.updateVisibleItems()
     },
+
+    /**
+     * Gère l'affichage des cartes en fonction du nombre de page 12 / Page.
+     */
     updateVisibleItems() {
-      console.log(this.search)
       this.visibleItems = []
       if (this.filteredIndicators.length > 0) {
         this.visibleItems = this.filteredIndicators.slice(
@@ -285,14 +299,22 @@ export default {
         )
       }
     },
+
+    /**
+     * Calcul le nombre total de pages.
+     */
     totalPages() {
       if (this.eventEmitted === true) {
-        return Math.ceil(this.filteredIndicators.length / this.pageSize)
         this.eventEmitted = false
+        return Math.ceil(this.filteredIndicators.length / this.pageSize)
       } else {
         return Math.ceil(this.items.length / this.pageSize)
       }
     },
+
+    /**
+     * Chargement des informations pour les cartes.
+     */
     initialize() {
       const vm = this
       vm.loadingData = true
@@ -306,37 +328,77 @@ export default {
             vm.workflowID = response.data.GetInfoAllClientResult[0].WORKFLOW_ID.toString()
             vm.getWorkflowName(vm.workflowID)
             vm.getMaxStep()
-          }  
+          }
           vm.setCardInfos()
           vm.updateVisibleItems()
           vm.loadingData = false
         })
         .catch(function(error) {
-          vm.showSnackbar('error', `${error} ! Impossible de récupérer l'historique des steps`)
+          vm.showSnackbar(
+            'error',
+            `${error} ! Impossible de récupérer l'historique des steps`
+          )
           vm.loadingData = false
         })
     },
+
+    /**
+     * Indicateur sélectionné pour filtrer l'affiche des cartes.
+     */
     getIndicators(value) {
       this.filteredIndicators = value
       this.eventEmitted = true
     },
-    getHistoricWorkflow() {
-      const vm = this
-      axios
+
+    /**
+     * Récupère l'historique des workflows order by LAUNCHING_DATE.
+     */
+    async getHistoricWorkflow() {
+      try {
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/workflow/historic`
+        )
+        if (response.status === 200) {
+          this.workflows = response.data.GetHWorkflowResult
+          // On récupère le dernier workflow lancé
+          this.workflowID = response.data.GetHWorkflowResult[
+            this.workflows.length - 1
+          ].WORKFLOW_ID.toString()
+          this.workflowDisplayed =
+            response.data.GetHWorkflowResult[
+              this.workflows.length - 1
+            ].WORKFLOW_LABEL
+          this.workflowStatut =
+            response.data.GetHWorkflowResult[
+              this.workflows.length - 1
+            ].STATUT_GLOBAL
+        }
+      } catch (error) {
+        this.showSnackbar(
+          'error',
+          `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`
+        )
+      }
+      /* axios
         .get(`${process.env.WEB_SERVICE_WCF}/workflow/historic`)
         .then(function(response) {
           vm.workflows = response.data.GetHWorkflowResult
-          vm.workflowID = response.data.GetHWorkflowResult[0].WORKFLOW_ID.toString()
-          vm.workflows.forEach((element) => {
-            if (element.WORKFLOW_ID.toString() === vm.workflowID) {
-              vm.workflowDiplayed = element.WORKFLOW_LABEL
-              vm.workflowStatut = element.STATUT_GLOBAL
-            }
-          })
+          // On récupère le dernier workflow lancé
+          vm.workflowID = response.data.GetHWorkflowResult[
+            vm.workflows.length - 1
+          ].WORKFLOW_ID.toString()
+          vm.workflowDisplayed =
+            response.data.GetHWorkflowResult[
+              vm.workflows.length - 1
+            ].WORKFLOW_LABEL
+          vm.workflowStatut =
+            response.data.GetHWorkflowResult[
+              vm.workflows.length - 1
+            ].STATUT_GLOBAL
         })
         .catch(function(error) {
           vm.showSnackbar('error', `${error} ! `)
-        })
+        }) */
     },
 
     /**
@@ -344,12 +406,13 @@ export default {
      * @param {object} workflowID - Workflow sélectionné dans l'entête
      */
     getWorkflowName(workflowID) {
-      this.workflows.forEach(element => {
+      for (let index = 0; index < this.workflows.length; index++) {
+        const element = this.workflows[index]
         if (element.WORKFLOW_ID.toString() === workflowID) {
           this.workflowDiplayed = element.WORKFLOW_LABEL
           this.workflowStatut = element.STATUT_GLOBAL
         }
-      })
+      }
     },
 
     /**
@@ -377,30 +440,39 @@ export default {
           vm.loadingData = false
         })
         .catch(function(error) {
-          vm.showSnackbar('error', `${error} ! Impossible de récupérer l'historique des workflows`)
+          vm.showSnackbar(
+            'error',
+            `${error} ! Impossible de récupérer l'historique des workflows`
+          )
           vm.loadingData = false
-        })
-    },
-    
-    /**
-     * Récupère le nombre maximal de step pour un workflow donné.
-     */
-    getMaxStep() {
-      const vm = this
-      axios
-        .get(
-          `${process.env.WEB_SERVICE_WCF}/workflow/` + vm.workflowID + `/maxstep`
-        )
-        .then(function(response) {
-          vm.maxStep = response.data
-        })
-        .catch(function(error) {
-          vm.showSnackbar('error', `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`)
         })
     },
 
     /**
+     * Récupère le nombre maximal de step pour un workflow donné.
+     */
+    async getMaxStep() {
+      try {
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/workflow/` +
+            this.workflowID +
+            `/maxstep`
+        )
+        if (response.status === 200) {
+          this.maxStep = response.data
+        }
+      } catch (error) {
+        this.showSnackbar(
+          'error',
+          `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`
+        )
+      }
+    },
+
+    /**
      * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
      */
     showSnackbar(color, message) {
       this.snackbar = true

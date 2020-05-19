@@ -19,7 +19,7 @@
           <v-card-text>
             <v-treeview
               v-model="selection"
-              :items="items"
+              :items="reportJsonData"
               selection-type="leaf"
               :search="search"
               :filter="filter"
@@ -60,7 +60,16 @@
           </v-list-item-content>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn x-small fab depressed color="primary" class="ma-4" v-on="on" :style="displayButton" @click="backToTreeView($event)">
+              <v-btn
+                x-small
+                fab
+                depressed
+                color="primary"
+                class="ma-4"
+                :style="displayButton"
+                v-on="on"
+                @click="backToTreeView($event)"
+              >
                 <v-icon>mdi-undo</v-icon>
               </v-btn>
             </template>
@@ -70,8 +79,8 @@
             v-model="checkbox"
             label="Voir uniquement les contrôles en erreur"
             hide-details
-            @change="Filtered($event)"
             :style="displayCheckbox"
+            @change="Filtered($event)"
           ></v-checkbox>
         </v-list-item-group>
         <transition v-if="noData === false" appear name="fade">
@@ -83,7 +92,9 @@
                 <thead>
                   <tr>
                     <th class="text-left">Nom</th>
-                    <th v-if="hasMessage === false" class="text-left">Statut</th>
+                    <th v-if="hasMessage === false" class="text-left">
+                      Statut
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -117,7 +128,7 @@
               </template>
             </v-simple-table>
           </v-card>
-          <v-card flat v-else :style="displayButton">
+          <v-card v-else flat :style="displayButton">
             <v-card-title>
               <v-text-field
                 v-model="searchInterDep"
@@ -138,7 +149,11 @@
               @page-count="pageCount = $event"
             ></v-data-table>
             <div class="text-center pa-2">
-              <v-pagination v-model="page" :length="pageCount" circle></v-pagination>
+              <v-pagination
+                v-model="page"
+                :length="pageCount"
+                circle
+              ></v-pagination>
             </div>
           </v-card>
         </transition>
@@ -149,7 +164,8 @@
           text
           type="success"
         >
-          Ce contrôle s'est déroulé avec succès, il n'a généré aucun message d'erreur.
+          Ce contrôle s'est déroulé avec succès, il n'a généré aucun message
+          d'erreur.
         </v-alert>
         <v-alert
           v-if="showInfo === true"
@@ -158,7 +174,8 @@
           text
           type="primary"
         >
-          Pour visualiser les résultats de ce contrôle, veuillez cliquer sur {{ titleTable }} dans l'arborescence.
+          Pour visualiser les résultats de ce contrôle, veuillez cliquer sur
+          {{ titleTable }} dans l'arborescence.
         </v-alert>
       </v-col>
     </v-row>
@@ -174,9 +191,9 @@ export default {
       type: String,
       default: '1'
     },
-    data: {
-      type: String,
-      default: ''
+    reportJsonData: {
+      type: Object,
+      default: () => {}
     }
   },
   data: () => ({
@@ -197,148 +214,10 @@ export default {
       { text: 'Result', value: 'result' },
       { text: 'Message', value: 'message' }
     ],
-    processName: '',
-    debutExecution: '',
-    finExecution: '',
-    lstPackageMdb: [],
-    lstControleMdb: [],
     search: null,
     caseSensitive: false,
     open: ['public'],
     selection: [],
-    items: [
-      {
-        id: '1',
-        name: 'Pré contrôle des .mdb',
-        result: 'mdi-alert-circle',
-        debut: '05/05/20 11:40:26',
-        fin: '05/05/20 11:40:32',
-        children: [
-          {
-            id: '2',
-            name: '8.1_HF2003_PLFR_152971.mdb',
-            result: 'mdi-alert-circle',
-            children: [
-              {
-                id: '201',
-                name: 'Contrôle des catalogues de table',
-                Tooltip:
-                  'Vérifie que les tables livrées sont référencées dans le catalogue des tables',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '202',
-                name: 'Contrôle des commandes interdites',
-                Tooltip:
-                  'Vérifie si le mdb standard ne contient pas de commande interdite',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '203',
-                name: 'Contrôle des données Replace',
-                Tooltip:
-                  'Vérifie si les données des tables présentes dans les scripts Replace Row sont bien présentes dans le mdb ',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '204',
-                name: 'Contrôle des ID Synoym',
-                Tooltip:
-                  "Vérifie si les items livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client",
-                result: 'mdi-check-circle'
-              },
-              {
-                "id": "205",
-                "name": "Contrôles des ID Synonym existant",
-                Tooltip:
-                  "Vérifie si les items livrés dans le mdb n'utilisent pas un ID Synonym déjà utilisé",
-                "result": "mdi-alert-circle",
-                "message": [
-                  {
-                    "id": "2051",
-                    "name": "L'ID_SYNONYM de l'item SFR_TOT_INDEM_ACT_PARTIEL(51410) est déja utilisé pour l'item SFR_TOT_AB_MONTHLY_SUB."
-                  }
-                ]
-              },
-              {
-                id: '206',
-                name: 'Contrôle des totalisateurs',
-                Tooltip:
-                  "Vérifie que les éléments utilisés dans les totaux livrés existent",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '207',
-                name: "Contrôle des niveaux d'héritage",
-                Tooltip:
-                  "Vérifie que les éléments livrés sont au niveau d'héritage le plus fin",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '208',
-                name: 'Contrôle des niveaux de saisies',
-                Tooltip:
-                  'Vérifie les différences de niveaux de saisies entre le mdb standard et la base client',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '209',
-                name: 'Contrôle des objets techno',
-                Tooltip:
-                  "Vérifie que le mdb standard ne livre pas d'élément techno. Les éléments techno ne doivent être livrés uniquement dans les HF Techno",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '210',
-                name: 'Contrôle des paramètres applicatifs',
-                Tooltip:
-                  'Vérifie que le mdb standard ne livre pas des paramètres applicatifs non autorisés',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '211',
-                name: 'Contrôle de sécurité sur les tâches',
-                Tooltip: 'Vérifie que les tâches livrées sont sécurisées',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '211',
-                name: 'Contrôle de sécurité sur les tables',
-                Tooltip: 'Vérifie que les tables livrées sont sécurisées',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '212',
-                name: 'Contrôle des types de packages',
-                Tooltip: `Vérifie la cohérence des types de packages livrés.
-                  Exemple : Script de création de colonne physique dans un pack logique.`,
-                result: 'mdi-check-circle'
-              }
-            ]
-          },
-          {
-            id: '3',
-            name: 'Contrôle des dépendances inter packages',
-            result: 'mdi-check-circle',
-            children: []
-          }
-        ]
-      }
-    ],
-    headers: [
-      {
-        text: 'Mdb',
-        align: 'start',
-        filterable: false,
-        value: '0',
-      },
-      { text: 'Pack', value: '1' },
-      { text: 'Mdb2', value: '2' },
-      { text: 'Pack2', value: '3' },
-      { text: 'Classe elt1 / Classe elt2', value: '4' },
-      { text: 'Elt1', value: '5' },
-      { text: 'Elt2', value: '6' },
-    ],
     active: [],
     selectedItemTable: [],
     titleTable: '',
@@ -354,7 +233,7 @@ export default {
     pageCount: 0,
     itemsPerPage: 10,
     nbColsRight: 8,
-    nbColsLeft : 4,
+    nbColsLeft: 4,
     displayNoneLeft: '',
     displayButton: 'display:none',
     tableCtrlDepInterPack: [],
@@ -371,9 +250,11 @@ export default {
   },
 
   created() {
-    this.selectedItemTable = this.items[0].children
-    this.tableCtrlDepInterPack = this.items[0].children[this.items[0].children.length -1]
-    this.titleTable = this.items[0].name
+    this.selectedItemTable = this.reportJsonData[0].children
+    this.tableCtrlDepInterPack = this.reportJsonData[0].children[
+      this.reportJsonData[0].children.length - 1
+    ]
+    this.titleTable = this.reportJsonData[0].name
     this.Filtered(this.checkboxValue)
   },
 
@@ -406,7 +287,10 @@ export default {
             this.displayCheckbox = ''
           }
         }
-        if (e[0].children === undefined && this.selectedItemTable === undefined) {
+        if (
+          e[0].children === undefined &&
+          this.selectedItemTable === undefined
+        ) {
           this.noData = true
         }
       }
@@ -451,15 +335,15 @@ export default {
       }
       this.csvFileHeader = Papa.parse(csvString, config).data[0]
       this.csvFile = Papa.parse(csvString, config).data.slice(1)
-      this.csvFile = this.csvFile.slice(0,this.csvFile.length -1)
+      this.csvFile = this.csvFile.slice(0, this.csvFile.length - 1)
     },
 
     Filtered(checkboxValue) {
       this.checkboxValue = checkboxValue
       if (checkboxValue === true) {
         this.tableFiltered = []
-        if (this.selectedItemTable !== undefined) { 
-          this.selectedItemTable.forEach(element => {
+        if (this.selectedItemTable !== undefined) {
+          this.selectedItemTable.forEach((element) => {
             if (element.result === 'mdi-alert-circle') {
               this.tableFiltered.push(element)
             }

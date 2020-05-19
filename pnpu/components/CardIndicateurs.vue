@@ -58,7 +58,6 @@ export default {
   },
 
   data: () => ({
-    maxStep: 8,
     localClients: [],
     filter: '',
     ClientsFiltered: [],
@@ -66,20 +65,32 @@ export default {
   }),
 
   computed: {
+    /**
+     * Retourne le nombre de client CORRECT.
+     */
     countDone() {
       return this.localClients.filter(
         (client) => client.ID_STATUT === 'CORRECT'
       ).length
     },
+    /**
+     * Retourne le nombre de client IN PROGRESS.
+     */
     countInProgress() {
       return this.localClients.filter(
         (client) => client.ID_STATUT === 'IN PROGRESS'
       ).length
     },
+    /**
+     * Retourne le nombre de client ERROR.
+     */
     countInError() {
       return this.localClients.filter((client) => client.ID_STATUT === 'ERROR')
         .length
     },
+    /**
+     * Retourne le nombre de client WARNING.
+     */
     countManuel() {
       return this.localClients.filter(
         (client) => client.ID_STATUT === 'WARNING'
@@ -88,12 +99,19 @@ export default {
   },
 
   watch: {
+     /**
+     * Alimente la liste des clients du composant via la propriété clients.
+     */
     clients() {
       this.localClients = this.clients
     }
   },
 
   methods: {
+    /**
+     * Filtre les clients en fonction de l'indicateur sélectionné.
+     * @param {string} filter - Valeur du filtre.
+     */
     filterIndicators(filter) {
       this.iconFilter = 'mdi-filter-remove'
       if (filter === 'WARNING') {
@@ -116,7 +134,6 @@ export default {
         this.ClientsFiltered = this.localClients
         this.iconFilter = 'mdi-filter'
       }
-      console.log('ClientsFiltered', this.ClientsFiltered)
       this.$emit('getIndicators', this.ClientsFiltered)
     }
   }

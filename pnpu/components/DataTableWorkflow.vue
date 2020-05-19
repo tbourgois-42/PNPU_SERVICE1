@@ -196,6 +196,9 @@ export default {
   }),
 
   computed: {
+    /**
+     * Gére l'affichage du titre de la fenêtre modale.
+     */
     formTitle() {
       return this.editedIndex === -1
         ? "Ajout d'un workflow"
@@ -204,6 +207,9 @@ export default {
   },
 
   watch: {
+    /**
+     * Permet la fermeture de la fenêtre modale.
+     */
     dialogWorkflow(val) {
       val || this.close()
     }
@@ -214,6 +220,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Charge les workflows depuis PNPU_WORKFLOW.
+     */
     async initialize() {
       const vm = this
       try {
@@ -225,12 +234,18 @@ export default {
       }
     },
 
+    /**
+     * Modifie l'affichage des items côté FrontEnd.
+     */
     editItem(item) {
       this.editedIndex = this.workflows.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialogWorkflow = true
     },
 
+    /**
+     * Suppression d'un workflow.
+     */
     deleteItem(item) {
       const index = this.workflows.indexOf(item)
       if (confirm('Etes-vous sûr de supprimer ce workflow ?') === true) {
@@ -261,6 +276,9 @@ export default {
       }
     },
 
+    /**
+     * Ferme la fenêtre de dialogue modale.
+     */
     close() {
       this.dialogWorkflow = false
       setTimeout(() => {
@@ -269,8 +287,14 @@ export default {
       }, 300)
     },
 
+    /**
+     * Sauvegarde des modifications sur le workflow lors du clique sur le bouton Save.
+     * Gére à la fois l'INSERT et l'UPDATE.
+     * Table PNPU_WORKFLOW.
+     */
     save() {
       if (this.editedIndex > -1) {
+        // On modifie un workflow éxistant --> UPDATE
         const index = this.editedIndex
         const item = this.editedItem
         const vm = this
@@ -293,6 +317,7 @@ export default {
             vm.showSnackbar('error', `${error} !`)
           })
       } else if (this.editedItem.WORKFLOW_LABEL !== '') {
+        // On créé un nouveau workflow --> INSERT
         const vm = this
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, {
@@ -323,6 +348,10 @@ export default {
       this.close()
     },
 
+    /**
+     * Charge les processus associés à un workflow donné.
+     * @param {object} item - Workflow sur lequel on est positionné.
+     */
     async showDetail(item) {
       const vm = this
       this.dialogDetailWorkflow = true
@@ -341,6 +370,10 @@ export default {
       }
     },
 
+    /**
+     * Effectue l'affectation des processus à un workflow donné.
+     * @param {object} item - Workflow sur lequel on est positionné.
+     */
     affectItem(item) {
       if (this.selectedProcessus !== undefined) {
         if (this.selectedProcessus.length !== 0) {
@@ -376,6 +409,11 @@ export default {
       }
     },
 
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
     showSnackbar(color, message) {
       this.snackbar = true
       this.colorsnackbar = color

@@ -111,6 +111,9 @@ export default {
   },
 
   watch: {
+    /**
+     * Alimente la liste des clients du composant via la propriété this.clients.
+     */
     clients() {
       this.localClients = this.clients
       this.calcProgessByTypologie()
@@ -118,6 +121,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Calcul la progression par typologie.
+     */
     calcProgessByTypologie() {
       let progressSDedie = 0
       let progressSDesync = 0

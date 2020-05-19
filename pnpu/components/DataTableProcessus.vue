@@ -142,6 +142,9 @@ export default {
   }),
 
   computed: {
+    /**
+     * Gére l'affichage du titre de la fenêtre modale.
+     */
     formTitle() {
       return this.editedIndex === -1
         ? "Ajout d'un processus"
@@ -150,6 +153,9 @@ export default {
   },
 
   watch: {
+    /**
+     * Permet la fermeture de la fenêtre modale.
+     */
     dialogProcessus(val) {
       val || this.close()
     }
@@ -160,6 +166,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Charge les processus depuis PNPU_PROCESS.
+     */
     async initialize() {
       const vm = this
       try {
@@ -171,12 +180,20 @@ export default {
       }
     },
 
+    /**
+     * Modifie l'affichage des items côté FrontEnd.
+     * @param {object} item - processus sur lequel on est positionné.
+     */
     editItem(item) {
       this.editedIndex = this.processus.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialogProcessus = true
     },
 
+    /**
+     * Suppression d'un processus.
+     * @param {object} item - processus sur lequel on est positionné.
+     */
     deleteItem(item) {
       const index = this.processus.indexOf(item)
       const vm = this
@@ -207,6 +224,9 @@ export default {
       }
     },
 
+    /**
+     * Ferme la fenêtre de dialogue modale.
+     */
     close() {
       this.dialogProcessus = false
       setTimeout(() => {
@@ -215,8 +235,14 @@ export default {
       }, 300)
     },
 
+    /**
+     * Sauvegarde des modifications sur le processus lors du clique sur le bouton Save.
+     * Gére à la fois l'INSERT et l'UPDATE.
+     * Table PNPU_PROCESS.
+     */
     save() {
       if (this.editedIndex > -1) {
+        // On modifie un processus éxistant --> INSERT
         const vm = this
         axios
           .put(
@@ -239,6 +265,7 @@ export default {
             vm.showSnackbar('error', `${error} !`)
           })
       } else if (this.editedItem.PROCESS_LABEL !== '') {
+        // On créé un nouveau processus --> INSERT
         const vm = this
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/process/CreateProcess/`, {
@@ -263,6 +290,11 @@ export default {
       this.close()
     },
 
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
     showSnackbar(color, message) {
       this.snackbar = true
       this.colorsnackbar = color
