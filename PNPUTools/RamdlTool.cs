@@ -56,7 +56,6 @@ namespace PNPUTools
             sLogin = "M4ADM";
             sMdp = "CapitalM4ADM";
             ParamRamDlInit();
-
         }
 
         public void AnalyseMdbRAMDL()
@@ -71,7 +70,7 @@ namespace PNPUTools
             this.pathIni = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRAMDL.ini";
             this.DirectoryResult = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT;
             // Suppression des fichiers d'analyse et de log précédents
-            this.deleteTempFile();
+            //this.deleteTempFile();
             try
             {
                 
@@ -130,9 +129,8 @@ namespace PNPUTools
                     int iIndexErreur = sContenuFichierLog.IndexOf("[Error");
                     if ((iIndexErreur > -1) && (sContenuFichierLog.IndexOf("[Error 429] ActiveX component can't create object") != iIndexErreur))
                     {
-
-                    }
                         //Logger.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
+                    }
                 }
             }
             catch (Exception ex)
