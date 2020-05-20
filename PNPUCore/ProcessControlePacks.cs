@@ -38,6 +38,7 @@ namespace PNPUCore.Process
             List<IControle> listControl = new List<IControle>();
             string GlobalResult = ParamAppli.StatutOk;
             string SourceResult = ParamAppli.StatutOk;
+            string statutControle;
             listMDB = new List<string>();
             sRapport = string.Empty;
             string[] tMDB = null;
@@ -47,6 +48,8 @@ namespace PNPUCore.Process
             //POUR TEST 
             /*this.CLIENT_ID = "101";*/
             this.STANDARD = true;
+
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
 
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
@@ -76,7 +79,9 @@ namespace PNPUCore.Process
                     RapportControle.Tooltip = controle.GetTooltipControle();
                     RapportControle.Message = new List<string>();
                     RapportControleCourant = RapportControle;
-                    string statutControle = controle.MakeControl();
+                    Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
+                    statutControle = controle.MakeControl();
+                    Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
                     //ERROR > WARNING > OK
                     if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
                     {
@@ -115,7 +120,10 @@ namespace PNPUCore.Process
             RapportControle.Name = cdmControleDependancesMDB.ToString();
             RapportControle.Message = new List<string>();
             RapportControleCourant = RapportControle;
-            RapportControle.Result = ParamAppli.TranscoSatut[cdmControleDependancesMDB.MakeControl()];
+            Logger.Log(this, cdmControleDependancesMDB, ParamAppli.StatutInfo, "Début du contrôle " + cdmControleDependancesMDB.ToString());
+            statutControle = cdmControleDependancesMDB.MakeControl();
+            Logger.Log(this, cdmControleDependancesMDB, statutControle, "Fin du contrôle " + cdmControleDependancesMDB.ToString());
+            RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
             //RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource);
 
@@ -138,7 +146,10 @@ namespace PNPUCore.Process
             RapportControle.Name = cdmControleDependancesMDB.ToString();
             RapportControle.Message = new List<string>();
             RapportControleCourant = RapportControle;
-            RapportControle.Result = ParamAppli.TranscoSatut[crdrControleRechercheDependancesRef.MakeControl()];
+            Logger.Log(this, crdrControleRechercheDependancesRef, ParamAppli.StatutInfo, "Début du contrôle " + crdrControleRechercheDependancesRef.ToString());
+            statutControle = crdrControleRechercheDependancesRef.MakeControl();
+            Logger.Log(this, crdrControleRechercheDependancesRef, statutControle, "Fin du contrôle " + crdrControleRechercheDependancesRef.ToString());
+            RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
             //RapportSource2.Controle.Add(RapportControle2);
             RapportProcess.Source.Add(RapportSource);
 
@@ -147,9 +158,10 @@ namespace PNPUCore.Process
             RapportSource.Result = RapportControle.Result;
 
 
-
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
+            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
+
 
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             //string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };

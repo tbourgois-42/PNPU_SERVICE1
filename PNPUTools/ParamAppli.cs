@@ -104,6 +104,7 @@ namespace PNPUTools
         public const string StatutCompleted = "COMPLETED";
         public const string StatutError = "ERROR";
         public const string StatutWarning = "WARNING";
+        public const string StatutInfo = "INFORMATION";
         public static string LogLevel = "DEBUG";
 
         public const string connectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
