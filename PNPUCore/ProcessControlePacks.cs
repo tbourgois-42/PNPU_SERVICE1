@@ -6,6 +6,7 @@ using System.IO;
 using System.Globalization;
 using PNPUTools;
 using PNPUTools.DataManager;
+using System.Xml;
 
 using PNPUCore.Rapport;
 
@@ -135,7 +136,6 @@ namespace PNPUCore.Process
             // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
             RapportControle.Message.Clear();
             RapportSource.Result = RapportControle.Result;
-
 
             // Recherche des dépendances avec les tâches CCT sur la base de référence
             ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
