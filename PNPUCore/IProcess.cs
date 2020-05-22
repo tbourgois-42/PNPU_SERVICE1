@@ -16,7 +16,7 @@ namespace PNPUCore.Process
         String FormatReport();
         void AjouteRapport(string v);
         string SaveReportInBDD(string json, IProcess process);
-        decimal WORKFLOW_ID { get; set; }
+        int WORKFLOW_ID { get; set; }
         string CLIENT_ID { get; set; }
 
         string STATUT { get; set; }
@@ -35,7 +35,7 @@ namespace PNPUCore.Process
     internal class ProcessCore : IProcess
     {
         public string LibProcess { get; set; }
-        public decimal WORKFLOW_ID { get; set; }
+        public int WORKFLOW_ID { get; set; }
         public string CLIENT_ID { get; set; }
         public string STATUT { get; set; }
         public int PROCESS_ID { get; set; }
@@ -53,7 +53,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessCore(decimal wORKFLOW_ID, string cLIENT_ID)
+        public ProcessCore(int wORKFLOW_ID, string cLIENT_ID)
         {
             RapportProcess = new RProcess();
             WORKFLOW_ID = wORKFLOW_ID;
@@ -86,7 +86,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
         /// <returns>Retourne l'instance du process créé.</returns>
-        internal static IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
+        internal static IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
         {
             return new ProcessCore(WORKFLOW_ID, CLIENT_ID);
         }

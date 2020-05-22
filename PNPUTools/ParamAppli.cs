@@ -98,7 +98,7 @@ namespace PNPUTools
 
 
         public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact";
-        public const string RamdDlPAth = "C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RAMDL.EXE";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
 
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";
@@ -128,7 +128,7 @@ namespace PNPUTools
         public static Dictionary<string, string> TranscoSatut;
 
         public const string templateIniFileAnalyseImpact = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n";//<CLEAR_PREVIOUS_ANALYSIS>\r\nYES\r\n<PACK_ANALYSIS>\r\n{5}\r\n<ANALYSE_RESULTS_FILE>\r\n{6}
-        public const string templateIniFileGeneratePack = "<ORIGIN_CONN>\n\r{0}\n\r<LOG_FILE>\n\r{1}\n\r<PKGWZ_CONTENT_TYPE>\n\r3\n\r<PKGWZ_CCT_VERSION>\n\r8.1\n\r<PKGWZ_CCT_TASK_LIST>\n\r{2}\n\r<PKGWZ_MDB_ADD_TABLES>\n\r3\n\r<PKGWZ_MDB_PATH>\n\r{3}\n\r<PKGWZ_PACK_NAME>\n\rPNPU_\n\r<PKGWZ_PACK_LOAD_DATA>\n\r1\n\r<PKGWZ_PACK_REFRESH_CHANGES>\n\r0\n\r<PKGWZ_PACK_SAVE_ORDER>\n\r1\n\r<PKGWZ_PACK_SAVE_SCRIPT>\n\r0";
+        public const string templateIniFileGeneratePack = "<ORIGIN_CONN>\r\n{0}\r\n<LOG_FILE>\r\n{1}\r\n<PKGWZ_CONTENT_TYPE>\r\n3\r\n<PKGWZ_CCT_VERSION>\r\n8.1\r\n<PKGWZ_CCT_TASK_LIST>\r\n{2}\r\n<PKGWZ_MDB_ADD_TABLES>\r\n3\r\n<PKGWZ_MDB_PATH>\r\n{3}\r\n<PKGWZ_PACK_NAME>\r\nPNPU_\r\n<PKGWZ_PACK_LOAD_DATA>\r\n1\r\n<PKGWZ_PACK_REFRESH_CHANGES>\r\n0\r\n<PKGWZ_PACK_SAVE_ORDER>\r\n1\r\n<PKGWZ_PACK_SAVE_SCRIPT>\r\n0";
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
         /// </summary>  

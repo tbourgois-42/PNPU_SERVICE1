@@ -35,7 +35,7 @@ namespace PNPUTools
         string sLogin = "";
         string sMdp = "";
 
-        public RamdlTool(String id_client, int WORKFLOW_ID_)
+        public RamdlTool(string id_client, int WORKFLOW_ID_)
         {
 
             InfoClient = ParamAppli.ListeInfoClient[id_client];
@@ -195,23 +195,33 @@ namespace PNPUTools
             StreamReader srResultat;
             string sContenuFichierLog;
 
+            // MHUM pour test
+            this.sChaineDeConnexion = "DSN=SAASSN305;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseRefPlateforme;
+            ParamAppli.GeneratePackPath = ParamAppli.DossierTemporaire+"\\RAMDL";
+            this.pathIni = ParamAppli.GeneratePackPath +"\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\RamdlCmd.INI";
+            // FIN MHUM pour test
+
             this.pathLogFile = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\RAMDL_DEPENDANCE_" + namePack + ".log"; //{1}
             this.pathResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\" + namePack + ".mdb";
             this.DirectoryResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT;
             try
             {
                 if (Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL") == false) Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");
-                
+                if (Directory.Exists(DirectoryResult) == false) Directory.CreateDirectory(DirectoryResult);
+
+                if (File.Exists(this.pathResult))
+                    File.Delete(this.pathResult);
+
                 string sDossierFichiersRAMDL = ParamAppli.GeneratePackPath;
 
                 this.GenerateIniForGeneratePack(namePack, listPack);
                 // Encodage du mot de passe
-                psiStartInfo = new ProcessStartInfo();
+                /*psiStartInfo = new ProcessStartInfo();
                 psiStartInfo.FileName = ParamAppli.RamdDlPAth;
                 psiStartInfo.Arguments = "ENC " + this.pathIni;
                 pProcess = System.Diagnostics.Process.Start(psiStartInfo);
                 pProcess.WaitForExit();
-                pProcess.Close();
+                pProcess.Close();*/
 
                 // TODO Suppression des fichiers d'analyse et de log précédents
                 //this.deleteTempFile();

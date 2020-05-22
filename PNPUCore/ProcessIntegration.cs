@@ -16,12 +16,12 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessIntegration(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessIntegration(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
             this.PROCESS_ID = ParamAppli.ProcessIntegration;
         }
 
-        internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
         {
             return new ProcessIntegration(WORKFLOW_ID, CLIENT_ID);
         }
