@@ -66,7 +66,7 @@
               :to="{
                 name: 'client',
                 params: {
-                  client: item.CLIENT_ID,
+                  client: item.CLIENT_NAME,
                   step: item.ORDER_ID,
                   workflowDate: workflowDiplayed,
                   textStatus: item.ID_STATUT,
@@ -86,7 +86,7 @@
                   <v-col class="d-flex">
                     <v-list-item>
                       <v-list-item-content>
-                        <v-list-item-title class="title">{{ item.CLIENT_ID }}</v-list-item-title>
+                        <v-list-item-title class="title">{{ item.CLIENT_NAME }}</v-list-item-title>
                         <v-list-item-subtitle class="pb-1">ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle>
                         <v-list-item-subtitle class="pb-2">Step {{ item.ORDER_ID }}/ {{ maxStep }}</v-list-item-subtitle>
                         <v-list-item-subtitle>

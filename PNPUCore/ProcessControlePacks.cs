@@ -9,6 +9,7 @@ using PNPUTools.DataManager;
 using System.Xml;
 
 using PNPUCore.Rapport;
+using System.Linq;
 
 namespace PNPUCore.Process
 {
@@ -45,11 +46,12 @@ namespace PNPUCore.Process
             string[] tMDB = null;
             RControle RapportControle;
             Rapport.Source RapportSource;
+            string[] listClientId = CLIENT_ID.Split(',');
 
             //POUR TEST 
             /*this.CLIENT_ID = "101";*/
             this.STANDARD = true;
-
+            //this.TYPOLOGY = ParamAppli.ListeInfoClient[listClientId.First()].TYPOLOGY;
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
 
             RapportProcess.Name = this.LibProcess;
@@ -166,7 +168,7 @@ namespace PNPUCore.Process
             //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
             //string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
             //string[] listClientId = new string[] { "111" };//{ "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
-            string[] listClientId = CLIENT_ID.Split(',');
+ 
 
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;

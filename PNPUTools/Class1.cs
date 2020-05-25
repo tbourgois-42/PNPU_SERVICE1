@@ -224,6 +224,7 @@ namespace PNPUTools.DataManager
 		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
 		public string CLIENT_ID { get; set; }
+		public string CLIENT_NAME { get; set; }
 		public string TYPOLOGY { get; set; }
 		public int ORDER_ID { get; set; }
 		public decimal PERCENTAGE_COMPLETUDE { get; set; }

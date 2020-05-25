@@ -183,7 +183,7 @@ namespace WcfService1
             string clientToLaunch = "";
 
             //Bring all client
-            if (String.IsNullOrEmpty(clients) && !String.IsNullOrEmpty(typology))
+            if ((String.IsNullOrEmpty(clients) || clients == "undefined") && !String.IsNullOrEmpty(typology))
             {
                 //REQUETE
                 int typologyId = Int32.Parse(typology);
@@ -192,7 +192,7 @@ namespace WcfService1
                 {
                     clientToLaunch = clientToLaunch + client.ID_CLIENT + ",";
                 }
-                clientToLaunch.Remove(clientToLaunch.Length - 1);
+                clientToLaunch = clientToLaunch.Remove(clientToLaunch.Length - 1);
             }
             else if (!String.IsNullOrEmpty(clients) && !String.IsNullOrEmpty(typology))
             {
