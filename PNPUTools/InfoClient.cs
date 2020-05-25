@@ -14,9 +14,9 @@ namespace PNPUTools
         public string ConnectionStringQA1 { get; set; }
         public string ConnectionStringQA2 { get; set; }
 
-        public InfoClient(string sID_CLIENT, string sCLIENT_NAME, string sTypology, string sTypology_ID, string sConnectionStringQA1, string sConnectionStringQA2)
+        public InfoClient(string iID_CLIENT, string sCLIENT_NAME, string sTypology, string sTypology_ID, string sConnectionStringQA1, string sConnectionStringQA2)
         {
-            ID_CLIENT = sID_CLIENT;
+            ID_CLIENT = iID_CLIENT;
             CLIENT_NAME = sCLIENT_NAME;
             TYPOLOGY = sTypology;
             TYPOLOGY_ID = sTypology_ID;
