@@ -94,6 +94,7 @@ namespace PNPUCore.Process
             historicStep.ITERATION = 1;
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
             historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.CLIENT_NAME = ParamAppli.ListeInfoClient[this.CLIENT_ID].CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
             historicStep.TYPOLOGY = "SAAS DEDIE";
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;

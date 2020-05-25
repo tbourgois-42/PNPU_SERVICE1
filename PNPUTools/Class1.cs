@@ -49,6 +49,7 @@ namespace PNPUTools.DataManager
 		public decimal WORKFLOW_ID { get; set; }
 		public decimal ID_PROCESS { get; set; }
 		public string CLIENT_ID { get; set; }
+		public string CLIENT_NAME { get; set; }
 		public string USER_ID { get; set; }
 		public DateTime LAUNCHING_DATE { get; set; }
 		public DateTime ENDING_DATE { get; set; }
@@ -59,12 +60,13 @@ namespace PNPUTools.DataManager
 		{
 
 		}
-		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_, string TYPOLOGY_)
+		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string CLIENT_NAME_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_, string TYPOLOGY_)
 		{
 			this.ITERATION = ITERATION_;
 			this.WORKFLOW_ID = WORKFLOW_ID_;
 			this.ID_PROCESS = ID_PROCESS_;
 			this.CLIENT_ID = CLIENT_ID_;
+			this.CLIENT_NAME = CLIENT_NAME_;
 			this.USER_ID = USER_ID_;
 			this.LAUNCHING_DATE = LAUNCHING_DATE_;
 			this.ENDING_DATE = ENDING_DATE_;
@@ -222,6 +224,7 @@ namespace PNPUTools.DataManager
 		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
 		public string CLIENT_ID { get; set; }
+		public string CLIENT_NAME { get; set; }
 		public string TYPOLOGY { get; set; }
 		public int ORDER_ID { get; set; }
 		public decimal PERCENTAGE_COMPLETUDE { get; set; }
