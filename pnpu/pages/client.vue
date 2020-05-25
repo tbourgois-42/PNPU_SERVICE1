@@ -5,7 +5,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
-              {{ client }}
+              {{ clientName }}
             </v-list-item-title>
             <v-list-item-subtitle>
               {{ workflowDate }} | Step {{ etape }}
@@ -123,7 +123,8 @@ export default {
     return {
       e1: 1,
       steps: [],
-      client: '',
+      clientId: '',
+      clientName: '',
       etape: '',
       workflowDate: '',
       workflowID: '',
@@ -146,13 +147,14 @@ export default {
   },
 
   created() {
-    this.client = this.$route.params.client
+    this.clientId = this.$route.params.clientId
+    this.clientName = this.$route.params.clientName
     this.etape = this.$route.params.step
     this.e1 = this.$route.params.step
     this.workflowDate = this.$route.params.workflowDate
     this.workflowID = this.$route.params.workflowID
     this.textStatus = this.$route.params.textStatus
-    if (this.$route.params.client === undefined) {
+    if (this.$route.params.clientId === undefined) {
       return this.$nuxt.error({ statusCode: 404 })
     } else {
       this.getWorkflowProcesses()
@@ -212,7 +214,7 @@ export default {
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/Workflow/Client/Stop`, {
             WORKFLOW_ID: this.workflowID,
-            CLIENT_ID: this.client
+            CLIENT_ID: this.clientId
           })
           .then(function(response) {
             console.log(response)
@@ -244,7 +246,7 @@ export default {
         axios
           .post(`${process.env.WEB_SERVICE_WCF}/Workflow/Client/Continue`, {
             WORKFLOW_ID: this.workflowID,
-            CLIENT_ID: this.client
+            CLIENT_ID: this.clientId
           })
           .then(function(response) {
             console.log(response)
@@ -275,7 +277,7 @@ export default {
             `/` +
             vm.currentID_PROCESS +
             `/` +
-            vm.client
+            vm.clientId
         )
         .then(function(response) {
           vm.test = response.data.getReportResult

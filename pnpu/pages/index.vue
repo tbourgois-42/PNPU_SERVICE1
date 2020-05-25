@@ -66,7 +66,8 @@
               :to="{
                 name: 'client',
                 params: {
-                  client: item.CLIENT_NAME,
+                  clientName: item.CLIENT_NAME,
+                  clientId: item.CLIENT_ID,
                   step: item.ORDER_ID,
                   workflowDate: workflowDiplayed,
                   textStatus: item.ID_STATUT,
