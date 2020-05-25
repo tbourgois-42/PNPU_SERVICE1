@@ -35,9 +35,9 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
 
-            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
-            ramdlTool.AnalyseMdbRAMDL();
-            /*List<IControle> listControl = ListControls.listOfMockControl;
+            /*RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
+            ramdlTool.AnalyseMdbRAMDL();*/
+            List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportProcess.Name = this.LibProcess;
@@ -61,15 +61,18 @@ namespace PNPUCore.Process
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
-            historicStep.ID_PROCESS = this.PROCESS_ID;  
+            historicStep.ID_PROCESS = this.PROCESS_ID;
             historicStep.ITERATION = 1;
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
             historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
             historicStep.TYPOLOGY = "SAAS DEDIE";
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;
             historicStep.ENDING_DATE = RapportProcess.Fin;
+            historicStep.ID_STATUT = GlobalResult;
 
             historicStep.ID_STATUT = GlobalResult;
 
@@ -79,10 +82,10 @@ namespace PNPUCore.Process
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
-            }*/
+            }
 
         }
-       
+
 
         //=> MHUM le 22/11/2019 - Gestion création des dossiers nécessaires à l'analyse RAMDL
         //--------------------------------------------------------------------

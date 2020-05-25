@@ -76,14 +76,15 @@ namespace PNPUCore.Process
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
             historicStep.ID_PROCESS = this.PROCESS_ID;
             historicStep.ITERATION = 1;
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
             historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
             historicStep.TYPOLOGY = "SAAS DEDIE";
-
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;
             historicStep.ENDING_DATE = RapportProcess.Fin;
             historicStep.ID_STATUT = GlobalResult;

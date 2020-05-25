@@ -177,18 +177,19 @@ namespace PNPUCore.Process
 
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
 
-            foreach (string clienId in listClientId) { 
+            foreach (string clientId in listClientId) {
+                InfoClient client = RequestTool.getClientsById(clientId);
                 PNPU_H_STEP historicStep = new PNPU_H_STEP();
                 historicStep.ID_PROCESS = this.PROCESS_ID;
                 historicStep.ITERATION = 1;
                 historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-                historicStep.CLIENT_ID = clienId;
+                historicStep.CLIENT_ID = clientId;
+                historicStep.CLIENT_NAME = client.CLIENT_NAME;
                 historicStep.USER_ID = "PNPUADM";
                 historicStep.LAUNCHING_DATE = RapportProcess.Debut;
                 historicStep.ENDING_DATE = RapportProcess.Fin;
                 historicStep.TYPOLOGY = "SAAS DEDIE";
                 historicStep.ID_STATUT = GlobalResult;
-                
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }
 
