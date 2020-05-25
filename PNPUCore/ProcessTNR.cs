@@ -15,12 +15,12 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessTNR(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessTNR(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
             this.PROCESS_ID = ParamAppli.ProcessTNR;
         }
 
-        internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
         {
             return new ProcessTNR(WORKFLOW_ID, CLIENT_ID);
         }
@@ -76,14 +76,15 @@ namespace PNPUCore.Process
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
             historicStep.ID_PROCESS = this.PROCESS_ID;
             historicStep.ITERATION = 1;
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
             historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
             historicStep.TYPOLOGY = "SAAS DEDIE";
-
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;
             historicStep.ENDING_DATE = RapportProcess.Fin;
             historicStep.ID_STATUT = GlobalResult;

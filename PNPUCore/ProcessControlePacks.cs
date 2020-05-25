@@ -6,6 +6,7 @@ using System.IO;
 using System.Globalization;
 using PNPUTools;
 using PNPUTools.DataManager;
+using System.Xml;
 
 using PNPUCore.Rapport;
 
@@ -24,7 +25,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessControlePacks(decimal wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessControlePacks(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
             this.PROCESS_ID = ParamAppli.ProcessControlePacks;
             this.LibProcess = "Pré contrôle des .mdb";
@@ -136,7 +137,6 @@ namespace PNPUCore.Process
             RapportControle.Message.Clear();
             RapportSource.Result = RapportControle.Result;
 
-
             // Recherche des dépendances avec les tâches CCT sur la base de référence
             ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
             RapportSource = new Rapport.Source();
@@ -177,18 +177,19 @@ namespace PNPUCore.Process
 
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
 
-            foreach (string clienId in listClientId) { 
+            foreach (string clientId in listClientId) {
+                InfoClient client = RequestTool.getClientsById(clientId);
                 PNPU_H_STEP historicStep = new PNPU_H_STEP();
                 historicStep.ID_PROCESS = this.PROCESS_ID;
                 historicStep.ITERATION = 1;
                 historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-                historicStep.CLIENT_ID = clienId;
+                historicStep.CLIENT_ID = clientId;
+                historicStep.CLIENT_NAME = client.CLIENT_NAME;
                 historicStep.USER_ID = "PNPUADM";
                 historicStep.LAUNCHING_DATE = RapportProcess.Debut;
                 historicStep.ENDING_DATE = RapportProcess.Fin;
                 historicStep.TYPOLOGY = "SAAS DEDIE";
                 historicStep.ID_STATUT = GlobalResult;
-                
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }
 
@@ -203,7 +204,7 @@ namespace PNPUCore.Process
             }
         }
 
-        internal static new IProcess CreateProcess(decimal WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
         {
             return new ProcessControlePacks(WORKFLOW_ID, CLIENT_ID);
         }

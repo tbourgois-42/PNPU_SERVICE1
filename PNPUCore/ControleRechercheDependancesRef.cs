@@ -151,7 +151,7 @@ namespace PNPUCore.Controle
                 {
                     sRequete = "SELECT A.CCT_TASK_ID,A.CCT_OBJECT_TYPE,A.CCT_OBJECT_ID,A.CCT_PARENT_OBJ_ID,A.DEP_CCT_TASK_ID,A.DEP_CCT_OBJECT_TYPE,A.DEP_CCT_OBJECT_ID,A.DEP_CCT_PARENT_OBJ_ID,A.DEP_CCT_ACTION_TYPE,A.DEP_CCT_PACK_TYPE,A.DEP_CCT_COMMAND_TYPE ";
                     sRequete += "FROM M4CFR_VW_CCT_DEPENDANCES A ";
-                    sRequete += "INNER JOIN M4RDL_PACKAGES B ON (A.CCT_TASK_ID = B.CCT_TASK_ID) ";
+                    sRequete += "INNER JOIN M4RDL_PACKAGES B ON (A.DEP_CCT_TASK_ID = B.CCT_TASK_ID) ";
                     sRequete += "INNER JOIN M4RDL_RAM_PACKS C ON (C.ID_PACKAGE = B.ID_PACKAGE) ";
                     sRequete += "WHERE A.CCT_TASK_ID IN (" + sFiltreNiveauN + ") ";
                     sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauN + ") ";

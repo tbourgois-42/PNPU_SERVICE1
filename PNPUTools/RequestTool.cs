@@ -32,6 +32,7 @@ namespace PNPUTools
 
         static string requestListClient = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.SAAS = '{0}'";
         static string requestListClientAll = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS";
+        static string requestClientById = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.CLIENT_ID = '{0}'";
 
         private static string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = ";
         private static string requestGetStepHistoric = "select * from PNPU_H_STEP where WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3}";
@@ -54,7 +55,7 @@ namespace PNPUTools
 
             string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
 
-            string request = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.TYPOLOGY, PS.ORDER_ID, ";
+            string request = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, ";
             request += "PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE " ;
             request += "FROM PNPU_H_STEP PHS, PNPU_STEP PS, PNPU_STEP PS2 WHERE PHS.LAUNCHING_DATE = (SELECT MAX(PHS2.LAUNCHING_DATE) FROM PNPU_H_STEP PHS2 WHERE PHS.WORKFLOW_ID = PHS2.WORKFLOW_ID AND PHS.CLIENT_ID = PHS2.CLIENT_ID) AND PHS.WORKFLOW_ID = " + filtre + " ";
             request += " AND PS.ORDER_ID = PS2.ORDER_ID AND PS.ID_PROCESS = PS2.ID_PROCESS AND PS.WORKFLOW_ID = PS2.WORKFLOW_ID AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID AND PS.ID_PROCESS = PHS.ID_PROCESS ";
@@ -96,6 +97,19 @@ namespace PNPUTools
             var newJson = regex.Replace(json, "Clients", 1);
             newJson = newJson.Replace("\r\n", "");
             return newJson;
+        }
+
+        public static InfoClient getClientsById(string idClient)
+        {
+
+            string finalRequest = string.Format(requestClientById, idClient);
+            DataSet result = DataManagerSQLServer.GetDatas(finalRequest, ParamAppli.connectionStringSupport);
+            DataTable table = result.Tables[0];
+
+
+            IEnumerable<InfoClient> listTest = table.DataTableToList<InfoClient>();
+
+            return listTest.First();
         }
 
         public static IEnumerable<InfoClient> getClientsWithTypologies(int typology)

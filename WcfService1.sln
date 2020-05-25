@@ -20,6 +20,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "PNPU_FRONT", "pnpu\PNPU_FRO
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TEST", "TEST\TEST.sqlproj", "{7D01D4BB-B17D-4D72-910A-1EC27CB07EB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{BD23D640-EF42-479B-8B63-B41CE935716B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{7D01D4BB-B17D-4D72-910A-1EC27CB07EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D01D4BB-B17D-4D72-910A-1EC27CB07EB9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D01D4BB-B17D-4D72-910A-1EC27CB07EB9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BD23D640-EF42-479B-8B63-B41CE935716B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD23D640-EF42-479B-8B63-B41CE935716B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD23D640-EF42-479B-8B63-B41CE935716B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD23D640-EF42-479B-8B63-B41CE935716B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,9 +8,9 @@ using PNPUTools;
 namespace PNPUCore.Controle
 {
     /// <summary>  
-    /// Cette classe permet de détecter les tâches CCT dépendantes au niveau 1 des tâches du HF. 
+    /// Cette classe permet de détecter les tâches CCT dépendantes au niveau 2 des tâches du HF. 
     /// </summary>  
-    class ControleDependanceN1 : PControle, IControle
+    class ControleDependanceN2 : PControle, IControle
     {
         private PNPUCore.Process.IProcess Process;
 
@@ -18,11 +18,11 @@ namespace PNPUCore.Controle
         /// Constructeur de la classe. 
         /// </summary>  
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
-        public ControleDependanceN1(PNPUCore.Process.IProcess pProcess)
+        public ControleDependanceN2(PNPUCore.Process.IProcess pProcess)
         {
             Process = pProcess;
-            ToolTipControle = "Récupération des tâches CCT dépendantes de niveau 1";
-            LibControle = "Contrôle des dépendances de niveau 1";
+            ToolTipControle = "Récupération des tâches CCT dépendantes de niveau 2";
+            LibControle = "Contrôle des dépendances de niveau 2";
             ResultatErreur = ParamAppli.StatutError;
         }
 
@@ -31,7 +31,7 @@ namespace PNPUCore.Controle
         /// </summary>  
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
-        public ControleDependanceN1(PNPUCore.Process.IProcess pProcess, DataRow drRow)
+        public ControleDependanceN2(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
             Process = pProcess;
             LibControle = drRow[1].ToString();
@@ -48,14 +48,15 @@ namespace PNPUCore.Controle
             string bResultat = ParamAppli.StatutOk;
             string sRequete = string.Empty;
             List<string> lListeCCTManquants = new List<string>();
+            List<TacheCCT> lTacheCCT = new List<TacheCCT>();
 
             DataManagerSQLServer dataManagerSQLServer;
 
             try
             {
-                // Chargement de la liste des tâche CCT de niveau 1 depuis la base de référence
+                // Chargement de la liste des tâche CCT de niveau 2 depuis la base de référence
                 dataManagerSQLServer = new DataManagerSQLServer();
-                sRequete = "SELECT DISTINCT(DEP_CCT_TASK_ID) from PNPU_DEP_REF where NIV_DEP = '1' AND ID_H_WORKFLOW = " + Process.WORKFLOW_ID;
+                sRequete = "SELECT DEP_CCT_TASK_ID, DEP_CCT_OBJECT_TYPE, DEP_CCT_OBJECT_ID, DEP_CCT_PARENT_OBJ_ID from PNPU_DEP_REF where NIV_DEP = '2' AND ID_H_WORKFLOW = " + Process.WORKFLOW_ID;
                 DataSet dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
 
                 sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
@@ -67,12 +68,14 @@ namespace PNPUCore.Controle
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         sCCT = drRow[0].ToString();
-                        lListeCCTManquants.Add(sCCT);
+                        if (lListeCCTManquants.Contains(sCCT) == false)
+                            lListeCCTManquants.Add(sCCT);
                         if (bPremier == true)
                             bPremier = false;
                         else
                             sRequete += ",";
                         sRequete += "'" + sCCT + "'";
+                        lTacheCCT.Add(new TacheCCT(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[3].ToString()));
                     }
                 }
                 sRequete += ")";
@@ -87,7 +90,18 @@ namespace PNPUCore.Controle
                         {
                             sCCT = drRow[0].ToString();
                             if (lListeCCTManquants.Contains(sCCT) == true)
+                            {
                                 lListeCCTManquants.Remove(sCCT);
+                                for(int cpt = 0; cpt <lTacheCCT.Count; cpt++)
+                                {
+                                    if (lTacheCCT[cpt].CCT_TASK_ID == sCCT)
+                                    {
+                                        lTacheCCT.RemoveAt(cpt);
+                                        cpt--;
+                                    }
+                                        
+                                }
+                            }
                         }
                     }
                 }
@@ -136,7 +150,18 @@ namespace PNPUCore.Controle
                             {
                                 sCCT = drRow[0].ToString();
                                 if (lListeCCTManquants.Contains(dCorrespondanceCCT[sCCT]) == true)
+                                {
                                     lListeCCTManquants.Remove(dCorrespondanceCCT[sCCT]);
+                                    for (int cpt = 0; cpt < lTacheCCT.Count; cpt++)
+                                    {
+                                        if (lTacheCCT[cpt].CCT_TASK_ID == dCorrespondanceCCT[sCCT])
+                                        {
+                                            lTacheCCT.RemoveAt(cpt);
+                                            cpt--;
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -145,15 +170,17 @@ namespace PNPUCore.Controle
                 //POUR TEST
                 lListeCCTManquants.Clear();
                 lListeCCTManquants.Add("SFR_152319");
+                lTacheCCT.Clear();
+                lTacheCCT.Add(new TacheCCT("SFR_152319", "ITEM", "CFR_CALC_IJSS", "CFR_H_HR_ABSENCES_PAIE"));
                 //FIN POUR TEST
-                
+
                 // La liste ne doit contenir que les tâches CCT non instalées sur le client
                 if (lListeCCTManquants.Count > 0)
                 {
                     List<string> lListeTacheCrees = new List<string>();
-                    if (DupliqueTachesCCT(lListeCCTManquants, "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID,ref lListeTacheCrees) == false)
+                    if (DupliqueTachesCCTN2(lListeCCTManquants,lTacheCCT, "PNPUN2_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees) == false)
                         bResultat = ResultatErreur;
-                    else if (lListeTacheCrees.Count>0)
+                    else if (lListeTacheCrees.Count > 0)
                     {
                         string sName = "TEST";
                         GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
@@ -161,7 +188,7 @@ namespace PNPUCore.Controle
                         ramdlTool.GeneratePackFromCCT(sName, lListeTacheCrees.ToArray());
                         Process.AjouteRapport("Génération du fichier MDB.");
                         sName = ParamAppli.GeneratePackPath + "\\" + Process.WORKFLOW_ID + "_" + Process.CLIENT_ID + "\\" + sName + ".mdb";
-                        if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.CLIENT_ID, 1) == 0)
+                        if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.CLIENT_ID, 2) == 0)
                             Process.AjouteRapport("Ajout du fichier MDB en base de données.");
                         else
                         {
@@ -182,20 +209,37 @@ namespace PNPUCore.Controle
             
         }
 
-        public bool DupliqueTachesCCT(List<string> lListeTachesCCT, string sPrefixe, ref List<string> lListeTachesCrees)
+        public bool DupliqueTachesCCTN2(List<string> lListeCCTManquants,List<TacheCCT> lTacheCCT, string sPrefixe, ref List<string> lListeTachesCrees)
         {
             string sRequete;
             string sNouvTacheCCT;
             string sUserPNPU = "MT4PNPU";
             int iCptPack = 0;
             bool bResultat = true;
+            string sFiltre;
+            bool bPremier;
             try
             {
                 lListeTachesCrees.Clear();
-                foreach (string sTacheCCT in lListeTachesCCT)
+                foreach (string sTacheCCT in lListeCCTManquants)
                 {
                     iCptPack++;
                     sNouvTacheCCT = sPrefixe + "_" + iCptPack.ToString("000");
+
+                    bPremier = true;
+                    sFiltre = string.Empty;
+
+                    foreach (TacheCCT cCT in lTacheCCT)
+                    {
+                        if (cCT.CCT_TASK_ID == sTacheCCT)
+                        {
+                            if (bPremier == true)
+                                bPremier = false;
+                            else
+                                sFiltre += ",";
+                            sFiltre += "'" + cCT.CCT_TASK_ID + "*" + cCT.CCT_OBJECT_ID + "*" + cCT.CCT_OBJECT_TYPE + "*" + cCT.CCT_PARENT_OBJ_ID +"'";
+                        }
+                    }
 
                     Process.AjouteRapport("Création de la tâche CCT " + sNouvTacheCCT + " pour livrer les éléments de la tâche " + sTacheCCT);
                     
@@ -326,7 +370,8 @@ namespace PNPUCore.Controle
                         sRequete += ", CCT_RDL";
                         sRequete += ", CCT_AUX2_OBJECT_ID";
                         sRequete += ", CCT_AUX3_OBJECT_ID";
-                        sRequete += " FROM M4RCT_OBJECTS WHERE CCT_TASK_ID='" + sTacheCCT + "'";
+                        //sRequete += " FROM M4RCT_OBJECTS WHERE CCT_TASK_ID='" + sTacheCCT + "'";
+                        sRequete += " FROM M4RCT_OBJECTS WHERE CCT_TASK_ID + '*' + CCT_OBJECT_ID + '*' + CCT_OBJECT_TYPE + '*' + CCT_PARENT_OBJ_ID IN (" + sFiltre + ")";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
                             int rowsAffected = cmd.ExecuteNonQuery();
@@ -372,7 +417,23 @@ namespace PNPUCore.Controle
         }
 
 
-}
+    }
+
+    class TacheCCT
+    {
+        public string CCT_TASK_ID { get; set; }
+        public string CCT_OBJECT_TYPE { get; set; }
+        public string CCT_OBJECT_ID { get; set; }
+        public string CCT_PARENT_OBJ_ID { get; set; }
+
+        public TacheCCT(string pCCT_TASK_ID, string pCCT_OBJECT_TYPE, string pCCT_OBJECT_ID, string pCCT_PARENT_OBJ_ID)
+        {
+            CCT_TASK_ID = pCCT_TASK_ID;
+            CCT_OBJECT_TYPE = pCCT_OBJECT_TYPE;
+            CCT_OBJECT_ID = pCCT_OBJECT_ID;
+            CCT_PARENT_OBJ_ID = pCCT_PARENT_OBJ_ID;
+        }
+    }
 }
 
 
