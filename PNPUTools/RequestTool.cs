@@ -213,8 +213,9 @@ namespace PNPUTools
 
         public static IEnumerable<PNPU_H_REPORT> getReport(decimal idProcess, decimal workflowId, string clientId)
         {
-            String sRequest = "SELECT ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE FROM PNPU_H_REPORT ";
-            sRequest += "WHERE ID_PROCESS = @ID_PROCESS AND WORKFLOW_ID = @WORKFLOW_ID AND CLIENT_ID = @CLIENT_ID";
+            String sRequest = "SELECT PHR.ITERATION, PHR.WORKFLOW_ID, PHR.ID_PROCESS, PHR.CLIENT_ID, PHR.JSON_TEMPLATE FROM PNPU_H_REPORT PHR, PNPU_PROCESS PR ";
+            sRequest += " WHERE PHR.ID_PROCESS = @ID_PROCESS AND PHR.WORKFLOW_ID = @WORKFLOW_ID AND PHR.ID_PROCESS =  PR.ID_PROCESS  AND ";
+            sRequest += " ( PHR.CLIENT_ID = @CLIENT_ID OR PR.IS_GLOBAL = '1') ";
 
             DataSet result = DataManagerSQLServer.GetDatasWithParams(sRequest, ParamAppli.ConnectionStringBaseAppli, idProcess, workflowId, clientId);
             DataTable table = result.Tables[0];

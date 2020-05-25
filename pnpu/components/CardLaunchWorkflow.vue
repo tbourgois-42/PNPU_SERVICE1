@@ -159,7 +159,6 @@ export default {
 
   watch: {
     txtTypologie() {
-      debugger
       this.lstClient = []
       for (let client of this.clientsTypo) {
         for (let idTypo of this.txtTypologie) {
@@ -194,7 +193,6 @@ export default {
     async sendFile() {
       const fd = new FormData()
       if (this.selectedFile !== null && this.txtTypologie !== -1) {
-        debugger
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
         fd.append('typology', this.txtTypologie)
         fd.append('clients', this.clientSelected)

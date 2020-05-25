@@ -64,23 +64,24 @@ namespace PNPUCore.Rapport
             StringBuilder sb = new StringBuilder();
             JsonWriter jw = new JsonTextWriter(new StringWriter(sb));
 
-            
+
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
             {
                 sCote = "'";
                 sCote2 = "*";
             }
 
             jw.Formatting = Formatting.Indented;
+            jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
             jw.WriteValue(sCote + this.name + sCote);
-            /*jw.WritePropertyName("id-client");
+            /*jw.WritePropertyName("id-client"); 
             jw.WriteValue(this.IdClient);*/
             jw.WritePropertyName("result");
             jw.WriteValue(sCote + this.result + sCote);
@@ -105,7 +106,7 @@ namespace PNPUCore.Rapport
                 jw.WriteValue(sCote + Source[i].Result + sCote);
 
 
-                // Cas particulier des dépedances
+                // Cas particulier des dépedances 
                 if (Source[i].Name == "Contrôle des dépendances inter packages")
                 {
                     jw.WritePropertyName("children");
@@ -114,8 +115,8 @@ namespace PNPUCore.Rapport
                 }
 
 
-                if (Source[i].Controle.Count >0)
-                { 
+                if (Source[i].Controle.Count > 0)
+                {
                     jw.WritePropertyName("children");
                     jw.WriteStartArray();
                     for (int j = 0; j < Source[i].Controle.Count; j++)
@@ -149,12 +150,12 @@ namespace PNPUCore.Rapport
                                 jw.WriteEndObject();
                             }
                             jw.WriteEndArray();
-                            
+
                         }
                         jw.WriteEndObject();
                     }
                     jw.WriteEndArray();
-                    
+
                 }
                 jw.WriteEndObject();
 
@@ -164,9 +165,10 @@ namespace PNPUCore.Rapport
 
             jw.WriteEndObject();
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == true)
+            jw.WriteEndArray();
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
             {
-            
                 sb = sb.Replace("\"", "");
                 sb = sb.Replace(sCote2, "\"");
             }
@@ -178,7 +180,7 @@ namespace PNPUCore.Rapport
             set { this.id = value; }
             get { return this.id; }
         }
-        
+
         public String Name
         {
             set { this.name = value; }
@@ -252,7 +254,7 @@ namespace PNPUCore.Rapport
         private string tooltip { get; set; }
         private string result { get; set; }
         private List<string> message { get; set; }
-    
+
         public String Id
         {
             set { this.id = value; }
