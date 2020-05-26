@@ -53,6 +53,30 @@ namespace PNPUCore.Process
             Rapport.Source RapportSource = new Rapport.Source();
             RapportSource.Name = "IdRapport - ProcessAnalyseImpact DEV";
             RapportSource.Controle = new List<RControle>();
+            foreach (IControle controle in listControl)
+            {
+                controle.SetProcessControle(this);
+                RControle RapportControle = new RControle();
+                RapportControle.Name = controle.GetLibControle();
+                RapportControle.Tooltip = controle.GetTooltipControle();
+                RapportControle.Message = new List<string>();
+                RapportControleCourant = RapportControle;
+                string statutControle = controle.MakeControl();
+                //ERROR > WARNING > OK
+                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
+                {
+                    GlobalResult = statutControle;
+
+                }
+                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+                {
+                    GlobalResult = statutControle;
+                }
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+
+
+                RapportSource.Controle.Add(RapportControle);
+            }
 
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
