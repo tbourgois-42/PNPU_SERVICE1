@@ -59,6 +59,11 @@ namespace PNPUCore.Process
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
             STANDARD = true;
+
+            if(!CLIENT_ID.Contains(","))
+            {
+                TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID].TYPOLOGY;
+            }
         }
 
         private void GenerateHistoric()
@@ -163,7 +168,7 @@ namespace PNPUCore.Process
             RequestTool.CreateUpdateStepHistoric(historicStep);
         }
 
-        private void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult)
+        public void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult)
         {
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
