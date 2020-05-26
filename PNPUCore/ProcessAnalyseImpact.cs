@@ -37,6 +37,7 @@ namespace PNPUCore.Process
 
             /*RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
             ramdlTool.AnalyseMdbRAMDL();*/
+
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
@@ -45,38 +46,21 @@ namespace PNPUCore.Process
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
 
+            //On génère les historic au début pour mettre en inprogress
+            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+
 
             Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Name = "IdRapport - ProcessAnalyseImpact";
+            RapportSource.Name = "IdRapport - ProcessAnalyseImpact DEV";
             RapportSource.Controle = new List<RControle>();
 
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
-            //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            PNPU_H_STEP historicStep = new PNPU_H_STEP();
+            //On fait un update pour la date de fin du process et son statut
+            GenerateHistoric(RapportProcess.Fin, GlobalResult);
 
-            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
-            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
-            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
-
-            historicStep.ID_PROCESS = this.PROCESS_ID;
-            historicStep.ITERATION = 1;
-            historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicStep.CLIENT_ID = this.CLIENT_ID;
-            historicStep.CLIENT_NAME = client.CLIENT_NAME;
-            historicStep.USER_ID = "PNPUADM";
-            historicStep.TYPOLOGY = "SAAS DEDIE";
-            historicStep.LAUNCHING_DATE = RapportProcess.Debut;
-            historicStep.ENDING_DATE = RapportProcess.Fin;
-            historicStep.ID_STATUT = GlobalResult;
-
-            historicStep.ID_STATUT = GlobalResult;
-
-            GenerateHistoric(historicWorkflow, historicStep);
 
             if (GlobalResult == ParamAppli.StatutOk)
             {

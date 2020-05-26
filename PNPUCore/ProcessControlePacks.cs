@@ -51,13 +51,16 @@ namespace PNPUCore.Process
             //POUR TEST 
             /*this.CLIENT_ID = "101";*/
             this.STANDARD = true;
-            //this.TYPOLOGY = ParamAppli.ListeInfoClient[listClientId.First()].TYPOLOGY;
+
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
 
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
+
+            //On génère l'historic en In_PROGRESS
+            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
 
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
             gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
@@ -165,36 +168,10 @@ namespace PNPUCore.Process
             Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
 
 
-            //Si le contrôle est ok on génère les lignes d'historique pour signifier que le workflow est lancé
-            //string[] listClientId = new string[] { "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
-            //string[] listClientId = new string[] { "111" };//{ "DASSAULT SYSTEME", "SANEF", "DRT", "GALILEO", "IQERA", "ICL", "CAMAIEU", "DANONE", "HOLDER", "OCP", "UNICANCER", "VEOLIA" };
- 
+            //Si le contrôle est ok on update les lignes d'historique pour signifier que le workflow est lancé
+            GenerateHistoricGlobal(listClientId, RapportProcess.Fin, GlobalResult);
 
-            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
-            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
-            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-            historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
-            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-
-            RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
-
-            foreach (string clientId in listClientId) {
-                InfoClient client = RequestTool.getClientsById(clientId);
-                PNPU_H_STEP historicStep = new PNPU_H_STEP();
-                historicStep.ID_PROCESS = this.PROCESS_ID;
-                historicStep.ITERATION = 1;
-                historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-                historicStep.CLIENT_ID = clientId;
-                historicStep.CLIENT_NAME = client.CLIENT_NAME;
-                historicStep.USER_ID = "PNPUADM";
-                historicStep.LAUNCHING_DATE = RapportProcess.Debut;
-                historicStep.ENDING_DATE = RapportProcess.Fin;
-                historicStep.TYPOLOGY = "SAAS DEDIE";
-                historicStep.ID_STATUT = GlobalResult;
-                RequestTool.CreateUpdateStepHistoric(historicStep);
-            }
-
+            
             // TEST ajout MDB
             //gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { "D:\\PNPU\\Tests_RAMDL\\test.mdb" }, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, CLIENT_ID,1);
 

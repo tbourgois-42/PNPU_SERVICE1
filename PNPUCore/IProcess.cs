@@ -138,13 +138,60 @@ namespace PNPUCore.Process
             }*/
         }
 
-        internal void GenerateHistoric(PNPU_H_WORKFLOW historicWorkflow, PNPU_H_STEP historicStep)
+        internal void GenerateHistoric(DateTime endDate, string statut)
         {
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+            PNPU_H_STEP historicStep = new PNPU_H_STEP();
+
+            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
+            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
+
+            historicStep.ID_PROCESS = this.PROCESS_ID;
+            historicStep.ITERATION = 1;
+            historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
+            historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.CLIENT_NAME = client.CLIENT_NAME;
+            historicStep.USER_ID = "PNPUADM";
+            historicStep.TYPOLOGY = this.TYPOLOGY;
+            historicStep.LAUNCHING_DATE = RapportProcess.Debut;
+            historicStep.ENDING_DATE = endDate;
+            historicStep.ID_STATUT = statut;
+
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
             RequestTool.CreateUpdateStepHistoric(historicStep);
         }
 
+        private void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult)
+        {
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
+            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
+            historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
+            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
 
+            RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
+
+            foreach (string clientId in listClientId)
+            {
+                InfoClient client = RequestTool.getClientsById(clientId);
+                PNPU_H_STEP historicStep = new PNPU_H_STEP();
+                historicStep.ID_PROCESS = this.PROCESS_ID;
+                historicStep.ITERATION = 1;
+                historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
+                historicStep.CLIENT_ID = clientId;
+                historicStep.CLIENT_NAME = client.CLIENT_NAME;
+                historicStep.USER_ID = "PNPUADM";
+                historicStep.LAUNCHING_DATE = RapportProcess.Debut;
+                historicStep.ENDING_DATE = fin;
+                historicStep.TYPOLOGY = this.TYPOLOGY;
+                historicStep.ID_STATUT = globalResult;
+                RequestTool.CreateUpdateStepHistoric(historicStep);
+            }
+
+        }
         /// <summary>
         /// Methode permettant de récupérer dynamiquement la liste des contrôles à lancer en fonction du process, de la typologie client et du type de pack (standard ou non).
         /// </summary>
