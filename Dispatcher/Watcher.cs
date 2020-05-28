@@ -79,7 +79,7 @@ namespace PNUDispatcher
 
                 LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);*/
 
-                ssStreamString[iNum].WriteString(sMessageResultat);
+                //ssStreamString[iNum].WriteString(sMessageResultat);
                 npssPipeClient[iNum].Flush();
              }
         }
@@ -106,9 +106,21 @@ namespace PNUDispatcher
             {
                 if (qFIFO.Count > 0)
                 {
-                    string[] listParam = qFIFO.Dequeue().Split('/');
+                    string requestInit = qFIFO.Dequeue();
+                    //Gestion des fin de fichiers
+                    string request = requestInit.Replace("\0", "");
+                    string[] listParam = request.Split('/');
 
-                    LaunchProcess(listParam[2], int.Parse(listParam[1]), int.Parse(listParam[0]));
+                    if (listParam.Length == 3)
+                    {
+                        LaunchProcess(listParam[2], int.Parse(listParam[1]), int.Parse(listParam[0]));
+                    }
+                    else
+                    {
+
+                        Console.WriteLine("ERREUR - " + requestInit + "Cannot be manage for launch process");
+                    }
+
                     if (qFIFO.Count == 0)
                         System.Threading.Thread.Sleep(200);
                 }
