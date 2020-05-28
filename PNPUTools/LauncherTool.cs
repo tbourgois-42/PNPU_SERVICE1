@@ -29,8 +29,8 @@ namespace PNPUTools
             ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
 
-            string result = ssStreamString.ReadString();
-             //return result;
+            //string result = ssStreamString.ReadString();
+            //return result;
         }
 
     }
