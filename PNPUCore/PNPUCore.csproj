@@ -48,6 +48,7 @@
     <Compile Include="Class2.cs" />
     <Compile Include="ControleDependanceN3.cs" />
     <Compile Include="ControleDependanceN2.cs" />
+    <Compile Include="ControlePropagation.cs" />
     <Compile Include="ControleRechercheDependancesRef.cs" />
     <Compile Include="ControleDependanceN1.cs" />
     <Compile Include="ControleLivBulElec.cs" />
