@@ -227,9 +227,9 @@ namespace PNPUTools
 
                 // On valorise en fonction de la typologie
                 ConnectionStringBaseRef = new Dictionary<string, string>();
-                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
-                ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
-                ConnectionStringBaseRef.Add("Désynchronisé", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("256", ConnectionStringBaseRefDedie);
+                ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
 
 
                 // N'existe que sur la base plateforme
@@ -257,7 +257,7 @@ namespace PNPUTools
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[3].ToString(), string.Empty, string.Empty)) ;
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty)) ;
                         }
                     }
                 }
