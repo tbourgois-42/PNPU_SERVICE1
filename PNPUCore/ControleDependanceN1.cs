@@ -143,8 +143,8 @@ namespace PNPUCore.Controle
                 }
 
                 //POUR TEST
-                lListeCCTManquants.Clear();
-                lListeCCTManquants.Add("SFR_152319");
+                /*lListeCCTManquants.Clear();
+                lListeCCTManquants.Add("SFR_152319");*/
                 //FIN POUR TEST
                 
                 // La liste ne doit contenir que les tâches CCT non instalées sur le client
@@ -155,7 +155,7 @@ namespace PNPUCore.Controle
                         bResultat = ResultatErreur;
                     else if (lListeTacheCrees.Count>0)
                     {
-                        string sName = "TEST";
+                        string sName = "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
                         GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
                         PNPUTools.RamdlTool ramdlTool = new RamdlTool(Process.CLIENT_ID, Process.WORKFLOW_ID);
                         ramdlTool.GeneratePackFromCCT(sName, lListeTacheCrees.ToArray());

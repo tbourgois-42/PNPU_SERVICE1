@@ -9,7 +9,7 @@ namespace PNPUTools.DataManager
     public class DataManagerAccess : IDataManager
     {
     
-        string GetConnectionString(string sMdbPath)
+        public string GetConnectionString(string sMdbPath)
         {
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq="
                 + sMdbPath

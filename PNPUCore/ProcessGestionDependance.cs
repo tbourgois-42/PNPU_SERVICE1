@@ -87,12 +87,11 @@ namespace PNPUCore.Process
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult);
 
-            // MHUM je bloque en attendant que l'analyse d'impact soit ok
-            /*if (GlobalResult == ParamAppli.StatutOk)
+            if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessGestionDependance);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
-            }*/
+            }
 
         }
 
