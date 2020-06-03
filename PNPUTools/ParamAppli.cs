@@ -5,6 +5,9 @@ using PNPUTools.DataManager;
 using System.Data;
 using System.IO.Pipes;
 using System.Data.SqlClient;
+using IniParser;
+using IniParser.Model;
+
 
 namespace PNPUTools
 {
@@ -165,8 +168,22 @@ namespace PNPUTools
             try
             {
                 //ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+                FileIniDataParser iniParser;
+                IniData iniData;
+                try
+                {
+                    string sCheminINI ="C:\\PNPU\\PNPUTools.ini";
 
-                ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                    iniParser = new FileIniDataParser();
+                    iniData = iniParser.ReadFile(sCheminINI);
+                    ConnectionStringBaseAppli = iniData["ConnectionStrings"]["BaseAppli"];
+                }
+                catch (Exception) { }
+
+                // Si pas trouvé je me mets sur la base de prod
+                if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
+                    ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_PRO;pwd=PNPU_PRO;database=PNPU_PRO;";
+
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
