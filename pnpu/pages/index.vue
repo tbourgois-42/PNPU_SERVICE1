@@ -251,6 +251,10 @@ export default {
     this.getMaxStep()
   },
 
+  beforeMount() {},
+
+  mounted() {},
+
   methods: {
     /**
      * Met à jour les informations des cartes.
@@ -324,6 +328,7 @@ export default {
      */
     totalPages() {
       if (this.eventEmitted === true) {
+        this.eventEmitted = false
         return Math.ceil(this.filteredIndicators.length / this.pageSize)
       } else if (this.filterSearch === true) {
         return Math.ceil(this.visibleItems.length / this.pageSize)
