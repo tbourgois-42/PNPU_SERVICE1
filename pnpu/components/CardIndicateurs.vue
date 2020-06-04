@@ -12,7 +12,7 @@
         class="ml-4 mt-4"
         color="grey"
         text-color="white"
-        @click.prevent="filterIndicators('IN PROGRESS')"
+        @click.prevent="filterIndicators('En cours')"
       >
         <v-avatar left class="grey darken-4">{{ countInProgress }}</v-avatar>
         En cours
@@ -21,7 +21,7 @@
         class="ml-4 mt-4"
         color="error"
         text-color="white"
-        @click.prevent="filterIndicators('ERROR')"
+        @click.prevent="filterIndicators('En erreur')"
       >
         <v-avatar left class="red darken-4">{{ countInError }}</v-avatar> En
         erreur
@@ -30,7 +30,7 @@
         class="ml-4 mb-4 mt-4"
         color="success"
         text-color="white"
-        @click.prevent="filterIndicators('CORRECT')"
+        @click.prevent="filterIndicators('Terminé')"
       >
         <v-avatar left class="green darken-4">{{ countDone }}</v-avatar>
         Terminé
@@ -39,7 +39,7 @@
         class="ml-5 mb-4 mt-4"
         color="warning"
         text-color="white"
-        @click.prevent="filterIndicators('WARNING')"
+        @click.prevent="filterIndicators('Manuel')"
       >
         <v-avatar left class="orange darken-4">{{ countManuel }}</v-avatar>
         Manuel
@@ -70,7 +70,7 @@ export default {
      */
     countDone() {
       return this.localClients.filter(
-        (client) => client.ID_STATUT === 'CORRECT'
+        (client) => client.ID_STATUT === 'Terminé'
       ).length
     },
     /**
@@ -78,28 +78,28 @@ export default {
      */
     countInProgress() {
       return this.localClients.filter(
-        (client) => client.ID_STATUT === 'IN PROGRESS'
+        (client) => client.ID_STATUT === 'En cours'
       ).length
     },
     /**
      * Retourne le nombre de client ERROR.
      */
     countInError() {
-      return this.localClients.filter((client) => client.ID_STATUT === 'ERROR')
-        .length
+      return this.localClients.filter(
+        (client) => client.ID_STATUT === 'En erreur'
+      ).length
     },
     /**
      * Retourne le nombre de client WARNING.
      */
     countManuel() {
-      return this.localClients.filter(
-        (client) => client.ID_STATUT === 'WARNING'
-      ).length
+      return this.localClients.filter((client) => client.ID_STATUT === 'Manuel')
+        .length
     }
   },
 
   watch: {
-     /**
+    /**
      * Alimente la liste des clients du composant via la propriété clients.
      */
     clients() {
@@ -114,21 +114,21 @@ export default {
      */
     filterIndicators(filter) {
       this.iconFilter = 'mdi-filter-remove'
-      if (filter === 'WARNING') {
+      if (filter === 'Manuel') {
         this.ClientsFiltered = this.localClients.filter(
-          (items) => items.ID_STATUT === 'WARNING'
+          (items) => items.ID_STATUT === 'Manuel'
         )
-      } else if (filter === 'CORRECT') {
+      } else if (filter === 'Terminé') {
         this.ClientsFiltered = this.localClients.filter(
-          (items) => items.ID_STATUT === 'CORRECT'
+          (items) => items.ID_STATUT === 'Terminé'
         )
-      } else if (filter === 'ERROR') {
+      } else if (filter === 'En erreur') {
         this.ClientsFiltered = this.localClients.filter(
-          (items) => items.ID_STATUT === 'ERROR'
+          (items) => items.ID_STATUT === 'En erreur'
         )
-      } else if (filter === 'IN PROGRESS') {
+      } else if (filter === 'En cours') {
         this.ClientsFiltered = this.localClients.filter(
-          (items) => items.ID_STATUT === 'IN PROGRESS'
+          (items) => items.ID_STATUT === 'En cours'
         )
       } else if (filter === 'NO FILTER') {
         this.ClientsFiltered = this.localClients
