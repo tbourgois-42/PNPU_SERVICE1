@@ -44,6 +44,7 @@
                             (v) => !!v || 'Le nom du processus est obligatoire'
                           ]"
                           required
+                          @keypress="pressEnter($event)"
                         ></v-text-field>
                         <v-select
                           v-model="editedItem.IS_LOOPABLE"
@@ -160,6 +161,14 @@ export default {
   },
 
   methods: {
+    pressEnter(e) {
+      if (e.key === 'Enter') {
+        this.save()
+      }
+    },
+    /**
+     * Charge les processus depuis PNPU_PROCESS.
+     */
     async initialize() {
       const vm = this
       try {

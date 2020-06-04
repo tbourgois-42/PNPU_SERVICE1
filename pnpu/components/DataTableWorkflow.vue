@@ -34,14 +34,20 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="12">
-                      <v-form ref="form" v-model="valid" lazy-validation>
+                      <v-form
+                        ref="form"
+                        v-model="valid"
+                        lazy-validation
+                      >
                         <v-text-field
+                          ref="autofocus"
                           v-model="editedItem.WORKFLOW_LABEL"
                           label="Nom du workflow"
                           :rules="[
                             (v) => !!v || 'Le nom du workflow est obligatoire'
                           ]"
                           required
+                          @keypress="pressEnter($event)"
                         ></v-text-field>
                       </v-form>
                     </v-col>
@@ -214,6 +220,14 @@ export default {
   },
 
   methods: {
+    pressEnter(e) {
+      if (e.key === 'Enter') {
+        this.save()
+      }
+    },
+    /**
+     * Charge les workflows depuis PNPU_WORKFLOW.
+     */
     async initialize() {
       const vm = this
       try {
