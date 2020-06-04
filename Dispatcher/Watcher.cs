@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.Pipes;
 using PNPUCore;
+using PNPUTools; 
 
 namespace PNUDispatcher
 {
@@ -20,7 +21,7 @@ namespace PNUDispatcher
         private static Thread tListen = null;
         private static Thread tListen2 = null;
         private static Thread tLaunchQueue = null;
-        private static Queue<string> qFIFO = null;
+        //private static Queue<string> qFIFO = null;
 
         /// <summary>  
         /// Constructeur de la classe. Lance juste la fonction ListenRequest dans un thread.  
@@ -29,15 +30,15 @@ namespace PNUDispatcher
         {
             npssPipeClient = new NamedPipeServerStream[2];
             ssStreamString = new StreamString[2];
-            qFIFO = new Queue<string>();
+            //qFIFO = new Queue<string>();
 
             tLaunchQueue = new Thread(() => LaunchQueue());
             tLaunchQueue.Start();
 
             tListen = new Thread(() => ListenRequest("PNPU_PIPE",0));
             tListen.Start();
-            tListen2 = new Thread(() => ListenRequest("PNPU_PIPE2",1));
-            tListen2.Start();
+            /*tListen2 = new Thread(() => ListenRequest("PNPU_PIPE2",1));
+            tListen2.Start();*/
         }
 
         /// <summary>  
@@ -66,21 +67,21 @@ namespace PNUDispatcher
             while (true)
             {
                 sMessage = ssStreamString[iNum].ReadString();
-                Console.WriteLine(sMessage);
+                //Console.WriteLine(sMessage);
 
                 if (IsValideJSON(sMessage) == false)
                     sMessageResultat = "KO";
                 else
                 {
                     sMessageResultat = "OK";
-                    qFIFO.Enqueue(sMessage);
+                    ParamAppli.qFIFO.Enqueue(sMessage);
                 }
                 /*string[] listParam = sMessage.Split('/');
 
                 LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);*/
 
                 //ssStreamString[iNum].WriteString(sMessageResultat);
-                npssPipeClient[iNum].Flush();
+                //npssPipeClient[iNum].Flush();
              }
         }
 
@@ -104,9 +105,11 @@ namespace PNUDispatcher
         {
             while (true)
             {
-                if (qFIFO.Count > 0)
+                if (ParamAppli.qFIFO.Count > 0)
                 {
-                    string requestInit = qFIFO.Dequeue();
+                    string requestInit = ParamAppli.qFIFO.Dequeue();
+
+                    Console.WriteLine(requestInit);
                     //Gestion des fin de fichiers
                     string request = requestInit.Replace("\0", "");
                     string[] listParam = request.Split('/');
@@ -121,7 +124,7 @@ namespace PNUDispatcher
                         Console.WriteLine("ERREUR - " + requestInit + "Cannot be manage for launch process");
                     }
 
-                    if (qFIFO.Count == 0)
+                    if (ParamAppli.qFIFO.Count == 0)
                         System.Threading.Thread.Sleep(200);
                 }
             }

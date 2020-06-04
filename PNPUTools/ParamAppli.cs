@@ -134,6 +134,9 @@ namespace PNPUTools
 
         public const string templateIniFileAnalyseImpact = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n";//<CLEAR_PREVIOUS_ANALYSIS>\r\nYES\r\n<PACK_ANALYSIS>\r\n{5}\r\n<ANALYSE_RESULTS_FILE>\r\n{6}
         public const string templateIniFileGeneratePack = "<ORIGIN_CONN>\r\n{0}\r\n<LOG_FILE>\r\n{1}\r\n<PKGWZ_CONTENT_TYPE>\r\n3\r\n<PKGWZ_CCT_VERSION>\r\n8.1\r\n<PKGWZ_CCT_TASK_LIST>\r\n{2}\r\n<PKGWZ_MDB_ADD_TABLES>\r\n3\r\n<PKGWZ_MDB_PATH>\r\n{3}\r\n<PKGWZ_PACK_NAME>\r\nPNPU_\r\n<PKGWZ_PACK_LOAD_DATA>\r\n1\r\n<PKGWZ_PACK_REFRESH_CHANGES>\r\n0\r\n<PKGWZ_PACK_SAVE_ORDER>\r\n1\r\n<PKGWZ_PACK_SAVE_SCRIPT>\r\n0";
+
+        public static Queue<string> qFIFO = null;
+
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
         /// </summary>  
@@ -167,6 +170,8 @@ namespace PNPUTools
 
             try
             {
+                qFIFO = new Queue<string>();
+
                 //ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
                 FileIniDataParser iniParser;
                 IniData iniData;

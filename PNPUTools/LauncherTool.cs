@@ -16,7 +16,7 @@ namespace PNPUTools
         {
             if (ProcFile == ParamAppli.ProcessFinished)
                 return;
-
+            /*
             if (ParamAppli.npcsPipeClient == null)
                 ParamAppli.npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE2");
 
@@ -26,7 +26,8 @@ namespace PNPUTools
 
             if (ssStreamString == null)
                 ssStreamString = new StreamString(ParamAppli.npcsPipeClient);
-            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
+            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);*/
+            ParamAppli.qFIFO.Enqueue(ProcFile + "/" + workflowId + "/" + clientId);
 
 
             //string result = ssStreamString.ReadString();
