@@ -77,9 +77,16 @@
                   <v-col class="d-flex">
                     <v-list-item>
                       <v-list-item-content>
-                        <v-list-item-title class="title">{{ item.CLIENT_NAME }}</v-list-item-title>
-                        <v-list-item-subtitle class="pb-1">ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle>
-                        <v-list-item-subtitle class="pb-2">Step {{ item.ORDER_ID }}/ {{ maxStep }}</v-list-item-subtitle>
+                        <v-list-item-title class="title">{{
+                          item.CLIENT_NAME
+                        }}</v-list-item-title>
+                        <v-list-item-subtitle class="pb-1"
+                          >ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle
+                        >
+                        <v-list-item-subtitle class="pb-2"
+                          >Step {{ item.ORDER_ID }}/
+                          {{ maxStep }}</v-list-item-subtitle
+                        >
                         <v-list-item-subtitle>
                           <v-chip
                             :color="item.colorCircular"

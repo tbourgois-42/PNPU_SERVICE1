@@ -5,11 +5,7 @@
         >Lancement workflow<v-icon>mdi-cog-box</v-icon></v-card-title
       >
       <v-divider class="mx-4"></v-divider>
-      <v-btn
-        class="my-4 ml-6"
-        color="primary"
-        @click="dialog = !dialog"
-      >
+      <v-btn class="my-4 ml-6" color="primary" @click="dialog = !dialog">
         <v-icon left>mdi-play</v-icon>Lancer un workflow
       </v-btn>
     </v-card>
@@ -48,7 +44,10 @@
                   multiple
                   solo
                 ></v-select>
-                <v-checkbox v-model="packStandard" label="Package standard"></v-checkbox>
+                <v-checkbox
+                  v-model="packStandard"
+                  label="Package standard"
+                ></v-checkbox>
               </v-col>
               <v-col cols="12" sm="12" md="12">
                 <v-file-input
@@ -150,7 +149,7 @@ export default {
      * Rules - Contrôle sur la sélection des typologies.
      */
     verifyTypologie() {
-      var saasDedieSelect = false
+      let saasDedieSelect = false
       this.txtTypologie.forEach((idTypo) => {
         if (idTypo === 256) {
           saasDedieSelect = true
@@ -162,23 +161,19 @@ export default {
       } else {
         this.launchWorkflow = false
       }
-    },
-    snackbarMessage: '',
-    snackbar: false,
-    colorsnackbar: '',
-    selectedFile: null,
-    lstWorkflows: [],
-    idSelectedWorkflow: '',
-    packStandard: true
+    }
   }),
 
   watch: {
     txtTypologie() {
       this.lstClient = []
-      for (let client of this.clientsTypo) {
-        for (let idTypo of this.txtTypologie) {
+      for (const client of this.clientsTypo) {
+        for (const idTypo of this.txtTypologie) {
           if (idTypo.toString() === client.TYPOLOGY_ID) {
-            this.lstClient.push({ value: client.ID_CLIENT, text: client.CLIENT_NAME });
+            this.lstClient.push({
+              value: client.ID_CLIENT,
+              text: client.CLIENT_NAME
+            })
           }
         }
       }
@@ -200,7 +195,7 @@ export default {
           this.selectedFile = element
         })
         if (this.selectedFile.type !== 'application/x-zip-compressed') {
-            this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
+          this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
         }
       }
     },
@@ -253,15 +248,16 @@ export default {
       }
 
       try {
-        const res2 = await axios.get(`${process.env.WEB_SERVICE_WCF}/clientsByTypo`)
+        const res2 = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/clientsByTypo`
+        )
         vm.clientsTypo = res2.data
-        /*vm.clients.forEach((element) => {
+        /* vm.clients.forEach((element) => {
           vm.lstClientHidden.push(element.CLIENT_NAME)
-        })*/
+        }) */
       } catch (error) {
         vm.showSnackbar('error', `${error} !`)
       }
-
     },
 
     getSelectedWorkflow() {
