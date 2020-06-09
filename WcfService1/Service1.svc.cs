@@ -208,6 +208,9 @@ namespace WcfService1
             //Launch process
             LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch);
 
+            //Test MDU launch ProcessTNR directly
+            //LaunchProcess(ParamAppli.ProcessTNR, workflowId, clientToLaunch);
+
             //SUPPRESSION DU FICHIER
             File.Delete(FilePath);
 

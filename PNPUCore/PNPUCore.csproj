@@ -53,6 +53,7 @@
     <Compile Include="ControleRechercheDependancesRef.cs" />
     <Compile Include="ControleDependanceN1.cs" />
     <Compile Include="ControleLivBulElec.cs" />
+    <Compile Include="ControleTNR.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ControleIDSynonymExistant.cs" />
     <Compile Include="ControleItemsTotaux.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="ProcessProcessusCritique.cs" />
     <Compile Include="ProcessTNR.cs" />
     <Compile Include="Rapport.cs" />
+    <Compile Include="RapportTNR.cs" />
     <Compile Include="WorkFlow.cs" />
     <Compile Include="ControleTypePack.cs" />
     <Compile Include="ControleParamAppli.cs" />

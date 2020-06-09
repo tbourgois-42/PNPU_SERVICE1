@@ -16,7 +16,7 @@ namespace PNPUCore
         void LaunchProcess(IProcess process)
         {
             process.ExecuteMainProcess();
-            String json = process.FormatReport();
+            String json = process.FormatReport(process);
             process.SaveReportInBDD(json, process);
             Console.WriteLine(json);
         }

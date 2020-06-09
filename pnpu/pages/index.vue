@@ -53,8 +53,9 @@
           <transition appear name="slide-in">
             <nuxt-link
               :to="{
-                name: 'client',
+                name: 'client-id',
                 params: {
+                  id: item.CLIENT_ID,
                   clientName: item.CLIENT_NAME,
                   clientId: item.CLIENT_ID,
                   step: item.ORDER_ID,

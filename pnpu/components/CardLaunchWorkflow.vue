@@ -87,7 +87,11 @@
           <v-btn color="error" @click="close"
             ><v-icon left>mdi-cancel</v-icon> Annuler</v-btn
           >
-          <v-btn color="primary" :disabled="launchWorkflow" @click="sendFile()"
+          <v-btn
+            :loading="loadingLaunchWorkflow"
+            color="primary"
+            :disabled="launchWorkflow"
+            @click="sendFile()"
             ><v-icon left>mdi-play</v-icon> Lancer</v-btn
           >
         </v-card-actions>
@@ -134,6 +138,17 @@ export default {
     txtWorkflow: '',
     workflows: [],
     lstSelectedClient: [],
+    snackbarMessage: '',
+    snackbar: false,
+    colorsnackbar: '',
+    selectedFile: null,
+    lstWorkflows: [],
+    idSelectedWorkflow: '',
+    packStandard: true,
+    loadingLaunchWorkflow: false,
+    /**
+     * Rules - Contrôle sur la sélection des typologies.
+     */
     verifyTypologie() {
       var saasDedieSelect = false
       this.txtTypologie.forEach((idTypo) => {
@@ -191,6 +206,7 @@ export default {
     },
 
     async sendFile() {
+      this.loadingLaunchWorkflow = true
       const fd = new FormData()
       if (this.selectedFile !== null && this.txtTypologie !== -1) {
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
@@ -205,6 +221,7 @@ export default {
 
             fd
           )
+          this.loadingLaunchWorkflow = false
           this.showSnackbar('success', 'Lancement effectué avec succès')
           this.close()
         } catch (error) {

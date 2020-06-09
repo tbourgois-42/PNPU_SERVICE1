@@ -6,6 +6,7 @@ using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
 using PNPUCore.Controle;
+using PNPUCore.RapportTNR;
 
 namespace PNPUCore.Process
 {
@@ -13,7 +14,7 @@ namespace PNPUCore.Process
     {
         void ExecuteMainProcess();
 
-        String FormatReport();
+        String FormatReport(IProcess process);
         void AjouteRapport(string v);
         string SaveReportInBDD(string json, IProcess process);
         int WORKFLOW_ID { get; set; }
@@ -46,6 +47,7 @@ namespace PNPUCore.Process
 
         public string sRapport;
         public RProcess RapportProcess;
+        public RTNR RapportTNR;
         public RControle RapportControleCourant;
 
         /// <summary>  
@@ -56,6 +58,7 @@ namespace PNPUCore.Process
         public ProcessCore(int wORKFLOW_ID, string cLIENT_ID)
         {
             RapportProcess = new RProcess();
+            RapportTNR = new RTNR();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
             STANDARD = true;
@@ -105,10 +108,28 @@ namespace PNPUCore.Process
         /// Méthode générant le rapport du déroulement du process au format JSON.
         /// <returns>Retourne le rapport au format JSON dans une chaine de caractères.</returns>
         /// </summary>  
-        public string FormatReport()
+        public string FormatReport(IProcess process)
         {
-            RapportProcess.Fin = DateTime.Now;
-            return (RapportProcess.ToJSONRepresentation());
+            if (ParamAppli.ProcessTNR == process.PROCESS_ID)
+            {
+                RapportTNR.Fin = DateTime.Now;
+                return (RapportTNR.ToJSONRepresentation());
+            }
+            else
+            {
+                RapportProcess.Fin = DateTime.Now;
+                return (RapportProcess.ToJSONRepresentation());
+            }
+        }
+
+        /// <summary>  
+        /// Méthode générant le rapport du déroulement du process au format JSON.
+        /// <returns>Retourne le rapport TNR au format JSON dans une chaine de caractères.</returns>
+        /// </summary>  
+        public string FormatReportTNR()
+        {
+            RapportTNR.Fin = DateTime.Now;
+            return (RapportTNR.ToJSONRepresentation());
         }
 
         public string SaveReportInBDD(string json, IProcess process)
