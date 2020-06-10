@@ -1,4 +1,4 @@
-﻿using PNPUCore.Controle;
+using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
@@ -23,6 +23,7 @@ namespace PNPUCore.Process
         public ProcessAnalyseImpact(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
         {
             this.PROCESS_ID = ParamAppli.ProcessAnalyseImpact;
+            this.LibProcess = "Analyse d'impact";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
