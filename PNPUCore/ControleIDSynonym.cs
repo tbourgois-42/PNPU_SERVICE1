@@ -32,6 +32,7 @@ namespace PNPUCore.Controle
             ToolTipControle = "Vérifie si les items livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client";
             LibControle = "Contrôle des ID Synoym";
             ResultatErreur = ParamAppli.StatutError;
+            CompleteToolTip();
         }
 
         /// <summary>  
@@ -47,6 +48,20 @@ namespace PNPUCore.Controle
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            CompleteToolTip();
+        }
+
+
+        /// <summary>
+        /// Complete le Tooltip avec la liste des plages réservées aux clients.
+        /// </summary>
+        private void CompleteToolTip()
+        {
+            ToolTipControle += ". Liste des plages réservées aux clients :";
+            for(int i=0; i<lLIM_INF.Count;i++)
+            {
+                ToolTipControle +=  " - De " + lLIM_INF[i].ToString() + " à "+ lLIM_SUP[i].ToString();
+            }
         }
 
         /// <summary>  

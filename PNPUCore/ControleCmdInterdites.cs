@@ -28,6 +28,7 @@ namespace PNPUCore.Controle
             ToolTipControle = "Vérifie si le mdb standard ne contient pas de commande interdite";
             LibControle = "Contrôle des commandes interdites";
             ResultatErreur = ParamAppli.StatutError;
+            CompleteToolTip();
         }
 
         /// <summary>  
@@ -42,7 +43,21 @@ namespace PNPUCore.Controle
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            CompleteToolTip();
         }
+
+        /// <summary>
+        /// Complete le Tooltip avec la liste des élements interdits qui sont paramétérés.
+        /// </summary>
+        private void CompleteToolTip()
+        {
+            ToolTipControle +=  ". Liste des commandes interdites :";
+            foreach(string sElt in lL_INTERDIT)
+            {
+                ToolTipControle += " - " + sElt;
+            }
+        }
+
 
         /// <summary>  
         /// Méthode effectuant le contrôle. 

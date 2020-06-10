@@ -42,6 +42,7 @@ namespace PNPUCore.Controle
 
             Process = (PNPUCore.Process.ProcessControlePacks) pProcess;
             ResultatErreur = ParamAppli.StatutError;
+            CompleteToolTip();
          }
 
         /// <summary>  
@@ -68,6 +69,24 @@ namespace PNPUCore.Controle
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
+            CompleteToolTip();
+        }
+
+        /// <summary>
+        /// Complete le Tooltip avec la liste clés et sections interdites.
+        /// </summary>
+        private void CompleteToolTip()
+        {
+            ToolTipControle += ". Liste des clés interdites :";
+            foreach(string sElt in ParamAppli.ListeCleInterdite)
+            {
+                ToolTipControle += " - " + sElt;
+            }
+            ToolTipControle += " - Liste des sections interdites :";
+            foreach (string sElt in ParamAppli.ListeSectionInterdite)
+            {
+                ToolTipControle += " - " + sElt;
+            }
         }
 
         /// <summary>  
