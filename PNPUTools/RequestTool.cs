@@ -165,29 +165,6 @@ namespace PNPUTools
             string[] parameters = new string[] { "@WORKFLOW_LABEL", input.WORKFLOW_LABEL };
             
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_WORKFLOW", parameters, true);
-
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                string LastInsertedPK = "";
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_WORKFLOW ( WORKFLOW_LABEL) VALUES( @WORKFLOW_LABEL)", conn))
-                    {
-                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            LastInsertedPK = DataManagerSQLServer.GetLastInsertedPK("PNPU_WORKFLOW", ParamAppli.ConnectionStringBaseAppli);
-                        }
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return LastInsertedPK;
-            }*/
         }
 
         public static string GetMaxStep(int workflowId)
@@ -241,31 +218,6 @@ namespace PNPUTools
                 string[] parameters = new string[] { "@CLIENT_ID", input.CLIENT_ID, "@WORKFLOW_ID", input.WORKFLOW_ID.ToString(), "@LAUNCHING_DATE", input.LAUNCHING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@ENDING_DATE", input.ENDING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@STATUT", input.STATUT_GLOBAL };
 
                 return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_WORKFLOW", parameters, true);
-
-                /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-                {
-                    try
-                    {
-
-                        conn.Open();
-
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_WORKFLOW ( CLIENT_ID, WORKFLOW_ID, LAUNCHING_DATE, ENDING_DATE, STATUT_GLOBAL) values (@CLIENT_ID, @WORKFLOW_ID, @LAUNCHING_DATE, @ENDING_DATE, @STATUT)", conn))
-                        {
-                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
-                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.DateTime).Value = input.LAUNCHING_DATE;
-                            cmd.Parameters.Add("@STATUT", SqlDbType.VarChar, 254).Value = input.STATUT_GLOBAL;
-                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime).Value = input.ENDING_DATE;
-
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                        }
-                    }
-                    catch (SqlException ex)
-                    {
-                        return ex.ToString();
-                    }
-                    return "Requête traitée avec succès et création/mis à jour d'un historique de workflow";
-                }*/
             }
         }
 
@@ -277,30 +229,6 @@ namespace PNPUTools
                 string[] parameters = new string[] { "@ITERATION", input.ITERATION.ToString(), "@WORKFLOW_ID", input.WORKFLOW_ID.ToString(), "@ID_PROCESS", input.ID_PROCESS.ToString(), "@CLIENT_ID", input.CLIENT_ID, "@CLIENT_NAME", input.CLIENT_NAME, "@ID_STATUT", input.ID_STATUT, "@ENDING_DATE", input.ENDING_DATE.ToString("MM/dd/yyyy HH:mm:ss") };
 
                 return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_STEP", parameters, true);
-                /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-                {
-                    try
-                    {
-
-                        conn.Open();
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("update PNPU_H_STEP set ENDING_DATE = @ENDING_DATE,  ID_STATUT = @ID_STATUT where ITERATION = @ITERATION AND WORKFLOW_ID = @WORKFLOW_ID AND ID_PROCESS = @ID_PROCESS AND CLIENT_ID = @CLIENT_ID", conn))
-                        {
-                            cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
-                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                            cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
-                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
-                            cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
-                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime, 254).Value = input.ENDING_DATE;
-
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                        }
-                    }
-                    catch (SqlException ex)
-                    {
-                        return ex.ToString();
-                    }
-                    return "Requête traitée avec succès et création d’un document.";
-                }*/
             }
             else
             {
@@ -308,34 +236,6 @@ namespace PNPUTools
                 string[] parameters = new string[] { "@ITERATION", input.ITERATION.ToString(), "@WORKFLOW_ID", input.WORKFLOW_ID.ToString(), "@ID_PROCESS", input.ID_PROCESS.ToString(), "@CLIENT_ID", input.CLIENT_ID, "@CLIENT_NAME", input.CLIENT_NAME, "@USER_ID", input.USER_ID, "@LAUNCHING_DATE", input.LAUNCHING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@ENDING_DATE", input.ENDING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@TYPOLOGY", input.TYPOLOGY, "@ID_STATUT", input.ID_STATUT };
 
                 return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_STEP", parameters, true);
-
-                /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-                {
-                    try
-                    {
-
-                        conn.Open();
-                        using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_H_STEP(ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, USER_ID, LAUNCHING_DATE, ENDING_DATE, ID_STATUT, TYPOLOGY) values(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @USER_ID, @LAUNCHING_DATE, @ENDING_DATE, @ID_STATUT, @TYPOLOGY)", conn))
-                        {
-                            cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = input.ITERATION;
-                            cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = input.WORKFLOW_ID;
-                            cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = input.ID_PROCESS;
-                            cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 254).Value = input.CLIENT_ID;
-                            cmd.Parameters.Add("@USER_ID", SqlDbType.VarChar, 254).Value = input.USER_ID;
-                            cmd.Parameters.Add("@LAUNCHING_DATE", SqlDbType.DateTime).Value = input.LAUNCHING_DATE;
-                            cmd.Parameters.Add("@ENDING_DATE", SqlDbType.DateTime).Value = input.ENDING_DATE;
-                            cmd.Parameters.Add("@TYPOLOGY", SqlDbType.VarChar, 254).Value = input.TYPOLOGY;
-                            cmd.Parameters.Add("@ID_STATUT", SqlDbType.VarChar, 254).Value = input.ID_STATUT;
-
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                        }
-                    }
-                    catch (SqlException ex)
-                    {
-                        return ex.ToString();
-                    }
-                    return "Requête traitée avec succès et création d’un document.";
-                }*/
             }
         }
 

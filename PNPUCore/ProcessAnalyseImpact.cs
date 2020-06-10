@@ -13,7 +13,8 @@ namespace PNPUCore.Process
 {
     internal class ProcessAnalyseImpact : ProcessCore, IProcess
     {
-
+        public RapportProcessAnalyseImpact RapportProcess;
+        //public list<ElementALocaliser> listElementALocaliser; 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -35,33 +36,63 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
 
-            /*RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
-            ramdlTool.AnalyseMdbRAMDL();*/
-
+            
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
-            RapportProcess.Source = new List<Rapport.Source>();
+            RapportAnalyseLogique rapportAnalyseLogique = new RapportAnalyseLogique();
 
             //On génère les historic au début pour mettre en inprogress
-            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+            //DEVGenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
 
-
-            Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Name = "IdRapport - ProcessAnalyseImpact DEV";
-            RapportSource.Controle = new List<RControle>();
-            foreach (IControle controle in listControl)
+            //Lancement analyse d'impact RamDl
+            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
+            List<String> pathList = ramdlTool.AnalyseMdbRAMDL();
+            List<AnalyseResultFile> resultFileList = new List<AnalyseResultFile>();
+            foreach (string pathFile in pathList)
             {
-                controle.SetProcessControle(this);
-                RControle RapportControle = new RControle();
-                RapportControle.Name = controle.GetLibControle();
-                RapportControle.Tooltip = controle.GetTooltipControle();
-                RapportControle.Message = new List<string>();
-                RapportControleCourant = RapportControle;
-                string statutControle = controle.MakeControl();
+                using (StreamReader reader = new StreamReader(pathFile))
+                {
+                    string line;
+                    AnalyseResultFile resultFile = new AnalyseResultFile(pathFile, Path.GetFileName(pathFile));
+                    
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] listElement = line.Split('\t');
+                        AnalyseResultLine resultLine = new AnalyseResultLine(listElement);
+                        resultFile.addLine(resultLine);
+                    }
+                    resultFileList.Add(resultFile);
+                }
+            }
+            this.addRapportAnalyseLogique(rapportAnalyseLogique, resultFileList);
+
+            RapportProcess.rapportAnalyseLogique = rapportAnalyseLogique;
+
+            //Gestion contrôle data
+            //GetListControle(ref listControl);
+            RapportAnalyseData rapportAnalyseData = new RapportAnalyseData();
+            List<ControleAnalyseData> listControleAnalyseData = new List<ControleAnalyseData>();
+
+            ControleAnalyseData controleAnalyseData = new ControleAnalyseData();
+
+            controleAnalyseData.Name = "Controle KO table bidule etc..";
+            controleAnalyseData.Tooltip = "";
+            controleAnalyseData.Result = "Warning";
+
+            listControleAnalyseData.Add(controleAnalyseData);
+            //gestion des requêtes data génériques (controle)
+
+
+
+            /*foreach (IControle controle in listControl)
+            {
+                Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
+                statutControle = controle.MakeControl();
+                Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
                 //ERROR > WARNING > OK
                 if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
                 {
@@ -72,101 +103,83 @@ namespace PNPUCore.Process
                 {
                     GlobalResult = statutControle;
                 }
-                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+
+                if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
+                {
+                    SourceResult = statutControle;
+
+                }
+                else if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+                {
+                    SourceResult = statutControle;
+                }
+            }*/
 
 
-                RapportSource.Controle.Add(RapportControle);
-            }
+            rapportAnalyseData.listControleAnalyseData = listControleAnalyseData;
+            RapportProcess.rapportAnalyseData = rapportAnalyseData;
+            
 
-            RapportProcess.Source.Add(RapportSource);
+
+
+            //Elements à localiser
+
+
+
+
+
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
-
+            
             //On fait un update pour la date de fin du process et son statut
-            GenerateHistoric(RapportProcess.Fin, GlobalResult);
+            //DEVGenerateHistoric(RapportProcess.Fin, GlobalResult);
 
 
-            if (GlobalResult == ParamAppli.StatutOk)
+            /*DEVif (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
-            }
+            }*/
 
         }
 
-
-        //=> MHUM le 22/11/2019 - Gestion création des dossiers nécessaires à l'analyse RAMDL
-        //--------------------------------------------------------------------
-        // Récupération du paramétrage dans la chaine
-        //
-        private string LitValeurParam(string pChaineEntiere, string pParam)
+        private void addRapportAnalyseLogique(RapportAnalyseLogique rapportAnalyseLogique, List<AnalyseResultFile> resultFile)
         {
-            string sResultat = string.Empty;
-            int iIndexDeb = 0;
-            int iIndexFin = 0;
+            rapportAnalyseLogique.listTypeAnalyseLogique = new List<TypeAnalyseLogique>();
+            TypeAnalyseLogique typeNew = new TypeAnalyseLogique();
+            typeNew.Name = "New";
+            typeNew.Tooltip = "Ceci contient la liste des élements nouveau du pack";
+            typeNew.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
-            try
+            TypeAnalyseLogique typeModified = new TypeAnalyseLogique();
+            typeModified.Name = "Modified";
+            typeModified.Tooltip = "Ceci contient la liste des élements modifié du pack";
+            typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+
+            TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique();
+            typeDeleted.Name = "Deleted";
+            typeDeleted.Tooltip = "Ceci contient la liste des élements supprimées du pack";
+            typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+
+
+            foreach (AnalyseResultFile file in resultFile)
             {
-                iIndexDeb = pChaineEntiere.IndexOf(pParam);
-                if (iIndexDeb > -1)
+                foreach(AnalyseResultLine line in file.ListLine())
                 {
-                    iIndexDeb = pChaineEntiere.IndexOf("'", iIndexDeb);
-                    iIndexFin = pChaineEntiere.IndexOf("'", iIndexDeb + 1);
-                    sResultat = pChaineEntiere.Substring(iIndexDeb + 1, iIndexFin - iIndexDeb - 1);
+                    //TODO METTRE ELEMENT DANS PARAM APPLI
+                    if(line.TransferFlag == "New")
+                    {
+
+                    }else if(line.TransferFlag == "")
+                    {
+
+                    }else if (line.TransferFlag == "New")
+                    {
+
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                //lbErreurs.Items.Add("LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
-                Logger.Log(this, "ERROR", "LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
-            }
-            return (sResultat);
-        }
 
-        // MHUM le 24/09/2019 - Test MAJ MDB pour supprimer les CRLF des commentaires
-        private void MiseAJourMDB(string sCheminMDB)
-        {
-            OdbcConnection dbConn = new OdbcConnection();
-            dbConn.ConnectionString = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=" + sCheminMDB + ";Uid=Admin;Pwd=;";
-            dbConn.Open();
-
-            OdbcCommand objCmd = new OdbcCommand();
-
-            objCmd.Connection = dbConn;
-            objCmd.CommandType = CommandType.Text;
-            objCmd.CommandText = "UPDATE M4RDL_PACK_CMDS SET CMD_COMMENTS = ' ' WHERE CMD_COMMENTS LIKE '%'+CHR(13)+CHR(10)+'%'";
-
-            objCmd.ExecuteNonQuery();
-            dbConn.Close();
-        }
-
-        private string MiseEnformeChaineConnexion(string sChaineConnexion, string sNomSourceODBC)
-        {
-            string sResultat = string.Empty;
-            int iIndex = 0;
-
-            if (sChaineConnexion.ToUpper().Substring(0, 6) == "SERVER")
-            {
-                iIndex = sChaineConnexion.IndexOf(";");
-                if (iIndex > -1)
-                    sResultat = "DSN=" + sNomSourceODBC + sChaineConnexion.Substring(iIndex);
-            }
-            return (sResultat);
-        }
-
-    }
-
-
-    class GereAccess
-    {
-        //--------------------------------------------------------------------
-        // Retourne la chaîne de connection pour un fichier Access.
-        //
-        public static string GetConnectionStringMDB(string sFichier)
-        {
-            return "Driver={Microsoft Access Driver (*.mdb)};Dbq="
-                + sFichier
-                + ";Uid=Admin;Pwd=;";
         }
     }
 }
