@@ -239,6 +239,7 @@ namespace PNPUCore.Rapport
 
     class ControleAnalyseData : TemplateReport
     {
+        public String Result { get; set; }
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
