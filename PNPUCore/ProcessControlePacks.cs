@@ -120,7 +120,7 @@ namespace PNPUCore.Process
             // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
             RapportSource = new Rapport.Source();
-            RapportSource.Name = "Contrôle des dépendances inter packages";
+            RapportSource.Name = "Contrôle des dépendances du livrable";
             RapportSource.Controle = new List<RControle>();
             RapportControle = new RControle();
             RapportControle.Name = cdmControleDependancesMDB.ToString();
@@ -178,7 +178,7 @@ namespace PNPUCore.Process
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
-               LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
+              LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
 
             }
         }
