@@ -11,6 +11,7 @@ namespace PNPUTools
     public class LauncherViaDIspatcher
     {
         private static StreamString ssStreamString = null;
+        private static StreamWriter sw = null;
 
         public static void LaunchProcess(int ProcFile, int workflowId, String clientId)
         {
@@ -22,15 +23,25 @@ namespace PNPUTools
 
             if (ParamAppli.npcsPipeClient.IsConnected == false)
                 ParamAppli.npcsPipeClient.Connect();
-         
-
-            if (ssStreamString == null)
-                ssStreamString = new StreamString(ParamAppli.npcsPipeClient);
-            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);
 
 
-            //string result = ssStreamString.ReadString();
-            //return result;
+            /* TEST TBO if (ssStreamString == null)
+                ssStreamString = new StreamString(ParamAppli.npcsPipeClient); */
+            if (sw == null)
+            {
+                sw = new StreamWriter(ParamAppli.npcsPipeClient);
+                sw.AutoFlush = true;
+            }
+
+            Console.WriteLine("TEST WRITE PIPE : " + ProcFile + "/" + workflowId + "/" + clientId + "\0");
+            sw.WriteLine(ProcFile + "/" + workflowId + "/" + clientId);
+            
+            /*Console.WriteLine("TEST ON LAUNCH PROCESS : " + ProcFile + "/" + workflowId + "/" + clientId + "\0");
+            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId + "\0");*/
+
+
+           //string result = ssStreamString.ReadString();
+           //return result;
         }
 
     }

@@ -60,13 +60,19 @@ namespace PNUDispatcher
             string sMessage = string.Empty;
             string sMessageResultat = string.Empty;
             npssPipeClient[iNum] = new NamedPipeServerStream(sNomPipe);
+
             ssStreamString[iNum] = new StreamString(npssPipeClient[iNum]);
             npssPipeClient[iNum].WaitForConnection();
+            StreamReader sr = new StreamReader(npssPipeClient[iNum]);
 
             while (true)
             {
-                sMessage = ssStreamString[iNum].ReadString();
-                Console.WriteLine(sMessage);
+
+                //TEST TBO sMessage = ssStreamString[iNum].ReadString();
+
+                sMessage = sr.ReadLine();
+                
+                Console.WriteLine("TEST LECTURE STRING : " + sMessage);
 
                 if (IsValideJSON(sMessage) == false)
                     sMessageResultat = "KO";
@@ -80,7 +86,7 @@ namespace PNUDispatcher
                 LaunchProcess(listParam[0], int.Parse(listParam[1]), listParam[2]);*/
 
                 //ssStreamString[iNum].WriteString(sMessageResultat);
-                npssPipeClient[iNum].Flush();
+                //npssPipeClient[iNum].Flush();
              }
         }
 

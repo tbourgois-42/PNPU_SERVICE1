@@ -159,10 +159,32 @@ namespace PNPUCore.Process
             historicStep.CLIENT_ID = this.CLIENT_ID;
             historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
-            historicStep.TYPOLOGY = this.TYPOLOGY;
+            if(client.TYPOLOGY == "Dédié")
+            {
+                historicStep.TYPOLOGY = "SAAS DEDIE";
+            }
+            else if(client.TYPOLOGY == "Désynchronisé")
+            {
+                historicStep.TYPOLOGY = "SAAS DESYNCHRONISE";
+            }
+            else if (client.TYPOLOGY == "Mutualisé")
+            {
+                historicStep.TYPOLOGY = "SAAS MUTUALISE";
+            }
+            else
+            {
+                historicStep.TYPOLOGY = "Typo not found";
+            }
             historicStep.LAUNCHING_DATE = RapportProcess.Debut;
             historicStep.ENDING_DATE = endDate;
             historicStep.ID_STATUT = statut;
+
+            if(PROCESS_ID == ParamAppli.ProcessLivraison)
+            {
+                Random rnd = new Random();
+                int random = rnd.Next(0, 30);
+                historicStep.NUMBER_LOCALISATION = random;
+            }
 
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
             RequestTool.CreateUpdateStepHistoric(historicStep);
@@ -191,7 +213,24 @@ namespace PNPUCore.Process
                 historicStep.USER_ID = "PNPUADM";
                 historicStep.LAUNCHING_DATE = RapportProcess.Debut;
                 historicStep.ENDING_DATE = fin;
-                historicStep.TYPOLOGY = this.TYPOLOGY;
+
+                if (client.TYPOLOGY == "Dédié")
+                {
+                    historicStep.TYPOLOGY = "SAAS DEDIE";
+                }
+                else if (client.TYPOLOGY == "Désynchronisé")
+                {
+                    historicStep.TYPOLOGY = "SAAS DESYNCHRONISE";
+                }
+                else if (client.TYPOLOGY == "Mutualisé")
+                {
+                    historicStep.TYPOLOGY = "SAAS MUTUALISE";
+                }
+                else
+                {
+                    historicStep.TYPOLOGY = "Typo not found";
+                }
+                
                 historicStep.ID_STATUT = globalResult;
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }

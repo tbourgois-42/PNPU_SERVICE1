@@ -129,7 +129,7 @@
                     </v-chip>
                     <v-chip class="pl-2" label>
                       <v-avatar left color="grey lighten-1">
-                        15
+                        {{ item.nbLocalisation }}
                       </v-avatar>
                       Localisation
                     </v-chip>
@@ -185,6 +185,7 @@ export default {
   data: () => ({
     items: [],
     workflows: [],
+    nbLocalisation: 0,
     workflowDiplayed: '',
     workflowStatut: '',
     workflowID: '0',
@@ -212,7 +213,6 @@ export default {
     eventEmitted: false,
     filterSearch: false
   }),
-
   watch: {
     /**
      * Met à jour l'affichage si un filtre est sélectionné.
@@ -257,6 +257,7 @@ export default {
      */
     setCardInfos() {
       this.items.forEach((element) => {
+        element.nbLocalisation = Math.floor(Math.random() * Math.floor(30))
         switch (element.TYPOLOGY) {
           case 'SAAS DEDIE':
             element.colorCircular = 'teal lighten-2'

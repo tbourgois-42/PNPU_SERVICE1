@@ -134,6 +134,9 @@ export default {
       let nbClientDesync = 0
       let nbClientPlat = 0
       let nbClientDedie = 0
+	  this.showProgressBarSaasDesynchronise = false
+	  this.showProgressBarSaasDedie = false
+	  this.showProgressBarSaasMutualise = false
       this.localClients.forEach((element) => {
         if (element.TYPOLOGY === 'SAAS DESYNCHRONISE') {
           this.showProgressBarSaasDesynchronise = true
