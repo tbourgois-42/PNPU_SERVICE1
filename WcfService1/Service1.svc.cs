@@ -25,7 +25,7 @@ namespace WcfService1
     {
         private static NamedPipeClientStream npcsPipeClient;
         private static StreamString ssStreamString = null;
-
+        private static StreamWriter sw = null;
         public string LaunchProcess(int ProcId, int workflowId, String clientId)
         {
             if (npcsPipeClient == null)
@@ -34,13 +34,21 @@ namespace WcfService1
                 npcsPipeClient.Connect();
             }
 
-            if (ssStreamString == null)
+            /*if (ssStreamString == null)
                 ssStreamString = new StreamString(npcsPipeClient);
-            ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);
+            ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);*/
+            if (sw == null)
+                sw = new StreamWriter(npcsPipeClient);
+
+            
+            sw.AutoFlush = true;
+            Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId);
+            sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId);
+            
 
 
-            string result = ssStreamString.ReadString();
-            return result;
+            //string result = ssStreamString.ReadString();
+            return "OK";
         }
 
 

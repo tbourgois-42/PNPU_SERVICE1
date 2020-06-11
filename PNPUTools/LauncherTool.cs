@@ -11,27 +11,14 @@ namespace PNPUTools
     public class LauncherViaDIspatcher
     {
         private static StreamString ssStreamString = null;
+        private static StreamWriter sw = null;
 
         public static void LaunchProcess(int ProcFile, int workflowId, String clientId)
         {
             if (ProcFile == ParamAppli.ProcessFinished)
                 return;
-            /*
-            if (ParamAppli.npcsPipeClient == null)
-                ParamAppli.npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE2");
 
-            if (ParamAppli.npcsPipeClient.IsConnected == false)
-                ParamAppli.npcsPipeClient.Connect();
-         
-
-            if (ssStreamString == null)
-                ssStreamString = new StreamString(ParamAppli.npcsPipeClient);
-            ssStreamString.WriteString(ProcFile + "/" + workflowId + "/" + clientId);*/
             ParamAppli.qFIFO.Enqueue(ProcFile + "/" + workflowId + "/" + clientId);
-
-
-            //string result = ssStreamString.ReadString();
-            //return result;
         }
 
     }

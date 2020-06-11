@@ -56,10 +56,10 @@ namespace PNPUTools
             string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
 
             string request = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, ";
-            request += "PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE " ;
+            request += "(PS.ORDER_ID)  / (SELECT (MAX(PS.ORDER_ID) ) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE " ;
             request += "FROM PNPU_H_STEP PHS, PNPU_STEP PS, PNPU_STEP PS2 WHERE PHS.LAUNCHING_DATE = (SELECT MAX(PHS2.LAUNCHING_DATE) FROM PNPU_H_STEP PHS2 WHERE PHS.WORKFLOW_ID = PHS2.WORKFLOW_ID AND PHS.CLIENT_ID = PHS2.CLIENT_ID) AND PHS.WORKFLOW_ID = " + filtre + " ";
             request += " AND PS.ORDER_ID = PS2.ORDER_ID AND PS.ID_PROCESS = PS2.ID_PROCESS AND PS.WORKFLOW_ID = PS2.WORKFLOW_ID AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID AND PS.ID_PROCESS = PHS.ID_PROCESS ";
-            request += "GROUP BY  PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PS.ID_PROCESS, PS.ORDER_ID ORDER BY PHS.CLIENT_ID";
+            request += "GROUP BY  PHS.ITERATION, PHS.WORKFLOW_ID, PHS.LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PS.ID_PROCESS, PS.ORDER_ID ORDER BY PHS.ID_STATUT, PHS.ID_PROCESS, PHS.CLIENT_NAME";
             
             DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
@@ -236,6 +236,8 @@ namespace PNPUTools
                 string[] parameters = new string[] { "@ITERATION", input.ITERATION.ToString(), "@WORKFLOW_ID", input.WORKFLOW_ID.ToString(), "@ID_PROCESS", input.ID_PROCESS.ToString(), "@CLIENT_ID", input.CLIENT_ID, "@CLIENT_NAME", input.CLIENT_NAME, "@USER_ID", input.USER_ID, "@LAUNCHING_DATE", input.LAUNCHING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@ENDING_DATE", input.ENDING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@TYPOLOGY", input.TYPOLOGY, "@ID_STATUT", input.ID_STATUT };
 
                 return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_STEP", parameters, true);
+
+               
             }
         }
 
@@ -289,24 +291,7 @@ namespace PNPUTools
             string[] parameters = new string[] { "@WORKFLOW_ID", workflowID, "@WORKFLOW_LABEL", input.WORKFLOW_LABEL };
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_WORKFLOW", parameters, false);
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_WORKFLOW SET WORKFLOW_LABEL = @WORKFLOW_LABEL WHERE WORKFLOW_ID = @WORKFLOW_ID ", conn))
-                    {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
-                        cmd.Parameters.Add("@WORKFLOW_LABEL", SqlDbType.VarChar, 254).Value = input.WORKFLOW_LABEL;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
-            }*/
+           
         }
 
         public static string AffectWorkflowsProcesses(PNPU_STEP input, string workflowID)
@@ -316,25 +301,7 @@ namespace PNPUTools
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_STEP", parameters, false);
 
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_STEP ( ORDER_ID, ID_PROCESS, WORKFLOW_ID) VALUES( @ORDER_ID, @ID_PROCESS, @WORKFLOW_ID)", conn))
-                    {
-                        cmd.Parameters.Add("@ORDER_ID", SqlDbType.Int).Value = input.ID_ORDER;
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 254).Value = input.ID_PROCESS;
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.VarChar, 254).Value = input.ID_WORKFLOW;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
-            }*/
+           
         }
 
         public static string ModifyProcessus(PNPU_PROCESS input, string processID)
@@ -343,25 +310,7 @@ namespace PNPUTools
             string[] parameters = new string[] { "@ID_PROCESS", processID, "@PROCESS_LABEL", input.PROCESS_LABEL, "@IS_LOOPABLE", input.IS_LOOPABLE };
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE PNPU_PROCESS SET PROCESS_LABEL = @PROCESS_LABEL, IS_LOOPABLE = @IS_LOOPABLE WHERE ID_PROCESS = @ID_PROCESS", conn))
-                    {
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
-                        cmd.Parameters.Add("@PROCESS_LABEL", SqlDbType.VarChar, 254).Value = input.PROCESS_LABEL;
-                        cmd.Parameters.Add("@IS_LOOPABLE", SqlDbType.VarChar, 254).Value = input.IS_LOOPABLE;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
-            }*/
+           
         }
 
         public static string CreateProcess(PNPU_PROCESS input)
@@ -371,11 +320,7 @@ namespace PNPUTools
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, true);
 
-            /*string sRequest = "INSERT INTO PNPU_PROCESS ( PROCESS_LABEL, IS_LOOPABLE) VALUES( @PROCESS_LABEL, @IS_LOOPABLE)";
-            string sTable = "PNPU_PROCESS";
-            string result = DataManagerSQLServer.SendTransactionWithGetLastPKid(sRequest, input, sTable);
-
-            return result;*/
+           
         }
 
         public static string DeleteProcess(string processID)
@@ -385,23 +330,7 @@ namespace PNPUTools
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
 
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_PROCESS WHERE ID_PROCESS = @ID_PROCESS", conn))
-                    {
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int).Value = processID;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
-            }*/
+            
         }
 
         public static string DeleteWorkflow(string workflowID)
@@ -411,28 +340,7 @@ namespace PNPUTools
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_WORKFLOW", parameters, false);
 
-            /* using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_WORKFLOW WHERE WORKFLOW_ID = @WORKFLOW_ID ", conn))
-                    {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("DELETE FROM PNPU_STEP WHERE WORKFLOW_ID = @WORKFLOW_ID", conn))
-                    {
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowID;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return ex.ToString();
-                }
-                return "Requête traitée avec succès et création d’un document.";
-            }*/
+            
         }
 
         public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()

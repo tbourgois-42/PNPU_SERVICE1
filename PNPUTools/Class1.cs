@@ -55,6 +55,7 @@ namespace PNPUTools.DataManager
 		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
 		public string TYPOLOGY { get; set; }
+		public int NUMBER_LOCALISATION { get; set; }
 
 		public PNPU_H_STEP()
 		{
@@ -230,6 +231,7 @@ namespace PNPUTools.DataManager
 		public decimal PERCENTAGE_COMPLETUDE { get; set; }
 		public decimal NB_PROCESS { get; set; }
 		public decimal ID_PROCESS { get; set; }
+		public decimal NUMBER_LOCALISATION { get; set; }
 
 		public InfoClientStep() { }
 	}
