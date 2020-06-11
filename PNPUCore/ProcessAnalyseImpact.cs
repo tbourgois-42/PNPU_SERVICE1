@@ -1,4 +1,4 @@
-using PNPUCore.Controle;
+﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
@@ -162,21 +162,42 @@ namespace PNPUCore.Process
             typeDeleted.Tooltip = "Ceci contient la liste des élements supprimées du pack";
             typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
-
+            LineAnalyseLogique lineAnalyseLogique;
             foreach (AnalyseResultFile file in resultFile)
             {
                 foreach(AnalyseResultLine line in file.ListLine())
                 {
                     //TODO METTRE ELEMENT DANS PARAM APPLI
-                    if(line.TransferFlag == "New")
+                    if(line.OriginDestination == "New")
                     {
+                        lineAnalyseLogique = new LineAnalyseLogique();
+                        lineAnalyseLogique.Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
+                        lineAnalyseLogique.Tooltip = "";
 
-                    }else if(line.TransferFlag == "")
+                        typeNew.listLineAnalyseLogique.Add(lineAnalyseLogique);
+                    }else if(line.OriginDestination == "Equal")
                     {
+                        lineAnalyseLogique = new LineAnalyseLogique();
+                        lineAnalyseLogique.Name = "EQUAL  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
+                        lineAnalyseLogique.Tooltip = "";
 
-                    }else if (line.TransferFlag == "New")
+                        typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
+                    }
+                    else if (line.OriginDestination == "Modified")
                     {
+                        lineAnalyseLogique = new LineAnalyseLogique();
+                        lineAnalyseLogique.Name = "MODIFIED  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
+                        lineAnalyseLogique.Tooltip = "";
 
+                        typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
+                    }
+                    else if (line.OriginDestination == "Delete")
+                    {
+                        lineAnalyseLogique = new LineAnalyseLogique();
+                        lineAnalyseLogique.Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
+                        lineAnalyseLogique.Tooltip = "";
+
+                        typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
                     }
                 }
             }
