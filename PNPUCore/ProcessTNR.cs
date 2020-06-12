@@ -155,7 +155,7 @@ namespace PNPUCore.Process
             historicStep.ENDING_DATE = RapportTNR.Fin;
             historicStep.ID_STATUT = RapportTNR.Result;
 
-            GenerateHistoric(historicWorkflow, historicStep);
+            GenerateHistoric(RapportTNR.Fin, RapportTNR.Result);
 
             if (RapportTNR.Result == ParamAppli.StatutOk)
             {

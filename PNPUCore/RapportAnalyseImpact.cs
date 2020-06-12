@@ -86,7 +86,6 @@ namespace PNPUCore.Rapport
 
             jw.WriteEndArray();
             jw.WriteEndObject();
-            jw.WriteEndArray();
 
             if (PNPUTools.ParamAppli.SimpleCotesReport == false)
             {
@@ -97,9 +96,12 @@ namespace PNPUCore.Rapport
             return sb.ToString();
         }
     }
-    class RapportAnalyseLogique : TemplateReport
+
+    
+
+    class RapportAnalyseImpactMDBData : TemplateReport
     {
-        public List<TypeAnalyseLogique> listTypeAnalyseLogique { set; get; }
+        public List<CommandData> listCommandData { set; get; }
 
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
@@ -124,7 +126,7 @@ namespace PNPUCore.Rapport
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
-            foreach (TypeAnalyseLogique type in listTypeAnalyseLogique)
+            foreach (CommandData type in listCommandData)
             {
                 type.ToJSONRepresentation(jw, id);
             }
@@ -133,6 +135,82 @@ namespace PNPUCore.Rapport
             jw.WriteEndObject();
         }
     }
+
+
+
+    class RapportAnalyseLogique : TemplateReport
+    {
+        public List<RapportAnalyseImpactMDBLogique> listRapportAnalyseImpactMDBLogique { set; get; }
+
+        internal void ToJSONRepresentation(JsonWriter jw, string id)
+        {
+            string sCote = string.Empty;
+            string sCote2 = string.Empty;
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
+            {
+                sCote = "'";
+                sCote2 = "*";
+            }
+
+            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+
+            jw.WriteStartObject();
+            jw.WritePropertyName("id");
+            jw.WriteValue(this.Id);
+            jw.WritePropertyName("name");
+            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WritePropertyName("tooltip");
+            jw.WriteValue(sCote + this.Tooltip + sCote);
+
+            jw.WritePropertyName("children");
+            jw.WriteStartArray();
+            foreach (RapportAnalyseImpactMDBLogique type in listRapportAnalyseImpactMDBLogique)
+            {
+                type.ToJSONRepresentation(jw, id);
+            }
+
+            jw.WriteEndArray();
+            jw.WriteEndObject();
+        }
+    }
+
+    class RapportAnalyseImpactMDBLogique : TemplateReport
+    {
+
+        public List<TypeAnalyseLogique> listTypeAnalyseLogique { set; get; }
+
+        public void ToJSONRepresentation(JsonWriter jw, string id)
+        {
+            string sCote = string.Empty;
+            string sCote2 = string.Empty;
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
+            {
+                sCote = "'";
+                sCote2 = "*";
+            }
+            this.Id = "1";
+            jw.Formatting = Formatting.Indented;
+            jw.WriteStartObject();
+            jw.WritePropertyName("id");
+            jw.WriteValue(this.Id);
+            jw.WritePropertyName("name");
+            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WritePropertyName("children");
+            jw.WriteStartArray();
+
+            foreach (TypeAnalyseLogique type in listTypeAnalyseLogique)
+            {
+                type.ToJSONRepresentation(jw, id);
+            }
+
+            jw.WriteEndArray();
+            jw.WriteEndObject();
+        }
+
+    }
+
     class TypeAnalyseLogique : TemplateReport
     {
         public List<LineAnalyseLogique> listLineAnalyseLogique { set; get; }
@@ -202,7 +280,7 @@ namespace PNPUCore.Rapport
 
     class RapportAnalyseData : TemplateReport
     {
-        public List<ControleAnalyseData> listControleAnalyseData { set; get; }
+        public List<CommandData> listCommandData { set; get; }
 
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
@@ -227,7 +305,7 @@ namespace PNPUCore.Rapport
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
-            foreach (ControleAnalyseData type in listControleAnalyseData)
+            foreach (CommandData type in listCommandData)
             {
                 type.ToJSONRepresentation(jw, id);
             }
@@ -237,9 +315,10 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class ControleAnalyseData : TemplateReport
+    class CommandData : TemplateReport
     {
         public String Result { get; set; }
+        public List<ControleCommandData> listControleCommandData; 
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
@@ -260,13 +339,53 @@ namespace PNPUCore.Rapport
             jw.WriteValue(sCote + this.Name + sCote);
             jw.WritePropertyName("tooltip");
             jw.WriteValue(sCote + this.Tooltip + sCote);
+
+            jw.WritePropertyName("message");
+            jw.WriteStartArray();
+            foreach (ControleCommandData type in listControleCommandData)
+            {
+                type.ToJSONRepresentation(jw, id);
+            }
+
+            jw.WriteEndArray();
+            jw.WriteEndObject();
+        }
+    }
+
+    class ControleCommandData : TemplateReport
+    {
+        public String Result { get; set; }
+        public string Message { get; set; }
+
+        internal void ToJSONRepresentation(JsonWriter jw, string id)
+        {
+            string sCote = string.Empty;
+            string sCote2 = string.Empty;
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
+            {
+                sCote = "'";
+                sCote2 = "*";
+            }
+
+            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+
+            jw.WriteStartObject();
+            jw.WritePropertyName("id");
+            jw.WriteValue(this.Id);
+            jw.WritePropertyName("name");
+            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WritePropertyName("message");
+            jw.WriteValue(sCote + this.Message + sCote);
+            jw.WritePropertyName("tooltip");
+            jw.WriteValue(sCote + this.Tooltip + sCote);
             jw.WriteEndObject();
         }
     }
 
     class RapportElementLocaliser : TemplateReport
     {
-        public List<ElementLocaliser> listElementLocaliser { set; get; }
+        public List<RapportAnalyseImpactMDBElementALocaliser> listRapportAnalyseImpactMDBElementALocaliser { set; get; }
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
@@ -290,6 +409,40 @@ namespace PNPUCore.Rapport
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
+            foreach (RapportAnalyseImpactMDBElementALocaliser element in listRapportAnalyseImpactMDBElementALocaliser)
+            {
+                element.ToJSONRepresentation(jw, id);
+            }
+
+            jw.WriteEndArray();
+            jw.WriteEndObject();
+        }
+
+    }
+    class RapportAnalyseImpactMDBElementALocaliser : TemplateReport
+    {
+        public List<ElementLocaliser> listElementLocaliser { set; get; }
+
+        public void ToJSONRepresentation(JsonWriter jw, string id)
+        {
+            string sCote = string.Empty;
+            string sCote2 = string.Empty;
+
+            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
+            {
+                sCote = "'";
+                sCote2 = "*";
+            }
+            this.Id = "1";
+            jw.Formatting = Formatting.Indented;
+            jw.WriteStartObject();
+            jw.WritePropertyName("id");
+            jw.WriteValue(this.Id);
+            jw.WritePropertyName("name");
+            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WritePropertyName("children");
+            jw.WriteStartArray();
+
             foreach (ElementLocaliser element in listElementLocaliser)
             {
                 element.ToJSONRepresentation(jw, id);
@@ -300,7 +453,6 @@ namespace PNPUCore.Rapport
         }
 
     }
-
     class ElementLocaliser : TemplateReport
     {
         internal void ToJSONRepresentation(JsonWriter jw, string id)

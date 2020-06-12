@@ -9,8 +9,8 @@ namespace PNPUTools
 
     public class AnalyseResultFile
     {
-        String pathFile;
-        String fileName;
+        public String pathFile;
+        public String fileName;
         List<AnalyseResultLine> listLine;
 
         public List<AnalyseResultLine>  ListLine()

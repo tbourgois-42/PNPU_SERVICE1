@@ -36,11 +36,10 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-
-            
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
+            RapportProcess = new RapportProcessAnalyseImpact();
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
@@ -75,16 +74,7 @@ namespace PNPUCore.Process
 
             //Gestion contrôle data
             //GetListControle(ref listControl);
-            RapportAnalyseData rapportAnalyseData = new RapportAnalyseData();
-            List<ControleAnalyseData> listControleAnalyseData = new List<ControleAnalyseData>();
 
-            ControleAnalyseData controleAnalyseData = new ControleAnalyseData();
-
-            controleAnalyseData.Name = "Controle KO table bidule etc..";
-            controleAnalyseData.Tooltip = "";
-            controleAnalyseData.Result = "Warning";
-
-            listControleAnalyseData.Add(controleAnalyseData);
             //gestion des requêtes data génériques (controle)
 
 
@@ -117,16 +107,12 @@ namespace PNPUCore.Process
             }*/
 
 
-            rapportAnalyseData.listControleAnalyseData = listControleAnalyseData;
-            RapportProcess.rapportAnalyseData = rapportAnalyseData;
+            //RapportProcess.rapportAnalyseData = rapportAnalyseData;
             
 
 
 
             //Elements à localiser
-
-
-
 
 
             RapportProcess.Fin = DateTime.Now;
@@ -146,26 +132,34 @@ namespace PNPUCore.Process
 
         private void addRapportAnalyseLogique(RapportAnalyseLogique rapportAnalyseLogique, List<AnalyseResultFile> resultFile)
         {
-            rapportAnalyseLogique.listTypeAnalyseLogique = new List<TypeAnalyseLogique>();
-            TypeAnalyseLogique typeNew = new TypeAnalyseLogique();
-            typeNew.Name = "New";
-            typeNew.Tooltip = "Ceci contient la liste des élements nouveau du pack";
-            typeNew.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
-            TypeAnalyseLogique typeModified = new TypeAnalyseLogique();
-            typeModified.Name = "Modified";
-            typeModified.Tooltip = "Ceci contient la liste des élements modifié du pack";
-            typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
-
-            TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique();
-            typeDeleted.Name = "Deleted";
-            typeDeleted.Tooltip = "Ceci contient la liste des élements supprimées du pack";
-            typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
-
+            List<RapportAnalyseImpactMDBLogique> listRapportAnalyseImpactMDBLogique = new List<RapportAnalyseImpactMDBLogique>();
             LineAnalyseLogique lineAnalyseLogique;
+            RapportAnalyseImpactMDBLogique analyseMdbLogique;
             foreach (AnalyseResultFile file in resultFile)
             {
-                foreach(AnalyseResultLine line in file.ListLine())
+
+                analyseMdbLogique = new RapportAnalyseImpactMDBLogique();
+                analyseMdbLogique.Name = file.fileName;
+                analyseMdbLogique.Tooltip = "";
+                analyseMdbLogique.listTypeAnalyseLogique = new List<TypeAnalyseLogique>();
+
+                TypeAnalyseLogique typeNew = new TypeAnalyseLogique();
+                typeNew.Name = "New";
+                typeNew.Tooltip = "Ceci contient la liste des élements nouveau du pack";
+                typeNew.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+
+                TypeAnalyseLogique typeModified = new TypeAnalyseLogique();
+                typeModified.Name = "Modified";
+                typeModified.Tooltip = "Ceci contient la liste des élements modifié du pack";
+                typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+
+                TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique();
+                typeDeleted.Name = "Deleted";
+                typeDeleted.Tooltip = "Ceci contient la liste des élements supprimées du pack";
+                typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+
+                foreach (AnalyseResultLine line in file.ListLine())
                 {
                     //TODO METTRE ELEMENT DANS PARAM APPLI
                     if(line.OriginDestination == "New")
@@ -200,7 +194,16 @@ namespace PNPUCore.Process
                         typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
                     }
                 }
+
+                analyseMdbLogique.listTypeAnalyseLogique.Add(typeNew);
+                analyseMdbLogique.listTypeAnalyseLogique.Add(typeNew);
+                analyseMdbLogique.listTypeAnalyseLogique.Add(typeNew);
+                listRapportAnalyseImpactMDBLogique.Add(analyseMdbLogique);
             }
+
+            rapportAnalyseLogique.listRapportAnalyseImpactMDBLogique = listRapportAnalyseImpactMDBLogique;
+
+
 
         }
     }
