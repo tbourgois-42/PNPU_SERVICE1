@@ -218,7 +218,7 @@ namespace PNPUCore.Process
             else
             {
                 sTable = ExtractParameter(sCommand, 1);
-                sFilter = ExtractParameter(sCommand, 4);
+                sFilter = ExtractParameter(sCommand, 4).Replace("''", "'");
             }
 
         }
