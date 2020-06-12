@@ -14,6 +14,7 @@ namespace PNPUCore.Process
     internal class ProcessAnalyseImpact : ProcessCore, IProcess
     {
         public RapportProcessAnalyseImpact RapportProcess;
+        public RapportAnalyseData RapportAnalyseDataCourant;
         //public list<ElementALocaliser> listElementALocaliser; 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -206,5 +207,124 @@ namespace PNPUCore.Process
 
 
         }
+
+        public void ExtractTableFilter(string sCommand, out string sTable, out string sFilter)
+        {
+            if (sCommand.ToUpper().IndexOf("EXEC") >= 0)
+            {
+                sTable = ExtractParameter(sCommand, "@table");
+                sFilter = ExtractParameter(sCommand, "@opt_where").Replace("''", "'");
+            }
+            else
+            {
+                sTable = ExtractParameter(sCommand, 1);
+                sFilter = ExtractParameter(sCommand, 4);
+            }
+
+        }
+
+        private string ExtractParameter(string sCommand, string sParameterName)
+        {
+            int iIndex1, iIndex2;
+            string sResultat = String.Empty;
+            bool bContinue = true;
+
+            try
+            {
+                iIndex1 = sCommand.IndexOf(sParameterName);
+                if (iIndex1 >= 0)
+                {
+                    iIndex1 += sParameterName.Length;
+                    while (sCommand[iIndex1] != '\'') iIndex1++;
+                    iIndex1++;
+                    iIndex2 = iIndex1;
+                    while (bContinue == true)
+                    {
+                        if (iIndex2 >= sCommand.Length)
+                            return (String.Empty);
+
+                        if (sCommand[iIndex2] == '\'')
+                        {
+                            if (sCommand.Substring(iIndex2, 2) == "''")
+                                iIndex2 += 2;
+                            else
+                                bContinue = false;
+                        }
+                        else
+                            iIndex2++;
+                    }
+
+                    sResultat = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
+                }
+
+            }
+            catch (Exception)
+            {
+                sResultat = String.Empty;
+            }
+            return sResultat;
+        }
+
+        private string ExtractParameter(string sCommand, int iParameterPos)
+        {
+            int iIndex1 = 0;
+            int iIndex2 = 0;
+            string sResultat = String.Empty;
+            bool bContinue = true;
+            int iNumeroParam = 1;
+
+            try
+            {
+                iIndex1 = sCommand.IndexOf("M4SFR_COPY_DATA_ORG");
+                if (iIndex1 >= 0)
+                {
+                    iIndex1 += "M4SFR_COPY_DATA_ORG".Length;
+                    while (sCommand[iIndex1] != '\'') iIndex1++;
+                    iIndex1++;
+                    while (iNumeroParam < iParameterPos)
+                    {
+                        iIndex1 = sCommand.IndexOf(',', iIndex1);
+                        if (iIndex1 == -1)
+                            return String.Empty;
+
+                        while (sCommand[iIndex1] != '\'') iIndex1++;
+                        iIndex1++;
+
+                        // Test si on est sur '', dans le filtre par exemple
+                        if (sCommand[iIndex1] != '\'')
+                            iNumeroParam++;
+                    }
+
+                    if (iNumeroParam == iParameterPos)
+                    {
+                        iIndex2 = iIndex1;
+                        while (bContinue == true)
+                        {
+                            if (iIndex2 >= sCommand.Length)
+                                return (String.Empty);
+
+                            if (sCommand[iIndex2] == '\'')
+                            {
+                                if (sCommand.Substring(iIndex2, 2) == "''")
+                                    iIndex2 += 2;
+                                else
+                                    bContinue = false;
+                            }
+                            else
+                                iIndex2++;
+                        }
+                    }
+
+                    sResultat = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
+                }
+
+            }
+            catch (Exception)
+            {
+                sResultat = String.Empty;
+            }
+            return sResultat;
+        }
+
     }
 }

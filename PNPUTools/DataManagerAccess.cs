@@ -16,7 +16,7 @@ namespace PNPUTools.DataManager
                 + ";Uid=Admin;Pwd=;";
         }
 
-        public DataSet GetData(string sRequest, string sMdbPath)
+        public override DataSet GetData(string sRequest, string sMdbPath)
         {
             DataSet dataSet = null;
 
@@ -45,5 +45,6 @@ namespace PNPUTools.DataManager
              return dataSet;
         }
 
+        
     }
 }
