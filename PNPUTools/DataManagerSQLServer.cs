@@ -17,9 +17,11 @@ namespace PNPUTools.DataManager
             return String.Empty;
         }
 
-        public DataSet GetData(string sRequest, string sConnectionString)
+        public override DataSet GetData(string sRequest, string sConnectionString)
         {
             DataSet dataSet = null;
+            string sTableName = string.Empty;
+
 
             try
             {
@@ -34,7 +36,11 @@ namespace PNPUTools.DataManager
 
 
                     dataSet = new DataSet();
-                    adapter.Fill(dataSet);
+                    sTableName = GetTableName(sRequest);
+                    if (sTableName == string.Empty)
+                        adapter.Fill(dataSet);
+                    else
+                        adapter.Fill(dataSet, sTableName);
                 }
             }
             catch (Exception ex)

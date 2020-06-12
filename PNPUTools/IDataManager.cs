@@ -148,5 +148,32 @@ namespace PNPUTools.DataManager
 
             return dListeTables;
         }
+
+        public string GetTableName(string sRequest)
+        {
+            string sResultat = string.Empty;
+            int iIndex1;
+            int iIndex2;
+
+            try
+            {
+                sRequest = sRequest.ToUpper();
+                iIndex1 = sRequest.IndexOf("FROM");
+                if (iIndex1 >= 0)
+                {
+                    iIndex1 += "FROM".Length;
+                    while (char.IsWhiteSpace(sRequest[iIndex1]) == true) iIndex1++;
+                    iIndex2 = iIndex1 + 1;
+                    while ((char.IsLetterOrDigit(sRequest[iIndex2]) == true) || (sRequest[iIndex2] == '_')) iIndex2++;
+                    sResultat = sRequest.Substring(iIndex1, iIndex2 - iIndex1);
+                }
+            }
+            catch(Exception)
+            {
+                sResultat = string.Empty;
+            }
+            return (sResultat);
+
+        }
     }
 }
