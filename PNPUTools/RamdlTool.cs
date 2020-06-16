@@ -58,13 +58,14 @@ namespace PNPUTools
             ParamRamDlInit();
         }
 
-        public void AnalyseMdbRAMDL()
+        public List<String> AnalyseMdbRAMDL()
         {
             string sCheminMDB;
             ProcessStartInfo psiStartInfo;
             System.Diagnostics.Process pProcess;
             StreamReader srResultat;
             string sContenuFichierLog;
+            List<string> listPathResult = new List<string>();
 
             this.pathLogFile = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\RAMDL_";
             this.pathIni = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRAMDL.ini";
@@ -131,13 +132,18 @@ namespace PNPUTools
                     {
                         //Logger.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
                     }
+                    else
+                    {
+                        listPathResult.Add(this.pathResult);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
-                return;
+                return new List<String>();
             }
+            return listPathResult;
         }
 
         private void GenerateIniForAnalyseImpact(string sCheminMDB)

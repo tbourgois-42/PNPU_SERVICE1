@@ -42,6 +42,7 @@
                             (v) => !!v || 'Le nom du workflow est obligatoire'
                           ]"
                           required
+                          @keypress="pressEnter($event)"
                         ></v-text-field>
                       </v-form>
                     </v-col>
@@ -214,6 +215,17 @@ export default {
   },
 
   methods: {
+    /**
+     * key press Enter
+     */
+    pressEnter(e) {
+      if (e.key === 'Enter') {
+        this.save()
+      }
+    },
+    /**
+     * Charge les workflows depuis PNPU_WORKFLOW.
+     */
     async initialize() {
       const vm = this
       try {

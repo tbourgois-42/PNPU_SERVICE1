@@ -11,76 +11,135 @@
     </v-card>
     <!-- Lancer un process -->
     <v-dialog v-model="dialog" max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Lancement du workflow</v-card-title>
-        <v-card-subtitle class="mt-1">{{ workflowDate }}</v-card-subtitle>
+      <v-card ref="form">
+        <v-card-title class="d-flex justify-space-between headline pt-6 pb-6"
+          >Lancement du workflow<v-icon class="mr-2 pr-1"
+            >mdi-play-circle</v-icon
+          ></v-card-title
+        >
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <v-select
-                  v-model="txtWorkflow"
-                  :items="lstWorkflows"
-                  label="Workflow"
-                  chips
-                  solo
-                  @input="getSelectedWorkflow()"
-                ></v-select>
-                <v-select
-                  v-model="txtTypologie"
-                  :items="typologie"
-                  :rules="[verifyTypologie()]"
-                  label="Typologie"
-                  chips
-                  multiple
-                  solo
-                ></v-select>
-                <v-select
-                  v-model="clientSelected"
-                  :items="lstClient"
-                  label="Client"
-                  chips
-                  multiple
-                  solo
-                ></v-select>
-                <v-checkbox
-                  v-model="packStandard"
-                  label="Package standard"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="12" sm="12" md="12">
-                <v-file-input
-                  v-model="files"
-                  color="primary"
-                  counter
-                  label=".zip"
-                  placeholder="Selection des fichiers"
-                  prepend-icon="mdi-paperclip"
-                  outlined
-                  multiple
-                  :show-size="1000"
-                  accept=".zip, .7zip, .rar"
-                  @change="selectFile($event)"
-                >
-                  <template v-slot:selection="{ index, text }">
-                    <v-chip v-if="index < 2" color="primary" dark label small>
-                      {{ text }}
-                    </v-chip>
+                <v-card class="d-flex justify-space-between align-center" flat>
+                  <v-select
+                    ref="txtWorkflow"
+                    v-model="txtWorkflow"
+                    :rules="[
+                      () => !!txtWorkflow || 'Le workflow est obligatoire.'
+                    ]"
+                    :items="lstWorkflows"
+                    label="Workflow *"
+                    chips
+                    solo
+                    @input="getSelectedWorkflow()"
+                    required
+                  ></v-select>
+                  <iconTooltip
+                    text="Sélection du workflow qui sera instancié."
+                  />
+                </v-card>
+                <v-card class="d-flex justify-space-between" flat>
+                  <v-select
+                    ref="txtTypologie"
+                    v-model="txtTypologie"
+                    :items="typologie"
+                    :rules="[verifyTypologie()]"
+                    label="Typologie *"
+                    multiple
+                    chips
+                    required
+                    solo
+                  ></v-select>
+                  <iconTooltip
+                    text="Typologie(s) de client(s) concernée(s) par le workflow. Il n'est pas possible de sélectionner la typologie SaaS Dédié avec une autre typologie. Si vous souhaitez instancier cette typologie en plus d'une autre il vous faudra réaliser deux instances distinctes."
+                  />
+                </v-card>
+                <v-card class="d-flex justify-space-between" flat>
+                  <v-select
+                    ref="clientSelected"
+                    v-model="clientSelected"
+                    :items="lstClient"
+                    label="Client"
+                    chips
+                    multiple
+                    solo
+                  ></v-select>
+                  <iconTooltip
+                    text="Si aucun client n'est sélectionné, l'instance du workflow lancé prendra en compte l'ensemble des clients pour la/les typologie(s) sélectionnée(s)."
+                  />
+                </v-card>
+                <v-card class="d-flex justify-space-between" flat>
+                  <v-text-field
+                    ref="txtInstanceName"
+                    v-model="txtInstanceName"
+                    :rules="[
+                      (value) =>
+                        !!value || `Le nom de l'instance est obligatoire.`
+                    ]"
+                    label="Nom de l'instance *"
+                    required
+                    solo
+                  ></v-text-field>
+                  <iconTooltip
+                    text="A chaque lancement d'un workflow celui-ci est instancié. Le nom de l'instance permet de différencier un workflow d'un autre."
+                  />
+                </v-card>
+                <v-card class="d-flex justify-space-between" flat>
+                  <v-file-input
+                    ref="files"
+                    v-model="files"
+                    :rules="[
+                      (files) => !!files || 'Le fichier zip est obligatoire.'
+                    ]"
+                    color="primary"
+                    counter
+                    label="Fichier .zip *"
+                    prepend-icon=""
+                    solo
+                    multiple
+                    :show-size="1000"
+                    accept=".zip, .7zip, .rar"
+                    required
+                    @change="selectFile($event)"
+                  >
+                    <template v-slot:selection="{ index, text }">
+                      <v-chip v-if="index < 2" color="primary" dark label small>
+                        {{ text }}
+                      </v-chip>
 
-                    <span
-                      v-else-if="index === 2"
-                      class="overline grey--text text--darken-3 mx-2"
-                    >
-                      +{{ files.length - 2 }} Fichier(s)
-                    </span>
-                  </template>
-                </v-file-input>
+                      <span
+                        v-else-if="index === 2"
+                        class="overline grey--text text--darken-3 mx-2"
+                      >
+                        +{{ files.length - 2 }} Fichier(s)
+                      </span>
+                    </template>
+                  </v-file-input>
+                  <iconTooltip
+                    text="La sélection doit contenir un fichier zippé contenant le/les fichier(s) .mdb"
+                  />
+                </v-card>
+                <v-card class="d-flex justify-space-between align-center" flat>
+                  <v-checkbox
+                    ref="packStandard"
+                    v-model="packStandard"
+                    label="Package standard *"
+                  ></v-checkbox>
+                  <iconTooltip
+                    margingPadding=""
+                    text="La case à cocher 'Package standard' doit être cochée si l'instance du workflow concerne un package standard. Cela a pour objectif de lancer des contrôles spécialement conçu pour ce type de pack."
+                  />
+                </v-card>
+                <v-card-text class="ma-0 pa-0">
+                  (*) Champs obligatoires
+                </v-card-text>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
-
+        <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="error" @click="close"
@@ -106,12 +165,10 @@
 </template>
 <script>
 import axios from 'axios'
+import iconTooltip from '../components/IconTooltip'
 export default {
+  components: { iconTooltip },
   props: {
-    workflowDate: {
-      type: String,
-      default: ''
-    },
     clients: {
       type: Array,
       default: () => []
@@ -131,7 +188,7 @@ export default {
     lstClient: [],
     lstClientHidden: [],
     clientsTypo: [],
-    files: '',
+    files: [],
     launchWorkflow: false,
     dialog: false,
     txtWorkflow: '',
@@ -145,6 +202,9 @@ export default {
     idSelectedWorkflow: '',
     packStandard: true,
     loadingLaunchWorkflow: false,
+    txtInstanceName: '',
+    formHasErrors: false,
+    clientSelected: [],
     /**
      * Rules - Contrôle sur la sélection des typologies.
      */
@@ -161,8 +221,24 @@ export default {
       } else {
         this.launchWorkflow = false
       }
+      if (this.txtTypologie.length === 0) {
+        return 'La typologie est obligatoire.'
+      }
     }
   }),
+
+  computed: {
+    form() {
+      return {
+        txtWorkflow: this.txtWorkflow,
+        txtTypologie: this.txtTypologie,
+        clientSelected: this.clientSelected,
+        txtInstanceName: this.txtInstanceName,
+        packStandard: this.packStandard,
+        files: this.files
+      }
+    }
+  },
 
   watch: {
     txtTypologie() {
@@ -190,24 +266,40 @@ export default {
     },
 
     selectFile(event) {
-      if (event !== '') {
+      if (event.length > 0) {
         event.forEach((element) => {
           this.selectedFile = element
         })
         if (this.selectedFile.type !== 'application/x-zip-compressed') {
+          this.files = []
           this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
         }
       }
     },
 
+    check() {
+      return false
+    },
+
     async sendFile() {
+      this.formHasErrors = false
+      Object.keys(this.form).forEach((f) => {
+        if (!this.form[f]) this.formHasErrors = true
+
+        this.$refs[f].validate(true)
+      })
       this.loadingLaunchWorkflow = true
       const fd = new FormData()
-      if (this.selectedFile !== null && this.txtTypologie !== -1) {
+      if (
+        this.selectedFile !== null &&
+        this.txtTypologie !== -1 &&
+        this.txtInstanceName !== null
+      ) {
         fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
         fd.append('typology', this.txtTypologie)
         fd.append('clients', this.clientSelected)
         fd.append('packStandard', this.packStandard)
+        fd.append('instanceName', this.txtInstanceName)
         try {
           await axios.post(
             `${process.env.WEB_SERVICE_WCF}/worflow/` +
@@ -272,6 +364,7 @@ export default {
       this.snackbar = true
       this.colorsnackbar = color
       this.snackbarMessage = message
+      this.loadingLaunchWorkflow = false
     }
   }
 }
