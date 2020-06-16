@@ -84,6 +84,13 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "localisation/workflow/{workflowId}/{clientId}")]
+        string GetNbLocalisation(string workflowId, string clientId);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "processuscritique")]
         string GetProcessusCritiquesAllCLient();
 
