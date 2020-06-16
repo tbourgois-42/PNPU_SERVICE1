@@ -46,6 +46,9 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="RmdCommandData.cs" />
+    <Compile Include="ControleGeneriqueCopyData.cs" />
+    <Compile Include="RapportAnalyseImpact.cs" />
     <Compile Include="ControleDependanceN3.cs" />
     <Compile Include="ControleDependanceN2.cs" />
     <Compile Include="ControlePropagationProjectExplorer.cs" />

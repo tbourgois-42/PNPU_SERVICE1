@@ -49,6 +49,8 @@ namespace PNPUCore.Process
         public RProcess RapportProcess;
         public RTNR RapportTNR;
         public RControle RapportControleCourant;
+        public RapportProcessAnalyseImpact RapportAnalyseImpact;
+
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -115,7 +117,11 @@ namespace PNPUCore.Process
                 RapportTNR.Fin = DateTime.Now;
                 return (RapportTNR.ToJSONRepresentation());
             }
-            else
+            else if (ParamAppli.ProcessAnalyseImpact == process.PROCESS_ID)
+            {
+                RapportAnalyseImpact.Fin = DateTime.Now;
+                return (RapportAnalyseImpact.ToJSONRepresentation());
+            }else
             {
                 RapportProcess.Fin = DateTime.Now;
                 return (RapportProcess.ToJSONRepresentation());

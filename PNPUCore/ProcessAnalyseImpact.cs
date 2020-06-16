@@ -13,7 +13,8 @@ namespace PNPUCore.Process
 {
     internal class ProcessAnalyseImpact : ProcessCore, IProcess
     {
-
+        
+        public List<ElementLocaliser> listElementALocaliser; 
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -41,19 +42,70 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
+            RapportAnalyseImpact = new RapportProcessAnalyseImpact();
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
-            RapportProcess.Source = new List<Rapport.Source>();
+            RapportAnalyseLogique rapportAnalyseLogique = new RapportAnalyseLogique();
+            RapportAnalyseData rapportAnalyseData = new RapportAnalyseData();
+            RapportElementLocaliser rapportElementLocaliser = new RapportElementLocaliser();
 
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
 
+            //Lancement analyse d'impact RamDl
+            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
+            List<String> pathList = ramdlTool.AnalyseMdbRAMDL();
+            List<AnalyseResultFile> resultFileList = new List<AnalyseResultFile>();
+            foreach (string pathFile in pathList)
+            {
+                String analyseFileName = Path.GetFileNameWithoutExtension(pathFile);
+                //PARTIE LOGIQUE
+                using (StreamReader reader = new StreamReader(pathFile))
+                {
+                    string line;
+                    AnalyseResultFile resultFile = new AnalyseResultFile(pathFile, analyseFileName);
+                    
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] listElement = line.Split('\t');
+                        AnalyseResultLine resultLine = new AnalyseResultLine(listElement);
+                        resultFile.addLine(resultLine);
+                    }
+                    resultFileList.Add(resultFile);
+                }
 
-            Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Name = "IdRapport - ProcessAnalyseImpact DEV";
-            RapportSource.Controle = new List<RControle>();
-            foreach (IControle controle in listControl)
+                //PARTIE DATA
+                //On recrée le chemin du fichier mdb.
+                string fileMdb =  analyseFileName.Remove(0, 8); //Remove Analyse_
+                string sNom = WORKFLOW_ID.ToString("0000000000");
+                string sPathFichierMdb = ParamAppli.DossierTemporaire + "\\" + sNom + "\\" + fileMdb + ".mdb";
+                //Récupération de toutes les commandes data
+                List<RmdCommandData> listCommandData = this.getAllDataCmd(sPathFichierMdb);
+
+                foreach(RmdCommandData commandData in listCommandData)
+                {
+
+
+                }
+
+
+            
+            }
+
+            this.addRapportAnalyseLogique(rapportAnalyseLogique, resultFileList);
+            RapportAnalyseImpact.rapportAnalyseLogique = rapportAnalyseLogique;
+            RapportAnalyseImpact.rapportAnalyseData = rapportAnalyseData;
+            RapportAnalyseImpact.rapportElementLocaliser = rapportElementLocaliser;
+
+            //Gestion contrôle data
+            //GetListControle(ref listControl);
+
+            //gestion des requêtes data génériques (controle)
+
+
+
+            /*foreach (IControle controle in listControl)
             {
                 controle.SetProcessControle(this);
                 RControle RapportControle = new RControle();
@@ -72,16 +124,35 @@ namespace PNPUCore.Process
                 {
                     GlobalResult = statutControle;
                 }
-                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
-
-
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+
+
                 RapportSource.Controle.Add(RapportControle);
             }
 
-            RapportProcess.Source.Add(RapportSource);
-            RapportProcess.Fin = DateTime.Now;
-            RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
+                if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
+                {
+                    SourceResult = statutControle;
 
+                }
+                else if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+                {
+                    SourceResult = statutControle;
+                }
+            }*/
+
+
+            //RapportProcess.rapportAnalyseData = rapportAnalyseData;
+
+
+
+
+            //Elements à localiser
+
+
+            RapportAnalyseImpact.Fin = DateTime.Now;
+            RapportAnalyseImpact.Result = ParamAppli.TranscoSatut[GlobalResult];
+            
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult);
 
@@ -154,6 +225,25 @@ namespace PNPUCore.Process
             return (sResultat);
         }
 
+
+        private List<RmdCommandData> getAllDataCmd(String sConnection)
+        {
+            DataManagerAccess dataManager = new DataManagerAccess();
+            string requete = "select ID_PACKAGE, ID_CLASS, ID_OBJECT, CMD_CODE from M4RDL_PACK_CMDS where ID_PACKAGE like '%_D'";
+            List<RmdCommandData> listDatacmd = new List<RmdCommandData>();
+            DataSet result = dataManager.GetData(requete, sConnection);
+            DataTable tableCmd = result.Tables[0];
+
+            foreach (DataRow row in tableCmd.Rows)
+            {
+                RmdCommandData commandData = new RmdCommandData(row[0].ToString(), row[1].ToString(), row[2].ToString(), row[3].ToString(), this);
+                listDatacmd.Add(commandData);
+
+
+            }
+
+            return listDatacmd;
+        }
     }
 
 
@@ -167,6 +257,26 @@ namespace PNPUCore.Process
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq="
                 + sFichier
                 + ";Uid=Admin;Pwd=;";
+        }
+
+
+        private List<RmdCommandData> getAllDataCmd(String sConnection)
+        {
+            DataManagerAccess dataManager = new DataManagerAccess();
+            string requete = "select ID_PACKAGE, ID_CLASS, ID_OBJECT, CMD_CODE from M4RDL_PACK_CMDS where ID_PACKAGE like '%_D'";
+            List<RmdCommandData> listDatacmd = new List<RmdCommandData>();
+            DataSet result = dataManager.GetData(requete, sConnection);
+            DataTable tableCmd = result.Tables[0];
+
+            foreach (DataRow row in tableCmd.Rows)
+            {
+                RmdCommandData commandData = new RmdCommandData(row[0].ToString(), row[1].ToString(), row[2].ToString(), row[3].ToString(), this);
+                listDatacmd.Add(commandData);
+
+
+            }
+
+            return listDatacmd;
         }
     }
 }
