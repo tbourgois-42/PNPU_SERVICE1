@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿using System;
+=======
+using System;
+>>>>>>> Dev
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,7 +101,11 @@ namespace PNPUCore.Rapport
         }
     }
 
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> Dev
 
     class RapportAnalyseImpactMDBData : TemplateReport
     {
@@ -276,7 +284,11 @@ namespace PNPUCore.Rapport
             jw.WriteEndObject();
         }
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> Dev
 
     class RapportAnalyseData : TemplateReport
     {
@@ -318,7 +330,11 @@ namespace PNPUCore.Rapport
     class CommandData : TemplateReport
     {
         public String Result { get; set; }
+<<<<<<< HEAD
         public List<ControleCommandData> listControleCommandData; 
+=======
+        public List<ControleCommandData> listControleCommandData;
+>>>>>>> Dev
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
