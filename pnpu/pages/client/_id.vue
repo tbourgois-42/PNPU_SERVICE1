@@ -121,14 +121,15 @@
                     <v-treeview
                       v-model="selection"
                       :items="JSON_TEMPLATE"
-                      selection-type="leaf"
                       :search="searchTreeview"
                       :filter="filter"
                       hoverable
                       returnObject
                       transition
                       activatable
+                      open-on-click
                       @update:active="getSelected($event)"
+                      @update:open="getSelected($event)"
                     >
                       <template v-slot:prepend="{ item, open }">
                         <v-icon v-if="!item.result">
