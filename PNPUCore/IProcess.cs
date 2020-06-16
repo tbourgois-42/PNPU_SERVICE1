@@ -278,7 +278,7 @@ namespace PNPUCore.Process
                         sClient_ID = this.CLIENT_ID;
                     this.TYPOLOGY = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
                     if (this.TYPOLOGY != string.Empty)
-                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
+                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
                 }
                 catch (Exception)
                 { }
