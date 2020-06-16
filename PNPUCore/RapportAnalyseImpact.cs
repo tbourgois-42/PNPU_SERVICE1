@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,6 +96,8 @@ namespace PNPUCore.Rapport
             return sb.ToString();
         }
     }
+
+
 
     class RapportAnalyseImpactMDBData : TemplateReport
     {
@@ -275,6 +277,7 @@ namespace PNPUCore.Rapport
         }
     }
 
+
     class RapportAnalyseData : TemplateReport
     {
         public List<CommandData> listCommandData { set; get; }
@@ -315,9 +318,7 @@ namespace PNPUCore.Rapport
     class CommandData : TemplateReport
     {
         public String Result { get; set; }
-
-        public List<ControleCommandData> listControleCommandData; 
-
+        public List<ControleCommandData> listControleCommandData;
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
