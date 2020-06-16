@@ -122,11 +122,13 @@
                       {{ item.ID_STATUT }}
                     </v-chip>
                     <v-chip class="pl-2" label>
-                      <v-avatar left color="grey lighten-1">
-                        15
+                      <v-avatar left color="grey ligthen-1">
+                        <!--{{ nbLocalisation }}-->
+                        {{ item.NB_LOCALISATION }}
                       </v-avatar>
                       Localisation
                     </v-chip>
+                    <v-icon color="error">mdi-alert-box</v-icon>
                   </v-card-actions>
                 </v-card>
               </v-hover>
@@ -203,8 +205,18 @@ export default {
     snackbar: false,
     colorsnackbar: '',
     loadingData: false,
-    eventEmitted: false
+    eventEmitted: false,
+    nbLocalisation: 0
   }),
+
+  computed: {
+    colorLocalisation() {
+      if (this.nbLocalisation >= 0 && this.nbLocalisation <= 50) return 'indigo'
+      if (this.nbLocalisation >= 51 && this.nbLocalisation <= 60) return 'teal'
+      if (this.nbLocalisation >= 61 && this.nbLocalisation <= 80) return 'green'
+      return 'red'
+    }
+  },
 
   watch: {
     /**
@@ -237,10 +249,6 @@ export default {
     this.initialize()
     this.getMaxStep()
   },
-
-  beforeMount() {},
-
-  mounted() {},
 
   methods: {
     /**
@@ -332,6 +340,21 @@ export default {
             vm.getMaxStep()
           }
           vm.setCardInfos()
+          vm.items.forEach((client) => {
+            axios
+              .get(
+                `${process.env.WEB_SERVICE_WCF}/localisation/workflow/` +
+                  client.WORKFLOW_ID +
+                  '/' +
+                  client.CLIENT_ID
+              )
+              .then(function(response) {
+                client.NB_LOCALISATION = response.data.GetNbLocalisationResult
+              })
+              .catch(function(error) {
+                vm.showSnackbar('error', `${error}`)
+              })
+          })
           vm.updateVisibleItems()
           vm.loadingData = false
         })
@@ -381,26 +404,6 @@ export default {
           `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`
         )
       }
-      /* axios
-        .get(`${process.env.WEB_SERVICE_WCF}/workflow/historic`)
-        .then(function(response) {
-          vm.workflows = response.data.GetHWorkflowResult
-          // On récupère le dernier workflow lancé
-          vm.workflowID = response.data.GetHWorkflowResult[
-            vm.workflows.length - 1
-          ].WORKFLOW_ID.toString()
-          vm.workflowDisplayed =
-            response.data.GetHWorkflowResult[
-              vm.workflows.length - 1
-            ].WORKFLOW_LABEL
-          vm.workflowStatut =
-            response.data.GetHWorkflowResult[
-              vm.workflows.length - 1
-            ].STATUT_GLOBAL
-        })
-        .catch(function(error) {
-          vm.showSnackbar('error', `${error} ! `)
-        }) */
     },
 
     /**
@@ -438,6 +441,21 @@ export default {
           vm.getWorkflowName(vm.workflowID)
           vm.getMaxStep()
           vm.setCardInfos()
+          vm.items.forEach((client) => {
+            axios
+              .get(
+                `${process.env.WEB_SERVICE_WCF}/localisation/workflow/` +
+                  client.WORKFLOW_ID +
+                  '/' +
+                  client.CLIENT_ID
+              )
+              .then(function(response) {
+                client.NB_LOCALISATION = response.data.GetNbLocalisationResult
+              })
+              .catch(function(error) {
+                vm.showSnackbar('error', `${error}`)
+              })
+          })
           vm.updateVisibleItems()
           vm.loadingData = false
         })
