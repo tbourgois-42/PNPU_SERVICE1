@@ -117,6 +117,14 @@ namespace PNPUCore.Process
                 {
                     GlobalResult = statutControle;
                 }
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+
+
+
+
+
+                RapportSource.Controle.Add(RapportControle);
+            }
 
                 if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
                 {
@@ -347,6 +355,7 @@ namespace PNPUCore.Process
             }
             return sResultat;
         }
+    }
 
 
         private List<RmdCommandData> getAllDataCmd(String sConnection)
