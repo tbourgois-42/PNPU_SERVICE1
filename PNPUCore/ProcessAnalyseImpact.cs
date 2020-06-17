@@ -82,7 +82,8 @@ namespace PNPUCore.Process
 
                 foreach(RmdCommandData commandData in listCommandData)
                 {
-
+                    commandData.CmdCode = removeCommentOnCommand(commandData.CmdCode);
+                    string[] listLineRequest = splitCmdCodeData(commandData.CmdCode);
 
                 }
 
@@ -95,53 +96,9 @@ namespace PNPUCore.Process
             RapportAnalyseImpact.rapportAnalyseData = rapportAnalyseData;
             RapportAnalyseImpact.rapportElementLocaliser = rapportElementLocaliser;
 
-            //Gestion contrôle data
-            //GetListControle(ref listControl);
-
-            //gestion des requêtes data génériques (controle)
-
-
-
-            /*foreach (IControle controle in listControl)
-            {
-                Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
-                statutControle = controle.MakeControl();
-                Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
-                //ERROR > WARNING > OK
-                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    GlobalResult = statutControle;
-
-                }
-                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
-                {
-                    GlobalResult = statutControle;
-                }
-                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
-
-
-
-
-
-                RapportSource.Controle.Add(RapportControle);
-            }
-
-                if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    SourceResult = statutControle;
-
-                }
-                else if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
-                {
-                    SourceResult = statutControle;
-                }
-            }*/
-
+            
 
             //RapportProcess.rapportAnalyseData = rapportAnalyseData;
-
-
-
 
             //Elements à localiser
 
@@ -355,7 +312,6 @@ namespace PNPUCore.Process
             }
             return sResultat;
         }
-    }
 
 
         private List<RmdCommandData> getAllDataCmd(String sConnection)
@@ -420,6 +376,46 @@ namespace PNPUCore.Process
             sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "ID_ORGANIZATION\\s+IN(|\\s+)\\((|\\s+)'" + sID_OrgaOrg + "'(|\\s+)\\)", "ID_ORGANIZATION IN (" + sORGA_SCRIPT + ")", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
             return sResultat;
+        }
+
+        public string[] splitCmdCodeData(string cmdCode)
+        {
+            //We use an ugly text to replace \\\\ for come back to this after the split on \\
+            string uglyString = "A?DJUEBISKJLERPDLZMLERJD?ZADLKJZDKD.§ZDI";
+            cmdCode = cmdCode.Replace("\\\\", uglyString);
+            string[] result = cmdCode.Split('\\');
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = result[i].Replace(uglyString, "\\\\");
+            }
+            return result;
+        }
+
+        public string removeCommentOnCommand(string cmdCode)
+        {
+
+            int indexOpenComment = cmdCode.IndexOf("/*");
+            int indexCloseComment = cmdCode.IndexOf("*/");
+
+            while (indexOpenComment != -1)
+            {
+                cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
+                indexOpenComment = cmdCode.IndexOf("/*");
+                indexCloseComment = cmdCode.IndexOf("*/");
+            }
+
+
+            indexOpenComment = cmdCode.IndexOf("//");
+            indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+            while (indexOpenComment != -1)
+            {
+                cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
+                indexOpenComment = cmdCode.IndexOf("//");
+                indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+            }
+
+            return cmdCode;
         }
     }
 }
