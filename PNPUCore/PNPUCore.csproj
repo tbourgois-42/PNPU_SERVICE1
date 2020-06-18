@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="RapportAnalyseImpactData.cs" />
+    <Compile Include="RapportAnalyseImpactLogique.cs" />
     <Compile Include="ControleDataM4SCO_ROW_COL_DEF.cs" />
     <Compile Include="ControleGeneriqueCopyData.cs" />
     <Compile Include="RapportAnalyseImpact.cs" />
