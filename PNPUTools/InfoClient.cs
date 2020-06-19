@@ -13,6 +13,7 @@ namespace PNPUTools
         public string TYPOLOGY_ID { get; set; }
         public string ConnectionStringQA1 { get; set; }
         public string ConnectionStringQA2 { get; set; }
+        public List<string> listID_ORGA { get; set; }
 
         public InfoClient(string iID_CLIENT, string sCLIENT_NAME, string sTypology, string sTypology_ID, string sConnectionStringQA1, string sConnectionStringQA2)
         {

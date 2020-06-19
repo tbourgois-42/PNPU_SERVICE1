@@ -72,6 +72,8 @@ namespace PNPUCore.Process
             {
                 TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID].TYPOLOGY;
             }
+            else
+                TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID.Split(',')[0]].TYPOLOGY;
         }
 
         private void GenerateHistoric()
@@ -266,6 +268,7 @@ namespace PNPUCore.Process
         {
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
             DataSet dsDataSet;
+            string sTypo;
             string sRequete = "SELECT ID_CONTROLE, CONTROLE_LABEL, TYPOLOGY, RUN_STANDARD, ID_PROCESS, ERROR_TYPE, TOOLTIP FROM PNPU_CONTROLE WHERE ID_PROCESS =" + this.PROCESS_ID.ToString();
 
             if ((this.CLIENT_ID != string.Empty) && (this.CLIENT_ID != "ALL"))
@@ -277,9 +280,9 @@ namespace PNPUCore.Process
                         sClient_ID = this.CLIENT_ID.Split(',')[0];
                     else
                         sClient_ID = this.CLIENT_ID;
-                    this.TYPOLOGY = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
-                    if (this.TYPOLOGY != string.Empty)
-                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
+                    sTypo = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
+                    if (sTypo != string.Empty)
+                        sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + sTypo + "*%'))";
                 }
                 catch (Exception)
                 { }

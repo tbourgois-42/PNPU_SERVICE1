@@ -83,7 +83,8 @@ namespace PNPUCore.Process
 
                 foreach(RmdCommandData commandData in listCommandData)
                 {
-
+                    commandData.CmdCode = removeCommentOnCommand(commandData.CmdCode);
+                    string[] listLineRequest = splitCmdCodeData(commandData.CmdCode);
 
                 }
 
@@ -96,45 +97,9 @@ namespace PNPUCore.Process
             RapportAnalyseImpact.rapportAnalyseData = rapportAnalyseData;
             RapportAnalyseImpact.rapportElementLocaliser = rapportElementLocaliser;
 
-            //Gestion contrôle data
-            //GetListControle(ref listControl);
-
-            //gestion des requêtes data génériques (controle)
-
-
-
-            /*foreach (IControle controle in listControl)
-            {
-                Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
-                statutControle = controle.MakeControl();
-                Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
-                //ERROR > WARNING > OK
-                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    GlobalResult = statutControle;
-
-                }
-                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
-                {
-                    GlobalResult = statutControle;
-                }
-
-                if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    SourceResult = statutControle;
-
-                }
-                else if (SourceResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
-                {
-                    SourceResult = statutControle;
-                }
-            }*/
-
+            
 
             //RapportProcess.rapportAnalyseData = rapportAnalyseData;
-
-
-
 
             //Elements à localiser
 
@@ -170,17 +135,17 @@ namespace PNPUCore.Process
 
                 TypeAnalyseLogique typeNew = new TypeAnalyseLogique();
                 typeNew.Name = "New";
-                typeNew.Tooltip = "Ceci contient la liste des élements nouveau du pack";
+                typeNew.Tooltip = "Ceci contient la liste des élements nouveaux du pack";
                 typeNew.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
                 TypeAnalyseLogique typeModified = new TypeAnalyseLogique();
                 typeModified.Name = "Modified";
-                typeModified.Tooltip = "Ceci contient la liste des élements modifié du pack";
+                typeModified.Tooltip = "Ceci contient la liste des élements modifiés du pack";
                 typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
                 TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique();
                 typeDeleted.Name = "Deleted";
-                typeDeleted.Tooltip = "Ceci contient la liste des élements supprimées du pack";
+                typeDeleted.Tooltip = "Ceci contient la liste des élements supprimés du pack";
                 typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
                 foreach (AnalyseResultLine line in file.ListLine())
@@ -354,6 +319,7 @@ namespace PNPUCore.Process
         {
             DataManagerAccess dataManager = new DataManagerAccess();
             string requete = "select ID_PACKAGE, ID_CLASS, ID_OBJECT, CMD_CODE from M4RDL_PACK_CMDS where ID_PACKAGE like '%_D'";
+            if (TYPOLOGY != "Dédié") requete += " AND  CMD_ACTIVE = -1 "; // Hors dédié on ne prend que les commandes actives
             List<RmdCommandData> listDatacmd = new List<RmdCommandData>();
             DataSet result = dataManager.GetData(requete, sConnection);
             DataTable tableCmd = result.Tables[0];
@@ -367,6 +333,90 @@ namespace PNPUCore.Process
             }
 
             return listDatacmd;
+        }
+
+
+        public string ReplaceID_ORGA(string sCommand, string sID_OrgaOrg, string sID_OrgaDest)
+        {
+            List<string> lID_Orga = new List<string>();
+            lID_Orga.Add(sID_OrgaDest);
+            return (ReplaceID_ORGA(sCommand, sID_OrgaOrg, lID_Orga));
+        }
+
+
+        public string ReplaceID_ORGA(string sCommand, string sID_OrgaOrg, List<string> sID_OrgaDest)
+        {
+            string sORGA_COPY = string.Empty;
+            string sORGA_SCRIPT = string.Empty;
+            bool bPremierElement = true;
+            string sResultat = sCommand;
+
+            foreach (string orga in sID_OrgaDest)
+            {
+                if (bPremierElement == true)
+                {
+                    bPremierElement = false;
+                    sORGA_COPY = "'";
+                    sORGA_SCRIPT = "'";
+                }
+                else
+                {
+                    sORGA_COPY += ",";
+                    sORGA_SCRIPT += ",'";
+                }
+                sORGA_COPY += orga;
+                sORGA_SCRIPT += orga + "'";
+            }
+            if (sORGA_COPY.Length > 0)
+                sORGA_COPY += "'";
+
+            sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "(|\\s+),(|\\s+)'" + sID_OrgaOrg + "'", "," + sORGA_COPY, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "@id_orgas_dest(|\\s+)=(|\\s+)'" + sID_OrgaOrg + "'", "@id_orgas_dest = " + sORGA_COPY, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "ID_ORGANIZATION(|\\s+)=(|\\s+)'" + sID_OrgaOrg + "'", "ID_ORGANIZATION IN (" + sORGA_SCRIPT + ")", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "ID_ORGANIZATION\\s+LIKE(|\\s+)'" + sID_OrgaOrg + "'", "ID_ORGANIZATION IN (" + sORGA_SCRIPT + ")", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "ID_ORGANIZATION\\s+IN(|\\s+)\\((|\\s+)'" + sID_OrgaOrg + "'(|\\s+)\\)", "ID_ORGANIZATION IN (" + sORGA_SCRIPT + ")", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            return sResultat;
+        }
+
+        public string[] splitCmdCodeData(string cmdCode)
+        {
+            //We use an ugly text to replace \\\\ for come back to this after the split on \\
+            string uglyString = "A?DJUEBISKJLERPDLZMLERJD?ZADLKJZDKD.§ZDI";
+            cmdCode = cmdCode.Replace("\\\\", uglyString);
+            string[] result = cmdCode.Split('\\');
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = result[i].Replace(uglyString, "\\\\");
+            }
+            return result;
+        }
+
+        public string removeCommentOnCommand(string cmdCode)
+        {
+
+            int indexOpenComment = cmdCode.IndexOf("/*");
+            int indexCloseComment = cmdCode.IndexOf("*/");
+
+            while (indexOpenComment != -1)
+            {
+                cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
+                indexOpenComment = cmdCode.IndexOf("/*");
+                indexCloseComment = cmdCode.IndexOf("*/");
+            }
+
+
+            indexOpenComment = cmdCode.IndexOf("//");
+            indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+            while (indexOpenComment != -1)
+            {
+                cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
+                indexOpenComment = cmdCode.IndexOf("//");
+                indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+            }
+
+            return cmdCode;
         }
     }
 }
