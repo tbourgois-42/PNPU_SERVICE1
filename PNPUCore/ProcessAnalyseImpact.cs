@@ -20,15 +20,15 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessAnalyseImpact(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessAnalyseImpact(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
             this.PROCESS_ID = ParamAppli.ProcessAnalyseImpact;
             this.LibProcess = "Analyse d'impact";
         }
 
-        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessAnalyseImpact(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessAnalyseImpact(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
 
         /// <summary>  
@@ -43,6 +43,7 @@ namespace PNPUCore.Process
             RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
+            int idInstanceWF = this.ID_INSTANCEWF;
             RapportAnalyseLogique rapportAnalyseLogique = new RapportAnalyseLogique();
             RapportAnalyseData rapportAnalyseData = new RapportAnalyseData();
             RapportElementLocaliser rapportElementLocaliser = new RapportElementLocaliser();
@@ -51,7 +52,7 @@ namespace PNPUCore.Process
             //DEVGenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
 
             //Lancement analyse d'impact RamDl
-            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID));
+            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID), idInstanceWF);
             List<String> pathList = ramdlTool.AnalyseMdbRAMDL();
             List<AnalyseResultFile> resultFileList = new List<AnalyseResultFile>();
             foreach (string pathFile in pathList)
@@ -140,7 +141,7 @@ namespace PNPUCore.Process
 
             RapportAnalyseImpact.Fin = DateTime.Now;
             RapportAnalyseImpact.Result = ParamAppli.TranscoSatut[GlobalResult];
-            
+
             //On fait un update pour la date de fin du process et son statut
             //DEVGenerateHistoric(RapportProcess.Fin, GlobalResult);
 
@@ -148,7 +149,7 @@ namespace PNPUCore.Process
             /*DEVif (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
             }*/
 
         }

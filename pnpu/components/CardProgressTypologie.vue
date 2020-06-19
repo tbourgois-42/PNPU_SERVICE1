@@ -17,7 +17,7 @@
               class="mx-4"
               color="success"
               small
-              >mdi-check-decagram</v-icon
+              >mdi-check-circle</v-icon
             >
           </div>
           <div>
@@ -43,7 +43,7 @@
               class="mx-4"
               color="success"
               small
-              >mdi-check-decagram</v-icon
+              >mdi-check-circle</v-icon
             >
           </div>
           <div>
@@ -69,7 +69,7 @@
               class="mx-4"
               color="success"
               small
-              >mdi-check-decagram</v-icon
+              >mdi-check-circle</v-icon
             >
           </div>
 
@@ -134,9 +134,9 @@ export default {
       let nbClientDesync = 0
       let nbClientPlat = 0
       let nbClientDedie = 0
-	  this.showProgressBarSaasDesynchronise = false
-	  this.showProgressBarSaasDedie = false
-	  this.showProgressBarSaasMutualise = false
+      this.showProgressBarSaasDesynchronise = false
+      this.showProgressBarSaasDedie = false
+      this.showProgressBarSaasMutualise = false
       this.localClients.forEach((element) => {
         if (element.TYPOLOGY === 'SAAS DESYNCHRONISE') {
           this.showProgressBarSaasDesynchronise = true

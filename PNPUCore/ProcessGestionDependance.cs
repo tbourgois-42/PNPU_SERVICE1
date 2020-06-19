@@ -15,14 +15,15 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessGestionDependance(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessGestionDependance(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
             this.PROCESS_ID = ParamAppli.ProcessGestionDependance;
+            this.LibProcess = "Gestion des dépendances";
         }
 
-        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessGestionDependance(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessGestionDependance(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
         /// <summary>  
         /// Méthode principale du process qui appelle les différents contrôles. 
@@ -44,9 +45,10 @@ namespace PNPUCore.Process
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
+            int idInstanceWF = this.ID_INSTANCEWF;
 
             //On génère les historic au début pour mettre en inprogress
-            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
             Rapport.Source RapportSource = new Rapport.Source();
             RapportSource.Name = "IdRapport - ProcessGestionDependance";
@@ -85,12 +87,12 @@ namespace PNPUCore.Process
             Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
 
             //On fait un update pour la date de fin du process et son statut
-            GenerateHistoric(RapportProcess.Fin, GlobalResult);
+            GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
 
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessGestionDependance);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
             }
 
         }

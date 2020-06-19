@@ -14,14 +14,14 @@
                     </v-btn>
                   </template>
 
-                  <v-list v-model="workflows.WORKFLOW_LABEL">
+                  <v-list v-model="workflows.INSTANCE_NAME">
                     <v-list-item
                       v-for="(workflow, id) in workflows"
                       :key="id"
                       @click="majDashboard(workflow)"
                     >
                       <v-list-item-title>{{
-                        workflow.WORKFLOW_LABEL
+                        workflow.INSTANCE_NAME
                       }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -61,7 +61,8 @@
                   step: item.ORDER_ID,
                   workflowDate: workflowDiplayed,
                   textStatus: item.ID_STATUT,
-                  workflowID: workflowID
+                  workflowID: workflowID,
+                  idInstanceWF: idInstanceWF
                 }
               }"
               append
@@ -77,9 +78,16 @@
                   <v-col class="d-flex">
                     <v-list-item>
                       <v-list-item-content>
-                        <v-list-item-title class="title">{{
-                          item.CLIENT_NAME
-                        }}</v-list-item-title>
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-list-item-title
+                              v-on="on"
+                              class="title overflow_ellipsis"
+                              >{{ item.CLIENT_NAME }}</v-list-item-title
+                            >
+                          </template>
+                          <span>{{ item.CLIENT_NAME }}</span>
+                        </v-tooltip>
                         <v-list-item-subtitle class="pb-1"
                           >ID {{ item.ID_ORGANIZATION }}</v-list-item-subtitle
                         >
@@ -118,7 +126,7 @@
                       text-color="white"
                       label
                     >
-                      <v-icon left color="white">mdi-check-circle</v-icon>
+                      <v-icon left color="white">{{ item.iconStatus }}</v-icon>
                       {{ item.ID_STATUT }}
                     </v-chip>
                     <v-chip class="pl-2" label>
@@ -128,7 +136,7 @@
                       </v-avatar>
                       Localisation
                     </v-chip>
-                    <v-icon color="error">mdi-alert-box</v-icon>
+                    <v-icon color="error">mdi-exclamation-thick</v-icon>
                   </v-card-actions>
                 </v-card>
               </v-hover>
@@ -183,6 +191,7 @@ export default {
     workflows: [],
     workflowDiplayed: '',
     workflowStatut: '',
+    workflowNameInstance: '',
     workflowID: '0',
     title: 'Dashboard',
     pageSize: 12,
@@ -206,7 +215,9 @@ export default {
     colorsnackbar: '',
     loadingData: false,
     eventEmitted: false,
-    nbLocalisation: 0
+    nbLocalisation: 0,
+    idInstanceWF: '',
+    filterSearch: false
   }),
 
   computed: {
@@ -233,10 +244,17 @@ export default {
       this.visibleItems = []
       this.items.forEach((element) => {
         if (
-          element.CLIENT_ID.toUpperCase().match(this.search.toUpperCase()) !==
+          element.CLIENT_NAME.toUpperCase().match(this.search.toUpperCase()) !==
           null
         ) {
-          this.visibleItems.push(element)
+          if (this.visibleItems.length < this.pageSize) {
+            this.visibleItems.push(element)
+            this.filterSearch = true
+            this.eventEmitted = false
+            this.totalPages()
+          } else {
+            this.filterSearch = false
+          }
         }
       })
     }
@@ -246,8 +264,8 @@ export default {
     this.updateVisibleItems()
     this.totalPages()
     this.getHistoricWorkflow()
-    this.initialize()
-    this.getMaxStep()
+    // this.initialize()
+    // this.getMaxStep()
   },
 
   methods: {
@@ -270,15 +288,23 @@ export default {
         switch (element.ID_STATUT) {
           case 'CORRECT':
             element.colorIconStatus = 'success'
+            element.iconStatus = 'mdi-check-circle'
+            element.ID_STATUT = 'Terminé'
             break
           case 'WARNING':
             element.colorIconStatus = 'warning'
+            element.iconStatus = 'mdi-hand'
+            element.ID_STATUT = 'Manuel'
             break
           case 'ERROR':
             element.colorIconStatus = 'error'
+            element.iconStatus = 'mdi-alert-circle'
+            element.ID_STATUT = 'En erreur'
             break
           case 'IN PROGRESS':
             element.colorIconStatus = 'grey lighten-1'
+            element.iconStatus = 'mdi-progress-clock'
+            element.ID_STATUT = 'En cours'
             break
         }
       })
@@ -330,7 +356,10 @@ export default {
       vm.loadingData = true
       axios
         .get(
-          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` + this.workflowID
+          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` +
+            this.workflowID +
+            '/' +
+            this.idInstanceWF
         )
         .then(function(response) {
           vm.items = response.data.GetInfoAllClientResult
@@ -345,6 +374,8 @@ export default {
               .get(
                 `${process.env.WEB_SERVICE_WCF}/localisation/workflow/` +
                   client.WORKFLOW_ID +
+                  '/' +
+                  client.ID_H_WORKFLOW +
                   '/' +
                   client.CLIENT_ID
               )
@@ -397,11 +428,21 @@ export default {
             response.data.GetHWorkflowResult[
               this.workflows.length - 1
             ].STATUT_GLOBAL
+          this.workflowNameInstance =
+            response.data.GetHWorkflowResult[
+              this.workflows.length - 1
+            ].INSTANCE_NAME
+          this.idInstanceWF =
+            response.data.GetHWorkflowResult[
+              this.workflows.length - 1
+            ].ID_H_WORKFLOW
+          this.initialize()
+          this.getMaxStep()
         }
       } catch (error) {
         this.showSnackbar(
           'error',
-          `${error} ! Impossible de récupérer le nombre max de step, la valeur 7 par defaut est appliquée dans l'affichage de la carte`
+          `${error} ! Une erreur s'est produite lors de la récupération de l'historique des workflows`
         )
       }
     },
@@ -413,8 +454,8 @@ export default {
     getWorkflowName(workflowID) {
       for (let index = 0; index < this.workflows.length; index++) {
         const element = this.workflows[index]
-        if (element.WORKFLOW_ID.toString() === workflowID) {
-          this.workflowDiplayed = element.WORKFLOW_LABEL
+        if (element.ID_H_WORKFLOW === this.idInstanceWF) {
+          this.workflowDiplayed = element.INSTANCE_NAME
           this.workflowStatut = element.STATUT_GLOBAL
         }
       }
@@ -433,7 +474,10 @@ export default {
       vm.loadingData = true
       axios
         .get(
-          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` + item.WORKFLOW_ID
+          `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` +
+            item.WORKFLOW_ID +
+            '/' +
+            item.ID_H_WORKFLOW
         )
         .then(function(response) {
           vm.items = response.data.GetInfoAllClientResult
@@ -446,6 +490,8 @@ export default {
               .get(
                 `${process.env.WEB_SERVICE_WCF}/localisation/workflow/` +
                   client.WORKFLOW_ID +
+                  '/' +
+                  client.ID_H_WORKFLOW +
                   '/' +
                   client.CLIENT_ID
               )
@@ -523,5 +569,9 @@ export default {
 }
 .cursor {
   cursor: pointer;
+}
+.overflow_ellipsis {
+  width: 0.75em;
+  text-overflow: ellipsis;
 }
 </style>

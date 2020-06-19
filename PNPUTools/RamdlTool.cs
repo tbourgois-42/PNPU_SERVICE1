@@ -14,6 +14,7 @@ namespace PNPUTools
     {
         InfoClient InfoClient;
         int WORKFLOW_ID;
+        int ID_H_WORKFLOW;
         private string pathLogFile;
         private string pathResult;
         private string pathIni;
@@ -35,11 +36,12 @@ namespace PNPUTools
         string sLogin = "";
         string sMdp = "";
 
-        public RamdlTool(string id_client, int WORKFLOW_ID_)
+        public RamdlTool(string id_client, int WORKFLOW_ID_, int ID_H_WORKFLOW_)
         {
 
             InfoClient = ParamAppli.ListeInfoClient[id_client];
             WORKFLOW_ID = WORKFLOW_ID_;
+            ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //string sEnvironnement = InfoClient.;
             sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
@@ -47,10 +49,11 @@ namespace PNPUTools
             ParamRamDlInit();
         }
 
-        public RamdlTool(InfoClient infoClient_, int WORKFLOW_ID_)
+        public RamdlTool(InfoClient infoClient_, int WORKFLOW_ID_, int ID_H_WORKFLOW_)
         {
             InfoClient = infoClient_;
             WORKFLOW_ID = WORKFLOW_ID_;
+            ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //TODO in waiting having r eal data;
             sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
@@ -67,26 +70,26 @@ namespace PNPUTools
             string sContenuFichierLog;
             List<string> listPathResult = new List<string>();
 
-            this.pathLogFile = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\RAMDL_";
-            this.pathIni = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRAMDL.ini";
-            this.DirectoryResult = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT;
+            this.pathLogFile = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW  + "\\" + InfoClient.ID_CLIENT + "\\RAMDL_";
+            this.pathIni = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRAMDL.ini";
+            this.DirectoryResult = ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT;
             // Suppression des fichiers d'analyse et de log précédents
             //this.deleteTempFile();
             try
             {
                 
-                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL") == false) 
-                    Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
+                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL") == false) 
+                    Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
 
-                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT) == false)
-                    Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + InfoClient.ID_CLIENT);
+                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT) == false)
+                    Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
 
                 //TBO Download from DB MDB
                 string[] tMdb = null;
                 List<string> listMDB = new List<string>();
 
                 PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
-                gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
+                gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_H_WORKFLOW);
                 
                 foreach (String sFichier in tMdb)
                 {
@@ -204,12 +207,12 @@ namespace PNPUTools
             // MHUM pour test
             this.sChaineDeConnexion = "DSN=SAASSN305;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseRefPlateforme;
             ParamAppli.GeneratePackPath = ParamAppli.DossierTemporaire+"\\RAMDL";
-            this.pathIni = ParamAppli.GeneratePackPath +"\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\RamdlCmd.INI";
+            this.pathIni = ParamAppli.GeneratePackPath +"\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT + "\\RamdlCmd.INI";
             // FIN MHUM pour test
 
-            this.pathLogFile = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\RAMDL_DEPENDANCE_" + namePack + ".log"; //{1}
-            this.pathResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT + "\\" + namePack + ".mdb";
-            this.DirectoryResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "_" + InfoClient.ID_CLIENT;
+            this.pathLogFile = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT + "\\RAMDL_DEPENDANCE_" + namePack + ".log"; //{1}
+            this.pathResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT + "\\" + namePack + ".mdb";
+            this.DirectoryResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT;
             try
             {
                 if (Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL") == false) Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");

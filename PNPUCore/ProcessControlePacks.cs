@@ -26,7 +26,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessControlePacks(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessControlePacks(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
             this.PROCESS_ID = ParamAppli.ProcessControlePacks;
             this.LibProcess = "Pré contrôle des .mdb";
@@ -47,6 +47,7 @@ namespace PNPUCore.Process
             RControle RapportControle;
             Rapport.Source RapportSource;
             string[] listClientId = CLIENT_ID.Split(',');
+            int idInstanceWF = this.ID_INSTANCEWF;
 
             //POUR TEST 
             /*this.CLIENT_ID = "101";*/
@@ -60,10 +61,10 @@ namespace PNPUCore.Process
             RapportProcess.Source = new List<Rapport.Source>();
 
             //On génère l'historic en In_PROGRESS
-            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, idInstanceWF, RapportProcess.Debut);
 
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
-            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli);
+            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
             foreach (String sFichier in tMDB)
             {
                 listMDB.Add(sFichier);
@@ -169,8 +170,7 @@ namespace PNPUCore.Process
 
 
             //Si le contrôle est ok on update les lignes d'historique pour signifier que le workflow est lancé
-            GenerateHistoricGlobal(listClientId, RapportProcess.Fin, GlobalResult);
-
+            GenerateHistoricGlobal(listClientId, RapportProcess.Fin, GlobalResult, idInstanceWF, RapportProcess.Debut);
             
             // TEST ajout MDB
             //gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { "D:\\PNPU\\Tests_RAMDL\\test.mdb" }, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, CLIENT_ID,1);
@@ -178,14 +178,13 @@ namespace PNPUCore.Process
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
             foreach(string clienId in listClientId)
             {
-              LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId);
-
+              LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId, idInstanceWF);
             }
         }
 
-        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessControlePacks(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessControlePacks(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
     }
 }

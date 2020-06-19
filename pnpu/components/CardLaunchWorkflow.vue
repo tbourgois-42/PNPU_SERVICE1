@@ -74,9 +74,13 @@
                   <v-text-field
                     ref="txtInstanceName"
                     v-model="txtInstanceName"
+                    :counter="255"
                     :rules="[
                       (value) =>
-                        !!value || `Le nom de l'instance est obligatoire.`
+                        !!value || `Le nom de l'instance est obligatoire.`,
+                      (value) =>
+                        (value && value.length <= 255) ||
+                        `Le nom de l'instance doit contenir moins de 255 caractères`
                     ]"
                     label="Nom de l'instance *"
                     required

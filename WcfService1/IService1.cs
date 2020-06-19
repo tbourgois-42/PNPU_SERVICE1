@@ -21,8 +21,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "clients/dashboard/{workflowId}")]
-        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId);
+            UriTemplate = "clients/dashboard/{workflowId}/{idInstanceWF}")]
+        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId, string idInstanceWF);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -70,8 +70,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "report/{workflowId}/{idProcess}/{clientId}")]
-        IEnumerable<PNPU_H_REPORT> getReport(string idProcess, string workflowId, string clientId);
+            UriTemplate = "report/{workflowId}/{idInstanceWF}/{idProcess}/{clientId}")]
+        IEnumerable<PNPU_H_REPORT> getReport(string idProcess, string workflowId, string clientId, string idInstanceWF);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -84,8 +84,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "localisation/workflow/{workflowId}/{clientId}")]
-        string GetNbLocalisation(string workflowId, string clientId);
+            UriTemplate = "localisation/workflow/{workflowId}/{idInstanceWF}/{clientId}")]
+        string GetNbLocalisation(string workflowId, string idInstanceWF, string clientId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -135,13 +135,6 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Workflow/{WorkflowName}/Run")]
         string RunWorkflow(string WorkflowName);
-
-        [OperationContract]
-        [WebInvoke(Method = "GET",
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "Alacon/{test}")]
-        string Alacon(string test);
 
         [OperationContract]
         [WebInvoke(Method = "POST",

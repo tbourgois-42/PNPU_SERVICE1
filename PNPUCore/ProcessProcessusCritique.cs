@@ -16,14 +16,15 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessProcessusCritique(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessProcessusCritique(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
             this.PROCESS_ID = ParamAppli.ProcessProcessusCritique;
+            this.LibProcess = "Tests des processus critiques";
         }
 
-        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessProcessusCritique(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessProcessusCritique(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
 
         /// <summary>  
@@ -34,13 +35,14 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportProcess.Name = this.ToString();
+            RapportProcess.Name = this.LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
+            int idInstanceWF = this.ID_INSTANCEWF;
 
             //On génère les historic au début pour mettre en inprogress
-            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+            GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
             Rapport.Source RapportSource = new Rapport.Source();
             RapportSource.Name = "IdRapport - ProcessProcessusCritique";
@@ -73,12 +75,12 @@ namespace PNPUCore.Process
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
             //On fait un update pour la date de fin du process et son statut
-            GenerateHistoric(RapportProcess.Fin, GlobalResult);
+            GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
 
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessProcessusCritique);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
             }
 
         }

@@ -26,7 +26,7 @@ namespace WcfService1
         private static NamedPipeClientStream npcsPipeClient;
         private static StreamString ssStreamString = null;
         private static StreamWriter sw = null;
-        public string LaunchProcess(int ProcId, int workflowId, String clientId)
+        public string LaunchProcess(int ProcId, int workflowId, String clientId, int idInstanceWF)
         {
             if (npcsPipeClient == null)
             {
@@ -42,8 +42,8 @@ namespace WcfService1
 
             
             sw.AutoFlush = true;
-            Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId);
-            sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId);
+            Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
+            sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
             
 
 
@@ -57,15 +57,11 @@ namespace WcfService1
             return string.Format("You entered: {0}", value);
         }
 
-        public string Alacon(string test)
-        {
-            return test;
-        }
-
-        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_)
+        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_, string idInstanceWF_)
         {
             int workflowId = int.Parse(workflowId_);
-            return RequestTool.GetAllInfoClient(workflowId);
+            int idInstanceWF = int.Parse(idInstanceWF_);
+            return RequestTool.GetAllInfoClient(workflowId, idInstanceWF);
             //return RequestTool.GetAllStep(); 
         }
         public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
@@ -166,6 +162,7 @@ namespace WcfService1
             string typology = parser.GetParameterValue("typology"); //separate by , 
             string clients = parser.GetParameterValue("clients"); // separate by ,
             bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
+            string instanceName = parser.GetParameterValue("instanceName");
             
             // Files are stored in a list:
             FilePart file = parser.Files.First();
@@ -185,9 +182,6 @@ namespace WcfService1
                 file.Data.CopyTo(fileStream);
             }
 
-            GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
-            //AJOUT DU ZIP DE MDB DANS LA BDD
-            gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli);
             string clientToLaunch = "";
 
             //Bring all client
@@ -213,8 +207,23 @@ namespace WcfService1
                 throw new Exception();
             }
 
+            // We generate instance of workflow in PNPU_H_WORKFLOW
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+            historicWorkflow.WORKFLOW_ID = workflowId;
+            historicWorkflow.CLIENT_ID = clientToLaunch;
+            historicWorkflow.LAUNCHING_DATE = DateTime.Now;
+            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
+            historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
+            historicWorkflow.INSTANCE_NAME = instanceName;
+
+            int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+
+            GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
+            //AJOUT DU ZIP DE MDB DANS LA BDD
+            gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
+
             //Launch process
-            LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch);
+            LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch, idInstanceWF);
 
             //Test MDU launch ProcessTNR directly
             //LaunchProcess(ParamAppli.ProcessTNR, workflowId, clientToLaunch);
@@ -254,11 +263,12 @@ namespace WcfService1
             return RequestTool.AffectWorkflowsProcesses(input, workflowID);
         }
 
-        public IEnumerable<PNPU_H_REPORT> getReport(string idProcess_, string workflowId_, string clientId)
+        public IEnumerable<PNPU_H_REPORT> getReport(string idProcess_, string workflowId_, string clientId, string idInstanceWF_)
         {
             decimal workflowId = decimal.Parse(workflowId_);
             decimal idProcess = decimal.Parse(idProcess_);
-            return RequestTool.getReport(idProcess, workflowId, clientId);
+            int idInstanceWF = int.Parse(idInstanceWF_);
+            return RequestTool.getReport(idProcess, workflowId, clientId, idInstanceWF);
         }
 
         public IEnumerable<InfoClient> getListClientsByTypo(string TypologyId)
@@ -277,11 +287,12 @@ namespace WcfService1
             return RequestTool.GetMaxStep(workflowId);
         }
 
-        public string GetNbLocalisation(string workflowId_, string clientId_)
+        public string GetNbLocalisation(string workflowId_, string idInstanceWF_, string clientId_)
         {
             int workflowId = int.Parse(workflowId_);
+            int idInstanceWF = int.Parse(idInstanceWF_);
             int clientId = int.Parse(clientId_);
-            return RequestTool.GetNbLocalisation(workflowId, clientId);
+            return RequestTool.GetNbLocalisation(workflowId, idInstanceWF, clientId);
         }
     }
 

@@ -23,7 +23,7 @@ namespace PNPUCore
 
                     conn.Open();
 
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG) values(@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG, ID_H_WORKFLOW) VALUES (@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG, @ID_H_WORKFLOW)", conn))
                     {                            
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 50).Value = process.ToString();
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = 1;
@@ -36,6 +36,7 @@ namespace PNPUCore
                         cmd.Parameters.Add("@SERVER", SqlDbType.VarChar, 50).Value = "SERVER";//process.SERVER;
                         cmd.Parameters.Add("@BASE", SqlDbType.VarChar, 50).Value = "BASE";//process.BASE;
                         cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.VarChar, 50).Value = ParamAppli.LogLevel;
+                        cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int).Value = process.ID_INSTANCEWF;
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }
@@ -58,7 +59,7 @@ namespace PNPUCore
 
                     conn.Open();
 
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("insert into PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG) values(@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG)", conn))
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG, ID_H_WORKFLOW) VALUES (@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG, @ID_H_WORKFLOW)", conn))
                     {
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 50).Value = process.ToString();
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = 1;
@@ -71,6 +72,7 @@ namespace PNPUCore
                         cmd.Parameters.Add("@SERVER", SqlDbType.VarChar, 50).Value = "SERVER";//process.SERVER;
                         cmd.Parameters.Add("@BASE", SqlDbType.VarChar, 50).Value = "BASE";// process.BASE;
                         cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.VarChar, 50).Value = ParamAppli.LogLevel;
+                        cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int).Value = process.ID_INSTANCEWF;
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                     }

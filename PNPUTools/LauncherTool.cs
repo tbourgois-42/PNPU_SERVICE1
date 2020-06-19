@@ -13,12 +13,12 @@ namespace PNPUTools
         private static StreamString ssStreamString = null;
         private static StreamWriter sw = null;
 
-        public static void LaunchProcess(int ProcFile, int workflowId, String clientId)
+        public static void LaunchProcess(int ProcFile, int workflowId, String clientId, int idInstanceWF)
         {
             if (ProcFile == ParamAppli.ProcessFinished)
                 return;
 
-            ParamAppli.qFIFO.Enqueue(ProcFile + "/" + workflowId + "/" + clientId);
+            ParamAppli.qFIFO.Enqueue(ProcFile + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
         }
 
     }

@@ -26,45 +26,45 @@ namespace PNPUCore
         /// </summary>  
         /// <param name="clientName">Client pour lequel on lance le preocess.</param>
         /// <param name="processName">Nom du process à lancer.</param>
-        public void Launch(String listclientId, int workflowId, int processId)
+        public void Launch(String listclientId, int workflowId, int processId, int idInstanceWF)
         {
-            IProcess process = CreateProcess(processId, workflowId, listclientId);
+            IProcess process = CreateProcess(processId, workflowId, listclientId, idInstanceWF);
 
             LaunchProcess(process);
         }
 
 
-        IProcess CreateProcess(int process, int workflowId, String client)
+        IProcess CreateProcess(int process, int workflowId, String client, int idInstanceWF)
         {
 
             switch (process)
             {
                 case ParamAppli.ProcessControlePacks:
-                    return ProcessControlePacks.CreateProcess(workflowId, client);
+                    return ProcessControlePacks.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessAnalyseImpact:
-                    return ProcessAnalyseImpact.CreateProcess(workflowId, client);
+                    return ProcessAnalyseImpact.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessInit:
-                    return ProcessInit.CreateProcess(workflowId, client);
+                    return ProcessInit.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessGestionDependance:
-                    return ProcessGestionDependance.CreateProcess(workflowId, client);
+                    return ProcessGestionDependance.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessIntegration:
-                    return ProcessIntegration.CreateProcess(workflowId, client);
+                    return ProcessIntegration.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessProcessusCritique:
-                    return ProcessProcessusCritique.CreateProcess(workflowId, client);
+                    return ProcessProcessusCritique.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessTNR:
-                    return ProcessTNR.CreateProcess(workflowId, client);
+                    return ProcessTNR.CreateProcess(workflowId, client, idInstanceWF);
 
                 case ParamAppli.ProcessLivraison:
-                    return ProcessLivraison.CreateProcess(workflowId, client);
+                    return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
 
                 default:
-                    return ProcessMock.CreateProcess(workflowId, client);
+                    return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);
 
             }
              

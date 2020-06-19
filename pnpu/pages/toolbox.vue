@@ -21,12 +21,11 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   components: {},
   data: () => ({
     title: 'Toolbox',
-    subTitle: 'Subtitle',
+    subTitle: 'Subtitle'
   })
 }
 </script>

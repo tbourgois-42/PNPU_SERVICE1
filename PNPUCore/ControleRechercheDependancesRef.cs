@@ -170,14 +170,14 @@ namespace PNPUCore.Controle
                         using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                         {
                             conn.Open();
-                            sRequete = "DELETE FROM PNPU_DEP_REF WHERE ID_H_WORKFLOW = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = "+ iNiveau.ToString();
+                            sRequete = "DELETE FROM PNPU_DEP_REF WHERE WORKFLOW_ID = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = "+ iNiveau.ToString() + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF.ToString();
                             using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                             {
                                 int rowsAffected = cmd.ExecuteNonQuery();
                             }
 
                             sRequete = "INSERT INTO PNPU_DEP_REF (";
-                            sRequete += "ID_H_WORKFLOW";
+                            sRequete += "WORKFLOW_ID";
                             sRequete += ",NIV_DEP";
                             sRequete += ",CCT_TASK_ID";
                             sRequete += ",CCT_OBJECT_TYPE";
@@ -190,8 +190,9 @@ namespace PNPUCore.Controle
                             sRequete += ",DEP_CCT_ACTION_TYPE";
                             sRequete += ",DEP_CCT_PACK_TYPE";
                             sRequete += ",DEP_CCT_COMMAND_TYPE";
+                            sRequete += ",ID_H_WORKFLOW";
                             sRequete += ") VALUES (";
-                            sRequete += "@ID_H_WORKFLOW";
+                            sRequete += "@WORKFLOW_ID";
                             sRequete += ",@NIV_DEP";
                             sRequete += ",@CCT_TASK_ID";
                             sRequete += ",@CCT_OBJECT_TYPE";
@@ -204,11 +205,12 @@ namespace PNPUCore.Controle
                             sRequete += ",@DEP_CCT_ACTION_TYPE";
                             sRequete += ",@DEP_CCT_PACK_TYPE";
                             sRequete += ",@DEP_CCT_COMMAND_TYPE ";
+                            sRequete += ",@ID_H_WORKFLOW ";
                             sRequete += ")";
 
                             using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                             {
-                                cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int);
+                                cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int);
                                 cmd.Parameters.Add("@NIV_DEP", SqlDbType.Int);
                                 cmd.Parameters.Add("@CCT_TASK_ID", SqlDbType.VarChar, 30);
                                 cmd.Parameters.Add("@CCT_OBJECT_TYPE", SqlDbType.VarChar, 30);
@@ -221,6 +223,7 @@ namespace PNPUCore.Controle
                                 cmd.Parameters.Add("@DEP_CCT_ACTION_TYPE", SqlDbType.VarChar, 10);
                                 cmd.Parameters.Add("@DEP_CCT_PACK_TYPE", SqlDbType.VarChar, 255);
                                 cmd.Parameters.Add("@DEP_CCT_COMMAND_TYPE ", SqlDbType.Decimal);
+                                cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int);
 
                                 bPremierElement = true;
                                 sFiltreNiveauN1 = string.Empty;
@@ -240,6 +243,7 @@ namespace PNPUCore.Controle
 
                                     cmd.Parameters[0].Value = Process.WORKFLOW_ID;
                                     cmd.Parameters[1].Value = iNiveau;
+                                    cmd.Parameters[13].Value = Process.ID_INSTANCEWF;
                                     for (int iCpt=0; iCpt<11;iCpt++)
                                         cmd.Parameters[iCpt+2].Value = drRow[iCpt];
                                     
@@ -330,11 +334,12 @@ namespace PNPUCore.Controle
                         using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                         {
                             conn.Open();
-                            using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_DEPN1_REF (ID_H_WORKFLOW, CCT_TASK_ID, DEP_CCT_TASK_ID) VALUES( @WORKFLOW_ID, @CCT_TASK_ID,@DEP_CCT_TASK_ID)", conn))
+                            using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_DEPN1_REF (WORKFLOW_ID, CCT_TASK_ID, DEP_CCT_TASK_ID, ID_H_WORKFLOW) VALUES( @WORKFLOW_ID, @CCT_TASK_ID,@DEP_CCT_TASK_ID, @ID_H_WORKFLOW)", conn))
                             {
                                 cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int);
                                 cmd.Parameters.Add("@CCT_TASK_ID", SqlDbType.VarChar, 30);
                                 cmd.Parameters.Add("@DEP_CCT_TASK_ID", SqlDbType.VarChar, 30);
+                                cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int);
 
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                                 {
@@ -347,6 +352,7 @@ namespace PNPUCore.Controle
                                         cmd.Parameters[0].Value = Process.WORKFLOW_ID;
                                         cmd.Parameters[1].Value = drRow[0].ToString();
                                         cmd.Parameters[2].Value = drRow[1].ToString();
+                                        cmd.Parameters[3].Value = Process.ID_INSTANCEWF;
                                         int rowsAffected = cmd.ExecuteNonQuery();
                                     }
                                 }

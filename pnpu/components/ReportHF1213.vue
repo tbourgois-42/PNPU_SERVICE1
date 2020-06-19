@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-row>
-      <v-col :cols="nbColsLeft" :style="displayNoneLeft">
+      <v-col cols="4">
         <v-card class="mx-auto" max-width="500">
           <v-sheet class="pa-4 primary">
             <v-text-field
@@ -57,7 +57,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col :cols="nbColsRight">
+      <v-col cols="8">
         <v-list-item-group class="mb-5 d-flex">
           <v-list-item-icon>
             <v-icon>mdi-folder</v-icon>
@@ -67,28 +67,10 @@
               {{ titleTable }}</v-list-item-title
             >
           </v-list-item-content>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                fab
-                depressed
-                color="primary"
-                class="ma-4"
-                :style="displayButton"
-                v-on="on"
-                @click="backToTreeView($event)"
-              >
-                <v-icon>mdi-undo</v-icon>
-              </v-btn>
-            </template>
-            <span>Retourner à l'arborescence</span>
-          </v-tooltip>
           <v-checkbox
             v-model="checkbox"
             label="Voir uniquement les contrôles en erreur"
             hide-details
-            :style="displayCheckbox"
             @change="Filtered($event)"
           ></v-checkbox>
         </v-list-item-group>
@@ -102,10 +84,8 @@
           {{ tooltip }}
         </v-alert>
         <transition v-if="noData === false" appear name="fade">
-          <v-card
-            v-if="titleTable !== 'Contrôle des dépendances inter packages'"
-          >
-            <v-simple-table>
+          <v-card>
+            <v-simple-table v-if="showSimpleTable">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -155,20 +135,10 @@
                 </tbody>
               </template>
             </v-simple-table>
-          </v-card>
-          <v-card v-else :style="displayButton">
-            <v-card-title>
-              <v-text-field
-                v-model="searchInterDep"
-                append-icon="mdi-magnify"
-                label="Chercher un résultat ..."
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
             <v-data-table
-              :headers="headers"
-              :items="csvFile"
+              v-if="showTableDependances"
+              :headers="headersDependances"
+              :items="dependItemTable"
               :search="searchInterDep"
               :page.sync="page"
               :items-per-page="itemsPerPage"
@@ -176,13 +146,6 @@
               multi-sort
               @page-count="pageCount = $event"
             ></v-data-table>
-            <div class="text-center pa-2">
-              <v-pagination
-                v-model="page"
-                :length="pageCount"
-                circle
-              ></v-pagination>
-            </div>
           </v-card>
         </transition>
         <v-alert
@@ -211,7 +174,6 @@
 </template>
 
 <script>
-import Papa from 'papaparse'
 export default {
   props: {
     idPROCESS: {
@@ -363,7 +325,7 @@ export default {
           },
           {
             id: '3',
-            name: 'Contrôle des dépendances inter packages',
+            name: 'Contrôle des dépendances du livrable',
             result: 'mdi-check-circle',
             children: [
               {
@@ -372,19 +334,16 @@ export default {
                 children: [
                   {
                     id: 3111,
-                    name: '8.1.6_HF1215_SFR_124343_L',
+                    name: '8.1.6_HF1215_SFR_150692_B',
                     children: [
                       {
                         id: 31111,
-                        name: '8.1.6_HF1215_SFR_122290_L',
-                        children: [
+                        name: '8.1.6_HF1215_SFR_122290_B',
+                        elements: [
                           {
                             id: 311111,
-                            name: 'dep',
-                            classel1: 'FIELD',
-                            classel2: 'FIELD',
-                            el1: 'SFR_CALC_INDEM_RUPT.SFR_IND_LEG_SPEC',
-                            el2: 'SFR_CALC_INDEM_RUPT.SFR_IND_LEG_SPEC'
+                            objectType: 'ITEM',
+                            objectID: 'SRFR_MN_CALC_INDEMN.ID_ORGANIZATION'
                           }
                         ]
                       }
@@ -392,39 +351,131 @@ export default {
                   },
                   {
                     id: 3112,
-                    name: '8.1.6_HF1215_SFR_150692_L'
+                    name: '8.1.6_HF1215_SFR_93641_L',
+                    children: [
+                      {
+                        id: 31121,
+                        name: '8.1.6_HF1215_SFR_120637_L',
+                        elements: [
+                          {
+                            id: 311211,
+                            objectType: 'CREATE_EXE_DIF_SCRIPT',
+                            objectID: 'CFR_H_HR_SAISIE'
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: 3113,
+                    name: '8.1.6_HF1215_SFR_150692_L',
+                    children: [
+                      {
+                        id: 31131,
+                        name: '8.1.6_HF1215_SFR_122290_L',
+                        elements: [
+                          {
+                            id: 311311,
+                            objectType: 'FIELD',
+                            objectID: 'SFR_CALC_INDEMN_RUPT.SFR_IND_LEG_SPEC'
+                          },
+                          {
+                            id: 311311,
+                            objectType: 'PRESENTATION',
+                            objectID: 'SRFR_MN_CALC_IND_LEG_CONV'
+                          },
+                          {
+                            id: 311311,
+                            objectType: 'ITEM',
+                            objectID: 'SRFR_MN_CALC_INDEMN.SFR_IND_LEG_SPEC'
+                          }
+                        ]
+                      },
+                      {
+                        id: 31132,
+                        name: '8.1.6_HF1215_SFR_124343_L',
+                        elements: [
+                          {
+                            id: 311321,
+                            objectType: 'FIELD',
+                            objectID:
+                              'SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_SUPRA_1'
+                          },
+                          {
+                            id: 311322,
+                            objectType: 'FIELD',
+                            objectID: 'SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD'
+                          },
+                          {
+                            id: 311323,
+                            objectType: 'FIELD',
+                            objectID: 'SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD_F'
+                          },
+                          {
+                            id: 311324,
+                            objectType: 'FIELD',
+                            objectID: 'SFR_CALC_INDEMN_RUPT.SFR_RETENUE_SIMUL'
+                          },
+                          {
+                            id: 311325,
+                            objectType: 'FIELD',
+                            objectID:
+                              'SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_ACCORD'
+                          },
+                          {
+                            id: 311326,
+                            objectType: 'ITEM',
+                            objectID:
+                              'SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_SUPRA_1'
+                          },
+                          {
+                            id: 311327,
+                            objectType: 'ITEM',
+                            objectID: 'SRFR_MN_CALC_INDEMN.SFR_RETENUE_SIMUL'
+                          },
+                          {
+                            id: 311328,
+                            objectType: 'ITEM',
+                            objectID: 'SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_ACCORD'
+                          },
+                          {
+                            id: 311329,
+                            objectType: 'CREATE_EXE_DIF_SCRIPT',
+                            objectID: 'SFR_CALC_IND_LEG_CONV'
+                          },
+                          {
+                            id: 311330,
+                            objectType: 'CREATE_EXE_DIF_SCRIPT',
+                            objectID: 'SFR_CALC_INDEMN_RUPT'
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    id: 3114,
+                    name: '8.1.6_HF1215_SFR_150692_L',
+                    elements: []
                   }
                 ]
               },
               {
                 id: 312,
-                name: '8.1.6_HF1215_2.mdb'
+                name: '8.1.6_HF1215_2.mdb',
+                elements: []
               }
             ]
           }
         ]
       }
     ],
-    headers: [
-      {
-        text: 'Mdb',
-        align: 'start',
-        filterable: false,
-        value: '0'
-      },
-      { text: 'Pack', value: '1' },
-      { text: 'Mdb2', value: '2' },
-      { text: 'Pack2', value: '3' },
-      { text: 'Classe elt1 / Classe elt2', value: '4' },
-      { text: 'Elt1', value: '5' },
-      { text: 'Elt2', value: '6' }
+    headersDependances: [
+      { text: 'Object Type', value: 'objectType' },
+      { text: 'Object ID', value: 'objectID' }
     ],
     active: [],
     selectedItemTable: [],
     titleTable: '',
-    csvFile: [],
-    csvFileHeader: [],
-    checkbox: false,
     tableFiltered: [],
     checkboxValue: false,
     noData: false,
@@ -433,17 +484,17 @@ export default {
     page: 1,
     pageCount: 0,
     itemsPerPage: 10,
-    nbColsRight: 8,
-    nbColsLeft: 4,
-    displayNoneLeft: '',
-    displayButton: 'display:none',
-    tableCtrlDepInterPack: [],
     showInfo: false,
-    displayCheckbox: '',
     tooltip: '',
     showTooltip: false,
     treeviewFiltered: [],
-    itemsCopy: []
+    itemsCopy: [],
+    dependItemTable: [],
+    nameControleDependances: 'Contrôle des dépendances du livrable',
+    showTableDependances: false,
+    showSimpleTable: true,
+    iconValid: 'mdi-check-circle',
+    iconAlert: 'mdi-alert-circle'
   }),
 
   computed: {
@@ -458,15 +509,8 @@ export default {
     this.itemsCopy = JSON.parse(JSON.stringify(this.items))
     this.treeviewFiltered = JSON.parse(JSON.stringify(this.items))
     this.selectedItemTable = this.items[0].children
-    this.tableCtrlDepInterPack = this.items[0].children[
-      this.items[0].children.length - 1
-    ]
     this.titleTable = this.items[0].name
     // this.Filtered(this.checkboxValue)
-  },
-
-  mounted() {
-    this.csv()
   },
 
   methods: {
@@ -474,9 +518,31 @@ export default {
       if (e.length > 0) {
         for (const selectedItem of e) {
           this.showTooltip = false
+          this.showTableDependances = false
+          this.showSimpleTable = false
           if (selectedItem.children !== undefined) {
             this.selectedItemTable = selectedItem.children
             this.hasMessage = false
+            this.showSimpleTable = true
+            if (selectedItem.result === undefined) {
+              this.hasMessage = true
+            }
+          } else if (
+            selectedItem.elements !== undefined ||
+            selectedItem.result !== this.iconValid
+          ) {
+            // Elements dépendants d'une tache
+            if (selectedItem.elements !== undefined) {
+              this.showTableDependances = true
+              this.dependItemTable = selectedItem.elements
+              this.hasMessage = false
+            } else {
+              this.showSimpleTable = true
+              this.selectedItemTable = selectedItem.message
+              this.hasMessage = false
+              this.tooltip = selectedItem.Tooltip
+              this.showTooltip = true
+            }
           } else {
             this.tooltip = selectedItem.Tooltip
             this.showTooltip = true
@@ -485,17 +551,6 @@ export default {
           }
           this.titleTable = selectedItem.name
           this.noData = false
-          if (this.titleTable === 'Contrôle des dépendances inter packages') {
-            this.displayNoneLeft = 'display:none'
-            this.nbColsRight = 12
-            this.displayButton = ''
-            this.displayCheckbox = 'display:none'
-          } else {
-            this.displayNoneLeft = ''
-            this.nbColsRight = 8
-            this.displayButton = 'display:none'
-            this.displayCheckbox = ''
-          }
         }
         if (
           e[0].children === undefined &&
@@ -504,41 +559,11 @@ export default {
           this.noData = true
         }
       }
+      if (this.titleTable === this.nameControleDependances) {
+        this.hasMessage = true
+      }
       this.showInfo = false
       this.Filtered(this.checkboxValue)
-    },
-
-    csv() {
-      const csvString = ``
-      const config = {
-        delimiter: '', // auto-detect
-        newline: '', // auto-detect
-        quoteChar: '"',
-        escapeChar: '"',
-        header: false,
-        transformHeader: undefined,
-        dynamicTyping: false,
-        preview: 0,
-        encoding: '',
-        worker: false,
-        comments: false,
-        step: undefined,
-        complete: undefined,
-        error: undefined,
-        download: false,
-        downloadRequestHeaders: undefined,
-        downloadRequestBody: undefined,
-        skipEmptyLines: false,
-        chunk: undefined,
-        fastMode: undefined,
-        beforeFirstChunk: undefined,
-        withCredentials: undefined,
-        transform: undefined,
-        delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
-      }
-      this.csvFileHeader = Papa.parse(csvString, config).data[0]
-      this.csvFile = Papa.parse(csvString, config).data.slice(1)
-      this.csvFile = this.csvFile.slice(0, this.csvFile.length - 1)
     },
 
     Filtered(checkboxValue) {
@@ -548,7 +573,7 @@ export default {
         this.tableFiltered = []
         if (this.selectedItemTable !== undefined) {
           this.selectedItemTable.forEach((element) => {
-            if (element.result === 'mdi-alert-circle') {
+            if (element.result === this.iconAlert) {
               this.tableFiltered.push(element)
             }
           })
@@ -563,7 +588,7 @@ export default {
       if (checkboxValue) {
         this.treeviewFiltered.forEach((element) => {
           element.children.forEach((el2, idx, ta) => {
-            if (el2.result === 'mdi-check-circle') {
+            if (el2.result === this.iconValid) {
               // delete ta[idx]
               // ta = this.removeElement(ta, idx)
               this.treeviewFiltered[0].children = this.removeElement(
@@ -572,7 +597,7 @@ export default {
               )
             }
             el2.children.forEach((el3, idx2, ta2) => {
-              if (el3.result === 'mdi-check-circle') {
+              if (el3.result === this.iconValid) {
                 // delete ta2[idx2]
                 this.treeviewFiltered[0].children[
                   idx
@@ -597,14 +622,6 @@ export default {
       const newArray = [...array]
       newArray.splice(index, 1)
       return newArray
-    },
-
-    backToTreeView(value) {
-      this.displayNoneLeft = ''
-      this.nbColsRight = 8
-      this.displayButton = 'display:none'
-      this.showInfo = true
-      this.displayCheckbox = ''
     }
   }
 }

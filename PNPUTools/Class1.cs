@@ -27,19 +27,21 @@ namespace PNPUTools.DataManager
 		public decimal ID_PROCESS { get; set; }
 		public string CLIENT_ID { get; set; }
 		public string JSON_TEMPLATE { get; set; }
+		public decimal ID_H_WORKFLOW { get; set; }
 
 		public PNPU_H_REPORT()
 		{
 
 		}
 
-		public PNPU_H_REPORT(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string JSON_TEMPLATE_)
+		public PNPU_H_REPORT(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string JSON_TEMPLATE_, int ID_H_WORKFLOW_)
 		{
 			this.ITERATION = ITERATION_;
 			this.WORKFLOW_ID = WORKFLOW_ID_;
 			this.ID_PROCESS = ID_PROCESS_;
 			this.CLIENT_ID = CLIENT_ID_;
 			this.JSON_TEMPLATE = JSON_TEMPLATE_;
+			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
 		}
 	}
 
@@ -55,7 +57,7 @@ namespace PNPUTools.DataManager
 		public DateTime ENDING_DATE { get; set; }
 		public string ID_STATUT { get; set; }
 		public string TYPOLOGY { get; set; }
-		public int NUMBER_LOCALISATION { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
 
 		public PNPU_H_STEP()
 		{
@@ -85,13 +87,14 @@ namespace PNPUTools.DataManager
 		public DateTime LAUNCHING_DATE { get; set; }
 		public DateTime ENDING_DATE { get; set; }
 		public string STATUT_GLOBAL { get; set; }
+		public string INSTANCE_NAME { get; set; }
 
 		public PNPU_H_WORKFLOW()
 		{
 
 		}
 
-		public PNPU_H_WORKFLOW(decimal ID_H_WORKFLOW_, string CLIENT_ID_, decimal WORKFLOW_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string STATUT_GLOBAL_)
+		public PNPU_H_WORKFLOW(decimal ID_H_WORKFLOW_, string CLIENT_ID_, decimal WORKFLOW_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string STATUT_GLOBAL_, string INSTANCE_NAME_)
 		{
 			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
 			this.CLIENT_ID = CLIENT_ID_;
@@ -99,6 +102,7 @@ namespace PNPUTools.DataManager
 			this.LAUNCHING_DATE = LAUNCHING_DATE_;
 			this.ENDING_DATE = ENDING_DATE_;
 			this.STATUT_GLOBAL = STATUT_GLOBAL_;
+			this.INSTANCE_NAME = INSTANCE_NAME_;
 		}
 	}
 
@@ -117,8 +121,9 @@ namespace PNPUTools.DataManager
 		public string SERVER { get; set; }
 		public string BASE { get; set; }
 		public string NIVEAU_LOG { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
 
-		public PNPU_LOG(decimal ID_LOG_, decimal ID_PROCESS_, decimal ITERATION_, decimal WORKFLOW_ID_, string MESSAGE_, string STATUT_MESSAGE_, string ID_CONTROLE_, string IS_CONTROLE_, DateTime DATE_LOG_, string SERVER_, string BASE_, string NIVEAU_LOG_)
+		public PNPU_LOG(decimal ID_LOG_, decimal ID_PROCESS_, decimal ITERATION_, decimal WORKFLOW_ID_, string MESSAGE_, string STATUT_MESSAGE_, string ID_CONTROLE_, string IS_CONTROLE_, DateTime DATE_LOG_, string SERVER_, string BASE_, string NIVEAU_LOG_, int ID_H_WORKFLOW_)
 		{
 			this.ID_LOG = ID_LOG_;
 			this.ID_PROCESS = ID_PROCESS_;
@@ -132,6 +137,7 @@ namespace PNPUTools.DataManager
 			this.SERVER = SERVER_;
 			this.BASE = BASE_;
 			this.NIVEAU_LOG = NIVEAU_LOG_;
+			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
 		}
 	}
 
@@ -232,6 +238,7 @@ namespace PNPUTools.DataManager
 		public decimal NB_PROCESS { get; set; }
 		public decimal ID_PROCESS { get; set; }
 		public decimal NUMBER_LOCALISATION { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
 
 		public InfoClientStep() { }
 	}

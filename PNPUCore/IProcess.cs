@@ -31,6 +31,7 @@ namespace PNPUCore.Process
         string TYPOLOGY { get; set; }
 
         bool STANDARD { get; set; }
+        int ID_INSTANCEWF { get; set; }
     }
 
     internal class ProcessCore : IProcess
@@ -44,6 +45,7 @@ namespace PNPUCore.Process
         public string SERVER { get; set; }
         public string TYPOLOGY { get; set; }
         public bool STANDARD { get; set; }
+        public int ID_INSTANCEWF { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;
@@ -57,15 +59,16 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessCore(int wORKFLOW_ID, string cLIENT_ID)
+        public ProcessCore(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF)
         {
             RapportProcess = new RProcess();
             RapportTNR = new RTNR();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
             STANDARD = true;
+            ID_INSTANCEWF = idInstanceWF;
 
-            if(!CLIENT_ID.Contains(","))
+            if (!CLIENT_ID.Contains(","))
             {
                 TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID].TYPOLOGY;
             }
@@ -96,9 +99,9 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
         /// <returns>Retourne l'instance du process créé.</returns>
-        internal static IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessCore(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessCore(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
 
         public void ExecuteMainProcess()
@@ -138,48 +141,37 @@ namespace PNPUCore.Process
             return (RapportTNR.ToJSONRepresentation());
         }
 
+        /// <summary>
+        /// Insert Json Report into PNPU_H_REPORT
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="process"></param>
+        /// <returns></returns>
         public string SaveReportInBDD(string json, IProcess process)
         {
-            string[] requests = { "INSERT INTO PNPU_H_REPORT (ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE) VALUES(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE)" };
-            string[] parameters = new string[] { "@ITERATION", "1", "@WORKFLOW_ID", process.WORKFLOW_ID.ToString(), "@ID_PROCESS", process.PROCESS_ID.ToString(), "@CLIENT_ID", process.CLIENT_ID, "@JSON_TEMPLATE", json.Replace("\r\n", "") };
+            string[] requests = { "INSERT INTO PNPU_H_REPORT (ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE, ID_H_WORKFLOW) VALUES(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE, @ID_H_WORKFLOW)" };
+            string[] parameters = new string[] { "@ITERATION", "1", "@WORKFLOW_ID", process.WORKFLOW_ID.ToString(), "@ID_PROCESS", process.PROCESS_ID.ToString(), "@CLIENT_ID", process.CLIENT_ID, "@JSON_TEMPLATE", json.Replace("\r\n", ""), "@ID_H_WORKFLOW", process.ID_INSTANCEWF.ToString() };
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_H_REPORT", parameters, false);
-
-            /*using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
-            {
-                try
-                {
-                    conn.Open();
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_H_REPORT (ITERATION, WORKFLOW_ID, ID_PROCESS, CLIENT_ID, JSON_TEMPLATE) VALUES(@ITERATION, @WORKFLOW_ID, @ID_PROCESS, @CLIENT_ID, @JSON_TEMPLATE)", conn))
-                    {
-                        cmd.Parameters.Add("@ITERATION", SqlDbType.Int, 10).Value = 1;
-                        cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int, 15).Value = process.WORKFLOW_ID;
-                        cmd.Parameters.Add("@ID_PROCESS", SqlDbType.Int, 15).Value = process.PROCESS_ID;
-                        cmd.Parameters.Add("@CLIENT_ID", SqlDbType.VarChar, 64).Value = process.CLIENT_ID;
-                        cmd.Parameters.Add("@JSON_TEMPLATE", SqlDbType.Text).Value = json.Replace("\r\n", "");
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    string msgError = "L'insertion du report du client " + process.CLIENT_ID + ", process " + process.PROCESS_ID + " ,workflow " + process.WORKFLOW_ID + " a échoué !";
-                    Console.WriteLine(msgError);
-                    return false;
-                }
-                return true;
-            }*/
         }
 
-        internal void GenerateHistoric(DateTime endDate, string statut)
+        /// <summary>
+        /// Generate historic line for PNPU_H_STEP and PNPU_H_WORKFLOW for one client
+        /// </summary>
+        /// <param name="endDate"></param>
+        /// <param name="statut"></param>
+        internal void GenerateHistoric(DateTime endDate, string statut, DateTime debut)
         {
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             PNPU_H_STEP historicStep = new PNPU_H_STEP();
 
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
-            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
+            historicWorkflow.LAUNCHING_DATE = debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
             InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
+            historicStep.ID_H_WORKFLOW = this.ID_INSTANCEWF;
             historicStep.ID_PROCESS = this.PROCESS_ID;
             historicStep.ITERATION = 1;
             historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
@@ -202,31 +194,32 @@ namespace PNPUCore.Process
             {
                 historicStep.TYPOLOGY = "Typo not found";
             }
-            historicStep.LAUNCHING_DATE = RapportProcess.Debut;
+            historicStep.LAUNCHING_DATE = debut;
             historicStep.ENDING_DATE = endDate;
             historicStep.ID_STATUT = statut;
-
-            if(PROCESS_ID == ParamAppli.ProcessLivraison)
-            {
-                Random rnd = new Random();
-                int random = rnd.Next(0, 30);
-                historicStep.NUMBER_LOCALISATION = random;
-            }
 
             RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
             RequestTool.CreateUpdateStepHistoric(historicStep);
         }
 
-        public void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult)
+        /// <summary>
+        /// Generate hitoric line for PNPU_H_STEP and PNPU_H_WORKFLOW
+        /// One line by client
+        /// </summary>
+        /// <param name="listClientId"></param>
+        /// <param name="fin"></param>
+        /// <param name="globalResult"></param>
+        public void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult, int idInstanceWF, DateTime debut)
         {
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
-            historicWorkflow.LAUNCHING_DATE = RapportProcess.Debut;
+            historicWorkflow.LAUNCHING_DATE = debut;
             historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
             historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
 
-            RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
+            idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
             foreach (string clientId in listClientId)
             {
@@ -238,8 +231,9 @@ namespace PNPUCore.Process
                 historicStep.CLIENT_ID = clientId;
                 historicStep.CLIENT_NAME = client.CLIENT_NAME;
                 historicStep.USER_ID = "PNPUADM";
-                historicStep.LAUNCHING_DATE = RapportProcess.Debut;
+                historicStep.LAUNCHING_DATE = debut;
                 historicStep.ENDING_DATE = fin;
+                historicStep.ID_H_WORKFLOW = idInstanceWF;
 
                 if (client.TYPOLOGY == "Dédié")
                 {
@@ -263,6 +257,7 @@ namespace PNPUCore.Process
             }
 
         }
+
         /// <summary>
         /// Methode permettant de récupérer dynamiquement la liste des contrôles à lancer en fonction du process, de la typologie client et du type de pack (standard ou non).
         /// </summary>

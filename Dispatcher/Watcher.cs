@@ -91,19 +91,19 @@ namespace PNUDispatcher
              }
         }
 
-        private static void LaunchProcess(string listclientId, int workflowId, int process)
+        private static void LaunchProcess(string listclientId, int workflowId, int process, int idInstanceWF)
         {
-            Thread thread = new Thread(() => LaunchProcessFunction(listclientId, workflowId, process));
+            Thread thread = new Thread(() => LaunchProcessFunction(listclientId, workflowId, process, idInstanceWF));
 
             //Thread thread = new Thread(new ThreadStart(LaunchProcessFunction));
             thread.Start();
         }
 
 
-        private static void LaunchProcessFunction(string listclientId, int workflowId, int process)
+        private static void LaunchProcessFunction(string listclientId, int workflowId, int process, int idInstanceWF)
         {
             var launcher = new Launcher();
-            launcher.Launch(listclientId, workflowId, process);
+            launcher.Launch(listclientId, workflowId, process, idInstanceWF);
         }
 
 
@@ -120,14 +120,14 @@ namespace PNUDispatcher
                     string request = requestInit.Replace("\0", "");
                     string[] listParam = request.Split('/');
 
-                    if (listParam.Length == 3)
+                    if (listParam.Length == 4)
                     {
-                        LaunchProcess(listParam[2], int.Parse(listParam[1]), int.Parse(listParam[0]));
+                        LaunchProcess(listParam[2], int.Parse(listParam[1]), int.Parse(listParam[0]), int.Parse(listParam[3]));
                     }
                     else
                     {
 
-                        Console.WriteLine("ERREUR - " + requestInit + "Cannot be manage for launch process");
+                        Console.WriteLine("ERREUR - " + requestInit + " Cannot be manage for launch process");
                     }
 
                     if (ParamAppli.qFIFO.Count == 0)

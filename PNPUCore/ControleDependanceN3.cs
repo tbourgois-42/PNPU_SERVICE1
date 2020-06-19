@@ -58,7 +58,7 @@ namespace PNPUCore.Controle
             {
                 // Chargement de la liste des tâche CCT de niveau 3 depuis la base de référence
                 dataManagerSQLServer = new DataManagerSQLServer();
-                sRequete = "SELECT DEP_CCT_TASK_ID, DEP_CCT_OBJECT_TYPE, DEP_CCT_OBJECT_ID, DEP_CCT_PARENT_OBJ_ID from PNPU_DEP_REF where NIV_DEP = '3' AND ID_H_WORKFLOW = " + Process.WORKFLOW_ID;
+                sRequete = "SELECT DEP_CCT_TASK_ID, DEP_CCT_OBJECT_TYPE, DEP_CCT_OBJECT_ID, DEP_CCT_PARENT_OBJ_ID from PNPU_DEP_REF where NIV_DEP = '3' AND WORKFLOW_ID = " + Process.WORKFLOW_ID + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF;
                 DataSet dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
 
                 sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
@@ -186,12 +186,12 @@ namespace PNPUCore.Controle
                     {
                         string sName = "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
                         GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
-                        PNPUTools.RamdlTool ramdlTool = new RamdlTool(Process.CLIENT_ID, Process.WORKFLOW_ID);
+                        PNPUTools.RamdlTool ramdlTool = new RamdlTool(Process.CLIENT_ID, Process.WORKFLOW_ID, Process.ID_INSTANCEWF);
                         ramdlTool.GeneratePackFromCCT(sName, lListeTacheCrees.ToArray());
                         sName = ParamAppli.GeneratePackPath + "\\" + Process.WORKFLOW_ID + "_" + Process.CLIENT_ID + "\\" + sName + ".mdb";
                         CommenteRegles(sName);
                         Process.AjouteRapport("Génération du fichier MDB.");
-                        if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.CLIENT_ID, 3) == 0)
+                        if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.ID_INSTANCEWF, Process.CLIENT_ID, 3) == 0)
                             Process.AjouteRapport("Ajout du fichier MDB en base de données.");
                         else
                         {

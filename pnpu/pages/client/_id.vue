@@ -376,7 +376,8 @@ export default {
       loadingReport: false,
       reportTNR: false,
       alertMessage: '',
-      alertIcon: 'mdi-information-outline'
+      alertIcon: 'mdi-information-outline',
+      idInstanceWF: ''
     }
   },
 
@@ -413,6 +414,7 @@ export default {
     this.workflowDate = this.$route.params.workflowDate
     this.workflowID = this.$route.params.workflowID
     this.textStatus = this.$route.params.textStatus
+    this.idInstanceWF = this.$route.params.idInstanceWF
     if (this.$route.params.clientId === undefined) {
       return this.$nuxt.error({ statusCode: 404 })
     } else {
@@ -670,6 +672,8 @@ export default {
           `${process.env.WEB_SERVICE_WCF}/report/` +
             vm.workflowID +
             `/` +
+            vm.idInstanceWF +
+            `/` +
             vm.currentID_PROCESS +
             `/` +
             vm.clientId
@@ -724,10 +728,10 @@ export default {
      * @param {object} datas - Json report
      */
     endLoadingDatas(datas) {
+      this.alertMessage = ''
       if (Object.entries(datas).length === 0) {
         this.setNoData()
       }
-      this.alertMessage = ''
       this.alertIcon = 'mdi-information-outline'
       this.loadingReport = false
     },

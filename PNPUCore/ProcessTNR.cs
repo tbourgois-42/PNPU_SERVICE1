@@ -17,7 +17,7 @@ namespace PNPUCore.Process
         /// </summary>  
         /// <param name="rapportProcess">Objet permettant de générer le rapport au format JSON sur le résultat du déroulement des contrôles.</param>
 
-        public ProcessTNR(int wORKFLOW_ID, string cLIENT_ID) : base(wORKFLOW_ID, cLIENT_ID)
+        public ProcessTNR(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
             this.PROCESS_ID = ParamAppli.ProcessTNR;
             this.LibProcess = "Tests de Non Régression (TNR)";
@@ -30,12 +30,19 @@ namespace PNPUCore.Process
         {
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
 
+            string[] listClientId = CLIENT_ID.Split(',');
+
+            int idInstanceWF = this.ID_INSTANCEWF;
+
             ControleTNR CTNR = new ControleTNR(this);
 
             sRapport = string.Empty;
-            RapportTNR.Name = "Tests de Non Régression (TNR)";
+            RapportTNR.Name = this.LibProcess;
             RapportTNR.Debut = DateTime.Now;
             RapportTNR.IdClient = CLIENT_ID;
+
+            //On génère l'historic en In_PROGRESS
+            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, this.ID_INSTANCEWF, RapportTNR.Debut);
 
             Domaine RapportDomaine = new RapportTNR.Domaine();
             RapportDomaine.Name = "Paie";
@@ -142,6 +149,7 @@ namespace PNPUCore.Process
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportTNR.Debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = idInstanceWF;
             InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
             historicStep.ID_PROCESS = this.PROCESS_ID;
@@ -154,19 +162,20 @@ namespace PNPUCore.Process
             historicStep.LAUNCHING_DATE = RapportTNR.Debut;
             historicStep.ENDING_DATE = RapportTNR.Fin;
             historicStep.ID_STATUT = RapportTNR.Result;
+            historicStep.ID_H_WORKFLOW = idInstanceWF;
 
-            GenerateHistoric(RapportTNR.Fin, RapportTNR.Result);
+            GenerateHistoric(RapportTNR.Fin, RapportTNR.Result, RapportTNR.Debut);
 
             if (RapportTNR.Result == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessTNR);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
             } 
         }
 
-        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID)
+        internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
         {
-            return new ProcessTNR(WORKFLOW_ID, CLIENT_ID);
+            return new ProcessTNR(WORKFLOW_ID, CLIENT_ID, idInstanceWF);
         }
     }
 }
