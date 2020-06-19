@@ -93,8 +93,8 @@ namespace PNPUCore.Process
             }
 
             this.addRapportAnalyseLogique(rapportAnalyseLogique, resultFileList);
-            RapportAnalyseImpact.rapportAnalyseLogique = rapportAnalyseLogique;
-            RapportAnalyseImpact.rapportAnalyseData = rapportAnalyseData;
+            //RapportAnalyseImpact.rapportAnalyseLogique = rapportAnalyseLogique;
+            //RapportAnalyseImpact.rapportAnalyseData = rapportAnalyseData;
             RapportAnalyseImpact.rapportElementLocaliser = rapportElementLocaliser;
 
             
@@ -379,7 +379,7 @@ namespace PNPUCore.Process
             return sResultat;
         }
 
-        public string[] splitCmdCodeData(string cmdCode)
+        public static string[] splitCmdCodeData(string cmdCode)
         {
             //We use an ugly text to replace \\\\ for come back to this after the split on \\
             string uglyString = "A?DJUEBISKJLERPDLZMLERJD?ZADLKJZDKD.§ZDI";
@@ -388,35 +388,65 @@ namespace PNPUCore.Process
 
             for (int i = 0; i < result.Length; i++)
             {
+
                 result[i] = result[i].Replace(uglyString, "\\\\");
+                result[i] = result[i].Trim();
+                if (String.IsNullOrEmpty(result[i]))
+                {
+                    RemoveAt(ref result, i);
+                    i--;
+                }
             }
             return result;
         }
 
-        public string removeCommentOnCommand(string cmdCode)
+        public static string removeCommentOnCommand(string cmdCode)
         {
 
             int indexOpenComment = cmdCode.IndexOf("/*");
-            int indexCloseComment = cmdCode.IndexOf("*/");
-
+            int indexCloseComment = -1;
+            if (indexOpenComment != -1)
+            {
+                indexCloseComment = cmdCode.IndexOf("*/", indexOpenComment);
+            }
             while (indexOpenComment != -1)
             {
                 cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
                 indexOpenComment = cmdCode.IndexOf("/*");
-                indexCloseComment = cmdCode.IndexOf("*/");
+                if (indexOpenComment != -1)
+                {
+                    indexCloseComment = cmdCode.IndexOf("*/", indexOpenComment);
+                }
             }
 
 
             indexOpenComment = cmdCode.IndexOf("//");
-            indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+            if (indexOpenComment != -1)
+            {
+                indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine, indexOpenComment);
+            }
             while (indexOpenComment != -1)
             {
                 cmdCode = cmdCode.Remove(indexOpenComment, (indexCloseComment - indexOpenComment) + 2); //+2 to remove the / at the end of the comment
                 indexOpenComment = cmdCode.IndexOf("//");
-                indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine);
+                if (indexOpenComment != -1)
+                {
+                    indexCloseComment = cmdCode.IndexOf(System.Environment.NewLine, indexOpenComment);
+                }
             }
 
             return cmdCode;
+        }
+
+        public static void RemoveAt<T>(ref T[] arr, int index)
+        {
+            for (int a = index; a < arr.Length - 1; a++)
+            {
+                // moving elements downwards, to fill the gap at [index]
+                arr[a] = arr[a + 1];
+            }
+            // finally, let's decrement Array's size by one
+            Array.Resize(ref arr, arr.Length - 1);
         }
     }
 }
