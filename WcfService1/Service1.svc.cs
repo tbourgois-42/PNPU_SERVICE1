@@ -16,6 +16,7 @@ using System.Web.Hosting;
 using AntsCode.Util;
 using System.Configuration;
 using HttpMultipartParser;
+using System.Net;
 
 namespace WcfService1
 {
@@ -219,16 +220,16 @@ namespace WcfService1
             int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
             GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
-            //AJOUT DU ZIP DE MDB DANS LA BDD
+            // Add zip into database
             gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
 
-            //Launch process
+            // By Default we allways first launch ProcessControlePacks
             LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch, idInstanceWF);
 
             //Test MDU launch ProcessTNR directly
             //LaunchProcess(ParamAppli.ProcessTNR, workflowId, clientToLaunch);
 
-            //SUPPRESSION DU FICHIER
+            // Delete file
             File.Delete(FilePath);
 
         }
@@ -293,6 +294,64 @@ namespace WcfService1
             int idInstanceWF = int.Parse(idInstanceWF_);
             int clientId = int.Parse(clientId_);
             return RequestTool.GetNbLocalisation(workflowId, idInstanceWF, clientId);
+        }
+
+        /// <summary>
+        /// Get one compressed file with all .mdb file.
+        /// </summary>
+        /// <param name="workflowId"></param>
+        /// <param name="idInstanceWF"></param>
+        /// <param name="clientId"></param>
+        /// <returns>Return Stream wich contains a zip file.</returns>
+        public Stream GetMdbLivraison(string workflowId, string idInstanceWF, string clientId)
+        {
+            MemoryStream stream = new MemoryStream();
+            
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/octet-stream";
+            
+            List<byte[]> mdb = RequestTool.GetMdbLivraison(workflowId, idInstanceWF, clientId);
+            string sDossierTempo = string.Empty;
+
+            foreach (byte[] fichier in mdb)
+            {
+                string sNom = "0000000000" + workflowId;
+                if (clientId != "")
+                    sNom += "_C" + clientId + "_N0";
+                sDossierTempo = ParamAppli.DossierTemporaire + "\\" + sNom;
+                string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
+                if (Directory.Exists(sDossierTempo) == false)
+                    Directory.CreateDirectory(sDossierTempo);
+
+                File.WriteAllBytes(sFichierZip, fichier);
+                PNPUTools.ZIP.ManageZip.DecompresseDansDossier(sFichierZip, sDossierTempo);
+
+                File.Delete(sFichierZip);
+            }
+            string zipName = sDossierTempo + "\\" + "PNPU_WF_" + workflowId + "_" + idInstanceWF + "_C" + clientId + ".ZIP";
+            PNPUTools.ZIP.ManageZip.CompresseDossier(sDossierTempo, zipName);
+
+            byte[] zipLivraison = File.ReadAllBytes(zipName);
+
+            if (zipLivraison != null)
+            {
+                stream.Write(zipLivraison, 0, zipLivraison.Length);
+                stream.Position = 0;
+            }
+            else
+            {
+                // Return HTTP Code 204 - No Content
+                throw new WebFaultException(HttpStatusCode.NoContent);
+            }
+
+            return stream;
+        }
+
+        public int GetNbAvailablePack(string workflowId, string idInstanceWF, string clientId)
+        {
+            string sRequest = "SELECT COUNT(MDB) FROM PNPU_MDB WHERE WORKFLOW_ID = " + workflowId + " AND ID_H_WORKFLOW = " + idInstanceWF + " AND CLIENT_ID IN ('" + clientId + "')";
+            int nbAvailablePack = int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));
+
+            return nbAvailablePack;
         }
     }
 

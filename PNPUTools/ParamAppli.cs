@@ -156,6 +156,8 @@ namespace PNPUTools
             TranscoSatut.Add(StatutCompleted, "mdi-check-circle");
             TranscoSatut.Add(StatutError, "mdi-alert-circle");
             TranscoSatut.Add(StatutWarning, "mdi-alert");
+            TranscoSatut.Add(StatutInProgress, "mdi-progress-circle");
+            TranscoSatut.Add(StatutInfo, "mdi-information-variant");
 
             npcsPipeClient = null;
 
@@ -255,7 +257,7 @@ namespace PNPUTools
 
                 // On valorise en fonction de la typologie
                 ConnectionStringBaseRef = new Dictionary<string, string>();
-                ConnectionStringBaseRef.Add("256", ConnectionStringBaseRefDedie);
+                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
                 ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
 

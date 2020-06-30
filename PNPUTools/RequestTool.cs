@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -68,7 +70,7 @@ namespace PNPUTools
 
             string sSelect = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, MAX(PHS.LAUNCHING_DATE) AS LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, PS.ID_PROCESS,  PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE ";
             string sFrom = "FROM PNPU_H_STEP PHS, PNPU_STEP PS ";
-            string sWhere = "WHERE PHS.WORKFLOW_ID = " + filtre + "AND PHS.ID_H_WORKFLOW = " + ID_H_WORKFLOW + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / 8 *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
+            string sWhere = "WHERE PHS.WORKFLOW_ID = " + filtre + " AND PHS.ID_H_WORKFLOW = " + ID_H_WORKFLOW + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / 8 *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
             string sGroupBy = "GROUP BY PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, PHS.ID_STATUT, PHS.ENDING_DATE, PS.ORDER_ID, PS.ID_PROCESS ";
             string sOrderBy = "ORDER BY PHS.ID_PROCESS DESC";
 
@@ -204,6 +206,13 @@ namespace PNPUTools
             IEnumerable<PNPU_PROCESS> listTest = table.DataTableToList<PNPU_PROCESS>();
 
             return listTest;
+        }
+
+        public static List<byte[]> GetMdbLivraison(string workflowId, string idInstanceWF, string clientId)
+        {
+            string sRequest = "SELECT MDB FROM PNPU_MDB WHERE WORKFLOW_ID = " + workflowId + " AND ID_H_WORKFLOW = " + idInstanceWF + " AND CLIENT_ID = " + clientId;
+            List<byte[]> mdb = DataManagerSQLServer.ReadBinaryDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+            return mdb;
         }
 
         /// <summary>

@@ -213,13 +213,24 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo/{TypologyId}")]
         IEnumerable<InfoClient> getListClientsByTypo( string TypologyId);
-
+        
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo")]
         IEnumerable<InfoClient> getListClients();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "clients/livraison/{workflowId}/{idInstanceWF}/{clientId}")]
+        Stream GetMdbLivraison(string workflowId, string idInstanceWF, string clientId);
+
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "livraison/availablePack/{workflowId}/{idInstanceWF}/{clientId}")]
+        int GetNbAvailablePack(string workflowId, string idInstanceWF, string clientId);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

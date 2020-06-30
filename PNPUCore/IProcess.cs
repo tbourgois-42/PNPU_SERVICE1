@@ -7,6 +7,7 @@ using PNPUTools;
 using PNPUTools.DataManager;
 using PNPUCore.Controle;
 using PNPUCore.RapportTNR;
+using PNPUCore.RapportLivraison;
 
 namespace PNPUCore.Process
 {
@@ -52,6 +53,8 @@ namespace PNPUCore.Process
         public RTNR RapportTNR;
         public RControle RapportControleCourant;
         public RapportProcessAnalyseImpact RapportAnalyseImpact;
+        public RLivraison RapportLivraison;
+        public Localisation RapportLocalisation;
 
 
         /// <summary>  
@@ -63,6 +66,8 @@ namespace PNPUCore.Process
         {
             RapportProcess = new RProcess();
             RapportTNR = new RTNR();
+            RapportLivraison = new RLivraison();
+            RapportLocalisation = new Localisation();
             WORKFLOW_ID = wORKFLOW_ID;
             CLIENT_ID = cLIENT_ID;
             STANDARD = true;
@@ -126,7 +131,12 @@ namespace PNPUCore.Process
             {
                 RapportAnalyseImpact.Fin = DateTime.Now;
                 return (RapportAnalyseImpact.ToJSONRepresentation());
-            }else
+            }else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
+            {
+                RapportLivraison.Fin = DateTime.Now;
+                return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));
+            }
+            else
             {
                 RapportProcess.Fin = DateTime.Now;
                 return (RapportProcess.ToJSONRepresentation());

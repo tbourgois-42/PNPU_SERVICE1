@@ -210,5 +210,46 @@ namespace PNPUTools.DataManager
                 return value;
             }
         }
+
+        /// <summary>
+        /// Get list of compressed file from the database
+        /// </summary>
+        /// <param name="sRequest"></param>
+        /// <param name="connectionStringBaseAppli"></param>
+        /// <returns>Return list of byte array</returns>
+        internal static List<byte[]> ReadBinaryDatas(string sRequest, string connectionStringBaseAppli)
+        {
+            byte[] MDB = null;
+            DataSet dataSet = null;
+            List<byte[]> lstMDB = new List<byte[]>();
+
+            try
+            {
+                using (var conn = new SqlConnection(connectionStringBaseAppli))
+                {
+                    using (var cmd = new SqlCommand(sRequest, conn))
+                    {
+                        conn.Open();
+                        SqlDataAdapter adapter = new SqlDataAdapter();
+                        adapter.SelectCommand = cmd;
+
+                        dataSet = new DataSet();
+                        adapter.Fill(dataSet);
+
+                        foreach (DataRow drRow in dataSet.Tables[0].Rows)
+                        {
+                            lstMDB.Add((byte[])drRow["MDB"]);
+                        }
+                    }
+
+                }
+                return lstMDB;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("La requete : " + sRequest + " a échoué.");
+                return lstMDB;
+            }
+        }
     }
 }
