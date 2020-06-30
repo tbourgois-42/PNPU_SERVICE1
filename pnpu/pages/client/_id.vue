@@ -13,7 +13,11 @@
           </v-list-item-content>
         </v-list-item>
       </v-flex>
-      <v-divider class="my-2 mx-4" inset></v-divider>
+      <v-divider
+        v-if="reportLivraison === false"
+        class="my-2 mx-4"
+        inset
+      ></v-divider>
 
       <v-stepper v-model="e1" class="mt-6" @change="getSelectedStep($event)">
         <v-stepper-header>
@@ -38,7 +42,11 @@
             :key="ixdContent"
             :step="ixdContent"
           >
-            <v-col cols="12" class="pt-0 mt-0 d-flex justify-space-between">
+            <v-col
+              v-if="reportLivraison === false"
+              cols="12"
+              class="pt-0 mt-0 d-flex justify-space-between"
+            >
               <v-card flat class="mr-auto">
                 <v-card-title class="pt-0 mt-0"
                   >Rapport d'execution du processus
@@ -66,6 +74,13 @@
               <v-btn depressed class="mr-4 mt-2 pr-4" color="primary">
                 <v-icon left>mdi-file-excel-outline</v-icon> Exporter
               </v-btn>
+              <v-btn
+                depressed
+                class="mr-4 mt-2 pr-4"
+                color="primary"
+                @click="downloadZip()"
+                ><v-icon left>mdi-download</v-icon> Télécharger</v-btn
+              >
             </v-col>
             <v-divider class="mx-4 mb-4"></v-divider>
             <!-- v-if="e1 === 0" -->
@@ -75,6 +90,30 @@
               "
               :idPROCESS="currentID_PROCESS"
               :reportJsonData="JSON_TEMPLATE"
+            />
+            <ReportLivraison
+              v-if="
+                Object.entries(JSON_TEMPLATE).length > 0 &&
+                  reportLivraison == true
+              "
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :nbAvailablePack="nbAvailablePack"
+              :currentID_STATUT="currentID_STATUT"
+              :clientID="CLIENT_ID"
+            />
+            <ReportPreControle
+              v-if="
+                Object.entries(JSON_TEMPLATE).length > 0 &&
+                  reportPreControle == true
+              "
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workfloxID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
             />
             <!-- Report -->
             <v-col cols="12">
@@ -99,7 +138,9 @@
             </v-col>
             <v-row
               v-if="
-                Object.entries(JSON_TEMPLATE).length > 0 && reportTNR == false
+                Object.entries(JSON_TEMPLATE).length > 0 &&
+                  reportTNR == false &&
+                  reportLivraison == false
               "
             >
               <v-col :cols="nbColsLeft" :style="displayNoneLeft">
@@ -144,19 +185,29 @@
                           v-if="item.result === 'mdi-check-circle'"
                           color="success"
                           >{{ item.result }}</v-icon
-                        ><v-icon v-else color="error">{{ item.result }}</v-icon>
+                        >
+                        <v-icon
+                          v-if="item.result === 'mdi-alert'"
+                          color="yellow darken-2"
+                          >{{ item.result }}</v-icon
+                        >
+                        <v-icon
+                          v-if="item.result === 'mdi-alert-circle'"
+                          color="error"
+                          >{{ item.result }}</v-icon
+                        >
                       </template>
                     </v-treeview>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col :cols="nbColsRight">
-                <v-list-item-group class="mb-5 d-flex">
+                <v-list-item-group class="mb-0 d-flex">
                   <v-list-item-icon>
                     <v-icon>mdi-folder</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title class="subtitle-1 mb-1">
+                    <v-list-item-title class="subtitle-1 mb-0">
                       {{ titleTable }}</v-list-item-title
                     >
                   </v-list-item-content>
@@ -187,9 +238,7 @@
                 </v-list-item-group>
                 <transition v-if="noData === false" appear name="fade">
                   <v-card
-                    v-if="
-                      titleTable !== 'Contrôle des dépendances inter packages'
-                    "
+                    v-if="titleTable !== 'Contrôle des dépendances du livrable'"
                   >
                     <v-simple-table>
                       <template v-slot:default>
@@ -228,9 +277,16 @@
                                 color="success"
                                 >{{ item.result }}</v-icon
                               >
-                              <v-icon v-else color="error">{{
-                                item.result
-                              }}</v-icon>
+                              <v-icon
+                                v-if="item.result === 'mdi-alert'"
+                                color="yellow darken-2"
+                                >{{ item.result }}</v-icon
+                              >
+                              <v-icon
+                                v-if="item.result === 'mdi-alert-circle'"
+                                color="error"
+                                >{{ item.result }}</v-icon
+                              >
                             </td>
                           </tr>
                         </tbody>
@@ -314,8 +370,10 @@
 import Papa from 'papaparse'
 import axios from 'axios'
 import ReportTNR from '../../components/ReportTNR'
+import ReportLivraison from '../../components/ReportLivraison'
+import ReportPreControle from '../../components/ReportPreControle'
 export default {
-  components: { ReportTNR },
+  components: { ReportTNR, ReportLivraison, ReportPreControle },
   data() {
     return {
       e1: 1,
@@ -377,7 +435,10 @@ export default {
       reportTNR: false,
       alertMessage: '',
       alertIcon: 'mdi-information-outline',
-      idInstanceWF: ''
+      idInstanceWF: '',
+      nbAvailablePack: 0,
+      reportLivraison: false,
+      clientTaskName: ''
     }
   },
 
@@ -419,6 +480,7 @@ export default {
       return this.$nuxt.error({ statusCode: 404 })
     } else {
       this.getWorkflowProcesses()
+      this.GetNbAvailablePack()
     }
   },
 
@@ -683,7 +745,7 @@ export default {
             vm.JSON_TEMPLATE = JSON.parse(
               response.data.getReportResult[0].JSON_TEMPLATE
             )
-            vm.isTNRReport(vm.JSON_TEMPLATE[0].name)
+            vm.getWichReport(vm.JSON_TEMPLATE[0].name)
             vm.selectedItemTable = vm.JSON_TEMPLATE[0].children
             vm.tableCtrlDepInterPack =
               vm.JSON_TEMPLATE[0].children[
@@ -703,14 +765,31 @@ export default {
     },
 
     /**
-     * Check if is a TNR report.
+     * Check wich report.
      * @param {string} reportName - Name of report.
      */
-    isTNRReport(reportName) {
-      if (reportName === 'Tests de Non Régression (TNR)') {
-        this.reportTNR = true
-      } else {
-        this.reportTNR = false
+    getWichReport(reportName) {
+      switch (reportName) {
+        case 'Livraison':
+          this.reportLivraison = true
+          this.reportTNR = false
+          this.ReportPreControle = false
+          break
+        case 'Pré contrôle des .mdb':
+          this.reportLivraison = false
+          this.reportTNR = false
+          this.ReportPreControle = true
+          break
+        case 'Tests de Non Régression (TNR)':
+          this.reportLivraison = false
+          this.ReportPreControle = false
+          this.reportTNR = true
+          break
+        default:
+          this.reportLivraison = false
+          this.reportTNR = false
+          this.ReportPreControle = false
+          break
       }
     },
 
@@ -743,6 +822,66 @@ export default {
     setNoData() {
       this.alertMessage =
         "Ce processus n'est pas terminé. Aucun rapport n'est disponible pour le moment"
+    },
+
+    /***
+     * Get available packages from database
+     */
+    GetNbAvailablePack() {
+      const vm = this
+      axios
+        .get(
+          `${process.env.WEB_SERVICE_WCF}/livraison/availablePack/` +
+            vm.workflowID +
+            `/` +
+            vm.idInstanceWF +
+            `/` +
+            vm.clientId
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            vm.nbAvailablePack = response.data
+          }
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
+    },
+
+    /**
+     * Download available zip file
+     */
+    downloadZip() {
+      const vm = this
+      axios({
+        method: 'GET',
+        url: `${process.env.WEB_SERVICE_WCF}/clients/livraison/1/24`,
+        responseType: 'arraybuffer'
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute(
+              'download',
+              this.clientName +
+                '_' +
+                this.workflowID +
+                '_' +
+                this.idInstanceWF +
+                '_.zip'
+            )
+            document.body.appendChild(link)
+            link.click()
+          }
+        })
+        .catch(function(error) {
+          vm.showSnackbar(
+            'error',
+            `${error} ! Impossible de récupérer les packages`
+          )
+        })
     },
 
     /**
