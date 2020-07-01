@@ -11,9 +11,8 @@ using PNPUCore.Rapport;
 
 namespace PNPUCore.Controle
 {
-    class ControleDataM4SCO_ROW_COL_DEF
+    class ControleDataTablesDSN
     {
-        private List<string> TableTraitee = new List<string>() { "M4SCO_ROW_COL_DEF", "M4SCO_ROWS" };
         ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
         private string sConnectionString;
@@ -21,7 +20,7 @@ namespace PNPUCore.Controle
         CommandData commandDataCour;
 
 
-        public ControleDataM4SCO_ROW_COL_DEF(ProcessAnalyseImpactData processAnalyseImpact)
+        public ControleDataTablesDSN(ProcessAnalyseImpactData processAnalyseImpact)
         {
             processAnalyseImpactData = processAnalyseImpact;
         }
@@ -43,7 +42,6 @@ namespace PNPUCore.Controle
             dmsDataManager = new DataManagerSQLServer();
             processAnalyseImpactData.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
-            if (TableTraitee.Contains(sTable) == false) return;
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
             sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
             commandDataCour = commandData;
@@ -71,10 +69,8 @@ namespace PNPUCore.Controle
                 }
                 else
                 {
-                    if (sFilter != string.Empty)
-                        sFilter = " AND ";
-                    sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
-                    sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
+                    sFiltreRef = sFilter + " AND ID_ORGANIZATION='0001'";
+                    sFiltreClient = sFilter + " A ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
 
                 sRequeteRef = "SELECT * FROM " + sTable + " WHERE " + sFiltreRef;

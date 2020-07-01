@@ -129,7 +129,8 @@ namespace PNPUTools
         public const int ProcessProcessusCritique = 6;
         public const int ProcessTNR = 7;
         public const int ProcessLivraison = 8;
- 
+        public const int ProcessAnalyseImpactData = 11;
+
         public const int ProcessFinished = -1;
 
         public const bool SimpleCotesReport = true;
@@ -254,12 +255,13 @@ namespace PNPUTools
                     }
                 }
 
-
                 // On valorise en fonction de la typologie
                 ConnectionStringBaseRef = new Dictionary<string, string>();
-                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
-                ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
+                 ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
+                ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("Désynchronisé", ConnectionStringBaseRefPlateforme);
 
 
                 // N'existe que sur la base plateforme
@@ -281,13 +283,15 @@ namespace PNPUTools
                 //Chargement des infos clients
                 if (ConnectionStringSupport != string.Empty)
                 {
-                    dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME, SAAS, CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION WHERE SAAS is not NULL AND SAAS = CODIFICATION_ID", ConnectionStringSupport);
+                    //dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME, SAAS, CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION WHERE SAAS is not NULL AND SAAS = CODIFICATION_ID", ConnectionStringSupport);
+                    dsDataSet = dataManagerSQLServer.GetData("SELECT CLIENT_ID, CLIENT_NAME, SAAS, C1.CODIFICATION_LIBELLE, C2.CODIFICATION_LIBELLE FROM A_CLIENT,A_CODIFICATION C1, A_CODIFICATION C2 WHERE SAAS is not NULL AND SAAS = C1.CODIFICATION_ID AND C1.CODIFICATION_TYPE = 'SAAS' AND C2.CODIFICATION_TYPE = 'SGBD' AND C2.CODIFICATION_ID = SGBD", ConnectionStringSupport);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty)) ;
+                            bool bOracle = drRow[4].ToString().ToUpper().Contains("ORACLE");
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty,bOracle)) ;
                         }
                     }
                 }

@@ -42,9 +42,9 @@ namespace PNPUCore
                 case ParamAppli.ProcessControlePacks:
                     return ProcessControlePacks.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessAnalyseImpact:
-                    return ProcessAnalyseImpact.CreateProcess(workflowId, client, idInstanceWF);
-
+                /*case ParamAppli.ProcessAnalyseImpact:
+                    return ProcessAnalyseImpact.CreateProcess(workflowId, client);*/
+                    
                 case ParamAppli.ProcessInit:
                     return ProcessInit.CreateProcess(workflowId, client, idInstanceWF);
 
@@ -62,6 +62,9 @@ namespace PNPUCore
 
                 case ParamAppli.ProcessLivraison:
                     return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
+
+                case ParamAppli.ProcessAnalyseImpactData:
+                    return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
 
                 default:
                     return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);

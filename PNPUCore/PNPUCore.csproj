@@ -46,10 +46,13 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="ControleDataGeneric.cs" />
+    <Compile Include="ControleDataTablesDSN.cs" />
     <Compile Include="RapportAnalyseImpactData.cs" />
     <Compile Include="RapportAnalyseImpactLogique.cs" />
     <Compile Include="ControleDataM4SCO_ROW_COL_DEF.cs" />
     <Compile Include="ControleGeneriqueCopyData.cs" />
+    <Compile Include="ProcessAnalyseImpactData.cs" />
     <Compile Include="RapportAnalyseImpact.cs" />
     <Compile Include="ControleDependanceN3.cs" />
     <Compile Include="ControleDependanceN2.cs" />
@@ -68,7 +71,6 @@
     <Compile Include="ControleNiveauSaisie.cs" />
     <Compile Include="ControleNiveauHeritage.cs" />
     <Compile Include="ControleDonneesReplace.cs" />
-    <Compile Include="ProcessAnalyseImpact.cs" />
     <Compile Include="ProcessControlePacks.cs" />
     <Compile Include="ProcessGestionDependance.cs" />
     <Compile Include="ProcessInit.cs" />

@@ -81,6 +81,7 @@ namespace PNPUTools.DataManager
         /// <param name="Table1">Première table.</param>
         /// <param name="pDataRow2">Ligne de la deuxième table.</param>
         /// <param name="Table2">Deuxième table</param>
+        /// <param name="dListeTablesFieldsIgnore">Liste des champs techniques à ignorer pour la comparaison</param>
         /// <returns>Retourne vrai si tous les champs des 2 tables ont la même valeur, faux sinon</returns>
         public bool CompareRows(DataRow pDataRow1, DataTable Table1, DataRow pDataRow2, DataTable Table2, Dictionary<string, List<string>> dListeTablesFieldsIgnore)
         {
@@ -118,6 +119,56 @@ namespace PNPUTools.DataManager
             }
             return (bResulat);
         }
+        /// <summary>
+        /// Compare les valeurs des champs de 2 tables.
+        /// </summary>
+        /// <param name="pDataRow1">Ligne de la première table.</param>
+        /// <param name="Table1">Première table.</param>
+        /// <param name="pDataRow2">Ligne de la deuxième table.</param>
+        /// <param name="Table2">Deuxième table</param>
+        /// <param name="dListeTablesFieldsIgnore">Liste des champs techniques à ignorer pour la comparaison</param>
+        /// <param name="ListColumnsDif">Au retour contient la liste des champs en différences</param>
+        /// <returns>Retourne vrai si tous les champs des 2 tables ont la même valeur, faux sinon</returns>
+        public bool CompareRows(DataRow pDataRow1, DataTable Table1, DataRow pDataRow2, DataTable Table2, Dictionary<string, List<string>> dListeTablesFieldsIgnore, ref List<string> ListColumnsDif)
+        {
+            int iCpt = 0;
+            bool bResulat = true;
+            string sValeur1;
+            string sValeur2;
+            string sNomTable;
+            string sNomChamp;
+
+            try
+            {
+                ListColumnsDif.Clear();
+                if (CompareColumns(Table1, Table2) == true)
+                {
+                    sNomTable = Table1.TableName;
+                    while (iCpt < Table1.Columns.Count)
+                    {
+                        sNomChamp = Table1.Columns[iCpt].ColumnName;
+                        if (dListeTablesFieldsIgnore[sNomTable].Contains(sNomChamp) == false)
+                        {
+                            sValeur1 = pDataRow1[iCpt].ToString();
+                            sValeur2 = pDataRow2[iCpt].ToString();
+                            if (sValeur1 != sValeur2)
+                            {
+                                bResulat = false;
+                                ListColumnsDif.Add(sNomChamp);
+                            }
+                        }
+                        iCpt++;
+                    }
+                }
+                else
+                    bResulat = false;
+            }
+            catch (Exception)
+            {
+                bResulat = false;
+            }
+            return (bResulat);
+        }
 
         public Dictionary<string, List<string>> GetIgnoredFields(string sConnectionInfo)
         {
@@ -147,6 +198,22 @@ namespace PNPUTools.DataManager
             }
 
             return dListeTables;
+        }
+
+        public List<string> GetPersonnalTables(string sConnectionInfo)
+        {
+            List<string> lListPersoTables = new List<string>();
+
+            DataSet dsDataSet = this.GetData("select DISTINCT ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD LIKE '%ID_HR' OR ID_REAL_FIELD LIKE '%ID_PERSON'", sConnectionInfo);
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                {
+                    lListPersoTables.Add(drRow[0].ToString());
+                }
+            }
+
+            return lListPersoTables;
         }
 
         public string GetTableName(string sRequest)

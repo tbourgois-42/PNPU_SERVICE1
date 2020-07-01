@@ -137,7 +137,9 @@ namespace PNPUCore.Controle
                                     sRequete = "select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%EXEC%M4SFR_COPY_DATA_ORG%" + sTable + "%";
                                     if (sWhere != string.Empty)
                                     {
+                                        sWhere2 = sWhere.Trim();
                                         sWhere2 = sWhere.ToUpper();
+                                        sWhere2 = sWhere2.Trim();
                                         sWhere2 = sWhere2.Replace("'", "' + CHR(39) + CHR(39) + '");
                                         sRequete += sWhere2 + "%";
                                     }

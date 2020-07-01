@@ -55,6 +55,7 @@ namespace PNPUCore.Process
         public RapportProcessAnalyseImpact RapportAnalyseImpact;
         public RLivraison RapportLivraison;
         public Localisation RapportLocalisation;
+        public RapportAnalyseData rapportAnalyseImpactData;
 
 
         /// <summary>  
@@ -127,11 +128,12 @@ namespace PNPUCore.Process
                 RapportTNR.Fin = DateTime.Now;
                 return (RapportTNR.ToJSONRepresentation());
             }
-            else if (ParamAppli.ProcessAnalyseImpact == process.PROCESS_ID)
+            else if (ParamAppli.ProcessAnalyseImpactData == process.PROCESS_ID)
             {
-                RapportAnalyseImpact.Fin = DateTime.Now;
-                return (RapportAnalyseImpact.ToJSONRepresentation());
-            }else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
+                rapportAnalyseImpactData.Fin = DateTime.Now;
+                return (rapportAnalyseImpactData.ToJSONRepresentation());
+            }
+            else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
             {
                 RapportLivraison.Fin = DateTime.Now;
                 return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));

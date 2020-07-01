@@ -81,11 +81,37 @@ namespace PNPUCore.Process
                 //Récupération de toutes les commandes data
                 List<RmdCommandData> listCommandData = this.getAllDataCmd(sPathFichierMdb);
 
-                foreach(RmdCommandData commandData in listCommandData)
+                // Récupération de la liste des champs à ignorer
+                DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
+                Dictionary<string, List<string>> dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
+
+                //Création des contrôles
+                /*ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
+                ControleDataM4SCO_ROW_COL_DEF controleDataM4SCO_ROW_COL_DEF = new ControleDataM4SCO_ROW_COL_DEF(this);
+
+                foreach (RmdCommandData commandData in listCommandData)
                 {
                     commandData.CmdCode = removeCommentOnCommand(commandData.CmdCode);
                     string[] listLineRequest = splitCmdCodeData(commandData.CmdCode);
+                    string sTable;
+                    string sFilter;
 
+                    for(int iIndex = 0; iIndex < listLineRequest.Length; iIndex++)
+                    {
+                        CommandData commandData1 = new CommandData();
+
+                        ExtractTableFilter(listLineRequest[iIndex], out sTable, out sFilter);
+                        switch (sTable)
+                        {
+                            case "M4SCO_ROW_COL_DEF":
+                                controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], commandData1, dListeTablesFieldsIgnore);
+                                break;
+
+                            default:
+                                controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], commandData1, dListeTablesFieldsIgnore);
+                                break;
+                        }
+                    }*/
                 }
 
 
