@@ -56,7 +56,7 @@ namespace PNPUCore.Process
         public RLivraison RapportLivraison;
         public Localisation RapportLocalisation;
         public RapportAnalyseData rapportAnalyseImpactData;
-
+        public RapportAnalyseLogique RapportAnalyseImpactLogique;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -129,11 +129,15 @@ namespace PNPUCore.Process
                 return (RapportTNR.ToJSONRepresentation());
             }
             else if (ParamAppli.ProcessAnalyseImpactData == process.PROCESS_ID)
+            else if (ParamAppli.ProcessAnalyseImpactLogique == process.PROCESS_ID)
             {
                 rapportAnalyseImpactData.Fin = DateTime.Now;
                 return (rapportAnalyseImpactData.ToJSONRepresentation());
             }
             else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
+                RapportAnalyseImpactLogique.Fin = DateTime.Now;
+                return (RapportAnalyseImpactLogique.ToJSONRepresentation());
+            }else
             {
                 RapportLivraison.Fin = DateTime.Now;
                 return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));

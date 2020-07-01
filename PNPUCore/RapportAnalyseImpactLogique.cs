@@ -63,9 +63,11 @@ namespace PNPUCore
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
+            int i = 0;
             foreach (RapportAnalyseImpactMDBLogique type in listRapportAnalyseImpactMDBLogique)
             {
-                type.ToJSONRepresentation(jw, this.Id);
+                type.ToJSONRepresentation(jw, this.Id, i);
+                i++;
             }
 
             jw.WriteEndArray();
@@ -86,7 +88,7 @@ namespace PNPUCore
 
         public List<TypeAnalyseLogique> listTypeAnalyseLogique { set; get; }
 
-        public void ToJSONRepresentation(JsonWriter jw, string id)
+        public void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
             string sCote2 = string.Empty;
@@ -96,7 +98,9 @@ namespace PNPUCore
                 sCote = "'";
                 sCote2 = "*";
             }
-            this.Id = "1";
+
+            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
+
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
@@ -106,9 +110,10 @@ namespace PNPUCore
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
+            int i = 0;
             foreach (TypeAnalyseLogique type in listTypeAnalyseLogique)
             {
-                type.ToJSONRepresentation(jw, id);
+                type.ToJSONRepresentation(jw, id, i);
             }
 
             jw.WriteEndArray();
@@ -121,7 +126,7 @@ namespace PNPUCore
     {
         public List<LineAnalyseLogique> listLineAnalyseLogique { set; get; }
 
-        internal void ToJSONRepresentation(JsonWriter jw, string id)
+        internal void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
             string sCote2 = string.Empty;
@@ -132,7 +137,7 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
@@ -144,9 +149,12 @@ namespace PNPUCore
 
             jw.WritePropertyName("line");
             jw.WriteStartArray();
+
+            int i = 0;
             foreach (LineAnalyseLogique line in this.listLineAnalyseLogique)
             {
-                line.ToJSONRepresentation(jw, id);
+                line.ToJSONRepresentation(jw, id, i);
+                i++;
             }
 
             jw.WriteEndArray();
@@ -159,7 +167,7 @@ namespace PNPUCore
         public String currentCode { set; get; }
         public String newCode { set; get; }
 
-        internal void ToJSONRepresentation(JsonWriter jw, string id)
+        internal void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
             string sCote2 = string.Empty;
@@ -170,7 +178,7 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");

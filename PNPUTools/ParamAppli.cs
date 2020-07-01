@@ -94,6 +94,7 @@ namespace PNPUTools
 
         public static Dictionary<string, InfoClient> ListeInfoClient { get; }
         public static string GeneratePackPath { get; internal set; }
+        public static DateTime DateNullPPN = new DateTime(1800,1,1);
 
         public const int TypologyDedie = 256;
 
@@ -101,7 +102,7 @@ namespace PNPUTools
 
 
         public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact";
-        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RAMDL.EXE";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string RamdDlPAth = "C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
 
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";
@@ -130,6 +131,8 @@ namespace PNPUTools
         public const int ProcessTNR = 7;
         public const int ProcessLivraison = 8;
         public const int ProcessAnalyseImpactData = 11;
+
+        public const int ProcessAnalyseImpactLogique = 10;
 
         public const int ProcessFinished = -1;
 
@@ -196,7 +199,7 @@ namespace PNPUTools
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_PRO;pwd=PNPU_PRO;database=PNPU_PRO;";
+                    ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 

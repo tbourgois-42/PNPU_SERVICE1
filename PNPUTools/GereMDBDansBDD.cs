@@ -29,7 +29,7 @@ namespace PNPUTools
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
                 if (Directory.Exists(sDossierTempo) == false)
                     Directory.CreateDirectory(sDossierTempo);
-                
+
                 if (ZIP.ManageZip.CompresseListeFichiers(sFichiers, sFichierZip) == -1)
                     return -1;
 

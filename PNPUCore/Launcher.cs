@@ -63,6 +63,9 @@ namespace PNPUCore
                 case ParamAppli.ProcessLivraison:
                     return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
 
+                case ParamAppli.ProcessAnalyseImpactLogique:
+                    return ProcessAnalyseImpactLogique.CreateProcess(workflowId, client, idInstanceWF);
+
                 case ParamAppli.ProcessAnalyseImpactData:
                     return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
 
