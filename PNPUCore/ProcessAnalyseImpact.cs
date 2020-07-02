@@ -11,6 +11,7 @@ using System.IO;
 
 namespace PNPUCore.Process
 {
+    /*
     internal class ProcessAnalyseImpact : ProcessCore, IProcess
     {
         
@@ -86,7 +87,7 @@ namespace PNPUCore.Process
                 Dictionary<string, List<string>> dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
 
                 //Création des contrôles
-                /*ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
+                ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
                 ControleDataM4SCO_ROW_COL_DEF controleDataM4SCO_ROW_COL_DEF = new ControleDataM4SCO_ROW_COL_DEF(this);
 
                 foreach (RmdCommandData commandData in listCommandData)
@@ -111,7 +112,7 @@ namespace PNPUCore.Process
                                 controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], commandData1, dListeTablesFieldsIgnore);
                                 break;
                         }
-                    }*/
+                    }
                 }
 
 
@@ -137,11 +138,11 @@ namespace PNPUCore.Process
             //DEVGenerateHistoric(RapportProcess.Fin, GlobalResult);
 
 
-            /*DEVif (GlobalResult == ParamAppli.StatutOk)
+            DEVif (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
-            }*/
+            }
 
         }
 
@@ -429,11 +430,11 @@ namespace PNPUCore.Process
         public static string removeCommentOnCommand(string cmdCode)
         {
 
-            int indexOpenComment = cmdCode.IndexOf("/*");
+            int indexOpenComment = cmdCode.IndexOf("");
             int indexCloseComment = -1;
             if (indexOpenComment != -1)
             {
-                indexCloseComment = cmdCode.IndexOf("*/", indexOpenComment);
+                indexCloseComment = cmdCode.IndexOf("", indexOpenComment);
             }
             while (indexOpenComment != -1)
             {
@@ -441,7 +442,7 @@ namespace PNPUCore.Process
                 indexOpenComment = cmdCode.IndexOf("/*");
                 if (indexOpenComment != -1)
                 {
-                    indexCloseComment = cmdCode.IndexOf("*/", indexOpenComment);
+                    indexCloseComment = cmdCode.IndexOf("", indexOpenComment);
                 }
             }
 
@@ -474,5 +475,5 @@ namespace PNPUCore.Process
             // finally, let's decrement Array's size by one
             Array.Resize(ref arr, arr.Length - 1);
         }
-    }
+    */
 }

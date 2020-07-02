@@ -37,43 +37,35 @@ namespace PNPUCore
         IProcess CreateProcess(int process, int workflowId, String client, int idInstanceWF)
         {
 
-            switch (process)
-            {
-                case ParamAppli.ProcessControlePacks:
-                    return ProcessControlePacks.CreateProcess(workflowId, client, idInstanceWF);
+            if (process == ParamAppli.ProcessControlePacks)
+                return ProcessControlePacks.CreateProcess(workflowId, client, idInstanceWF);
 
-                /*case ParamAppli.ProcessAnalyseImpact:
-                    return ProcessAnalyseImpact.CreateProcess(workflowId, client);*/
-                    
-                case ParamAppli.ProcessInit:
-                    return ProcessInit.CreateProcess(workflowId, client, idInstanceWF);
+            if (process == ParamAppli.ProcessInit)
+                return ProcessInit.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessGestionDependance:
-                    return ProcessGestionDependance.CreateProcess(workflowId, client, idInstanceWF);
+            if (process == ParamAppli.ProcessGestionDependance)
+                return ProcessGestionDependance.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessIntegration:
+            if (process == ParamAppli.ProcessIntegration)
                     return ProcessIntegration.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessProcessusCritique:
+            if (process == ParamAppli.ProcessProcessusCritique)
                     return ProcessProcessusCritique.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessTNR:
+            if (process == ParamAppli.ProcessTNR)
                     return ProcessTNR.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessLivraison:
+            if (process == ParamAppli.ProcessLivraison)
                     return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessAnalyseImpactLogique:
+            if (process == ParamAppli.ProcessAnalyseImpactLogique)
                     return ProcessAnalyseImpactLogique.CreateProcess(workflowId, client, idInstanceWF);
 
-                case ParamAppli.ProcessAnalyseImpactData:
+            if (process == ParamAppli.ProcessAnalyseImpactData)
                     return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
 
-                default:
-                    return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);
+            return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);
 
-            }
-             
         }
     }
 }

@@ -122,17 +122,16 @@ namespace PNPUTools
         public const string ConnectionStringBaseQA2 = "server=M4FRDB20;uid=GLS_TNR;pwd=F3?6D!Fk*f.;database=GLS_TNR;";
         public const string ConnectionStringBaseQA1 = "server=M4FRDB20;uid=GLS_REF;pwd=o8lfIwUOBW;database=GLS_REF;";
 
-        public const int ProcessControlePacks = 1;
-        public const int ProcessInit = 2;
-        public const int ProcessGestionDependance = 3;
-        public const int ProcessAnalyseImpact = 4;
-        public const int ProcessIntegration = 5;
-        public const int ProcessProcessusCritique = 6;
-        public const int ProcessTNR = 7;
-        public const int ProcessLivraison = 8;
-        public const int ProcessAnalyseImpactData = 11;
-
-        public const int ProcessAnalyseImpactLogique = 10;
+        public static int ProcessControlePacks = 1;
+        public static int ProcessInit = 2;
+        public static int ProcessGestionDependance = 3;
+        public static int ProcessAnalyseImpact = 4;
+        public static int ProcessIntegration = 5;
+        public static int ProcessProcessusCritique = 6;
+        public static int ProcessTNR = 7;
+        public static int ProcessLivraison = 8;
+        public static int ProcessAnalyseImpactData = 11;
+        public static int ProcessAnalyseImpactLogique = 10;
 
         public const int ProcessFinished = -1;
 
@@ -302,6 +301,65 @@ namespace PNPUTools
             catch (Exception ex)
             {
 
+            }
+
+
+            /*
+                Pré-Contrôle du HF
+                Initialisation
+                Packaging des dépendances
+                Analyse d'impact
+                Test d'intégration
+                Tests des processus critique
+                TNR standard
+                Livraison
+                Analyse d'impact Data
+            */
+            IEnumerable<PNPU_PROCESS> listAllProcess = RequestTool.GetAllProcesses();
+            foreach(PNPU_PROCESS process in listAllProcess)
+            {
+                switch (process.PROCESS_LABEL)
+                {
+                    case "Pré - Contrôle du HF":
+                        ProcessControlePacks = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Initialisation":
+                        ProcessInit = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Packaging des dépendances":
+                        ProcessGestionDependance = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Analyse d'impact":
+                        ProcessAnalyseImpact = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Test d'intégration":
+                        ProcessIntegration = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Tests des processus critique":
+                        ProcessProcessusCritique = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "TNR standard":
+                        ProcessTNR = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Livraison":
+                        ProcessLivraison = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Analyse d'impact Data":
+                        ProcessAnalyseImpactData = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+
+                    case "Analyse d'impact Logique":
+                        ProcessAnalyseImpactLogique = Decimal.ToInt32(process.ID_PROCESS);
+                        break;
+                }
             }
 
         }
