@@ -54,8 +54,9 @@ namespace PNPUCore.Process
             RapportAnalyseImpactPackData rapportAnalyseImpactPackData = null;
             List<string> lColumnsList = new List<string>();
             List<string> lTablesPostPaie = new List<string> { "M4SCO_ROWS", "M4SCO_ROW_COL_DEF" };
-            List<string> lTablesDSN = new List<string>();
+            List<string> lTablesDSN = new List<string>();// { "M4SFR_DSN_CTP_PARAM","M4SFR_DSN_PARAM_RUB_NAT08","M4SFR_DSN_PARAM_RUB_NAT05"};
             int idInstanceWF = this.ID_INSTANCEWF;
+            DataSet dsDataSet;
 
 
             //On génère les historic au début pour mettre en inprogress
@@ -72,9 +73,18 @@ namespace PNPUCore.Process
             //Recupération des tables liées à une personne
             lListPersonnalTables = dmsDataManager.GetPersonnalTables(ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
 
+            // Recupération de la liste des tables DSN avec un champ SFR_ID_ORIG_PARAM
+            dsDataSet = dmsDataManager.GetData("select ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD = 'SFR_ID_ORIG_PARAM' AND ID_REAL_OBJECT LIKE '%DSN%'", ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                    lTablesDSN.Add(drRow[0].ToString());
+            }
+
             //Création des contrôles
             ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
             ControleDataM4SCO_ROW_COL_DEF controleDataM4SCO_ROW_COL_DEF = new ControleDataM4SCO_ROW_COL_DEF(this);
+            ControleDataTablesDSN controleDataTablesDSN = new ControleDataTablesDSN(this);
 
 
             // Récupération des mdb
@@ -150,6 +160,7 @@ namespace PNPUCore.Process
                                 // Traitement des tables DSN
                                 else if (lTablesDSN.Contains(sTable) == true)
                                 {
+                                    controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData);
                                 }
                                 if (commandData1.Result == ParamAppli.StatutInfo)
                                     controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData);
@@ -200,6 +211,49 @@ namespace PNPUCore.Process
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
             /* }*/
 
+        }
+
+       /* public List<string> GetDSNTables(string  sConnectionString)
+        {
+            List<string> lDSNTables = new List<string>();
+            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
+            string sRequete = "SELECT "
+
+            dataManagerSQL
+        }*/
+
+        public void GetPKFields(string sTable, string sConnectionString, ref List<string> lPKFields)
+        {
+            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
+            DataSet dsDataSet;
+            string sRequete = "SELECT B.ID_REAL_FIELD FROM M4RDC_FIELDS A,M4RDC_REAL_FIELDS B where B.ID_REAL_OBJECT = '" +sTable + "' AND B.ID_OBJECT=A.ID_OBJECT AND B.ID_FIELD=A.ID_FIELD AND A.POS_PK>0 AND A.ID_TYPE NOT LIKE '%DATE%' order by A.POS_PK";
+            lPKFields.Clear();
+
+            dsDataSet = dataManagerSQL.GetData(sRequete, sConnectionString);
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                {
+                    lPKFields.Add(drRow[0].ToString());
+                }
+            }
+
+        }
+
+        public bool ExistsField(DataTable dtTable, string sField)
+        {
+            bool bResult = false;
+
+            foreach (DataColumn dcColumn in dtTable.Columns)
+            {
+                if (dcColumn.ColumnName == sField)
+                {
+                    bResult = true;
+                    break;
+                }
+            }
+
+            return bResult;
         }
 
         /// <summary>
