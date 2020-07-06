@@ -530,6 +530,14 @@ namespace PNPUTools
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
         }
+
+        public static string addLocalisationByALineAnalyseData(String clientId, int workflowId, string taskId, string cct_Object_ID, string commande, int idWfInstance)
+        {
+            string cct_version = "PNPU" + DateTime.Now.ToString("d");
+            string[] requests = { "INSERT INTO PNPU_H_LOCALISATION (CLIENT_ID, WORKFLOW_ID, CCT_TASK_ID, CCT_VERSION, CCT_OBJECT_ID, CCT_OBJECT_TYPE, CCT_PARENT_OBJ_ID, CCT_AUX_OBJECT_ID, CCT_RULE_START_DAT, CCT_ACTION_TYPE, CCT_PACK_TYPE, CCT_LAST_CHG_DATE, CCT_USER_ID, CCT_COMMAND_TYPE, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, CCT_RDL, CCT_AUX2_OBJECT_ID, CCT_AUX3_OBJECT_ID, ID_H_WORKFLOW) VALUES (@client_id, @workflow_id, @cct_task_id, @cct_version, @cct_object_id, @cct_object_type, @cct_parent_obj_id, @cct_aux_object_id, @cct_rule_start_dat, @cct_action_type, @cct_pack_type, @cct_last_chg_date, @cct_user_id, @cct_command_type, @id_approle, @id_secuser, @dt_last_update, @cct_rdl, @cct_aux2_object_id, @cct_aux3_object_id, @id_h_workflow)" };
+            string[] parameters = new string[] { "@client_id", clientId, "@workflow_id", workflowId.ToString(), "@cct_task_id", taskId, "@cct_version", cct_version, "@cct_object_id", cct_Object_ID, "@cct_object_type", "FUNCTIONAL DATA SCRIPT", "@cct_parent_obj_id", "#N/A", "@cct_aux_object_id", "#N/A", "@cct_rule_start_dat", ParamAppli.DateNullPPN.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_action_type", "MODIFIED", "@cct_pack_type", "4", "@cct_last_chg_date", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_user_id", "PNPUADM", "@cct_command_type", "2", "@id_approle", "M4ADM", "@id_secuser", "PNPUADM", "@dt_last_update", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_rdl", commande, "@cct_aux2_object_id", "#N/A", "@cct_aux3_object_id", "#N/A", "@id_h_workflow", idWfInstance.ToString() };
+            return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
+        }
     }
 
 }

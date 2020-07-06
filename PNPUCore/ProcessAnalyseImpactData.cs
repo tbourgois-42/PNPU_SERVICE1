@@ -155,15 +155,15 @@ namespace PNPUCore.Process
                                 // Traitement des tables postpaie
                                 if (lTablesPostPaie.Contains(sTable) == true)
                                 {
-                                    controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData);
+                                    controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
                                 // Traitement des tables DSN
                                 else if (lTablesDSN.Contains(sTable) == true)
                                 {
-                                    controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData);
+                                    controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
                                 if (commandData1.Result == ParamAppli.StatutInfo)
-                                    controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData);
+                                    controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                             }
                             else
                             {
@@ -213,14 +213,28 @@ namespace PNPUCore.Process
 
         }
 
-       /* public List<string> GetDSNTables(string  sConnectionString)
-        {
-            List<string> lDSNTables = new List<string>();
-            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
-            string sRequete = "SELECT "
+        /* public List<string> GetDSNTables(string  sConnectionString)
+         {
+             List<string> lDSNTables = new List<string>();
+             DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
+             string sRequete = "SELECT "
 
-            dataManagerSQL
-        }*/
+             dataManagerSQL
+         }*/
+
+
+        public string GenerateReplace(string sTable, string sFilter, string sOrgaOrg, string sOrgaDest)
+        {
+            string sResultat = string.Empty;
+
+            if (sFilter.Contains("ID_ORGANIZATION") == false)
+                sFilter = " AND ID_ORGANIZATION='" + sOrgaDest + "'";
+            sResultat = "Replace " + sTable + "  from origin to destination where \"" + sFilter + "\"";
+            sResultat = ReplaceID_ORGA(sResultat, sOrgaOrg, sOrgaDest);
+
+            return sResultat;
+        }
+
 
         public void GetPKFields(string sTable, string sConnectionString, ref List<string> lPKFields)
         {
@@ -560,7 +574,7 @@ namespace PNPUCore.Process
         private List<RmdCommandData> getAllDataCmd(String sConnection, bool bOracle)
         {
             DataManagerAccess dataManager = new DataManagerAccess();
-            string requete = "select ID_PACKAGE, ID_CLASS, ID_OBJECT, CMD_CODE, CMD_SEQUENCE from M4RDL_PACK_CMDS where ID_PACKAGE like '%_D'";
+            string requete = "select A.ID_PACKAGE, A.ID_CLASS, A.ID_OBJECT, A.CMD_CODE, A.CMD_SEQUENCE, B.CCT_TASK_ID from M4RDL_PACK_CMDS A, M4RDL_PACKAGES B where A.ID_PACKAGE like '%_D' AND A.ID_PACKAGE = B.ID_PACKAGE";
             if (TYPOLOGY != "Dédié") requete += " AND  CMD_ACTIVE = -1 "; // Hors dédié on ne prend que les commandes actives
             List<RmdCommandData> listDatacmd = new List<RmdCommandData>();
             DataSet result = dataManager.GetData(requete, sConnection);
@@ -574,7 +588,7 @@ namespace PNPUCore.Process
                     sCommande = GereOracle(sCommande, bOracle);
                 if (sCommande != string.Empty)
                 {
-                    RmdCommandData commandData = new RmdCommandData(row[0].ToString(), row[1].ToString(), row[2].ToString(), sCommande, ((decimal)(row[4])).ToString("###0"), this);
+                    RmdCommandData commandData = new RmdCommandData(row[0].ToString(), row[1].ToString(), row[2].ToString(), sCommande, ((decimal)(row[4])).ToString("###0"), this, row[5].ToString());
                     listDatacmd.Add(commandData);
 
                 }

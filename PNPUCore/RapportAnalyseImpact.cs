@@ -305,11 +305,13 @@ namespace PNPUCore.Rapport
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
-            foreach (CommandData type in listCommandData)
+            if (listCommandData != null)
             {
-                type.ToJSONRepresentation(jw, id);
+                foreach (CommandData type in listCommandData)
+                {
+                    type.ToJSONRepresentation(jw, id);
+                }
             }
-
             jw.WriteEndArray();
             jw.WriteEndObject();
         }
@@ -409,11 +411,15 @@ namespace PNPUCore.Rapport
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
-            foreach (RapportAnalyseImpactMDBElementALocaliser element in listRapportAnalyseImpactMDBElementALocaliser)
             {
-                element.ToJSONRepresentation(jw, id);
+                if (listRapportAnalyseImpactMDBElementALocaliser != null)
+                {
+                    foreach (RapportAnalyseImpactMDBElementALocaliser element in listRapportAnalyseImpactMDBElementALocaliser)
+                    {
+                        element.ToJSONRepresentation(jw, id);
+                    }
+                }
             }
-
             jw.WriteEndArray();
             jw.WriteEndObject();
         }

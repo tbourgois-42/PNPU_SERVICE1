@@ -26,7 +26,7 @@ namespace PNPUCore.Controle
             processAnalyseImpactData = processAnalyseImpact;
         }
 
-        public void AnalyzeCommand(string commandeLine, ref CommandData commandData, ref EltsALocaliserData eltsALocaliserData)
+        public void AnalyzeCommand(string commandeLine, ref CommandData commandData, ref EltsALocaliserData eltsALocaliserData, RmdCommandData rmdCommandData)
         {
             string sTable = String.Empty;
             string sFilter = String.Empty;
@@ -37,8 +37,10 @@ namespace PNPUCore.Controle
              string sFiltreRef;
             string sFiltreClient;
             string sOrgaOrg;
+            string sOrgaOrgFiltre;
             //ControleCommandData controleCommandData;
             List<string> lColumnsList = new List<string>();
+            string sCommandeGeneree;
 
             dmsDataManager = new DataManagerSQLServer();
             processAnalyseImpactData.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
@@ -52,22 +54,24 @@ namespace PNPUCore.Controle
             // On traite une commande de propagation
             if ((commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0) || (commandeLine.ToUpper().IndexOf("DELETE") >= 0) || (commandeLine.ToUpper().IndexOf("UPDATE") >= 0))
             {
+                if (processAnalyseImpactData.TYPOLOGY == "Dédié")
+                    sOrgaOrg = "0002";
+                else
+                    sOrgaOrg = "9999";
+
                 if (commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                 {
-                    sOrgaOrg = "0001";
+                    sOrgaOrgFiltre = "0001";
                 }
                 else
                 {
-                    if (processAnalyseImpactData.TYPOLOGY == "Dédié")
-                        sOrgaOrg = "0002";
-                    else
-                        sOrgaOrg = "9999";
+                    sOrgaOrgFiltre = sOrgaOrg;
                 }
 
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrg, "0001");
-                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrg, sOrgaCour);
+                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
+                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
@@ -96,7 +100,12 @@ namespace PNPUCore.Controle
                             sSCO_ID_BODY = drRowRef[2].ToString();
                             sSCO_ID_ROW = drRowRef[3].ToString();
 
-                            ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW);
+                            if (ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW) == false)
+                            {
+                                sCommandeGeneree = processAnalyseImpactData.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
+                                RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
+
+                            }
                         }
                     }
                 }
@@ -152,6 +161,7 @@ namespace PNPUCore.Controle
                         else
                             commandDataCour.Message += "SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
                         commandDataCour.Message += ").";
+
                     }
                 }
             }

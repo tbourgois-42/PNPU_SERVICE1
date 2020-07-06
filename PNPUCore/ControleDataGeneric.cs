@@ -20,7 +20,7 @@ namespace PNPUCore.Controle
             processAnalyseImpactData = pProcessAnalyseImpact;
         }
 
-        public void AnalyzeCommand(string commandeLine, ref CommandData commandData, ref EltsALocaliserData eltsALocaliserData)
+        public void AnalyzeCommand(string commandeLine, ref CommandData commandData, ref EltsALocaliserData eltsALocaliserData, RmdCommandData rmdCommandData)
         {
             string sTable = String.Empty;
             string sFilter = String.Empty;
@@ -38,8 +38,9 @@ namespace PNPUCore.Controle
             string sOrgaCour;
             List<string> lColumnsList = new List<string>();
             string sOrgaOrg;
+            string sOrgaOrgFiltre;
             bool bFlagUpdate;
-
+            string sCommandeGeneree;
 
             processAnalyseImpactData.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
@@ -49,22 +50,23 @@ namespace PNPUCore.Controle
             // On traite les commandes pour lesquelles on peut extraire la table
             if ((sTable != String.Empty) && (processAnalyseImpactData.lListPersonnalTables.Contains(sTable) == false))
             {
+                if (processAnalyseImpactData.TYPOLOGY == "Dédié")
+                    sOrgaOrg = "0002";
+                else
+                    sOrgaOrg = "9999";
 
                 if (commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                 {
-                    sOrgaOrg = "0001";
+                    sOrgaOrgFiltre = "0001";
                 }
                 else
                 {
-                    if (processAnalyseImpactData.TYPOLOGY == "Dédié")
-                        sOrgaOrg = "0002";
-                    else
-                        sOrgaOrg = "9999";
+                    sOrgaOrgFiltre = sOrgaOrg;
                 }
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrg, "0001") ;
-                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrg, sOrgaCour);
+                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001") ;
+                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
@@ -101,6 +103,9 @@ namespace PNPUCore.Controle
                         eltsALocaliserData.Result = commandData.Result;
                         eltsALocaliserData.Name = commandData.Name;
                         eltsALocaliserData.Message = commandData.Message;
+                        sCommandeGeneree = processAnalyseImpactData.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
+                        RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
+
                     }
                     else
                     {
@@ -111,6 +116,8 @@ namespace PNPUCore.Controle
                             eltsALocaliserData.Result = commandData.Result;
                             eltsALocaliserData.Name = commandData.Name;
                             eltsALocaliserData.Message = commandData.Message;
+                            sCommandeGeneree = processAnalyseImpactData.ReplaceID_ORGA(commandeLine, sOrgaOrg, sOrgaCour);
+                            RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
                         }
                         else
                         {
@@ -143,11 +150,17 @@ namespace PNPUCore.Controle
                                 else
                                     commandData.Message = "Les données du client sont standards. La commande peut être exécutée.";
                                 commandData.Result = ParamAppli.StatutOk;
+                                sCommandeGeneree = processAnalyseImpactData.ReplaceID_ORGA(commandeLine, sOrgaOrg, sOrgaCour);
+                                RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
+
                             }
                             else
                             {
                                 commandData.Message = "Les données du client contiennent du spécifique. Commande à traiter à la main.";
                                 commandData.Result = ParamAppli.StatutError;
+                                sCommandeGeneree = processAnalyseImpactData.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
+                                RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
+
                             }
                             eltsALocaliserData.Result = commandData.Result;
                             eltsALocaliserData.Name = commandData.Name;
@@ -162,6 +175,8 @@ namespace PNPUCore.Controle
                     eltsALocaliserData.Result = commandData.Result;
                     eltsALocaliserData.Name = commandData.Name;
                     eltsALocaliserData.Message = commandData.Message;
+                    sCommandeGeneree = processAnalyseImpactData.ReplaceID_ORGA(commandeLine, sOrgaOrg, sOrgaCour);
+                    RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
                 }
             }
             else
@@ -171,6 +186,7 @@ namespace PNPUCore.Controle
                 eltsALocaliserData.Result = commandData.Result;
                 eltsALocaliserData.Name = commandData.Name;
                 eltsALocaliserData.Message = commandData.Message;
+                RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, commandeLine, processAnalyseImpactData.ID_INSTANCEWF);
             }
         }
     }

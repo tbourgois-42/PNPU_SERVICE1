@@ -15,8 +15,9 @@ namespace PNPUCore.Process
         String idObject;
         String cmdSequence;
         IProcess process;
+        String idCCTTask;
   
-        public RmdCommandData(string idPackage, string idClass, string idObject, string cmdCode, string cmdSequence, IProcess process)
+        public RmdCommandData(string idPackage, string idClass, string idObject, string cmdCode, string cmdSequence, IProcess process, string idCCTTask)
         {
             this.idPackage = idPackage;
             this.idClass = idClass;
@@ -24,6 +25,7 @@ namespace PNPUCore.Process
             this.idObject = idObject;
             this.cmdSequence = cmdSequence;
             this.process = process;
+            this.idCCTTask = idCCTTask;
         }
 
         public string IdPackage { get => idPackage; set => idPackage = value; }
@@ -32,6 +34,7 @@ namespace PNPUCore.Process
         public string IdObject { get => idObject; set => idObject = value; }
         public string CmdSequence { get => cmdSequence; set => cmdSequence = value; }
         public IProcess Process { get => process; set => process = value; }
+        public string IdCCTTask { get => idCCTTask; set => idCCTTask = value; }
     }
 }
 
