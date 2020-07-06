@@ -17,6 +17,7 @@ using AntsCode.Util;
 using System.Configuration;
 using HttpMultipartParser;
 using System.Net;
+using System.Data;
 
 namespace WcfService1
 {
@@ -352,6 +353,39 @@ namespace WcfService1
             int nbAvailablePack = int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));
 
             return nbAvailablePack;
+        }
+
+        public string AuthUser(Stream stream)
+        {
+            string sToken = Authentification.AuthUser(stream);
+
+            if (sToken == string.Empty)
+            {
+                throw new WebFaultException(HttpStatusCode.Unauthorized);
+            }
+
+            return sToken;
+        
+        }
+
+        public string ConnectUser(Stream stream)
+        {
+            return Authentification.ConnectUser(stream);
+        }
+
+        public string SignOutUser(Stream stream)
+        {
+            return Authentification.SignOutUser(stream) ? "Déconnection effectué avec succès" : throw new WebFaultException(HttpStatusCode.BadRequest);
+        }
+
+        public string GetHabilitation(string user, string token)
+        {
+            return Authentification.GetHabilitation(user, token);
+        }
+
+        public string[] GetListClients(string user, string habilitation)
+        {
+            return Authentification.GetListClient(habilitation, user);
         }
     }
 

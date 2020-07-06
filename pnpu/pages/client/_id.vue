@@ -849,42 +849,6 @@ export default {
     },
 
     /**
-     * Download available zip file
-     */
-    downloadZip() {
-      const vm = this
-      axios({
-        method: 'GET',
-        url: `${process.env.WEB_SERVICE_WCF}/clients/livraison/1/24`,
-        responseType: 'arraybuffer'
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            const url = window.URL.createObjectURL(new Blob([response.data]))
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute(
-              'download',
-              this.clientName +
-                '_' +
-                this.workflowID +
-                '_' +
-                this.idInstanceWF +
-                '_.zip'
-            )
-            document.body.appendChild(link)
-            link.click()
-          }
-        })
-        .catch(function(error) {
-          vm.showSnackbar(
-            'error',
-            `${error} ! Impossible de récupérer les packages`
-          )
-        })
-    },
-
-    /**
      * Gére l'affichage du snackbar.
      * @param {string} color - Couleur de la snackbar.
      * @param {string} message - Message affiché dans la snackbar.

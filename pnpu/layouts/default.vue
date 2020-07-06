@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="authenticated"
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
@@ -11,7 +12,7 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title font-weight-medium">
-            PeopleNet Platform Update
+            Bonjour, {{ user }}
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -73,15 +74,24 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" app flat dark dense color="primary">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="authenticated" @click.stop="drawer = !drawer" />
       <v-btn text to="/">
         <v-toolbar-title class="title"
           >PeopleNet Platform Update</v-toolbar-title
         >
       </v-btn>
       <v-spacer />
-      <v-btn icon>
-        <v-icon>mdi-account</v-icon>
+      <v-btn
+        v-if="authenticated"
+        @click.prevent="signOut"
+        text
+        class="ma-2"
+        to="/logout"
+      >
+        <v-icon left>mdi-logout</v-icon> Se déconnecter
+      </v-btn>
+      <v-btn v-if="!authenticated" text class="ma-2" to="/signin">
+        <v-icon left>mdi-account</v-icon> Se connecter
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -96,6 +106,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -160,12 +171,41 @@ export default {
               to: '/reportAlpha/rapportTNR'
             }
           ]
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Livraison',
+          to: '/rapportLivraison'
+        },
+        {
+          icon: 'mdi-login',
+          text: 'Login',
+          to: '/signin'
         }
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'PeopleNet Platform Update'
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      authenticated: 'modules/auth/authenticated',
+      user: 'modules/auth/user'
+    })
+  },
+
+  methods: {
+    ...mapActions({
+      signOutAction: 'modules/auth/signOut'
+    }),
+
+    signOut() {
+      this.signOutAction().then(() => {
+        this.$router.push('/signin')
+      })
     }
   }
 }

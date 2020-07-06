@@ -29,6 +29,7 @@ import DataTableProcessus from '../components/DataTableProcessus'
 import DataTableWorkflow from '../components/DataTableWorkflow'
 export default {
   components: { DataTableProcessus, DataTableWorkflow },
+  middleware: 'authenticatedMiddleware',
   data: () => ({
     selectedProcessus: []
   }),
