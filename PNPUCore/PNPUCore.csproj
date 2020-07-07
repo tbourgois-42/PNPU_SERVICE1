@@ -49,6 +49,7 @@
     <Compile Include="ControleDataGeneric.cs" />
     <Compile Include="ControleDataTablesDSN.cs" />
     <Compile Include="ProcessAnalyseImpactLogique.cs" />
+    <Compile Include="RapportDependancesInterPack.cs" />
     <Compile Include="RapportAnalyseImpactData.cs" />
     <Compile Include="RapportAnalyseImpactLogique.cs" />
     <Compile Include="ControleDataM4SCO_ROW_COL_DEF.cs" />

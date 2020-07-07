@@ -49,6 +49,7 @@ namespace PNPUCore.Rapport
         private DateTime debut;
         private DateTime fin;
         private string result;
+        public RapportDependancesInterPack rapportDependancesInterPack = new RapportDependancesInterPack();
 
         private string DetermineFormat(int iNombre)
         {
@@ -97,67 +98,66 @@ namespace PNPUCore.Rapport
             {
                 string sIDSource;
                 sIDSource = (i + 2).ToString(DetermineFormat(Source.Count + 1));
-                jw.WriteStartObject();
-                jw.WritePropertyName("id");
-                jw.WriteValue(sIDSource);
-                jw.WritePropertyName("name");
-                jw.WriteValue(sCote + Source[i].Name + sCote);
-                jw.WritePropertyName("result");
-                jw.WriteValue(sCote + Source[i].Result + sCote);
-
-
-                // Cas particulier des dépedances 
-                if (Source[i].Name == "Contrôle des dépendances inter packages")
+                // Cas particulier des dépendances 
+                if (Source[i].Name == "Contrôle des dépendances du livrable")
                 {
-                    jw.WritePropertyName("children");
-                    jw.WriteStartArray();
-                    jw.WriteEndArray();
+                    rapportDependancesInterPack.ToJSONRepresentation(jw,"3",0);
                 }
-
-
-                if (Source[i].Controle.Count > 0)
+                else
                 {
-                    jw.WritePropertyName("children");
-                    jw.WriteStartArray();
-                    for (int j = 0; j < Source[i].Controle.Count; j++)
+                    jw.WriteStartObject();
+                    jw.WritePropertyName("id");
+                    jw.WriteValue(sIDSource);
+                    jw.WritePropertyName("name");
+                    jw.WriteValue(sCote + Source[i].Name + sCote);
+                    jw.WritePropertyName("result");
+                    jw.WriteValue(sCote + Source[i].Result + sCote);
+
+
+                    if (Source[i].Controle.Count > 0)
                     {
-                        string sIDControle;
-                        sIDControle = sIDSource + (j + 1).ToString(DetermineFormat(Source[i].Controle.Count));
-                        jw.WriteStartObject();
-                        jw.WritePropertyName("id");
-                        jw.WriteValue(sIDControle);
-                        jw.WritePropertyName("name");
-                        jw.WriteValue(sCote2 + Source[i].Controle[j].Name + sCote2);
-                        jw.WritePropertyName("Tooltip");
-                        jw.WriteValue(sCote2 + Source[i].Controle[j].Tooltip + sCote2);
-                        jw.WritePropertyName("result");
-                        jw.WriteValue(sCote + Source[i].Controle[j].Result + sCote);
-
-                        if (Source[i].Controle[j].Message.Count > 0)
+                        jw.WritePropertyName("children");
+                        jw.WriteStartArray();
+                        for (int j = 0; j < Source[i].Controle.Count; j++)
                         {
+                            string sIDControle;
+                            sIDControle = sIDSource + (j + 1).ToString(DetermineFormat(Source[i].Controle.Count));
+                            jw.WriteStartObject();
+                            jw.WritePropertyName("id");
+                            jw.WriteValue(sIDControle);
+                            jw.WritePropertyName("name");
+                            jw.WriteValue(sCote2 + Source[i].Controle[j].Name + sCote2);
+                            jw.WritePropertyName("Tooltip");
+                            jw.WriteValue(sCote2 + Source[i].Controle[j].Tooltip + sCote2);
+                            jw.WritePropertyName("result");
+                            jw.WriteValue(sCote + Source[i].Controle[j].Result + sCote);
 
-                            jw.WritePropertyName("message");
-                            jw.WriteStartArray();
-                            for (int k = 0; k < Source[i].Controle[j].Message.Count; k++)
+                            if (Source[i].Controle[j].Message.Count > 0)
                             {
-                                string sIDMessage;
-                                sIDMessage = sIDControle + (k + 1).ToString(DetermineFormat(Source[i].Controle[j].Message.Count));
-                                jw.WriteStartObject();
-                                jw.WritePropertyName("id");
-                                jw.WriteValue(sIDMessage);
-                                jw.WritePropertyName("name");
-                                jw.WriteValue(sCote + Source[i].Controle[j].Message[k] + sCote);
-                                jw.WriteEndObject();
+
+                                jw.WritePropertyName("message");
+                                jw.WriteStartArray();
+                                for (int k = 0; k < Source[i].Controle[j].Message.Count; k++)
+                                {
+                                    string sIDMessage;
+                                    sIDMessage = sIDControle + (k + 1).ToString(DetermineFormat(Source[i].Controle[j].Message.Count));
+                                    jw.WriteStartObject();
+                                    jw.WritePropertyName("id");
+                                    jw.WriteValue(sIDMessage);
+                                    jw.WritePropertyName("name");
+                                    jw.WriteValue(sCote + Source[i].Controle[j].Message[k] + sCote);
+                                    jw.WriteEndObject();
+                                }
+                                jw.WriteEndArray();
+
                             }
-                            jw.WriteEndArray();
-
+                            jw.WriteEndObject();
                         }
-                        jw.WriteEndObject();
-                    }
-                    jw.WriteEndArray();
+                        jw.WriteEndArray();
 
+                    }
+                    jw.WriteEndObject();
                 }
-                jw.WriteEndObject();
 
             }
 

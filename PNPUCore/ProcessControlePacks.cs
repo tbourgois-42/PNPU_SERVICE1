@@ -122,6 +122,12 @@ namespace PNPUCore.Process
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
             RapportSource = new Rapport.Source();
             RapportSource.Name = "Contrôle des dépendances du livrable";
+
+            RapportProcess.rapportDependancesInterPack.Id = "3";
+            RapportProcess.rapportDependancesInterPack.Name = "Contrôle des dépendances du livrable";
+            RapportProcess.rapportDependancesInterPack.Result = ParamAppli.StatutOk;
+            RapportProcess.rapportDependancesInterPack.listRapportDependancesInterPackMDB = new List<RapportDependancesInterPackMDB>();
+
             RapportSource.Controle = new List<RControle>();
             RapportControle = new RControle();
             RapportControle.Name = cdmControleDependancesMDB.ToString();
@@ -131,17 +137,17 @@ namespace PNPUCore.Process
             statutControle = cdmControleDependancesMDB.MakeControl();
             Logger.Log(this, cdmControleDependancesMDB, statutControle, "Fin du contrôle " + cdmControleDependancesMDB.ToString());
             RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
-            //RapportSource2.Controle.Add(RapportControle2);
+            RapportSource.Controle.Add(RapportControle);
             RapportProcess.Source.Add(RapportSource);
 
             // Génération du fichier CSV des dépendances
-            StreamWriter swFichierDep = new StreamWriter(Path.Combine(ParamAppli.DossierTemporaire, this.WORKFLOW_ID.ToString("000000") + "_DEPENDANCES.csv"));
+           /* StreamWriter swFichierDep = new StreamWriter(Path.Combine(ParamAppli.DossierTemporaire, this.WORKFLOW_ID.ToString("000000") + "_DEPENDANCES.csv"));
             foreach (string sLig in RapportControle.Message)
                 swFichierDep.WriteLine(sLig);
             swFichierDep.Close();
             // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
             RapportControle.Message.Clear();
-            RapportSource.Result = RapportControle.Result;
+            RapportSource.Result = RapportControle.Result;*/
 
             // Recherche des dépendances avec les tâches CCT sur la base de référence
             ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
