@@ -47,13 +47,13 @@ namespace PNPUCore.Controle
             bool bFlagCommandAjoutee = false;
 
             dmsDataManager = new DataManagerSQLServer();
-            processAnalyseImpactData.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
+            dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
             sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
             commandDataCour = commandData;
 
-            processAnalyseImpactData.GetPKFields(sTable, sConnectionString, ref lPKFields);
+            dmsDataManager.GetPKFields(sTable, sConnectionString, ref lPKFields);
 
             // On traite une commande de propagation
             if ((commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0) || (commandeLine.ToUpper().IndexOf("DELETE") >= 0) || (commandeLine.ToUpper().IndexOf("UPDATE") >= 0))
@@ -78,8 +78,8 @@ namespace PNPUCore.Controle
 
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
-                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
+                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
+                    sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace PNPUCore.Controle
 
                 if ((dsDataSetRef != null) && (dsDataSetRef.Tables[0].Rows.Count > 0))
                 {
-                    bSFR_CK_IS_ACTIF = processAnalyseImpactData.ExistsField(dsDataSetRef.Tables[0], "SFR_CK_IS_ACTIF");
+                    bSFR_CK_IS_ACTIF = dmsDataManager.ExistsField(dsDataSetRef.Tables[0], "SFR_CK_IS_ACTIF");
                      // Cas particulier du paramétrage client sur une autre ligne
                     foreach (DataRow drRowRef in dsDataSetRef.Tables[0].Rows)
                     {
@@ -148,7 +148,7 @@ namespace PNPUCore.Controle
                                 if (bFlagCommandAjoutee == false)
                                 {
                                     bFlagCommandAjoutee = true;
-                                    sCommandeGeneree = processAnalyseImpactData.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
+                                    sCommandeGeneree = dmsDataManager.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
                                     RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
                                 }
 

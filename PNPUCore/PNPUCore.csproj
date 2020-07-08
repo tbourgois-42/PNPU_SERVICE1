@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="ControleLivraisonTablecomplete.cs" />
     <Compile Include="ControleDataGeneric.cs" />
     <Compile Include="ControleDataTablesDSN.cs" />
     <Compile Include="ProcessAnalyseImpactLogique.cs" />

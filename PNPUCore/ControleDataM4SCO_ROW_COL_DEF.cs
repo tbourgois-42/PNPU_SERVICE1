@@ -43,7 +43,7 @@ namespace PNPUCore.Controle
             string sCommandeGeneree;
 
             dmsDataManager = new DataManagerSQLServer();
-            processAnalyseImpactData.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
+            dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
             if (TableTraitee.Contains(sTable) == false) return;
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
@@ -70,8 +70,8 @@ namespace PNPUCore.Controle
 
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
-                    sFiltreClient = processAnalyseImpactData.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
+                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
+                    sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
@@ -102,7 +102,7 @@ namespace PNPUCore.Controle
 
                             if (ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW) == false)
                             {
-                                sCommandeGeneree = processAnalyseImpactData.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
+                                sCommandeGeneree = dmsDataManager.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
                                 RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
 
                             }
