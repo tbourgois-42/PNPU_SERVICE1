@@ -10,11 +10,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Reflection.Emit;
+using System.Net;
 
 namespace PNPUTools
 {
     public class Authentification
     {
+        /// <summary>
+        /// Connect user
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns>Return token string if user has been successfuly connected</returns>
         public static string AuthUser(Stream stream)
         {
             var parser = MultipartFormDataParser.Parse(stream);
@@ -42,6 +48,11 @@ namespace PNPUTools
             return sToken;
         }
 
+        /// <summary>
+        /// Get user token
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns>Return token string</returns>
         static string GetUserToken(string User)
         {
             string sToken = string.Empty;
@@ -63,6 +74,11 @@ namespace PNPUTools
             return sToken;
         }
 
+        /// <summary>
+        /// Check if user exist in database
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns>Return true if exist, false if not</returns>
         static bool IsUserExist(string User)
         {
             try
@@ -78,6 +94,11 @@ namespace PNPUTools
             }
         }
 
+        /// <summary>
+        /// Generate token for user
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns>Return string token</returns>
         static string GenerateToken(string User)
         {
             string sToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -97,6 +118,11 @@ namespace PNPUTools
             return sToken;
         }
 
+        /// <summary>
+        /// Check if token was expired
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns>Return true if expired, false if not</returns>
         static bool IsExpiredToken(string User)
         {
             DateTime expiredTime;
@@ -123,6 +149,12 @@ namespace PNPUTools
             return value;
         }
 
+        /// <summary>
+        /// Check if user password is correct
+        /// </summary>
+        /// <param name="User"></param>
+        /// <param name="Password"></param>
+        /// <returns>Return true if password is correct, false if not</returns>
         static bool IsValidAuth(string User, string Password)
         {
             string sRequest = "SELECT USER_ID, PASSWORD FROM PNPU_USER WHERE USER_ID = '" + User + "'";
@@ -157,6 +189,13 @@ namespace PNPUTools
             return value;
         }
 
+        /// <summary>
+        /// Decrypt user password
+        /// </summary>
+        /// <param name="cipherText"></param>
+        /// <param name="Key"></param>
+        /// <param name="IV"></param>
+        /// <returns></returns>
         static string DecryptStringToBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             if (cipherText == null || cipherText.Length <= 0)
@@ -190,6 +229,11 @@ namespace PNPUTools
             return plaintext;
         }
 
+        /// <summary>
+        /// Connect user
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
         public static string ConnectUser(Stream stream)
         {
             var parser = MultipartFormDataParser.Parse(stream);
@@ -199,6 +243,11 @@ namespace PNPUTools
             return GetUserName(sToken);
         }
 
+        /// <summary>
+        /// Get username by user token
+        /// </summary>
+        /// <param name="sToken"></param>
+        /// <returns></returns>
         static string GetUserName(string sToken)
         {
             string user = null;
@@ -215,6 +264,11 @@ namespace PNPUTools
             return user;
         }
 
+        /// <summary>
+        /// Disconnect user
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
         public static bool SignOutUser(Stream stream)
         {
             var parser = MultipartFormDataParser.Parse(stream);
@@ -225,6 +279,12 @@ namespace PNPUTools
             return DisconnectUser(user, token);
         }
 
+        /// <summary>
+        /// Delete user token from PNPU_USER_TOKEN
+        /// </summary>
+        /// <param name="User"></param>
+        /// <param name="Token"></param>
+        /// <returns></returns>
         static bool DisconnectUser(string User, string Token)
         {
             string sRequest = "DELETE FROM PNPU_USER_TOKEN WHERE USER_ID = '" + User + "' AND TOKEN = '" + Token + "'";
@@ -233,6 +293,12 @@ namespace PNPUTools
             return result == true ? true : false;
         }
 
+        /// <summary>
+        /// Get habilitation profil of user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public static string GetHabilitation(string user, string token)
         {
             user = user.Contains('\\') ? user.Replace(@"\", @"%") : user;
@@ -242,6 +308,11 @@ namespace PNPUTools
             return HasData(result) ? result.Tables[0].Rows[0].ItemArray[0].ToString() : "";
         }
 
+        /// <summary>
+        /// Check if dataset have data
+        /// </summary>
+        /// <param name="datas"></param>
+        /// <returns></returns>
         private static bool HasData(DataSet datas)
         {
             if (datas.Tables.Count > 0)
@@ -254,37 +325,138 @@ namespace PNPUTools
             }
         }
 
-        public static string[] GetListClient(string sHabilitation, string sUser)
+        /// <summary>
+        /// Get list of visible clients for a user
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <returns>Return list of client</returns>
+        public static IEnumerable<InfoClient> GetListClient(string sHabilitation, string sUser)
         {
             string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
             sUser = sUser.Contains('\\') ? sUser.Replace(@"\", @"%") : sUser;
-            List<string> lstClient = null;
+            List<string> lstClient = new List<string>();
 
-            string sRequest = "SELECT CLIENT_ID FROM HABILITATIONS WHERE USER_ID LIKE '%" + sUser + "%'";
+            string sRequest = string.Empty;
 
             if (sHabilitation == "ADMIN")
             {
-                return lstClientKeys;
+                sRequest = GenerateRequestGetListClient(lstClient, sHabilitation);
+                DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.connectionStringSupport);
+                if (HasData(result))
+                {
+                    return result.Tables[0].DataTableToList<InfoClient>();
+                }
             }
             else
             {
-                DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.connectionStringSupport);
+                lstClient = GenerateListStringClient(lstClientKeys, sUser);
+                sRequest = GenerateRequestGetListClient(lstClient, sHabilitation);
 
+                DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.connectionStringSupport);
                 if (HasData(result))
                 {
-                    foreach (string clientIDKeys in lstClientKeys)
+                    return result.Tables[0].DataTableToList<InfoClient>();
+                }
+            }
+            return null;
+        }
+
+        private static List<string> GenerateListStringClient(string[] lstClientKeys, string sUser)
+        {
+            string sRequest = "SELECT CLIENT_ID FROM HABILITATIONS WHERE USER_ID LIKE '%" + sUser + "%'";
+            List<string> lstClient = new List<string>();
+
+            DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.connectionStringSupport);
+
+            if (HasData(result))
+            {
+                foreach (string clientIDKeys in lstClientKeys)
+                {
+                    foreach (DataRow clientID in result.Tables[0].Rows)
                     {
-                        foreach (DataRow clientID in result.Tables[0].Rows)
+                        if (clientIDKeys.ToString() == clientID.ItemArray[0].ToString())
                         {
-                            if (clientIDKeys.ToString() == clientID.ItemArray[0].ToString())
-                            {
-                                lstClient.Add(clientIDKeys);
-                            }
+                            lstClient.Add(clientIDKeys);
                         }
                     }
                 }
-                return lstClient != null ? lstClient.ToArray() : null;
             }
+
+            return lstClient;
+        }
+
+        /// <summary>
+        /// Generate request in order to Get list of clients
+        /// </summary>
+        /// <param name="lstClient"></param>
+        /// <returns>Return string request</returns>
+        private static string GenerateRequestGetListClient(List<string> lstClient, string sHabilitation)
+        {
+            string sSelect = "SELECT CLI.CLIENT_ID AS ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS AS TYPOLOGY_ID, COD.CODIFICATION_LIBELLE AS TYPOLOGY ";
+            string sFrom = "FROM A_CLIENT CLI, A_CODIFICATION COD ";
+            string sWhere = "WHERE COD.CODIFICATION_ID = CLI.SAAS ";
+            string sRequest = sSelect + sFrom;
+            string sAlias = "CLI";
+
+            sWhere += BuildHabilitationWhereClause(lstClient, sHabilitation, sAlias);
+
+            sRequest = sSelect + sFrom + sWhere;
+
+            return sRequest;
+        }
+
+        /// <summary>
+        /// Build habilitation where clause
+        /// </summary>
+        /// <param name="lstClient"></param>
+        /// <param name="shabilitation"></param>
+        /// <returns></returns>
+        private static string BuildHabilitationWhereClause(List<string> lstClient, string sHabilitation, string sAlias)
+        {
+            string sWhere = string.Empty;
+            bool bPremier = true;
+
+            // If is'nt admin profil we generate where clause with list of client visible for the user
+            if (sHabilitation != "ADMIN")
+            {
+                foreach (var clientID in lstClient)
+                {
+                    if (bPremier == true)
+                    {
+                        bPremier = false;
+                        sWhere += "AND " + sAlias + ".CLIENT_ID IN (";
+                    }
+                    else
+                    {
+                        sWhere += ",";
+                    }
+
+                    sWhere += "'" + clientID + "'";
+                }
+                sWhere += ")";
+            }
+            return sWhere;
+        }
+
+        public static string GetHabilitationWhereClause(string sHabilitation, string sUser, string sAlias)
+        {
+            string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
+            List<string> lstClient  = null;
+
+            if (sHabilitation == "ADMIN")
+            {
+                lstClient = new List<string>(lstClientKeys);
+            } else
+            {
+                lstClient = GenerateListStringClient(lstClientKeys, sUser);
+            }
+
+            
+
+            string sWhere = BuildHabilitationWhereClause(lstClient, sHabilitation, sAlias);
+
+            return sWhere;
         }
     }
 }

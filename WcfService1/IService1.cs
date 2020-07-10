@@ -21,8 +21,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "clients/dashboard/{workflowId}/{idInstanceWF}")]
-        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId, string idInstanceWF);
+            UriTemplate = "clients/dashboard/{workflowId}/{idInstanceWF}/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId, string idInstanceWF, string sHabilitation, string sUser);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -267,7 +267,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "auth/habilitation/clients/?user={user}&habilitation={habilitation}")]
-        string[] GetListClients(string user, string habilitation);
+        IEnumerable<InfoClient> GetListClients(string user, string habilitation);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

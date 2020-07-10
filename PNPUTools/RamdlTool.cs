@@ -43,7 +43,7 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //string sEnvironnement = InfoClient.;
-            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18.fr.meta4.com;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
             sMdp = "CapitalM4ADM";
             ParamRamDlInit();
@@ -55,7 +55,7 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //TODO in waiting having r eal data;
-            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18.fr.meta4.com;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
             sMdp = "CapitalM4ADM";
             ParamRamDlInit();

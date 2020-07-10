@@ -14,6 +14,10 @@
           <v-list-item-title class="title font-weight-medium">
             Bonjour, {{ user }}
           </v-list-item-title>
+          <v-chip class="mt-2 mb-2" color="primary" label>
+            <v-icon left>mdi-account</v-icon>
+            {{ profil }}
+          </v-chip>
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mx-4"></v-divider>
@@ -193,7 +197,8 @@ export default {
   computed: {
     ...mapGetters({
       authenticated: 'modules/auth/authenticated',
-      user: 'modules/auth/user'
+      user: 'modules/auth/user',
+      profil: 'modules/auth/profil'
     })
   },
 

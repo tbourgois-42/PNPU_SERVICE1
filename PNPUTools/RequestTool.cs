@@ -61,17 +61,22 @@ namespace PNPUTools
         /// <param name="WORKFLOW_ID"></param>
         /// <param name="ID_H_WORKFLOW"></param>
         /// <returns></returns>
-        public static IEnumerable<InfoClientStep> GetAllInfoClient(decimal WORKFLOW_ID, int ID_H_WORKFLOW)
+        public static IEnumerable<InfoClientStep> GetAllInfoClient(decimal WORKFLOW_ID, int ID_H_WORKFLOW, string sHabilitation, string sUser)
         {
             // Par défault on charge sur le dashboard la dernière instance de workflow lancée
             string defaultWorkflowID = "(SELECT TOP(1) PHW.WORKFLOW_ID FROM PNPU_H_WORKFLOW PHW, PNPU_H_WORKFLOW PHW2 WHERE PHW.ID_H_WORKFLOW = PHW2.ID_H_WORKFLOW AND PHW.WORKFLOW_ID = PHW2.WORKFLOW_ID AND PHW.LAUNCHING_DATE = (SELECT MAX(PHW2.LAUNCHING_DATE) FROM PNPU_H_WORKFLOW PHW2))";
+
+            string sWhereHabilitation = Authentification.GetHabilitationWhereClause(sHabilitation, sUser, "PHS");
 
             string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
 
             string sSelect = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, MAX(PHS.LAUNCHING_DATE) AS LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, PS.ID_PROCESS,  PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE ";
             string sFrom = "FROM PNPU_H_STEP PHS, PNPU_STEP PS ";
-            string sWhere = "WHERE PHS.WORKFLOW_ID = " + filtre + " AND PHS.ID_H_WORKFLOW = " + ID_H_WORKFLOW + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / 8 *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
-            string sGroupBy = "GROUP BY PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, PHS.ID_STATUT, PHS.ENDING_DATE, PS.ORDER_ID, PS.ID_PROCESS ";
+            string sWhere = "WHERE PHS.WORKFLOW_ID = " + filtre + " AND PHS.ID_H_WORKFLOW = " + ID_H_WORKFLOW + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = 28 GROUP BY PS.WORKFLOW_ID) *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
+
+            sWhere += sWhereHabilitation;
+
+            string sGroupBy = " GROUP BY PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, PHS.ID_STATUT, PHS.ENDING_DATE, PS.ORDER_ID, PS.ID_PROCESS ";
             string sOrderBy = "ORDER BY PHS.ID_PROCESS DESC";
 
             string sRequest = sSelect + sFrom + sWhere + sGroupBy + sOrderBy;

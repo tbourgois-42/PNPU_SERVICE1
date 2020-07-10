@@ -78,8 +78,6 @@ export default {
     snackbarMessage: '',
     snackbar: false,
     colorsnackbar: '',
-    token: '',
-    user: '',
     message: '',
     showAlert: false
   }),

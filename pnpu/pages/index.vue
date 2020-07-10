@@ -81,8 +81,8 @@
                         <v-tooltip top>
                           <template v-slot:activator="{ on }">
                             <v-list-item-title
-                              v-on="on"
                               class="title overflow_ellipsis"
+                              v-on="on"
                               >{{ item.CLIENT_NAME }}</v-list-item-title
                             >
                           </template>
@@ -176,6 +176,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 import CardLaunchWorkflow from '../components/CardLaunchWorkflow'
 import CardIndicateurs from '../components/CardIndicateurs'
@@ -221,12 +222,10 @@ export default {
   }),
 
   computed: {
-    colorLocalisation() {
-      if (this.nbLocalisation >= 0 && this.nbLocalisation <= 50) return 'indigo'
-      if (this.nbLocalisation >= 51 && this.nbLocalisation <= 60) return 'teal'
-      if (this.nbLocalisation >= 61 && this.nbLocalisation <= 80) return 'green'
-      return 'red'
-    }
+    ...mapGetters({
+      user: 'modules/auth/user',
+      profil: 'modules/auth/profil'
+    })
   },
 
   watch: {
@@ -359,7 +358,13 @@ export default {
           `${process.env.WEB_SERVICE_WCF}/Clients/Dashboard/` +
             this.workflowID +
             '/' +
-            this.idInstanceWF
+            this.idInstanceWF,
+          {
+            params: {
+              user: this.user,
+              habilitation: this.profil
+            }
+          }
         )
         .then(function(response) {
           vm.items = response.data.GetInfoAllClientResult

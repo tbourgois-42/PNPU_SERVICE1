@@ -59,11 +59,11 @@ namespace WcfService1
             return string.Format("You entered: {0}", value);
         }
 
-        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_, string idInstanceWF_)
+        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_, string idInstanceWF_, string sHabilitation, string sUser)
         {
             int workflowId = int.Parse(workflowId_);
             int idInstanceWF = int.Parse(idInstanceWF_);
-            return RequestTool.GetAllInfoClient(workflowId, idInstanceWF);
+            return RequestTool.GetAllInfoClient(workflowId, idInstanceWF, sHabilitation, sUser);
             //return RequestTool.GetAllStep(); 
         }
         public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
@@ -383,7 +383,7 @@ namespace WcfService1
             return Authentification.GetHabilitation(user, token);
         }
 
-        public string[] GetListClients(string user, string habilitation)
+        public IEnumerable<InfoClient> GetListClients(string user, string habilitation)
         {
             return Authentification.GetListClient(habilitation, user);
         }
