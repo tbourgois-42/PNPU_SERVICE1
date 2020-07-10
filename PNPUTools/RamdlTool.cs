@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using PNPUTools.DataManager;
 
 namespace PNPUTools
 {
@@ -43,9 +45,9 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //string sEnvironnement = InfoClient.;
-            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+            sChaineDeConnexion = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";//"DSN =CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
-            sMdp = "CapitalM4ADM";
+            sMdp = "M4ADM";//"CapitalM4ADM";
             ParamRamDlInit();
         }
 
@@ -55,11 +57,238 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //TODO in waiting having r eal data;
-            sChaineDeConnexion = "DSN=CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+            sChaineDeConnexion = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";//"DSN =CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
             sLogin = "M4ADM";
-            sMdp = "CapitalM4ADM";
+            sMdp = "M4ADM";// "CapitalM4ADM";
             ParamRamDlInit();
         }
+
+        /// <summary>
+        /// Cette méthode lance l'installation des mdb stockés en base en fonction du workflow, du client et du niveau de dépendance pour les packs de dépendance
+        /// </summary>
+        /// <param name="Niv">Niveau du pack de dépendance à installé (1,2 ou 3) ou le pack de base du HF si 0.</param>
+        /// <param name="dResultat">Au retour contient le résultat fe l'installation sous forme de dictionnaire, nom du mdb en clé et la liste des erreurs en valeur</param>
+        /// <param name="bRemovePack">Si true, effectue un remove pack pour chaque pack du mdb avant de lancer l'installation</param>
+        public void InstallMdbRAMDL(int Niv, ref Dictionary<string,List<string>> dResultat, bool bRemovePack = false)
+        {
+            string sCheminMDB;
+            ProcessStartInfo psiStartInfo;
+            System.Diagnostics.Process pProcess;
+            StreamWriter swFichierIni;
+            string sCheminCommandFile;
+
+            // MHUM pour test
+            InfoClient.ConnectionStringQA2 = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";
+
+            List<string> lListError = null;
+
+            this.pathLogFile = ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\RAMDL_";
+            this.pathIni = ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRAMDL.ini";
+            this.DirectoryResult = ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT;
+
+            sCheminCommandFile = ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL\\CmdRamDL.sql";
+
+            // Suppression des fichiers d'analyse et de log précédents
+            //this.deleteTempFile();
+            try
+            {
+
+                if (Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL") == false)
+                    Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
+
+                if (Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT) == false)
+                    Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
+
+                string[] tMdb = null;
+                List<string> listMDB = new List<string>();
+
+                PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+                if (Niv > 0 )
+                    gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_H_WORKFLOW, InfoClient.ID_CLIENT, Niv);
+                else
+                    gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_H_WORKFLOW);
+
+                if ((tMdb != null) && (tMdb.Length > 0))
+                {
+                    foreach (String sFichier in tMdb)
+                    {
+                        listMDB.Add(sFichier);
+                    }
+
+                    for (int i = 0; i < listMDB.Count; i++)
+                    {
+                        sCheminMDB = listMDB[i];
+
+                        //< LOG_FILE >
+                        string logFile = pathLogFile + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log";
+                        //<ORIGIN_CONN>
+                        string originConn = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + sCheminMDB;
+                        //<TARGET_CONN>
+                        string targetConn = InfoClient.ConnectionStringQA2;
+                        //<USER_CVM>
+                        string userCVM = sLogin;
+                        //<PWD_CVM>
+                        string pwdCVM = sMdp;
+
+                        // Gestion des remove pack
+                        if (bRemovePack == true)
+                        {
+                            iniFile = String.Format(ParamAppli.templateIniFileRemovePack, targetConn, targetConn, logFile, sCheminCommandFile);
+                            swFichierIni = new StreamWriter(this.pathIni, false);
+                            swFichierIni.WriteLine(iniFile);
+                            swFichierIni.Close();
+
+                            // Ecriture du fichier de commandes
+                            swFichierIni = new StreamWriter(sCheminCommandFile, false);
+                            DataManagerAccess dataManagerAccess = new DataManagerAccess();
+                            DataSet dataSet = dataManagerAccess.GetData("SELECT ID_PACKAGE FROM M4RDL_PACKAGES", sCheminMDB);
+                            if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
+                            {
+                                foreach(DataRow drRow in dataSet.Tables[0].Rows)
+                                {
+                                    swFichierIni.WriteLine("Remove Pack \"" + drRow[0].ToString() + "\" From Destination\\");
+                                }
+                            }
+
+                            swFichierIni.Close();
+                            
+                            // Encodage du mot de passe
+                            psiStartInfo = new ProcessStartInfo();
+                            psiStartInfo.FileName = ParamAppli.RamdDlPAth;
+                            psiStartInfo.Arguments = "ENC " + this.pathIni;
+                            pProcess = System.Diagnostics.Process.Start(psiStartInfo);
+                            pProcess.WaitForExit();
+                            pProcess.Close();
+
+                            // Lancement des remove pack
+                            psiStartInfo = new ProcessStartInfo();
+                            psiStartInfo.FileName = ParamAppli.RamdDlPAth;
+                            psiStartInfo.Arguments = this.pathIni;
+                            pProcess = System.Diagnostics.Process.Start(psiStartInfo);
+
+                            pProcess.WaitForExit();
+                            pProcess.Close();
+                        }
+
+                        iniFile = String.Format(ParamAppli.templateIniFileInstallPack, originConn, targetConn, logFile, userCVM, pwdCVM);
+                        swFichierIni = new StreamWriter(this.pathIni, false);
+                        swFichierIni.WriteLine(iniFile);
+                        swFichierIni.Close();
+
+                        // Encodage du mot de passe
+                        psiStartInfo = new ProcessStartInfo();
+                        psiStartInfo.FileName = ParamAppli.RamdDlPAth;
+                        psiStartInfo.Arguments = "ENC " + this.pathIni;
+                        pProcess = System.Diagnostics.Process.Start(psiStartInfo);
+                        pProcess.WaitForExit();
+                        pProcess.Close();
+
+                        // Lancement de l'installation
+                        psiStartInfo = new ProcessStartInfo();
+                        psiStartInfo.FileName = ParamAppli.RamdDlPAth;
+                        psiStartInfo.Arguments = this.pathIni;
+                        pProcess = System.Diagnostics.Process.Start(psiStartInfo);
+
+                        pProcess.WaitForExit();
+                        pProcess.Close();
+
+                        lListError = new List<string>();
+                        ExecutionInstallationCorrecte(logFile, ref lListError);
+                        dResultat.Add(Path.GetFileName(sCheminMDB), lListError);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+               
+            }
+        }
+
+        /// <summary>
+        /// Méthode vérifiant le résultat d'une installation.
+        /// </summary>
+        /// <param name="sCheminFichierLog">Chemin du fichier de log Ramdl à vérifier</param>
+        /// <param name="lErrorMessages">au retour liste contenant les messages d'erreur trouvé dans le fichier</param>
+        /// <returns></returns>
+        private bool ExecutionInstallationCorrecte(string sCheminFichierLog, ref List<string> lErrorMessages)
+        {
+            StreamReader srFichierLog = new StreamReader(sCheminFichierLog);
+            string sContenufichierLog;
+            bool bResultat = true;
+            string sNomFichierRAMDLLOG = string.Empty;
+            List<string> lListePacksErreur = new List<string>();
+
+
+            try
+            {
+                while (srFichierLog.EndOfStream == false)
+                {
+                    sContenufichierLog = srFichierLog.ReadLine();
+
+                    if (Regex.IsMatch(sContenufichierLog, @"^\[[^\]]*\]\*(.*)$") == true)
+                    {
+                        foreach (string sExpression in Regex.Split(sContenufichierLog, @"^\[[^\]]*\]\*(.*)$"))
+                        {
+                            if (sExpression != string.Empty)
+                            {
+
+                                if (Regex.IsMatch(sExpression, @"^\[Error 0\] Disconnect from") == false)
+                                {
+                                    if (Regex.IsMatch(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'") == true)
+                                    {
+                                        foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'"))
+                                        {
+                                            if (sExpression2 != string.Empty)
+                                            {   
+                                                lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
+                                                bResultat = false;
+                                            }
+                                        }
+                                    }
+
+                                    if (Regex.IsMatch(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors") == true)
+                                    {
+                                        foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors"))
+                                        {
+                                            if (sExpression2 != string.Empty)
+                                            {
+                                                // Vérifie si la deuxième exécution n'a pas abouti
+                                                if ((sContenufichierLog.IndexOf("'" + sExpression2 + "' executed successfully") == -1) && (lListePacksErreur.IndexOf(sExpression2) == -1))
+                                                {
+                                                    lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
+                                                    lListePacksErreur.Add(sExpression2);
+                                                    bResultat = false;
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if ((sExpression.IndexOf("[Error -1] The RAM-DL repository") > -1) && (sExpression.IndexOf(" is not compatible with the connected repository") > -1))
+                                    {
+                                        lErrorMessages.Add("MDB non compatible.");
+                                        bResultat = false;
+                                    }
+                                    if (sExpression.Contains("[Error 100] No packages found in origin source or already loaded at destination") == true)
+                                    {
+                                        lErrorMessages.Add("Aucun nouveau pack trouvé dans le mdb.");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                srFichierLog.Close();
+            }
+            catch (Exception ex)
+            {
+                bResultat = false;
+            }
+
+            return bResultat;
+        }
+
 
         public List<String> AnalyseMdbRAMDL()
         {
@@ -162,7 +391,7 @@ namespace PNPUTools
             //<USER_CVM>
             string userCVM = sLogin;
             //<PWD_CVM>
-            string pwdCVM = sMdp;//swFichierIni.WriteLine("Logan%Celya09");
+            string pwdCVM = sMdp;
             this.pathResult = DirectoryResult + "\\Analyse_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".TXT";
 
             iniFile = String.Format(ParamAppli.templateIniFileAnalyseImpact, originConn, targetConn, logFile, userCVM, pwdCVM);

@@ -39,41 +39,127 @@ namespace PNPUCore.Process
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
             int idInstanceWF = this.ID_INSTANCEWF;
+            Dictionary<string, List<string>> dResultat = new Dictionary<string, List<string>>();
+            Rapport.Source RapportSource;
+            string SourceResult = ParamAppli.StatutOk;
+
+
+            // MHUM A terme devra être récupéré depuis l'écran de lancement des WF
+            bool bRemovePack = true;
+
+
+            // MHUM Pour tests
+            /*GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
+            gereMDBDansBDD.AjouteZipBDD(@"D:\PNPU\MDB de test\Nouveau dossier\TEST_INSTALL_N1.zip", WORKFLOW_ID, ParamAppli.ConnectionStringBaseAppli, idInstanceWF, CLIENT_ID, 1);
+            gereMDBDansBDD.AjouteZipBDD(@"D:\PNPU\MDB de test\Nouveau dossier\TEST_INSTALL_N2.zip", WORKFLOW_ID, ParamAppli.ConnectionStringBaseAppli, idInstanceWF, CLIENT_ID, 2);
+            gereMDBDansBDD.AjouteZipBDD(@"D:\PNPU\MDB de test\Nouveau dossier\TEST_INSTALL_N3.zip", WORKFLOW_ID, ParamAppli.ConnectionStringBaseAppli, idInstanceWF, CLIENT_ID, 3);*/
 
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
-            Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Name = "IdRapport - ProcessIntegration";
-            RapportSource.Controle = new List<RControle>();
-            foreach (IControle controle in listControl)
-            {
-                controle.SetProcessControle(this);
-                RControle RapportControle = new RControle();
-                RapportControle.Name = controle.GetLibControle();
-                RapportControle.Tooltip = controle.GetTooltipControle();
-                RapportControle.Message = new List<string>();
-                RapportControleCourant = RapportControle;
-                string statutControle = controle.MakeControl();
-                //ERROR > WARNING > OK
-                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    GlobalResult = statutControle;
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID), ID_INSTANCEWF);
 
-                }
-                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+
+            // Gestion des packs de dépendance
+            for (int iNiv = 3; iNiv > 0; iNiv--)
+            {
+                ramdlTool.InstallMdbRAMDL(iNiv, ref dResultat, bRemovePack);
+                if (dResultat.Count > 0)
                 {
-                    GlobalResult = statutControle;
+                    RapportSource = new Rapport.Source();
+                    RapportSource.Name = "Installation des packs de dépendance Niveau " + iNiv.ToString();
+                    RapportSource.Controle = new List<RControle>();
+                    SourceResult = ParamAppli.StatutOk;
+
+                    foreach (string sMdb in dResultat.Keys)
+                    {
+                        RControle RapportControle = new RControle();
+                        RapportControle.Message = new List<string>();
+                        RapportControle.Name = sMdb;
+
+                        if (dResultat[sMdb].Count > 0)
+                        {
+                            if ((dResultat[sMdb].Count == 1) && (dResultat[sMdb][0] == "Aucun nouveau pack trouvé dans le mdb."))
+                            {
+                                RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning];
+                                if (SourceResult == ParamAppli.StatutOk)
+                                    SourceResult = ParamAppli.StatutWarning;
+                            }
+                            else
+                            {
+                                SourceResult = ParamAppli.StatutError;
+                                RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
+                            }
+                            RapportControle.Message = dResultat[sMdb];
+                        }
+                        else
+                            RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+
+                        RapportSource.Controle.Add(RapportControle);
+                        RapportSource.Result = ParamAppli.TranscoSatut[SourceResult];
+                        if (GlobalResult == ParamAppli.StatutOk)
+                            GlobalResult = SourceResult;
+                        else if ((GlobalResult == ParamAppli.StatutWarning) && (SourceResult == ParamAppli.StatutError))
+                            GlobalResult = ParamAppli.StatutError;
+
+                    }
+                    RapportProcess.Source.Add(RapportSource);
+                    dResultat.Clear();
                 }
-                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+            }
+
+
+            //Lancement installation mdb
+              
+            RapportSource = new Rapport.Source();
+            RapportSource.Name = "Installation des packs du HF";
+            RapportSource.Controle = new List<RControle>();
+            SourceResult = ParamAppli.StatutOk;
+
+            ramdlTool.InstallMdbRAMDL(0, ref dResultat, bRemovePack);
+
+           
+            foreach (string sMdb in dResultat.Keys)
+            {
+                RControle RapportControle = new RControle();
+                RapportControle.Message = new List<string>();
+                RapportControle.Name = sMdb;
+
+                if (dResultat[sMdb].Count > 0)
+                {
+                    if ((dResultat[sMdb].Count == 1) && (dResultat[sMdb][0] == "Aucun nouveau pack trouvé dans le mdb."))
+                    {
+                        RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning];
+                        if (SourceResult == ParamAppli.StatutOk)
+                            SourceResult = ParamAppli.StatutWarning;
+                    }
+                    else
+                    {
+                        SourceResult = ParamAppli.StatutError;
+                        RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
+                    }
+                    RapportControle.Message = dResultat[sMdb];
+                }
+                else
+                    RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+
                 RapportSource.Controle.Add(RapportControle);
+                RapportSource.Result = ParamAppli.TranscoSatut[SourceResult];
+                if (GlobalResult == ParamAppli.StatutOk)
+                    GlobalResult = SourceResult;
+                else if ((GlobalResult == ParamAppli.StatutWarning) && (SourceResult == ParamAppli.StatutError))
+                    GlobalResult = ParamAppli.StatutError;
+
             }
             RapportProcess.Source.Add(RapportSource);
+
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
+            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
 
             if (GlobalResult == ParamAppli.StatutOk)
             {

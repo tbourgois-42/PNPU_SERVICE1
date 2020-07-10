@@ -102,7 +102,8 @@ namespace PNPUTools
 
 
         public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact";
-        public const string RamdDlPAth = "C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation";
 
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";
@@ -143,6 +144,8 @@ namespace PNPUTools
 
         public const string templateIniFileAnalyseImpact = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n";//<CLEAR_PREVIOUS_ANALYSIS>\r\nYES\r\n<PACK_ANALYSIS>\r\n{5}\r\n<ANALYSE_RESULTS_FILE>\r\n{6}
         public const string templateIniFileGeneratePack = "<ORIGIN_CONN>\r\n{0}\r\n<LOG_FILE>\r\n{1}\r\n<PKGWZ_CONTENT_TYPE>\r\n3\r\n<PKGWZ_CCT_VERSION>\r\n8.1\r\n<PKGWZ_CCT_TASK_LIST>\r\n{2}\r\n<PKGWZ_MDB_ADD_TABLES>\r\n3\r\n<PKGWZ_MDB_PATH>\r\n{3}\r\n<PKGWZ_PACK_NAME>\r\nPNPU_\r\n<PKGWZ_PACK_LOAD_DATA>\r\n1\r\n<PKGWZ_PACK_REFRESH_CHANGES>\r\n0\r\n<PKGWZ_PACK_SAVE_ORDER>\r\n1\r\n<PKGWZ_PACK_SAVE_SCRIPT>\r\n0";
+        public const string templateIniFileInstallPack = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n<PACK_LOAD>\r\n#ALL#\r\n<PACK_EXEC>\r\n#ALL#";
+        public const string templateIniFileRemovePack = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<SCRIPT_EXEC>\r\n{3}\r\n";
 
         public static Queue<string> qFIFO = null;
 
