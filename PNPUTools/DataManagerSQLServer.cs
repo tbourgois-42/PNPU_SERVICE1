@@ -185,6 +185,68 @@ namespace PNPUTools.DataManager
         }
 
         /// <summary>
+        /// Gestion des transactions SQL.
+        /// </summary>
+        /// <param name="transactionName">Nom de la transaction.</param>
+        /// <param name="reqInsert">Tableau de requêtes à traiter.</param>
+         /// <param name="parameters">Paramètres nécessaire à la requête</param>
+        /// <returns>Retourne le dernier ID auto incrément en cas d'INSERT, autrement "Requête traité avec succès".</returns>
+        public static string ExecuteSqlTransaction(string[] reqInsert, string[] parameters, string sConnectionString)
+        {
+            string ReturnValue = "OK";
+
+            using (SqlConnection connection = new SqlConnection(sConnectionString))
+            {
+
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                string UniqueID = Guid.NewGuid().ToString().Substring(0, 32);
+
+                transaction = connection.BeginTransaction(UniqueID);
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    for (int i = 0; i < parameters.Count(); i += 2)
+                    {
+                        command.Parameters.AddWithValue(parameters[i], parameters[i + 1]);
+                    }
+                    foreach (string request in reqInsert)
+                    {
+                        // Requete d'insertion
+                       
+                        command.CommandText = request;
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                    // Si on n'est pas sur une requête d'insertion on renvoi une chaine de caractère
+                    ReturnValue = (ReturnValue == null) ? "Requête traité avec succès" : ReturnValue;
+                }
+                catch (Exception ex)
+                {
+                    ReturnValue = ex.ToString();
+
+                    // En cas d'erreur on Rollback la transaction
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception exRlbk)
+                    {
+                        // Le Rollback a échoué. Exemple, coupure de connexion avec le serveur
+                        ReturnValue = exRlbk.ToString();
+                    }
+                }
+            }
+            return ReturnValue;
+        }
+
+        /// <summary>
         /// Check if exist
         /// </summary>
         /// <param name="sRequest">Request</param>

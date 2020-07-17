@@ -147,6 +147,18 @@ namespace PNPUTools
         public const string templateIniFileInstallPack = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n<PACK_LOAD>\r\n#ALL#\r\n<PACK_EXEC>\r\n#ALL#";
         public const string templateIniFileRemovePack = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<SCRIPT_EXEC>\r\n{3}\r\n";
 
+        // Statuts des tâches planifiées
+        public const string statusScheduleTaskTermine = "0";
+        public const string statusScheduleTaskAttente = "1";
+        public const string statusScheduleTaskEnCours = "2";
+        public const string statusScheduleTaskAnnule1 = "3";
+        public const string statusScheduleTaskAnnule2 = "5";
+        public const string statusScheduleTaskAnnule3 = "7";
+        public const string statusScheduleTaskExpire = "4";
+        public const string statusScheduleTaskInterrompu = "6";
+        public const string statusScheduleTaskAbandon1 = "10";
+        public const string statusScheduleTaskAbandon2 = "11";
+
         public static Queue<string> qFIFO = null;
 
         /// <summary>  
