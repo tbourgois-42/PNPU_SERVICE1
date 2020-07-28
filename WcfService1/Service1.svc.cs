@@ -154,7 +154,7 @@ namespace WcfService1
         {
         }
 
-        public void UploadFile(Stream stream, string workflowId_)
+        public void UploadFile(Stream stream)
         {
             var parser = MultipartFormDataParser.Parse(stream);
 
@@ -162,12 +162,11 @@ namespace WcfService1
             string clients = parser.GetParameterValue("clients"); // separate by ,
             bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
             string instanceName = parser.GetParameterValue("instanceName");
+            int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
             
             // Files are stored in a list:
             FilePart file = parser.Files.First();
             string FileName = file.FileName;
-
-            int workflowId = int.Parse(workflowId_);
 
             //EST CE QUE LE DOSSIER TEMP EXISTE
             if (Directory.Exists(ParamAppli.DossierTemporaire) == false)

@@ -211,8 +211,8 @@ namespace WcfService1
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "worflow/{WorkflowId}/uploadFile")]
-        void UploadFile(Stream stream, string WorkflowId);
+            UriTemplate = "worflow/uploadFile")]
+        void UploadFile(Stream stream);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
