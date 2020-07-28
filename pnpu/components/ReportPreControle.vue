@@ -32,7 +32,7 @@
       <v-col cols="12">
         <v-divider class="mx-4 mb-4"></v-divider>
       </v-col>
-      <v-col :cols="nbColsLeft" :style="displayNoneLeft">
+      <v-col cols="4">
         <v-card class="mx-auto" max-width="500">
           <v-sheet class="pa-4 primary">
             <v-text-field
@@ -50,7 +50,7 @@
           <v-card-text>
             <v-treeview
               v-model="selection"
-              :items="JSON_TEMPLATE"
+              :items="treeviewFiltered"
               :search="searchTreeview"
               :filter="filter"
               hoverable
@@ -90,7 +90,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col :cols="nbColsRight">
+      <v-col cols="8">
         <v-list-item-group class="mb-0 d-flex">
           <v-list-item-icon>
             <v-icon>mdi-folder</v-icon>
@@ -100,117 +100,39 @@
               {{ titleTable }}</v-list-item-title
             >
           </v-list-item-content>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                fab
-                depressed
-                color="primary"
-                class="ma-4"
-                :style="displayButton"
-                v-on="on"
-                @click="backToTreeView($event)"
-              >
-                <v-icon>mdi-undo</v-icon>
-              </v-btn>
-            </template>
-            <span>Retourner à l'arborescence</span>
-          </v-tooltip>
           <v-checkbox
             v-model="checkbox"
-            label="Voir uniquement les contrôles en erreur"
+            label="Voir uniquement les contrôles en erreur / warning"
             hide-details
-            :style="displayCheckbox"
             @change="Filtered($event)"
           ></v-checkbox>
         </v-list-item-group>
-        <transition v-if="noData === false" appear name="fade">
-          <v-card v-if="titleTable !== 'Contrôle des dépendances du livrable'">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left">Nom</th>
-                    <th v-if="hasMessage === false" class="text-left">
-                      Statut
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(item, idxTableFiltered) in tableFiltered"
-                    :key="idxTableFiltered"
-                  >
-                    <v-tooltip
-                      v-if="item.Tooltip !== undefined"
-                      top
-                      color="primary"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <td v-on="on">{{ item.name }}</td>
-                      </template>
-                      <span class="mt-6">
-                        <v-icon dark class="mr-4">
-                          mdi-alert-circle
-                        </v-icon>
-                        {{ item.Tooltip }}
-                      </span>
-                    </v-tooltip>
-                    <td v-else>{{ item.name }}</td>
-                    <td v-if="hasMessage === false">
-                      <v-icon
-                        v-if="item.result === 'mdi-check-circle'"
-                        color="success"
-                        >{{ item.result }}</v-icon
-                      >
-                      <v-icon
-                        v-if="item.result === 'mdi-alert'"
-                        color="yellow darken-2"
-                        >{{ item.result }}</v-icon
-                      >
-                      <v-icon
-                        v-if="item.result === 'mdi-alert-circle'"
-                        color="error"
-                        >{{ item.result }}</v-icon
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-card>
-          <v-card v-else flat :style="displayButton">
-            <v-card-title>
-              <v-text-field
-                v-model="searchInterDep"
-                append-icon="mdi-magnify"
-                label="Chercher un résultat ..."
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="csvFile"
-              :search="searchInterDep"
-              :page.sync="page"
-              :items-per-page="itemsPerPage"
-              hide-default-footer
-              multi-sort
-              @page-count="pageCount = $event"
-            ></v-data-table>
-            <div class="text-center pa-2">
-              <v-pagination
-                v-model="page"
-                :length="pageCount"
-                circle
-              ></v-pagination>
-            </div>
-          </v-card>
+        <transition appear name="fade">
+          <v-data-table
+            :headers="headers"
+            :items="tableFiltered"
+            :search="searchDataTable"
+            :hide-default-footer="hideFooterDataTable(tableFiltered)"
+            :items-per-page="itemsPerPage"
+            multi-sort
+            class="elevation-1 mt-4 mr-2"
+            v-if="selectedItemTable.length > 0"
+          >
+            <template v-slot:top>
+              <v-text-field v-model="searchDataTable" label="Chercher un élément" class="mx-4" append-icon="mdi-magnify"></v-text-field>
+            </template>
+            <template v-slot:item.result="{ item }">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon v-bind="attrs" v-on="on" :color=getgetColorIconResult(item.result)>{{ item.result }}</v-icon>
+                </template>
+                <span>{{ tooltipMessage }}</span>
+              </v-tooltip>
+            </template>
+          </v-data-table>
         </transition>
         <v-alert
-          v-if="noData === true"
+          v-if="selectedItemTable.length === 0"
           icon="mdi-check"
           prominent
           text
@@ -251,61 +173,21 @@
           d'éxecution ci-dessous</v-alert
         >
       </v-col>
-      <v-alert
-        v-if="noData === true"
-        :icon="iconValid"
-        prominent
-        text
-        type="success"
-      >
-        Ce process s'est déroulé avec succés, vous pouvez consultez le rapport
-        en visualisant l'étape concernée dans le Stepper d'erreur.
-      </v-alert>
-      <v-alert
-        v-if="processInError === true"
-        :icon="iconAlert"
-        prominent
-        text
-        type="error"
-      >
-        Ce process s'est terminé avec des erreurs, vous pouvez consultez le
-        rapport en visualisant l'étape concernée dans le Stepper
-      </v-alert>
-      <v-alert
-        v-if="processInWarning === true"
-        :icon="iconWarning"
-        prominent
-        text
-        type="warning"
-      >
-        Ce process s'est déroulé avec des warning, vous pouvez consultez le
-        rapport en visualisant l'étape concernée dans le Stepper
-      </v-alert>
-      <v-alert
-        v-if="undefinedIcon === true"
-        :icon="iconAlert"
-        prominent
-        text
-        type="error"
-      >
-        Résultat du contrôle inconnu
-      </v-alert>
     </v-row>
   </v-layout>
 </template>
 
 <script>
-import Papa from 'papaparse'
 import axios from 'axios'
 export default {
   props: {
     idPROCESS: {
-      type: String,
-      default: '1'
+      type: Number,
+      default: 1
     },
     reportJsonData: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     idInstanceWF: {
       type: String,
@@ -315,7 +197,7 @@ export default {
       type: String,
       default: ''
     },
-    nbAvailablePack: {
+    currentID_STATUT: {
       type: String,
       default: ''
     }
@@ -334,23 +216,6 @@ export default {
     snackbarMessage: '',
     snackbar: false,
     colorsnackbar: '',
-    JSON_TEMPLATE: {},
-    headers: [
-      {
-        text: 'Contrôle',
-        align: 'start',
-        sortable: false,
-        value: 'id'
-      },
-      { text: 'Debut', value: 'debut' },
-      { text: 'Fin', value: 'fin' },
-      { text: 'Source', value: 'source' },
-      { text: 'Id', value: 'id' },
-      { text: 'Contrôle', value: 'controle' },
-      { text: 'Id', value: 'id' },
-      { text: 'Result', value: 'result' },
-      { text: 'Message', value: 'message' }
-    ],
     searchTreeview: null,
     caseSensitive: false,
     open: ['public'],
@@ -363,27 +228,24 @@ export default {
     checkbox: false,
     tableFiltered: [],
     checkboxValue: false,
-    noData: false,
-    hasMessage: false,
-    searchInterDep: '',
     page: 1,
     pageCount: 0,
-    itemsPerPage: 10,
-    nbColsRight: 8,
-    nbColsLeft: 4,
-    displayNoneLeft: '',
-    displayButton: 'display:none',
-    tableCtrlDepInterPack: [],
+    itemsPerPage: 15,
     showInfo: false,
-    displayCheckbox: '',
     loadingReport: false,
     reportTNR: false,
     alertMessage: '',
     alertIcon: 'mdi-information-outline',
     idInstanceWF: '',
-    nbAvailablePack: 0,
     reportLivraison: false,
-    clientTaskName: ''
+    clientTaskName: '',
+    undefinedIcon: false,
+    headers: [
+      { text: 'Nom', value: 'name' },
+      { text: 'Status', value: 'result' }
+    ],
+    searchDataTable: '',
+    treeviewFiltered: []
   }),
 
   computed: {
@@ -398,6 +260,11 @@ export default {
     }
   },
 
+  created() {
+    this.titleTable = this.reportJsonData[0].name
+    this.selectedItemTable = this.reportJsonData[0].children
+  },
+
   watch: {
     /**
      * Step sélectionné dans le stepper.
@@ -410,11 +277,30 @@ export default {
     }
   },
 
-  mounted() {
-    this.parseCSVFile()
-  },
-
   methods: {
+    /**
+     * Generate color icon according to icon word
+     */
+    getgetColorIconResult(icon) {
+      if (icon === 'mdi-alert-circle') {
+        return 'error'
+      }
+      if (icon === 'mdi-alert') {
+        return 'warning'
+      }
+      if (icon === 'mdi-check-circle') {
+        return 'success'
+      }
+    },
+
+    /**
+     * Hide data table footer
+     * @param {array} - Treeview items selected 
+     */
+    hideFooterDataTable(items) {
+      return items.length < this.itemsPerPage ? true : false
+    },
+
     /**
      * Elément sélectionné dans l'arborescence.
      * @param {object} e - $event.
@@ -423,32 +309,18 @@ export default {
       if (e.length > 0) {
         for (const selectedItem of e) {
           if (selectedItem.children !== undefined) {
-            this.selectedItemTable = selectedItem.children
-            this.hasMessage = false
+            this.GenerateTableValues(selectedItem.children, selectedItem.name)
+          } else if (selectedItem.elements !== undefined) {
+            this.GenerateTableValues(selectedItem.elements, selectedItem.name)
+            this.headers = [
+              { text: 'Object Type', value: 'objectType' },
+              { text: 'Object ID', value: 'objectID' }
+            ]
+          } else if (selectedItem.message !== undefined) {
+            this.GenerateTableValues(selectedItem.message, selectedItem.name)
           } else {
-            this.selectedItemTable = selectedItem.message
-            this.hasMessage = true
+            this.selectedItemTable = []
           }
-          this.titleTable = selectedItem.name
-          this.noData = false
-          // On change l'affichage si on est sur le Contrôle des dépendances inter packages (CSV)
-          if (this.titleTable === 'Contrôle des dépendances inter packages') {
-            this.displayNoneLeft = 'display:none'
-            this.nbColsRight = 12
-            this.displayButton = ''
-            this.displayCheckbox = 'display:none'
-          } else {
-            this.displayNoneLeft = ''
-            this.nbColsRight = 8
-            this.displayButton = 'display:none'
-            this.displayCheckbox = ''
-          }
-        }
-        if (
-          e[0].children === undefined &&
-          this.selectedItemTable === undefined
-        ) {
-          this.noData = true
         }
       }
       this.showInfo = false
@@ -456,47 +328,28 @@ export default {
     },
 
     /**
-     * Parse le CSV.
-     * TODO : Récupérer le fichier CSV depuis la base de données
+     * Generate table values according to treeview items selected
+     * @param {array} items - Treeview items selected 
+     * @param {string} tableName - Name shown above table
      */
-    parseCSVFile() {
-      const csvString = `Mdb;Pack;Mdb2;Pack2;Classe elt1 / Classe elt2;Elt1;Elt2
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152794_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152208_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;FIELD / FIELD;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152208_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152794_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;FIELD / FIELD;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL
-`
-      const config = {
-        delimiter: '', // auto-detect
-        newline: '', // auto-detect
-        quoteChar: '"',
-        escapeChar: '"',
-        header: false,
-        transformHeader: undefined,
-        dynamicTyping: false,
-        preview: 0,
-        encoding: '',
-        worker: false,
-        comments: false,
-        step: undefined,
-        complete: undefined,
-        error: undefined,
-        download: false,
-        downloadRequestHeaders: undefined,
-        downloadRequestBody: undefined,
-        skipEmptyLines: false,
-        chunk: undefined,
-        fastMode: undefined,
-        beforeFirstChunk: undefined,
-        withCredentials: undefined,
-        transform: undefined,
-        delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
+    GenerateTableValues(items, tableName) {
+      const vm = this
+      vm.titleTable = tableName
+      if (items !== undefined) {
+        this.selectedItemTable = items
+        items.forEach((children) => {
+          if (children.result === undefined) {
+            this.headers = [
+              { text: 'Nom', value: 'name' }
+            ]
+          } else {
+            this.headers = [
+              { text: 'Nom', value: 'name' },
+              { text: 'Status', value: 'result' }
+            ]
+          }
+        })
       }
-      this.csvFileHeader = Papa.parse(csvString, config).data[0]
-      this.csvFile = Papa.parse(csvString, config).data.slice(1)
-      this.csvFile = this.csvFile.slice(0, this.csvFile.length - 1)
     },
 
     /**
@@ -505,11 +358,12 @@ export default {
      */
     Filtered(checkboxValue) {
       this.checkboxValue = checkboxValue
+      this.FilterTreeview(checkboxValue)
       if (checkboxValue === true) {
         this.tableFiltered = []
         if (this.selectedItemTable !== undefined) {
           this.selectedItemTable.forEach((element) => {
-            if (element.result === 'mdi-alert-circle') {
+            if (element.result !== 'mdi-check-circle') {
               this.tableFiltered.push(element)
             }
           })
@@ -520,15 +374,37 @@ export default {
     },
 
     /**
-     * Permet de retouner à l'affichage avec l'arborescence quand on est sur l'affichage du CSV.
-     * @param {object} value - $event.
+     * Filter treeview
+     * @param {bool} checkboxValue
      */
-    backToTreeView(value) {
-      this.displayNoneLeft = ''
-      this.nbColsRight = 8
-      this.displayButton = 'display:none'
-      this.showInfo = true
-      this.displayCheckbox = ''
+    FilterTreeview(checkboxValue) {
+      if (checkboxValue) {
+        // Remove all if global control is OK
+        if (this.treeviewFiltered[0].result === 'mdi-check-circle') {
+          this.treeviewFiltered.splice(0, 1)
+        } else {
+          // Remove "Controle des dépendances du livrable" level
+          this.removeElements(this.treeviewFiltered[0].children)
+          // Remove all check control
+          this.removeElements(this.treeviewFiltered[0].children[0].children)
+        }
+      } else {
+        // Deep Copy of this.items
+        this.treeviewFiltered = JSON.parse(JSON.stringify(this.items))
+      }
+    },
+
+    /**
+     * Remove elements from array
+     * @param {array} array - Array to check for remove elements
+     */
+    removeElements(array) {
+      for (let index = 0; index < array.length; index++) {
+        if (array[index].result === 'mdi-check-circle') {
+          array.splice(index, 1)
+          index --
+        }
+      }
     },
 
     /**

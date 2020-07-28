@@ -42,59 +42,9 @@
             :key="ixdContent"
             :step="ixdContent"
           >
-            <v-col
-              v-if="reportLivraison === false"
-              cols="12"
-              class="pt-0 mt-0 d-flex justify-space-between"
-            >
-              <v-card flat class="mr-auto">
-                <v-card-title class="pt-0 mt-0"
-                  >Rapport d'execution du processus
-                </v-card-title>
-                <v-card-subtitle class="pb-0">{{
-                  step.PROCESS_LABEL
-                }}</v-card-subtitle> </v-card
-              ><v-btn
-                v-if="currentID_STATUT === 'mdi-hand'"
-                depressed
-                class="mr-4 mt-2 pr-4"
-                color="error"
-                @click="stopWorkflow()"
-                ><v-icon left>mdi-hand</v-icon> Stopper le workflow
-              </v-btn>
-              <v-btn
-                v-if="currentID_STATUT === 'mdi-hand'"
-                depressed
-                class="mr-4 mt-2 pr-4"
-                color="warning"
-                @click="continueWorkflow()"
-                ><v-icon left>mdi-hand</v-icon> Valider le processus
-              </v-btn>
-
-              <v-btn depressed class="mr-4 mt-2 pr-4" color="primary">
-                <v-icon left>mdi-file-excel-outline</v-icon> Exporter
-              </v-btn>
-              <v-btn
-                depressed
-                class="mr-4 mt-2 pr-4"
-                color="primary"
-                @click="downloadZip()"
-                ><v-icon left>mdi-download</v-icon> Télécharger</v-btn
-              >
-            </v-col>
-            <v-divider class="mx-4 mb-4"></v-divider>
-            <!-- v-if="e1 === 0" -->
-            <ReportTNR
-              v-if="
-                Object.entries(JSON_TEMPLATE).length > 0 && reportTNR == true
-              "
-              :idPROCESS="currentID_PROCESS"
-              :reportJsonData="JSON_TEMPLATE"
-            />
             <ReportLivraison
               v-if="
-                Object.entries(JSON_TEMPLATE).length > 0 &&
-                  reportLivraison == true
+                Object.entries(JSON_TEMPLATE).length > 0 && reportLivraison === true
               "
               :idPROCESS="currentID_PROCESS"
               :reportJsonData="JSON_TEMPLATE"
@@ -102,258 +52,74 @@
               :workflowID="workflowID"
               :nbAvailablePack="nbAvailablePack"
               :currentID_STATUT="currentID_STATUT"
-              :clientID="CLIENT_ID"
+              :clientID="clientId"
+              :clientName="clientName"
             />
-            <ReportPreControle
-              v-if="
-                Object.entries(JSON_TEMPLATE).length > 0 &&
-                  reportPreControle == true
-              "
+            <ReportPreControle v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportPreControle === true" 
               :idPROCESS="currentID_PROCESS"
               :reportJsonData="JSON_TEMPLATE"
               :idInstanceWF="idInstanceWF"
-              :workfloxID="workflowID"
+              :workflowID="workflowID"
               :currentID_STATUT="currentID_STATUT"
             />
-            <!-- Report -->
-            <v-col cols="12">
-              <v-alert
-                v-if="currentID_STATUT === 'mdi-hand'"
-                icon="mdi-information-outline"
-                text
-                color="warning"
-                >Ce processus demande l'intervention d'un utilisateur pour
-                pouvoir continuer ou non le workflow. Pour plus d'information
-                veuillez consulter le rapport d'éxecution ci-dessous</v-alert
-              >
-              <v-alert
-                v-if="currentID_STATUT === 'mdi-alert'"
-                icon="mdi-information-outline"
-                text
-                color="error"
-                >Le processus a remonté des erreurs qui ont entrainés l'arrêt du
-                Workflow. Pour plus d'information veuillez consulter le rapport
-                d'éxecution ci-dessous</v-alert
-              >
-            </v-col>
-            <v-row
-              v-if="
-                Object.entries(JSON_TEMPLATE).length > 0 &&
-                  reportTNR == false &&
-                  reportLivraison == false
-              "
+            <ReportInitialisation v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportInitialisation === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportPackagingDependances v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportPackagingDependances === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportAnalyseData v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportAnalyseData === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportAnalyseLogique v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportAnalyseLogique === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportProcessusCritiques v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportProcessusCritiques === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportIntegration v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportIntegration === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <ReportTNR v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportTNR === true"
+              :idPROCESS="currentID_PROCESS"
+              :reportJsonData="JSON_TEMPLATE"
+              :idInstanceWF="idInstanceWF"
+              :workflowID="workflowID"
+              :currentID_STATUT="currentID_STATUT"
+            />
+            <v-alert
+              v-if="alertMessage"
+              icon='mdi-progress-clock'
+              prominent
+              text
+              type="primary"
             >
-              <v-col :cols="nbColsLeft" :style="displayNoneLeft">
-                <v-card class="mx-auto" max-width="500">
-                  <v-sheet class="pa-4 primary">
-                    <v-text-field
-                      v-model="searchTreeview"
-                      append-icon="mdi-magnify"
-                      label="Chercher un élément"
-                      dark
-                      flat
-                      solo-inverted
-                      hide-details
-                      clearable
-                      clear-icon="mdi-close-circle-outline"
-                    ></v-text-field>
-                  </v-sheet>
-                  <v-card-text>
-                    <v-treeview
-                      v-model="selection"
-                      :items="JSON_TEMPLATE"
-                      :search="searchTreeview"
-                      :filter="filter"
-                      hoverable
-                      returnObject
-                      transition
-                      activatable
-                      open-on-click
-                      @update:active="getSelected($event)"
-                      @update:open="getSelected($event)"
-                    >
-                      <template v-slot:prepend="{ item, open }">
-                        <v-icon v-if="!item.result">
-                          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-                        </v-icon>
-                        <v-icon v-else>
-                          mdi-folder
-                        </v-icon>
-                      </template>
-                      <template v-slot:append="{ item }">
-                        <v-icon
-                          v-if="item.result === 'mdi-check-circle'"
-                          color="success"
-                          >{{ item.result }}</v-icon
-                        >
-                        <v-icon
-                          v-if="item.result === 'mdi-alert'"
-                          color="yellow darken-2"
-                          >{{ item.result }}</v-icon
-                        >
-                        <v-icon
-                          v-if="item.result === 'mdi-alert-circle'"
-                          color="error"
-                          >{{ item.result }}</v-icon
-                        >
-                      </template>
-                    </v-treeview>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <v-col :cols="nbColsRight">
-                <v-list-item-group class="mb-0 d-flex">
-                  <v-list-item-icon>
-                    <v-icon>mdi-folder</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="subtitle-1 mb-0">
-                      {{ titleTable }}</v-list-item-title
-                    >
-                  </v-list-item-content>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        x-small
-                        fab
-                        depressed
-                        color="primary"
-                        class="ma-4"
-                        :style="displayButton"
-                        v-on="on"
-                        @click="backToTreeView($event)"
-                      >
-                        <v-icon>mdi-undo</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Retourner à l'arborescence</span>
-                  </v-tooltip>
-                  <v-checkbox
-                    v-model="checkbox"
-                    label="Voir uniquement les contrôles en erreur"
-                    hide-details
-                    :style="displayCheckbox"
-                    @change="Filtered($event)"
-                  ></v-checkbox>
-                </v-list-item-group>
-                <transition v-if="noData === false" appear name="fade">
-                  <v-card
-                    v-if="titleTable !== 'Contrôle des dépendances du livrable'"
-                  >
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">Nom</th>
-                            <th v-if="hasMessage === false" class="text-left">
-                              Statut
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(item, idxTableFiltered) in tableFiltered"
-                            :key="idxTableFiltered"
-                          >
-                            <v-tooltip
-                              v-if="item.Tooltip !== undefined"
-                              top
-                              color="primary"
-                            >
-                              <template v-slot:activator="{ on }">
-                                <td v-on="on">{{ item.name }}</td>
-                              </template>
-                              <span class="mt-6">
-                                <v-icon dark class="mr-4">
-                                  mdi-alert-circle
-                                </v-icon>
-                                {{ item.Tooltip }}
-                              </span>
-                            </v-tooltip>
-                            <td v-else>{{ item.name }}</td>
-                            <td v-if="hasMessage === false">
-                              <v-icon
-                                v-if="item.result === 'mdi-check-circle'"
-                                color="success"
-                                >{{ item.result }}</v-icon
-                              >
-                              <v-icon
-                                v-if="item.result === 'mdi-alert'"
-                                color="yellow darken-2"
-                                >{{ item.result }}</v-icon
-                              >
-                              <v-icon
-                                v-if="item.result === 'mdi-alert-circle'"
-                                color="error"
-                                >{{ item.result }}</v-icon
-                              >
-                            </td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                  <v-card v-else flat :style="displayButton">
-                    <v-card-title>
-                      <v-text-field
-                        v-model="searchInterDep"
-                        append-icon="mdi-magnify"
-                        label="Chercher un résultat ..."
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    </v-card-title>
-                    <v-data-table
-                      :headers="headers"
-                      :items="csvFile"
-                      :search="searchInterDep"
-                      :page.sync="page"
-                      :items-per-page="itemsPerPage"
-                      hide-default-footer
-                      multi-sort
-                      @page-count="pageCount = $event"
-                    ></v-data-table>
-                    <div class="text-center pa-2">
-                      <v-pagination
-                        v-model="page"
-                        :length="pageCount"
-                        circle
-                      ></v-pagination>
-                    </div>
-                  </v-card>
-                </transition>
-                <v-alert
-                  v-if="noData === true"
-                  icon="mdi-check"
-                  prominent
-                  text
-                  type="success"
-                >
-                  Ce contrôle s'est déroulé avec succès, il n'a généré aucun
-                  message d'erreur.
-                </v-alert>
-                <v-alert
-                  v-if="showInfo === true"
-                  icon="mdi-information-variant"
-                  prominent
-                  text
-                  type="primary"
-                >
-                  Pour visualiser les résultats de ce contrôle, veuillez cliquer
-                  sur {{ titleTable }} dans l'arborescence.
-                </v-alert>
-              </v-col>
-            </v-row>
-            <!-- Fin Report -->
-            <v-col else cols="12">
-              <v-alert
-                v-if="Object.entries(JSON_TEMPLATE).length === 0"
-                :icon="alertIcon"
-                text
-                color="info"
-                >{{ alertMessage }}</v-alert
-              >
-            </v-col>
+              {{ alertMessage }}
+            </v-alert>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -369,11 +135,17 @@
 <script>
 import Papa from 'papaparse'
 import axios from 'axios'
+import ReportPreControle from '../../components/ReportPreControle'
 import ReportTNR from '../../components/ReportTNR'
 import ReportLivraison from '../../components/ReportLivraison'
-import ReportPreControle from '../../components/ReportPreControle'
+import ReportInitialisation from '../../components/ReportInitialisation'
+import ReportPackagingDependances from '../../components/ReportPackagingDependances'
+import ReportAnalyseData from '../../components/ReportAnalyseData'
+import ReportAnalyseLogique from '../../components/ReportAnalyseLogique'
+import ReportProcessusCritiques from '../../components/ReportProcessusCritiques'
+import ReportIntegration from '../../components/ReportIntegration'
 export default {
-  components: { ReportTNR, ReportLivraison, ReportPreControle },
+  components: { ReportTNR, ReportLivraison, ReportPreControle, ReportInitialisation, ReportPackagingDependances, ReportAnalyseData, ReportAnalyseLogique, ReportProcessusCritiques, ReportIntegration },
   data() {
     return {
       e1: 1,
@@ -432,12 +204,19 @@ export default {
       showInfo: false,
       displayCheckbox: '',
       loadingReport: false,
-      reportTNR: false,
       alertMessage: '',
       alertIcon: 'mdi-information-outline',
       idInstanceWF: '',
       nbAvailablePack: 0,
       reportLivraison: false,
+      reportTNR: false,
+      reportPreControle: false,
+      reportInitialisation: false,
+      reportPackagingDependances: false,
+      reportAnalyseData: false,
+      reportAnalyseLogique: false,
+      reportProcessusCritiques: false,
+      reportIntegration: false,
       clientTaskName: ''
     }
   },
@@ -484,10 +263,6 @@ export default {
     }
   },
 
-  mounted() {
-    this.parseCSVFile()
-  },
-
   methods: {
     /**
      * Elément sélectionné dans l'arborescence.
@@ -527,50 +302,6 @@ export default {
       }
       this.showInfo = false
       this.Filtered(this.checkboxValue)
-    },
-
-    /**
-     * Parse le CSV.
-     * TODO : Récupérer le fichier CSV depuis la base de données
-     */
-    parseCSVFile() {
-      const csvString = `Mdb;Pack;Mdb2;Pack2;Classe elt1 / Classe elt2;Elt1;Elt2
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152794_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152208_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;FIELD / FIELD;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152208_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152794_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT;SCO_HRPERIOD_CALC.SFR_MAJ_TOT_ECRETEMENT
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;FIELD / FIELD;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL;SCO_AC_HR_PERIOD.SFR_TOT_INDEM_ACT_PARTIEL
-8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_153221_L;8.1_HF2003_PLFR_152971.mdb;8.1_HF2003_SFR_152972_L;ITEM / ITEM;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL;SCO_HRPERIOD_CALC.SFR_TOT_INDEM_ACT_PARTIEL
-`
-      const config = {
-        delimiter: '', // auto-detect
-        newline: '', // auto-detect
-        quoteChar: '"',
-        escapeChar: '"',
-        header: false,
-        transformHeader: undefined,
-        dynamicTyping: false,
-        preview: 0,
-        encoding: '',
-        worker: false,
-        comments: false,
-        step: undefined,
-        complete: undefined,
-        error: undefined,
-        download: false,
-        downloadRequestHeaders: undefined,
-        downloadRequestBody: undefined,
-        skipEmptyLines: false,
-        chunk: undefined,
-        fastMode: undefined,
-        beforeFirstChunk: undefined,
-        withCredentials: undefined,
-        transform: undefined,
-        delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
-      }
-      this.csvFileHeader = Papa.parse(csvString, config).data[0]
-      this.csvFile = Papa.parse(csvString, config).data.slice(1)
-      this.csvFile = this.csvFile.slice(0, this.csvFile.length - 1)
     },
 
     /**
@@ -769,28 +500,51 @@ export default {
      * @param {string} reportName - Name of report.
      */
     getWichReport(reportName) {
+      this.setDefaultValue()
       switch (reportName) {
-        case 'Livraison':
-          this.reportLivraison = true
-          this.reportTNR = false
-          this.ReportPreControle = false
-          break
         case 'Pré contrôle des .mdb':
-          this.reportLivraison = false
-          this.reportTNR = false
-          this.ReportPreControle = true
+          this.reportPreControle = true
+          break
+        case 'Initialisation':
+          this.reportInitialisation = true
+          break
+        case 'Packaging des dépendances':
+          this.reportPackagingDependances = true
+          break
+        case 'Intégration':
+          this.reportIntegration = true
+          break
+        case "Analyse d'impact sur les données":
+          this.reportAnalyseData = true
+          break
+        case "Analyse d'impacte logique":
+          this.reportAnalyseLogique = true
+          break
+        case "Tests des processus critiques":
+          this.reportProcessusCritiques = true
           break
         case 'Tests de Non Régression (TNR)':
-          this.reportLivraison = false
-          this.ReportPreControle = false
           this.reportTNR = true
           break
+        case 'Livraison':
+          this.reportLivraison = true
+          break
         default:
-          this.reportLivraison = false
-          this.reportTNR = false
-          this.ReportPreControle = false
+          this.setDefaultValue()
           break
       }
+    },
+
+    setDefaultValue() {
+      this.reportLivraison = false
+      this.reportTNR = false
+      this.reportPreControle = false
+      this.reportInitialisation = false
+      this.reportPackagingDependances = false
+      this.reportAnalyseData = false
+      this.reportAnalyseLogique = false
+      this.reportProcessusCritiques = false
+      this.reportIntegration = false
     },
 
     /**

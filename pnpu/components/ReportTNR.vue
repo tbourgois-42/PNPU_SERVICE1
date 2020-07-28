@@ -3,6 +3,37 @@
     <v-container>
       <v-flex md12>
         <v-row>
+          <v-col cols="12" class="pt-0 mt-0 d-flex justify-space-between">
+        <v-card flat class="mr-auto">
+          <v-card-title class="pt-0 mt-0"
+            >Rapport d'execution du processus
+          </v-card-title>
+          <v-card-subtitle class="pb-0">
+            Tests de Non Régression (TNR)
+          </v-card-subtitle> </v-card
+        ><v-btn
+          v-if="currentID_STATUT === 'mdi-hand'"
+          depressed
+          class="mr-4 mt-2 pr-4"
+          color="error"
+          @click="stopWorkflow()"
+          ><v-icon left>mdi-hand</v-icon> Stopper le workflow
+        </v-btn>
+        <v-btn
+          v-if="currentID_STATUT === 'mdi-hand'"
+          depressed
+          class="mr-4 mt-2 pr-4"
+          color="warning"
+          @click="continueWorkflow()"
+          ><v-icon left>mdi-hand</v-icon> Valider le processus
+        </v-btn>
+        <v-btn depressed class="mr-4 mt-2 pr-4" color="primary">
+          <v-icon left>mdi-file-excel-outline</v-icon> Exporter
+        </v-btn>
+      </v-col>
+      <v-col cols="12">
+        <v-divider class="mx-4 mb-4"></v-divider>
+      </v-col>
           <v-col :cols="nbColsLeft" :style="displayNoneLeft">
             <v-card class="mx-auto" max-width="500">
               <v-sheet class="pa-4 primary">
@@ -216,12 +247,24 @@
 export default {
   props: {
     idPROCESS: {
-      type: String,
-      default: '1'
+      type: Number,
+      default: 1
     },
     reportJsonData: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
+    },
+    idInstanceWF: {
+      type: String,
+      default: ''
+    },
+    workflowID: {
+      type: String,
+      default: ''
+    },
+    currentID_STATUT: {
+      type: String,
+      default: ''
     }
   },
   data: () => ({
@@ -462,7 +505,7 @@ export default {
         this.tableFiltered = []
         if (this.selectedItemTable !== undefined) {
           this.selectedItemTable.forEach((element) => {
-            if (element.result === 'mdi-alert-circle') {
+            if (element.result !== 'mdi-check-circle') {
               this.tableFiltered.push(element)
             }
           })
