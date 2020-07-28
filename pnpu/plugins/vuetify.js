@@ -16,15 +16,19 @@ export default (ctx) => {
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
           warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          error: colors.red.lighten1,
+          success: colors.green.lighten1,
+          Pantone171C : "#FF5C35",
+          Pantone540C : "#002C52"
+        },
+        options: {
+          themeCache: {
+            get: (key) => localStorage.getItem(key),
+            set: (key, value) => localStorage.setItem(key, value)
+          }
         }
       }
     }
-    // icons: {
-    //   iconfont: "mdi" // (default) material icons
-    //   // iconfont: 'fa' // Font Awesome icons
-    // }
   })
   ctx.app.vuetify = vuetify
   ctx.$vuetify = vuetify.framework

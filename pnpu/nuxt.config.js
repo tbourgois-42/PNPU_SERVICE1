@@ -44,7 +44,7 @@ module.exports = {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
+    //'@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
   ],
   /*
@@ -64,7 +64,7 @@ module.exports = {
 
   server: {
     port: 5000, // default: 3000
-    host: '10.113.24.75', // default: localhost
+    host: 'localhost', // default: localhost
   }, // other configs
   /*
    ** Build configuration
