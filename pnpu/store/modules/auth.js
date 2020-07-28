@@ -5,9 +5,7 @@ export default {
     token: null,
     user: null,
     profil: null,
-    clients: [],
-    dashboardInfo: [],
-    nbLocalisation: null
+    clients: []
   }),
   getters: {
     authenticated(state) {
@@ -24,14 +22,6 @@ export default {
 
     clients(state) {
       return state.clients
-    },
-
-    dashboardInfo(state) {
-      return state.dashboardInfo
-    },
-
-    nbLocalisation(state) {
-      return state.nbLocalisation
     }
   },
   mutations: {
@@ -46,12 +36,6 @@ export default {
     },
     SET_CLIENTS(state, data) {
       state.clients = data
-    },
-    SET_DASHBOARD_INFO(state, data) {
-      state.dashboardInfo = data
-    },
-    SET_NB_LOCALISATION(state, data) {
-      state.nbLocalisation = data
     }
   },
   actions: {
@@ -73,12 +57,15 @@ export default {
       if (!state.token) {
         return
       }
-      const fd = new FormData()
-      fd.append('token', token)
+
       try {
-        const response = await axios.post(
+        const response = await axios.get(
           `${process.env.WEB_SERVICE_WCF}/auth/me`,
-          fd
+          {
+            params: {
+              token: state.token
+            }
+          }
         )
         if (response.data === '') {
           commit('SET_USER', null)
@@ -90,6 +77,41 @@ export default {
       } catch (error) {
         commit('SET_TOKEN', null)
         commit('SET_USER', null)
+        commit('SET_HABILITATION', null)
+        commit('SET_CLIENTS', [])
+      }
+    },
+
+    async getHabilitation({ commit, state, dispatch }) {
+      if (state.user !== null) {
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/auth/habilitation`,
+          {
+            params: {
+              user: state.user,
+              token: state.token
+            }
+          }
+        )
+        if (response.status === 200) {
+          commit('SET_HABILITATION', response.data)
+          dispatch('getListClient', response.data)
+        }
+      }
+    },
+
+    async getListClient({ commit, state }) {
+      const response = await axios.get(
+        `${process.env.WEB_SERVICE_WCF}/auth/habilitation/clients`,
+        {
+          params: {
+            user: state.user,
+            habilitation: state.profil
+          }
+        }
+      )
+      if (response.status === 200) {
+        commit('SET_CLIENTS', response.data)
       }
     },
 
@@ -104,108 +126,9 @@ export default {
       if (response.status === 200) {
         commit('SET_TOKEN', null)
         commit('SET_USER', null)
+        commit('SET_HABILITATION', null)
+        commit('SET_CLIENTS', [])
         localStorage.removeItem('token')
-      }
-    },
-
-    async getHabilitation({ commit, state, dispatch }) {
-      const response = await axios.get(
-        `${process.env.WEB_SERVICE_WCF}/auth/habilitation`,
-        {
-          params: {
-            user: state.user,
-            token: state.token
-          }
-        }
-      )
-      if (response.status === 200) {
-        commit('SET_HABILITATION', response.data)
-        dispatch('getListClient', response.data)
-      }
-    },
-
-    async getListClient({ commit, state, dispatch }) {
-      const response = await axios.get(
-        `${process.env.WEB_SERVICE_WCF}/auth/habilitation/clients`,
-        {
-          params: {
-            user: state.user,
-            habilitation: state.profil
-          }
-        }
-      )
-      if (response.status === 200) {
-        commit('SET_CLIENTS', response.data)
-        dispatch('getInfoDashboard', response.data)
-      }
-    },
-
-    async getInfoDashboard({ commit, state }) {
-      const response = await axios.get(
-        `${process.env.WEB_SERVICE_WCF}/clients/dashboard`,
-        {
-          params: {
-            workflowID: state.workflowID,
-            idInstanceWF: state.idInstanceWF,
-            user: state.user,
-            habilitation: state.profil
-          }
-        }
-      )
-      if (response.status === 200) {
-        commit('SET_DASHBOARD_INFO', response.data)
-      }
-    },
-
-    async getNbLocalisation({ commit, state }) {
-      const response = await axios.get(
-        `${process.env.WEB_SERVICE_WCF}/clients/dashboard`,
-        {
-          params: {
-            workflowID: state.workflowID,
-            idInstanceWF: state.idInstanceWF,
-            user: state.user,
-            habilitation: state.profil
-          }
-        }
-      )
-      if (response.status === 200) {
-        commit('SET_NB_LOCALISATION', response.data)
-      }
-    },
-
-    async getHistoricWorkflow({ commit }) {
-      const response = await axios.get(
-        `${process.env.WEB_SERVICE_WCF}/workflow/historic`
-      )
-      if (response.status === 200) {
-        commit('SET_H_WORKFLOW', response.data)
-        commit(
-          'SET_WORKFLOW_ID',
-          response.data.GetHWorkflowResult[
-            this.workflows.length - 1
-          ].WORKFLOW_ID.toString()
-        )
-        commit(
-          'SET_WORKFLOW_NAME',
-          response.data.GetHWorkflowResult[this.workflows.length - 1]
-            .WORKFLOW_LABEL
-        )
-        commit(
-          'SET_WORKFLOW_STATUS',
-          response.data.GetHWorkflowResult[this.workflows.length - 1]
-            .STATUT_GLOBAL
-        )
-        commit(
-          'SET_INSTANCE_NAME_WF',
-          response.data.GetHWorkflowResult[this.workflows.length - 1]
-            .INSTANCE_NAME
-        )
-        commit(
-          'SET_ID_INSTANCE_WF',
-          response.data.GetHWorkflowResult[this.workflows.length - 1]
-            .ID_H_WORKFLOW
-        )
       }
     }
   }

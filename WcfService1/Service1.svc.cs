@@ -59,16 +59,13 @@ namespace WcfService1
             return string.Format("You entered: {0}", value);
         }
 
-        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_, string idInstanceWF_, string sHabilitation, string sUser)
+        public IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser)
         {
-            int workflowId = int.Parse(workflowId_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            return RequestTool.GetAllInfoClient(workflowId, idInstanceWF, sHabilitation, sUser);
-            //return RequestTool.GetAllStep(); 
+            return RequestTool.GetInfoDashboardCard(sHabilitation, sUser);
         }
-        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
+        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser)
         {
-            return RequestTool.GetHWorkflow();
+            return RequestTool.GetHWorkflow(sHabilitation, sUser);
         }
 
         public string GetInfoOneClient(string ClientName)
@@ -368,9 +365,9 @@ namespace WcfService1
         
         }
 
-        public string ConnectUser(Stream stream)
+        public string ConnectUser(string sToken)
         {
-            return Authentification.ConnectUser(stream);
+            return Authentification.ConnectUser(sToken);
         }
 
         public string SignOutUser(Stream stream)
@@ -386,6 +383,13 @@ namespace WcfService1
         public IEnumerable<InfoClient> GetListClients(string user, string habilitation)
         {
             return Authentification.GetListClient(habilitation, user);
+        }
+
+        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string user, string habilitation, string workflowID_, string idInstanceWF_)
+        {
+            decimal workflowID = decimal.Parse(workflowID_);
+            decimal idInstanceWF = decimal.Parse(idInstanceWF_);
+            return RequestTool.GetInfoDashboardCardByWorkflow(user, habilitation, workflowID, idInstanceWF);
         }
     }
 

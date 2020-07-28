@@ -28,7 +28,7 @@ namespace PNPUTools
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
-        static string requestHistoricWorkflow = "SELECT PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL, PHW.INSTANCE_NAME FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ORDER BY PHW.LAUNCHING_DATE";
+        static string requestHistoricWorkflow = "SELECT PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL, PHW.INSTANCE_NAME FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ";
         static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
 
         static string requestListClient = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.SAAS = '{0}'";
@@ -44,9 +44,11 @@ namespace PNPUTools
         /// Get workflow hitoric
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
+        public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser)
         {
-            DataSet result = DataManagerSQLServer.GetDatas(requestHistoricWorkflow, ParamAppli.ConnectionStringBaseAppli);
+            string request = Authentification.BuildRequestWorkflowHistoricByProfil(sHabilitation, sUser, requestHistoricWorkflow);
+
+            DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
 
@@ -61,26 +63,28 @@ namespace PNPUTools
         /// <param name="WORKFLOW_ID"></param>
         /// <param name="ID_H_WORKFLOW"></param>
         /// <returns></returns>
-        public static IEnumerable<InfoClientStep> GetAllInfoClient(decimal WORKFLOW_ID, int ID_H_WORKFLOW, string sHabilitation, string sUser)
+        public static IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser)
         {
-            // Par défault on charge sur le dashboard la dernière instance de workflow lancée
-            string defaultWorkflowID = "(SELECT TOP(1) PHW.WORKFLOW_ID FROM PNPU_H_WORKFLOW PHW, PNPU_H_WORKFLOW PHW2 WHERE PHW.ID_H_WORKFLOW = PHW2.ID_H_WORKFLOW AND PHW.WORKFLOW_ID = PHW2.WORKFLOW_ID AND PHW.LAUNCHING_DATE = (SELECT MAX(PHW2.LAUNCHING_DATE) FROM PNPU_H_WORKFLOW PHW2))";
+            // Load lastest workflow how has been lauched for client's user
 
-            string sWhereHabilitation = Authentification.GetHabilitationWhereClause(sHabilitation, sUser, "PHS");
+            List<string> lstWORKFLOW = new List<string>();
 
-            string filtre = (WORKFLOW_ID == 0) ? defaultWorkflowID : WORKFLOW_ID.ToString();
+            lstWORKFLOW = Authentification.GetLastWorkflowLaunchForProfil(sHabilitation, sUser, ParamAppli.ConnectionStringBaseAppli);
 
-            string sSelect = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, MAX(PHS.LAUNCHING_DATE) AS LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, PS.ID_PROCESS,  PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + filtre + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE ";
+            //string sWorkflowID = (WORKFLOW_ID == 0) ? lstWORKFLOW[0] : WORKFLOW_ID.ToString();
+            //string sIdHWorkflow = string.IsNullOrEmpty(ID_H_WORKFLOW.ToString()) ? lstWORKFLOW[1] : ID_H_WORKFLOW.ToString();
+
+            string sWorkflowID = lstWORKFLOW[0];
+            string sIdHWorkflow = lstWORKFLOW[1];
+
+            string sSelect = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, MAX(PHS.LAUNCHING_DATE) AS LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, PS.ID_PROCESS,  PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + sWorkflowID + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE ";
             string sFrom = "FROM PNPU_H_STEP PHS, PNPU_STEP PS ";
-            string sWhere = "WHERE PHS.WORKFLOW_ID = " + filtre + " AND PHS.ID_H_WORKFLOW = " + ID_H_WORKFLOW + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = 28 GROUP BY PS.WORKFLOW_ID) *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
-
-            sWhere += sWhereHabilitation;
-
+            string sWhere = "WHERE PHS.WORKFLOW_ID = " + sWorkflowID + " AND PHS.ID_H_WORKFLOW = " + sIdHWorkflow + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + sWorkflowID + " GROUP BY PS.WORKFLOW_ID) *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
             string sGroupBy = " GROUP BY PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, PHS.ID_STATUT, PHS.ENDING_DATE, PS.ORDER_ID, PS.ID_PROCESS ";
             string sOrderBy = "ORDER BY PHS.ID_PROCESS DESC";
 
             string sRequest = sSelect + sFrom + sWhere + sGroupBy + sOrderBy;
-
+            
             DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
@@ -286,6 +290,34 @@ namespace PNPUTools
 
             return listTest;
 
+        }
+
+        /// <summary>
+        /// Get dahsboard info when a user select a workflow
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <param name="workflowID"></param>
+        /// <param name="idInstanceWF"></param>
+        /// <returns></returns>
+        public static IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string sHabilitation, string sUser, decimal workflowID, decimal idInstanceWF)
+        {
+            string sSelect = "SELECT PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, MAX(PHS.LAUNCHING_DATE) AS LAUNCHING_DATE, PHS.ENDING_DATE, PHS.ID_STATUT, PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PS.ORDER_ID, PS.ID_PROCESS,  PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + workflowID + " GROUP BY PS.WORKFLOW_ID) *100 AS PERCENTAGE_COMPLETUDE ";
+            string sFrom = "FROM PNPU_H_STEP PHS, PNPU_STEP PS ";
+            string sWhere = "WHERE PHS.WORKFLOW_ID = " + workflowID + " AND PHS.ID_H_WORKFLOW = " + idInstanceWF + " AND (PHS.ENDING_DATE = {d'1800-01-01'} OR (PS.ID_PROCESS / (SELECT MAX(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW INNER JOIN PNPU_STEP PS ON PW.WORKFLOW_ID = PS.WORKFLOW_ID WHERE PW.WORKFLOW_ID = " + workflowID + " GROUP BY PS.WORKFLOW_ID) *100) = '100') AND PS.ID_PROCESS = PHS.ID_PROCESS AND PS.WORKFLOW_ID = PHS.WORKFLOW_ID ";
+            string sGroupBy = " GROUP BY PHS.CLIENT_ID, PHS.CLIENT_NAME, PHS.TYPOLOGY, PHS.ID_PROCESS, PHS.ITERATION, PHS.WORKFLOW_ID, PHS.ID_H_WORKFLOW, PHS.ID_STATUT, PHS.ENDING_DATE, PS.ORDER_ID, PS.ID_PROCESS ";
+            string sOrderBy = "ORDER BY PHS.ID_PROCESS DESC";
+
+            string sWhereHabilitation = Authentification.GetHabilitationWhereClause(sHabilitation, sUser, "PHS");
+
+            string sRequest = sSelect + sFrom + sWhere + sWhereHabilitation + sGroupBy + sOrderBy;
+
+            DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<InfoClientStep> listTest = table.DataTableToList<InfoClientStep>();
+
+            return listTest;
         }
 
         /// <summary>

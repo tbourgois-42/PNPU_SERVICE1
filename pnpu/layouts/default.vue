@@ -90,19 +90,19 @@
         @click.prevent="signOut"
         text
         class="ma-2"
-        to="/logout"
+        to="/"
       >
         <v-icon left>mdi-logout</v-icon> Se déconnecter
       </v-btn>
-      <v-btn v-if="!authenticated" text class="ma-2" to="/signin">
+      <v-btn v-if="!authenticated" text class="ma-2" to="/">
         <v-icon left>mdi-account</v-icon> Se connecter
       </v-btn>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-container fluid>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
     <v-footer :fixed="fixed" app dark dense color="primary">
       <span>&copy; {{ new Date().getFullYear() }} - Cegid</span>
     </v-footer>
@@ -121,7 +121,7 @@ export default {
         {
           icon: 'mdi-view-dashboard',
           text: 'Dashboard',
-          to: '/'
+          to: '/dashboard'
         },
         {
           icon: 'mdi-sitemap',
@@ -144,7 +144,7 @@ export default {
           to: '/report'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-toolbox',
           text: 'Toolbox',
           to: '/toolbox'
         },
@@ -182,9 +182,29 @@ export default {
           to: '/rapportLivraison'
         },
         {
-          icon: 'mdi-login',
-          text: 'Login',
-          to: '/signin'
+          icon: 'mdi-microsoft-access',
+          text: 'Intégration',
+          to: '/rapportIntegration'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Analyse de données',
+          to: '/rapportAnalyseData'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Packaging des dépendances',
+          to: '/rapportPackagingDependances'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Processus critiques',
+          to: '/rapportProcessusCritiques'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Analyse logique',
+          to: '/rapportAnalyseLogique'
         }
       ],
       miniVariant: false,
@@ -209,7 +229,7 @@ export default {
 
     signOut() {
       this.signOutAction().then(() => {
-        this.$router.push('/signin')
+        this.$router.push('/')
       })
     }
   }

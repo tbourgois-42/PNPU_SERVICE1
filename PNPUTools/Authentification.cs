@@ -17,7 +17,7 @@ namespace PNPUTools
     public class Authentification
     {
         /// <summary>
-        /// Connect user
+        /// Main method to Authenticate user
         /// </summary>
         /// <param name="stream"></param>
         /// <returns>Return token string if user has been successfuly connected</returns>
@@ -118,6 +118,20 @@ namespace PNPUTools
             return sToken;
         }
 
+        internal static string BuildRequestWorkflowHistoricByProfil(string sHabilitation, string sUser, string requestHistoricWorkflow)
+        {
+            string sWhere = string.Empty;
+            string sRequest = string.Empty;
+            string sOrderBy = "ORDER BY PHW.LAUNCHING_DATE";
+
+            if (sHabilitation != "ADMIN")
+            {
+                sWhere += "WHERE (" + BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHW") + ") ";
+            }
+            sRequest = requestHistoricWorkflow + sWhere + sOrderBy;
+            return sRequest;
+        }
+
         /// <summary>
         /// Check if token was expired
         /// </summary>
@@ -167,6 +181,12 @@ namespace PNPUTools
 
                 if (result.Tables.Count > 0)
                 {
+                    using (Aes myAes = Aes.Create())
+                    {
+                        byte[] encrypted = EncryptStringToBytes_Aes(Password, myAes.Key, myAes.IV);
+
+                        string decrypted = DecryptStringToBytes_Aes(encrypted, myAes.Key, myAes.IV);
+                    }
                     /*string user = result.Tables[0].Rows[0].ItemArray[0].ToString();
                     byte[] password = Encoding.ASCII.GetBytes(result.Tables[0].Rows[0].ItemArray[1].ToString());
 
@@ -229,17 +249,53 @@ namespace PNPUTools
             return plaintext;
         }
 
+        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        {
+            // Check arguments.
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted;
+
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create an encryptor to perform the stream transform.
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+
+            // Return the encrypted bytes from the memory stream.
+            return encrypted;
+        }
+
         /// <summary>
         /// Connect user
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public static string ConnectUser(Stream stream)
+        public static string ConnectUser(string sToken)
         {
-            var parser = MultipartFormDataParser.Parse(stream);
-
-            string sToken = parser.GetParameterValue("token");
-
             return GetUserName(sToken);
         }
 
@@ -362,6 +418,12 @@ namespace PNPUTools
             return null;
         }
 
+        /// <summary>
+        /// Generate List String Client for user
+        /// </summary>
+        /// <param name="lstClientKeys"></param>
+        /// <param name="sUser"></param>
+        /// <returns></returns>
         private static List<string> GenerateListStringClient(string[] lstClientKeys, string sUser)
         {
             string sRequest = "SELECT CLIENT_ID FROM HABILITATIONS WHERE USER_ID LIKE '%" + sUser + "%'";
@@ -390,6 +452,7 @@ namespace PNPUTools
         /// Generate request in order to Get list of clients
         /// </summary>
         /// <param name="lstClient"></param>
+        /// <param name="sHabilitation"></param>
         /// <returns>Return string request</returns>
         private static string GenerateRequestGetListClient(List<string> lstClient, string sHabilitation)
         {
@@ -410,7 +473,8 @@ namespace PNPUTools
         /// Build habilitation where clause
         /// </summary>
         /// <param name="lstClient"></param>
-        /// <param name="shabilitation"></param>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sAlias"></param>
         /// <returns></returns>
         private static string BuildHabilitationWhereClause(List<string> lstClient, string sHabilitation, string sAlias)
         {
@@ -439,24 +503,116 @@ namespace PNPUTools
             return sWhere;
         }
 
+        /// <summary>
+        /// Build habilitation like clause
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <param name="sColumn"></param>
+        /// <param name="sAlias"></param>
+        /// <returns></returns>
+        public static string BuildHabilitationLikeClause(string sHabilitation, string sUser, string sColumn, string sAlias)
+        {
+            string sLike = string.Empty;
+            List<string> lstClient = BuildListStringClient(sHabilitation, sUser); ;
+            bool bPremier = true;
+
+            foreach (var clientID in lstClient)
+            {
+                if (bPremier == true)
+                {
+                    bPremier = false;
+                    sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";
+                }
+                else
+                {
+                    if (lstClient.Count > 1)
+                    {
+                        sLike += " OR ";
+                    }
+                    sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";
+                }
+                
+            }
+            sLike += " ";
+            return sLike;
+        }
+
+        /// <summary>
+        /// Get habilitation where clause
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <param name="sAlias"></param>
+        /// <returns></returns>
         public static string GetHabilitationWhereClause(string sHabilitation, string sUser, string sAlias)
         {
-            string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
+            
             List<string> lstClient  = null;
 
-            if (sHabilitation == "ADMIN")
-            {
-                lstClient = new List<string>(lstClientKeys);
-            } else
-            {
-                lstClient = GenerateListStringClient(lstClientKeys, sUser);
-            }
-
-            
+            lstClient = BuildListStringClient(sHabilitation, sUser);
 
             string sWhere = BuildHabilitationWhereClause(lstClient, sHabilitation, sAlias);
 
             return sWhere;
+        }
+
+        /// <summary>
+        /// Build list string client for user
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <returns></returns>
+        private static List<string> BuildListStringClient(string sHabilitation, string sUser)
+        {
+            string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
+            List<string> lstClient = null;
+
+            if (sHabilitation == "ADMIN")
+            {
+                lstClient = new List<string>(lstClientKeys);
+            }
+            else
+            {
+                lstClient = GenerateListStringClient(lstClientKeys, sUser);
+            }
+            return lstClient;
+        }
+
+        /// <summary>
+        /// Get last workflow launched for user
+        /// </summary>
+        /// <param name="sHabilitation"></param>
+        /// <param name="sUser"></param>
+        /// <param name="sConnectionString"></param>
+        /// <returns></returns>
+        public static List<string> GetLastWorkflowLaunchForProfil(string sHabilitation, string sUser, string sConnectionString)
+        {
+            string sRequest = "SELECT PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW FROM PNPU_H_WORKFLOW PHW, PNPU_H_WORKFLOW PHW2 ";
+            sRequest += "WHERE PHW.ID_H_WORKFLOW = PHW2.ID_H_WORKFLOW AND PHW.WORKFLOW_ID = PHW2.WORKFLOW_ID AND PHW.CLIENT_ID = PHW2.CLIENT_ID AND PHW.LAUNCHING_DATE = (SELECT MAX(PHW2.LAUNCHING_DATE) FROM PNPU_H_WORKFLOW PHW2 ";
+
+            if (sHabilitation != "ADMIN")
+            {
+                sRequest += "WHERE (";
+                sRequest += BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHW2");
+                sRequest += "))";
+            }
+            else
+            {
+                sRequest += ")";
+            }
+
+            List<string> lstWORKFLOW = new List<string>();
+
+            DataSet resultWorkflowHabilitation = DataManagerSQLServer.GetDatas(sRequest, sConnectionString);
+
+            foreach (DataRow drRow in resultWorkflowHabilitation.Tables[0].Rows)
+            {
+                lstWORKFLOW.Add(drRow.ItemArray[0].ToString()); // WORKFLOW_ID
+                lstWORKFLOW.Add(drRow.ItemArray[1].ToString()); // ID_H_WORKFLOW
+            }
+
+            return lstWORKFLOW;
         }
     }
 }

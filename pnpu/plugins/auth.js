@@ -1,12 +1,11 @@
 export default ({ store }) => {
   store.app.router.beforeEach((to, from, next) => {
-    if (!store.getters['modules/auth/authenticated'] && to.name !== 'SignIn') {
+    if (!store.getters['modules/auth/authenticated'] && to.name !== 'index') {
       next({
-        name: 'SignIn'
+        name: 'index'
       })
-    } else {
-      store.dispatch('modules/auth/attempt', localStorage.getItem('token'))
-      next()
-    }
+    } 
+    store.dispatch('modules/auth/attempt', localStorage.getItem('token'))
+    next()
   })
 }

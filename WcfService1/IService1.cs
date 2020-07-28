@@ -21,8 +21,15 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "clients/dashboard/{workflowId}/{idInstanceWF}/?user={sUser}&habilitation={sHabilitation}")]
-        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId, string idInstanceWF, string sHabilitation, string sUser);
+            UriTemplate = "clients/dashboard/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "clients/dashboard/{workflowID}/{idInstanceWF}/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string sHabilitation, string sUser, string workflowID, string idInstanceWF);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -42,8 +49,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "workflow/historic")]
-        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow();
+            UriTemplate = "dashboard/workflow/historic/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -240,12 +247,12 @@ namespace WcfService1
         string AuthUser(Stream stream);
 
         [OperationContract]
-        [WebInvoke(Method = "POST",
+        [WebInvoke(Method = "GET",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "auth/me")]
-        string ConnectUser(Stream stream);
+            UriTemplate = "auth/me/?token={token}")]
+        string ConnectUser(string token);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
