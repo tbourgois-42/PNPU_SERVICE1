@@ -44,6 +44,7 @@
                           required
                           @keypress="pressEnter($event)"
                         ></v-text-field>
+                        <v-checkbox v-model="editedItem.IS_TOOLBOX" label="Toolbox"></v-checkbox>
                       </v-form>
                     </v-col>
                   </v-row>
@@ -101,6 +102,9 @@
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
+      </template>
+      <template v-slot:item.IS_TOOLBOX="{ item }">
+        <v-simple-checkbox v-model="item.IS_TOOLBOX" disabled></v-simple-checkbox>
       </template>
     </v-data-table>
     <div class="text-center pt-2">
@@ -163,6 +167,7 @@ export default {
       },
       { text: 'Identifiant', value: 'WORKFLOW_ID', sortable: true },
       { text: 'Nombre de processus', value: 'NB_PROCESS', sortable: false },
+      { text: 'Toolbox', value: 'IS_TOOLBOX', sortable: true},
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     headersProcessus: [
@@ -182,18 +187,21 @@ export default {
       WORKFLOW_LABEL: '',
       WORKFLOW_ID: 0,
       actions: 0,
-      NB_PROCESS: 0
+      NB_PROCESS: 0,
+      IS_TOOLBOX: 0
     },
     defaultItem: {
       WORKFLOW_LABEL: '',
       WORKFLOW_ID: 0,
       actions: 0,
-      NB_PROCESS: 0
+      NB_PROCESS: 0,
+      IS_TOOLBOX: 0
     },
     workflowDate: '',
     loadingData: true,
     loadingWorkflowProcesses: true,
-    valid: true
+    valid: true,
+    chkToolbox: null
   }),
 
   computed: {
@@ -306,9 +314,12 @@ export default {
           })
       } else if (this.editedItem.WORKFLOW_LABEL !== '') {
         const vm = this
+        debugger
         axios
-          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, {
-            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
+          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, 
+          {
+            WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL,
+            IS_TOOLBOX: this.editedItem.IS_TOOLBOX
           })
           .then(function(response) {
             if (response.status !== 200) {

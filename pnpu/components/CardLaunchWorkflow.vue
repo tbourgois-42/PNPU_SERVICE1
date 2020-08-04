@@ -330,11 +330,10 @@ export default {
         fd.append('clients', this.clientSelected)
         fd.append('packStandard', this.packStandard)
         fd.append('instanceName', this.txtInstanceName)
+        fd.append('workflowID', this.idSelectedWorkflow)
         try {
           await axios.post(
-            `${process.env.WEB_SERVICE_WCF}/worflow/` +
-              this.idSelectedWorkflow +
-              `/uploadFile`,
+            `${process.env.WEB_SERVICE_WCF}/worflow/uploadFile`,
 
             fd
           )

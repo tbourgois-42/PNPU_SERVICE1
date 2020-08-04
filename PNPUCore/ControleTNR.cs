@@ -32,11 +32,11 @@ namespace PNPUCore.Controle
         /// <param name="index"></param>
         /// <param name="sDate"></param>
         /// <param name="sNewOrDelete"></param>
-        internal void AddItemEcart(Ecarts rapportEcarts, DataRow drRow, int index, DateTime sDate, string sNewOrDelete)
+        internal void AddItemEcart(Ecarts rapportEcarts, DataRow drRow, int index, DateTime sDate, string sNewOrDelete, string sConnectionStringBaseQA1, string sConnectionStringBaseQA2)
         {
             rapportEcarts.Name = drRow[4] + " - " + drRow[3];
-            rapportEcarts.ValueAfter = GetAgregateItemValue(drRow[1].ToString(), drRow[2].ToString(), sDate, ParamAppli.ConnectionStringBaseQA2);
-            rapportEcarts.ValueBefore = GetAgregateItemValue(drRow[1].ToString(), drRow[2].ToString(), sDate, ParamAppli.ConnectionStringBaseQA1);
+            rapportEcarts.ValueAfter = GetAgregateItemValue(drRow[1].ToString(), drRow[2].ToString(), sDate, sConnectionStringBaseQA2);
+            rapportEcarts.ValueBefore = GetAgregateItemValue(drRow[1].ToString(), drRow[2].ToString(), sDate, sConnectionStringBaseQA1);
             rapportEcarts.Difference = GetAgregateDifferenceItemValue(rapportEcarts.ValueBefore, rapportEcarts.ValueAfter);
             rapportEcarts.Comment = (index == -1) ? sNewOrDelete : "";
         }

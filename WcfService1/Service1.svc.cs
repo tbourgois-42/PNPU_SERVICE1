@@ -18,6 +18,7 @@ using System.Configuration;
 using HttpMultipartParser;
 using System.Net;
 using System.Data;
+using PNPUCore;
 
 namespace WcfService1
 {
@@ -389,6 +390,47 @@ namespace WcfService1
             decimal workflowID = decimal.Parse(workflowID_);
             decimal idInstanceWF = decimal.Parse(idInstanceWF_);
             return RequestTool.GetInfoDashboardCardByWorkflow(user, habilitation, workflowID, idInstanceWF);
+        }
+
+        public string LaunchToolBoxProcess(Stream stream)
+        {
+            var parser = MultipartFormDataParser.Parse(stream);
+            string clientId = parser.GetParameterValue("clientID");
+            int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
+            int idInstanceWF = 1234;
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
+
+            LaunchProcess(7, workflowId, clientId.ToString(), 1234);
+            /*string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PHW.IS_TOOLBOX = 1";
+
+            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                {
+                    // We generate instance of workflow in PNPU_H_WORKFLOW
+                    PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+                    historicWorkflow.WORKFLOW_ID = workflowId;
+                    historicWorkflow.CLIENT_ID = clientId;
+                    historicWorkflow.LAUNCHING_DATE = DateTime.Now;
+                    historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
+                    historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
+                    historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId ;
+
+                    int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+
+            LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), 1234);
+                }
+            }*/
+            // LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch, idInstanceWF);
+            if (result != "Requête traité avec succès")
+            {
+                throw new WebFaultException(HttpStatusCode.BadRequest);
+            }
+            return result;
         }
     }
 

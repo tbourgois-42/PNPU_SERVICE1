@@ -201,14 +201,65 @@ namespace PNPUTools.DataManager
 		public string WORKFLOW_LABEL { get; set; }
 		public decimal NB_PROCESS { get; set; }
 
+		public bool IS_TOOLBOX { get; set; }
+
 		public PNPU_WORKFLOW() { }
-		public PNPU_WORKFLOW(decimal WORKFLOW_ID_, string WORKFLOW_LABEL_, decimal NB_PROCESS_)
+		public PNPU_WORKFLOW(decimal WORKFLOW_ID_, string WORKFLOW_LABEL_, decimal NB_PROCESS_, bool IS_TOOLBOX_)
 		{
 			this.WORKFLOW_ID = WORKFLOW_ID_;
 			this.WORKFLOW_LABEL = WORKFLOW_LABEL_;
 			this.NB_PROCESS = NB_PROCESS_;
+			this.IS_TOOLBOX = IS_TOOLBOX_;
 		}
 	}
+
+	public class PNPU_TMP_PARAM_TOOLBOX
+    {
+		public string SERVER_BEFORE { get; set; }
+		public string DATABASE_BEFORE { get; set; }
+		public string PASSWORD_BEFORE { get; set; }
+		public string SERVER_AFTER { get; set; }
+		public string DATABASE_AFTER { get; set; }
+		public string PASSWORD_AFTER { get; set; }
+		public DateTime DT_PAIE { get; set; }
+		public int WORKFLOW_ID { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
+		public string CLIENT_ID { get; set; }
+
+		public PNPU_TMP_PARAM_TOOLBOX() { }
+		public PNPU_TMP_PARAM_TOOLBOX(string SERVER_BEFORE_, string DATABASE_BEFORE_, string PASSWORD_BEFORE_, string SERVER_AFTER_, string DATABASE_AFTER_, string PASSWORD_AFTER_, DateTime DT_PAIE_, int WORKFLOW_ID_, int ID_H_WORKFLOW_, string CLIENT_ID_)
+        {
+			this.SERVER_AFTER = SERVER_AFTER_;
+			this.DATABASE_AFTER = DATABASE_AFTER_;
+			this.PASSWORD_AFTER = PASSWORD_AFTER_;
+			this.SERVER_BEFORE = SERVER_BEFORE_;
+			this.DATABASE_BEFORE = DATABASE_BEFORE_;
+			this.PASSWORD_BEFORE = PASSWORD_BEFORE_;
+			this.DT_PAIE = DT_PAIE_;
+			this.WORKFLOW_ID = WORKFLOW_ID_;
+			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
+			this.CLIENT_ID = CLIENT_ID_;
+        }
+	}
+	
+	public class SUPPORT_DBS
+    {
+		public int DATABASE_ID { get; set; }
+		public string HOST { get; set; }
+		public string USER_ACCOUNT { get; set; }
+		public string USER_PASSWORD { get; set; }
+		public int CLIENT_ID { get; set; }
+
+		public SUPPORT_DBS() { }
+		public SUPPORT_DBS(int DATABASE_ID_, string HOST_, string USER_ACCOUNT_, string USER_PASSWORD_, int CLIENT_ID_)
+        {
+			this.DATABASE_ID = DATABASE_ID_;
+			this.HOST = HOST_;
+			this.USER_ACCOUNT = USER_ACCOUNT_;
+			this.USER_PASSWORD = USER_PASSWORD_;
+			this.CLIENT_ID = CLIENT_ID_;
+        }
+    }
 
 	public class PNPU_WORKFLOW_HABILITATION
 	{

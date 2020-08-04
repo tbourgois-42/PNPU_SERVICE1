@@ -277,6 +277,21 @@ namespace WcfService1
         IEnumerable<InfoClient> GetListClients(string user, string habilitation);
 
         [OperationContract]
+        [WebInvoke(Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "toolbox")]
+        string LaunchToolBoxProcess(Stream stream);
+
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "toolbox/dashboard/{workflowId}/{idInstanceWF}")]
+        IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);
+
+        [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
         void preflightRequest();
 

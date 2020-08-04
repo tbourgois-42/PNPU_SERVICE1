@@ -28,6 +28,11 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
+            string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
+
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
@@ -57,14 +62,13 @@ namespace PNPUCore.Process
             RapportSousDomaineParts.Result = string.Empty;
 
             // Client TNR database Read Node items
-            DataSet ItemsNoeudReadTNR = CTNR.GetItemsNoeudRead(ParamAppli.ConnectionStringBaseQA2);
+            DataSet ItemsNoeudReadTNR = CTNR.GetItemsNoeudRead(sConnectionStringBaseQA2);
 
             // Client REF database Read Node items
-            DataSet ItemsNoeudReadREF = CTNR.GetItemsNoeudRead(ParamAppli.ConnectionStringBaseQA1);
+            DataSet ItemsNoeudReadREF = CTNR.GetItemsNoeudRead(sConnectionStringBaseQA1);
 
             // Payment date
-            // TOTO : Read M4SCO_HT_PAYS in order to get the last open pay
-            DateTime sDate = new DateTime(2020, 2, 25);
+            DateTime sDate = paramToolbox.GetDtPaie(WORKFLOW_ID, ID_INSTANCEWF);
             
             Dictionary<string, string> lstCumulativeTable = CTNR.GetListOfCumulativeTable(ItemsNoeudReadTNR);
 
@@ -72,7 +76,7 @@ namespace PNPUCore.Process
             Classification RapportClassification = null;
 
             int index = -1;
-            int reg = 1;
+            decimal reg = 1;
 
             // Loop into TNR node.
             foreach (DataRow drRow in ItemsNoeudReadTNR.Tables[0].Rows)
@@ -82,7 +86,7 @@ namespace PNPUCore.Process
                 
                 index = CTNR.FindIndexOfBaseRef(drRow[1].ToString(), ItemsNoeudReadREF, ItemsNoeudReadTNR);
 
-                if (lstClassification.ContainsKey(drRow[6].ToString()) == false)
+                if (!lstClassification.ContainsKey(drRow[6].ToString()))
                 {   
                     RapportClassification = new Classification();
                     CTNR.CreateClassification(RapportClassification, drRow, lstClassification, RapportSousDomaineParts);
@@ -94,15 +98,15 @@ namespace PNPUCore.Process
 
                 // Add item difference with "NEW" specificity if index equals to -1, If not we set comment at empty string
                 Ecarts RapportEcarts = new Ecarts();
-                CTNR.AddItemEcart(RapportEcarts, drRow, index, sDate, "NEW");
+                CTNR.AddItemEcart(RapportEcarts, drRow, index, sDate, "NEW", sConnectionStringBaseQA1, sConnectionStringBaseQA2);
 
                 if (RapportEcarts.Difference > 0 || RapportEcarts.Difference < 0 || RapportEcarts.Comment == "NEW")
                 {
                     CTNR.SetStatusWarning(RapportTNR, RapportDomaine, RapportSousDomaine, RapportSousDomaineParts, RapportClassification);
                     RapportClassification.Ecarts.Add(RapportEcarts);
 
-                    DataSet itemValuesBaseQA2 = CTNR.GetItemValues(drRow, sDate, ParamAppli.ConnectionStringBaseQA2, lstCumulativeTable);
-                    DataSet itemValuesBaseQA1 = CTNR.GetItemValues(drRow, sDate, ParamAppli.ConnectionStringBaseQA1, lstCumulativeTable);
+                    DataSet itemValuesBaseQA2 = CTNR.GetItemValues(drRow, sDate, sConnectionStringBaseQA2, lstCumulativeTable);
+                    DataSet itemValuesBaseQA1 = CTNR.GetItemValues(drRow, sDate, sConnectionStringBaseQA1, lstCumulativeTable);
                     CTNR.CheckDifference(RapportEcarts, itemValuesBaseQA1, itemValuesBaseQA2, drRow, sDate);
 
                 } else
@@ -119,7 +123,7 @@ namespace PNPUCore.Process
 
                 if (index == -1)
                 {
-                    if (lstClassification.ContainsKey(drRow[6].ToString()) == false)
+                    if (!lstClassification.ContainsKey(drRow[6].ToString()))
                     {
                         // Create new instance of classification if not exist
                         RapportClassification = new Classification();
@@ -132,7 +136,7 @@ namespace PNPUCore.Process
                     }
                     // Add item difference with "DELETED" specificity if index equals to -1
                     Ecarts RapportEcarts = new Ecarts();
-                    CTNR.AddItemEcart(RapportEcarts, drRow, index, sDate, "DELETED");
+                    CTNR.AddItemEcart(RapportEcarts, drRow, index, sDate, "DELETED", sConnectionStringBaseQA1, sConnectionStringBaseQA2);
                 }
             }
 
@@ -149,7 +153,7 @@ namespace PNPUCore.Process
             historicWorkflow.CLIENT_ID = this.CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportTNR.Debut;
             historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicWorkflow.ID_H_WORKFLOW = idInstanceWF;
+            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
             InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
 
             historicStep.ID_PROCESS = this.PROCESS_ID;
@@ -162,14 +166,16 @@ namespace PNPUCore.Process
             historicStep.LAUNCHING_DATE = RapportTNR.Debut;
             historicStep.ENDING_DATE = RapportTNR.Fin;
             historicStep.ID_STATUT = RapportTNR.Result;
-            historicStep.ID_H_WORKFLOW = idInstanceWF;
+            historicStep.ID_H_WORKFLOW = this.ID_INSTANCEWF;
 
             GenerateHistoric(RapportTNR.Fin, RapportTNR.Result, RapportTNR.Debut);
+
+            paramToolbox.DeleteParamsToolbox(this.WORKFLOW_ID, this.ID_INSTANCEWF);
 
             if (RapportTNR.Result == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessTNR);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, this.ID_INSTANCEWF);
             } 
         }
 
