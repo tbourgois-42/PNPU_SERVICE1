@@ -149,6 +149,10 @@
                         color="error"
                         >{{ item.result }}</v-icon
                       >
+                      <v-icon
+                        v-if="item.result === 'mdi-information-variant'"
+                        >{{ item.result }}</v-icon
+                      >
                     </td>
                   </tr>
                 </tbody>
@@ -230,167 +234,218 @@ export default {
     items: [
       {
         id: '1',
-        name: 'Pré contrôle des .mdb',
+        name: "Analyse d'impact sur les données",
+        idClient: '111',
         result: 'mdi-alert-circle',
-        debut: '09/06/20 17:48:25',
-        fin: '09/06/20 17:48:37',
+        debut: '22/06/20 14:45:34',
+        fin: '22/06/20 14:45:35',
         children: [
           {
-            id: '2',
-            name: '8.1.6_HF1214.mdb',
+            id: '101',
+            name: 'TESTS_ANALYSE_DATA.mdb',
             result: 'mdi-alert-circle',
+            tooltip:
+              "Analyse d'impact des données livrées dans le fichier TESTS_ANALYSE_DATA.mdb",
             children: [
               {
-                id: '201',
-                name: 'Contrôle des commandes interdites',
-                Tooltip:
-                  'Vérifie si le mdb standard ne contient pas de commande risquant de provoquer un dysfonctionnement. Par exemple les commandes TRANSFER "SECURITY... ou KILL "SECURITY... -  - Liste des commandes interdites : - TRANSFER "SECURITY - KILL "SECURITY - REPLACE M4RSC_APPROLE',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '202',
-                name: 'Contrôle des données Replace',
-                Tooltip:
-                  'Vérifie si les données des tables présentes dans les scripts Replace Row sont bien présentes dans le mdb afin de détecter une erreur de packaging ou un oubli de livraison de paramétrage',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '203',
-                name: 'Contrôle des ID Synonym',
-                Tooltip:
-                  "Vérifie si les items de paie standards livrés dans le mdb ne sont pas livrés sur des plages d'ID Synonym réservées au client.Cela permet d'éviter de livrer un item standard ayant le même ID Synonym qu'un item spécifique -  - Liste des plages réservées aux clients : - De 5001 à 9999 - De 10301 à 10999 - De 11301 à 11999 - De 13301 à 13999 - De 14501 à 14999 - De 17000 à 25000 - De 27001 à 29999 - De 33001 à 39999 - De 43001 à 49999 - De 53001 à 59999 - De 60501 à 60999 - De 63001 à 69999 - De 73001 à 79999 - De 83001 à 89999 - De 90301 à 95999 - De 97000 à 99999 - De 150000 à 199999 - De 250000 à 299999 - De 350000 à 399999 - De 450000 à 499999 - De 550000 à 599999 - De 650000 à 799999 - De 950000 à 999999 - De 1150000 à 1199999 - De 1250000 à 1299999 - De 1350000 à 1399999 - De 1450000 à 1499999 - De 1550000 à 1599999 - De 1650000 à 1999999 - De 2500000 à 2999999 - De 3500000 à 4999999 - De 5400000 à 5999999",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '204',
-                name: 'Contrôles des ID Synonym existant',
-                Tooltip:
-                  "Vérifie si les items de paie livrés dans le mdb n'utilisent pas un ID Synonym déjà pris sur la base de référence afin d'éviter le risque de sélectionner le mauvais item si on utilise la sélection par CODE dans la saisie de EV par exemple",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '205',
-                name: 'Contrôle des totaux',
-                Tooltip:
-                  "Vérifie que les items de paie utilisés dans les totaux livrés dans le mdb standard existent sur la base de référence ou dans le mdb standard afin d'éviter d'avoir une erreur lors du calcul de paie",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '206',
-                name: 'Contrôle livraison bulletin électronique',
-                Tooltip:
-                  "Vérifie dans le pack standard si la présentation SCO_DP_PAYROLL_CHANNEL est livrée. Si c'est le cas un warning est déclenché pour indiquer qu'une action est à prévoir pour les clients n'utilisant pas la présentation SFR",
-                result: 'mdi-alert',
-                message: [
+                id: '10101',
+                name: '8.1_HF2001_PLFR_142112_D',
+                numCommande: '1',
+                result: 'mdi-check-circle',
+                tooltip: '',
+                children: [
                   {
-                    id: '2061',
+                    id: '1010101',
                     name:
-                      'La présentation SCO_DP_PAYROLL_CHANNEL est livrée dans le pack 8.1.6_HF1214_SFR_127702_L.'
+                      "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.011' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010102',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.012' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010103',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.013' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010104',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.014' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010105',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.011' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010106',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.012' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010107',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.013' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010108',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.014' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010109',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '02'  \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010110',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '03'  \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010111',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '23'  \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
+                  },
+                  {
+                    id: '1010112',
+                    name:
+                      "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '43'  \"",
+                    result: 'mdi-information-variant',
+                    message: 'Pas de contrôle automatique sur cette commande.'
                   }
                 ]
               },
               {
-                id: '207',
-                name: "Contrôle des niveaux d'héritage",
-                Tooltip:
-                  "Vérifie que les éléments standards livrés sont au niveau d'héritage le plus fin afin d'éviter que la modification livrée ne soit neutralisée par une surécriture standard",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '208',
-                name: 'Contrôle des niveaux de saisies',
-                Tooltip:
-                  "Vérifie qu'il n'y a pas de perte de niveau de saisie d'un item de paie entre le mdb standard et la base de référence pour éviter les régressions et rappels intempestifs sur cet item lors du calcul de paie",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '209',
-                name: "Contrôle livraison d'objets techno",
-                Tooltip:
-                  "Vérifie que le mdb standard ne livre pas d'élément techno. Les éléments techno doivent être livrés exclusivement dans des HF Technos",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '210',
-                name: 'Contrôle des paramètres applicatifs',
-                Tooltip:
-                  'Vérifie que le mdb standard ne livre pas des paramètres applicatifs risquant de provoquer un dysfonctionnement. Par exemple les paramètres concernant le machine to machine. -  - Liste des clés interdites : - ENC_CONN_STR_RAMDL - FILESERVICE_URI - M2M_PROXY_HOST - M2M_PROXY_LOGIN - M2M_PROXY_PORT - M2M_PROXY_PROTOCOLE - M2M_PROXY_PWD - PROXY_HOST - PROXY_PORT - PROXY_USER - PROXY_USER_DOMAIN - PROXY_USER_PASSWORD - PARTNER_PROCESS_SERVER - PARTNER_PROCESS_USER - SERVER_URL - MAIL_SERVICE_URL -  - Liste des sections interdites : - AUTHENTICATION - PORTS - SERVERS - SMTP_TRANSPORT',
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '211',
-                name: 'Contrôle propagation des données',
-                Tooltip:
-                  "Vérifie si les données des tables multi orga livrées dans le mdb sont propagées pour qu'elles soient appliquées sur les ID Organization des clients",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '212',
-                name: 'Contrôle propagation dans project explorer',
-                Tooltip:
-                  "Vérifie si les données du project explorer livrées en standard sur SOC_0001 sont propagées sur SOC_0002 pour qu'elles soient appliquées sur les clients. Si ce n'est pas le cas un warning est déclenché pour qu'une action soit prévue",
-                result: 'mdi-check-circle'
-              },
-              {
-                id: '213',
-                name: 'Contrôle de sécurité sur les tables',
-                Tooltip:
-                  "Vérifie que les tables livrées sont sécurisées afin d'éviter que tous les utilisateurs puissent accéder aux données sans avoir les accès",
+                id: '10102',
+                name: '8.1_HF2001_PLFR_142112_D',
+                numCommande: '2',
                 result: 'mdi-alert-circle',
-                message: [
+                tooltip: '',
+                children: [
                   {
-                    id: '2131',
-                    name: 'Table SFR_DSN_FICHES_PARAM non sécurisée.'
+                    id: '1010201',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010202',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010203',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010204',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010205',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010206',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010207',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010208',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010209',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''02'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010210',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''03'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010211',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''23'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-check-circle',
+                    message:
+                      'Les données du client sont standards. La propagation peut-être faite.'
+                  },
+                  {
+                    id: '1010212',
+                    name:
+                      "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''43'' ', @opt_suppr = 1, @debug = 0",
+                    result: 'mdi-alert-circle',
+                    message:
+                      'Les données du client contiennent du spécifique. Commande à traiter à la main.'
                   }
                 ]
-              },
-              {
-                id: '214',
-                name: 'Contrôle de sécurité sur les tâches',
-                Tooltip:
-                  "Vérifie que les business process livrés sont sécurisés afin d'éviter que tous les utilisateurs puissent lancer la tâche sans avoir les accès",
-                result: 'mdi-alert-circle',
-                message: [
-                  {
-                    id: '2141',
-                    name: 'Tâche SFR_JS_DSN_CONTROL_FPOC non sécurisée.'
-                  },
-                  {
-                    id: '2142',
-                    name: 'Tâche SFR_JS_DSN_CONTROL_FPOC_COMP non sécurisée.'
-                  },
-                  {
-                    id: '2143',
-                    name: 'Tâche SFR_JS_DSN_FILE_INTEG_SINGLE non sécurisée.'
-                  },
-                  {
-                    id: '2144',
-                    name: 'Tâche SFR_JS_DSN_FILE_INTEGRATOR non sécurisée.'
-                  },
-                  {
-                    id: '2145',
-                    name: 'Tâche SFR_JS_DSN_LIST non sécurisée.'
-                  },
-                  {
-                    id: '2146',
-                    name: 'Tâche SFR_JS_DSN_LIST_SINGLE non sécurisée.'
-                  }
-                ]
-              },
-              {
-                id: '215',
-                name: 'Contrôle des types de packages',
-                Tooltip:
-                  'Vérifie la cohérence entre le contenu des commandes et le type de package pour éviter par exemple la livraison d\'une commande TRANSFER "ITEM" dans un pack de données (D) au lieu d\'un pack logique (L)',
-                result: 'mdi-check-circle'
               }
             ]
-          },
-          {
-            id: '3',
-            name: 'Contrôle des dépendances inter packages',
-            result: 'mdi-check-circle',
-            children: []
           }
         ]
       }

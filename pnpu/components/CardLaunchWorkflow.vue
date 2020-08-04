@@ -33,8 +33,8 @@
                     label="Workflow *"
                     chips
                     solo
-                    @input="getSelectedWorkflow()"
                     required
+                    @input="getSelectedWorkflow()"
                   ></v-select>
                   <iconTooltip
                     text="Sélection du workflow qui sera instancié."
@@ -44,7 +44,7 @@
                   <v-select
                     ref="txtTypologie"
                     v-model="txtTypologie"
-                    :items="typologie"
+                    :items="lstTypologie"
                     :rules="[verifyTypologie()]"
                     label="Typologie *"
                     multiple
@@ -168,15 +168,12 @@
   </v-layout>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 import iconTooltip from '../components/IconTooltip'
 export default {
   components: { iconTooltip },
   props: {
-    clients: {
-      type: Array,
-      default: () => []
-    },
     typologie: {
       type: Array,
       default: () => []
@@ -190,7 +187,7 @@ export default {
     txtTypologie: [],
     idTypologie: '',
     lstClient: [],
-    lstClientHidden: [],
+    lstTypologie: [],
     clientsTypo: [],
     files: [],
     launchWorkflow: false,
@@ -232,6 +229,9 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      clients: 'modules/auth/clients'
+    }),
     form() {
       return {
         txtWorkflow: this.txtWorkflow,
@@ -245,26 +245,52 @@ export default {
   },
 
   watch: {
+    /**
+     * Change list of client depends on typology selected
+     */
     txtTypologie() {
       this.lstClient = []
-      for (const client of this.clientsTypo) {
-        for (const idTypo of this.txtTypologie) {
-          if (idTypo.toString() === client.TYPOLOGY_ID) {
-            this.lstClient.push({
-              value: client.ID_CLIENT,
-              text: client.CLIENT_NAME
-            })
-          }
+      this.clients.forEach((client) => {
+        if (this.txtTypologie.length === 0) {
+          this.createLstClient()
+        } else {
+          this.txtTypologie.forEach((typologie) => {
+            if (typologie.toString() === client.TYPOLOGY.toString()) {
+              this.lstClient.push({
+                value: client.ID_CLIENT,
+                text: client.CLIENT_NAME
+              })
+            }
+          })
         }
-      }
+      })
     }
   },
 
   created() {
     this.initialize()
+    this.createLstClient()
+    this.createLstTypologie()
   },
 
   methods: {
+    createLstClient() {
+      this.clients.forEach((client) => {
+        this.lstClient.push({
+          value: client.ID_CLIENT,
+          text: client.CLIENT_NAME
+        })
+      })
+    },
+
+    createLstTypologie() {
+      this.clients.forEach((client) => {
+        if (this.lstTypologie.includes(client.TYPOLOGY) === false) {
+          this.lstTypologie.push(client.TYPOLOGY)
+        }
+      })
+    },
+
     close() {
       this.dialog = false
     },
@@ -348,9 +374,6 @@ export default {
           `${process.env.WEB_SERVICE_WCF}/clientsByTypo`
         )
         vm.clientsTypo = res2.data
-        /* vm.clients.forEach((element) => {
-          vm.lstClientHidden.push(element.CLIENT_NAME)
-        }) */
       } catch (error) {
         vm.showSnackbar('error', `${error} !`)
       }

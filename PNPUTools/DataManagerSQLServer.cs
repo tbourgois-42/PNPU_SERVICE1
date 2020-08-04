@@ -273,6 +273,27 @@ namespace PNPUTools.DataManager
             }
         }
 
+        internal static bool DeleteDatas(string sRequest, string connectionString)
+        {
+            bool result = false;
+            using (var conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlCommand command = conn.CreateCommand();
+                    command.CommandText = sRequest;
+                    command.ExecuteNonQuery();
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("La requete : " + sRequest + " a échoué.");
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// Get list of compressed file from the database
         /// </summary>

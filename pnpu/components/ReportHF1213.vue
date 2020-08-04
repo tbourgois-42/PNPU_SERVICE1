@@ -26,7 +26,7 @@
               return-object
               transition
               activatable
-              open-on-click
+              open-all
               @update:active="getSelected($event)"
               @update:open="getSelected($event)"
             >
@@ -68,7 +68,7 @@
             >
           </v-list-item-content>
           <v-checkbox
-            v-model="checkbox"
+            v-model="checkboxValue"
             label="Voir uniquement les contrôles en erreur"
             hide-details
             @change="Filtered($event)"
@@ -488,7 +488,6 @@ export default {
     tooltip: '',
     showTooltip: false,
     treeviewFiltered: [],
-    itemsCopy: [],
     dependItemTable: [],
     nameControleDependances: 'Contrôle des dépendances du livrable',
     showTableDependances: false,
@@ -506,7 +505,6 @@ export default {
   },
 
   created() {
-    this.itemsCopy = JSON.parse(JSON.stringify(this.items))
     this.treeviewFiltered = JSON.parse(JSON.stringify(this.items))
     this.selectedItemTable = this.items[0].children
     this.titleTable = this.items[0].name
@@ -514,6 +512,10 @@ export default {
   },
 
   methods: {
+    /**
+     * Get selected item in treeview
+     * @param {object} $event
+     */
     getSelected(e) {
       if (e.length > 0) {
         for (const selectedItem of e) {
@@ -566,6 +568,10 @@ export default {
       this.Filtered(this.checkboxValue)
     },
 
+    /**
+     * Filter table
+     * @param {bool} checkboxValue
+     */
     Filtered(checkboxValue) {
       this.checkboxValue = checkboxValue
       this.FilterTreeview(checkboxValue)
@@ -583,45 +589,38 @@ export default {
       }
     },
 
+    /**
+     * Filter treeview
+     * @param {bool} checkboxValue
+     */
     FilterTreeview(checkboxValue) {
-      // debugger
       if (checkboxValue) {
-        this.treeviewFiltered.forEach((element) => {
-          element.children.forEach((el2, idx, ta) => {
-            if (el2.result === this.iconValid) {
-              // delete ta[idx]
-              // ta = this.removeElement(ta, idx)
-              this.treeviewFiltered[0].children = this.removeElement(
-                this.treeviewFiltered[0].children,
-                idx
-              )
-            }
-            el2.children.forEach((el3, idx2, ta2) => {
-              if (el3.result === this.iconValid) {
-                // delete ta2[idx2]
-                this.treeviewFiltered[0].children[
-                  idx
-                ].children = this.removeElement(
-                  this.treeviewFiltered[0].children[idx].children,
-                  idx2
-                )
-                // ta2 = this.removeElement(ta2, idx2)
-              }
-            })
-          })
-        })
+        // Remove all if global control is OK
+        if (this.treeviewFiltered[0].result === 'mdi-check-circle') {
+          this.treeviewFiltered.splice(0, 1)
+        } else {
+          // Remove "Controle des dépendances du livrable" level
+          this.removeElements(this.treeviewFiltered[0].children)
+          // Remove all check control
+          this.removeElements(this.treeviewFiltered[0].children[0].children)
+        }
       } else {
-        // this.treeviewFiltered = this.itemsCopy
-        console.log('treeviewFilteredElse', this.treeviewFiltered)
+        // Deep Copy of this.items
+        this.treeviewFiltered = JSON.parse(JSON.stringify(this.items))
       }
-      console.log('treeviewFiltered', this.treeviewFiltered)
-      console.log('itemsCopy', this.itemsCopy)
     },
 
-    removeElement(array, index) {
-      const newArray = [...array]
-      newArray.splice(index, 1)
-      return newArray
+    /**
+     * Remove elements from array
+     * @param {array} array - Array to check for remove elements
+     */
+    removeElements(array) {
+      for (let index = 0; index < array.length; index++) {
+        if (array[index].result === 'mdi-check-circle') {
+          array.splice(index, 1)
+          index --
+        }
+      }
     }
   }
 }

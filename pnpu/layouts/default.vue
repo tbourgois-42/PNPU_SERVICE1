@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="authenticated"
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
@@ -11,8 +12,12 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title font-weight-medium">
-            PeopleNet Platform Update
+            Bonjour, {{ user }}
           </v-list-item-title>
+          <v-chip class="mt-2 mb-2" color="primary" label>
+            <v-icon left>mdi-account</v-icon>
+            {{ profil }}
+          </v-chip>
         </v-list-item-content>
       </v-list-item>
       <v-divider class="mx-4"></v-divider>
@@ -73,22 +78,31 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" app flat dark dense color="primary">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="authenticated" @click.stop="drawer = !drawer" />
       <v-btn text to="/">
         <v-toolbar-title class="title"
           >PeopleNet Platform Update</v-toolbar-title
         >
       </v-btn>
       <v-spacer />
-      <v-btn icon>
-        <v-icon>mdi-account</v-icon>
+      <v-btn
+        v-if="authenticated"
+        @click.prevent="signOut"
+        text
+        class="ma-2"
+        to="/"
+      >
+        <v-icon left>mdi-logout</v-icon> Se déconnecter
+      </v-btn>
+      <v-btn v-if="!authenticated" text class="ma-2" to="/">
+        <v-icon left>mdi-account</v-icon> Se connecter
       </v-btn>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-container fluid>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
     <v-footer :fixed="fixed" app dark dense color="primary">
       <span>&copy; {{ new Date().getFullYear() }} - Cegid</span>
     </v-footer>
@@ -96,6 +110,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -106,7 +121,7 @@ export default {
         {
           icon: 'mdi-view-dashboard',
           text: 'Dashboard',
-          to: '/'
+          to: '/dashboard'
         },
         {
           icon: 'mdi-sitemap',
@@ -129,7 +144,7 @@ export default {
           to: '/report'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-toolbox',
           text: 'Toolbox',
           to: '/toolbox'
         },
@@ -160,12 +175,62 @@ export default {
               to: '/reportAlpha/rapportTNR'
             }
           ]
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Livraison',
+          to: '/rapportLivraison'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Intégration',
+          to: '/rapportIntegration'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Analyse de données',
+          to: '/rapportAnalyseData'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Packaging des dépendances',
+          to: '/rapportPackagingDependances'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Processus critiques',
+          to: '/rapportProcessusCritiques'
+        },
+        {
+          icon: 'mdi-microsoft-access',
+          text: 'Analyse logique',
+          to: '/rapportAnalyseLogique'
         }
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'PeopleNet Platform Update'
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      authenticated: 'modules/auth/authenticated',
+      user: 'modules/auth/user',
+      profil: 'modules/auth/profil'
+    })
+  },
+
+  methods: {
+    ...mapActions({
+      signOutAction: 'modules/auth/signOut'
+    }),
+
+    signOut() {
+      this.signOutAction().then(() => {
+        this.$router.push('/')
+      })
     }
   }
 }

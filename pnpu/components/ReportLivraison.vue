@@ -25,14 +25,21 @@
           @click="continueWorkflow()"
           ><v-icon left>mdi-hand</v-icon> Valider le processus
         </v-btn>
-        <v-btn
-          depressed
-          class="mr-4 mt-2 pr-4"
-          color="primary"
-          :disabled="downloadDisable"
-          @click="downloadZip()"
-          ><v-icon left>mdi-download</v-icon> Télécharger</v-btn
-        >
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              depressed
+              class="mr-4 mt-2 pr-4"
+              color="primary"
+              :disabled="downloadDisable"
+              @click="downloadZip()"
+              v-on="on"
+              v-bind="attrs"
+              ><v-icon left>mdi-download</v-icon> Télécharger</v-btn
+            >
+          </template>
+          <span>Télécharger les .mbd</span>
+        </v-tooltip>
         <v-btn depressed class="mr-4 mt-2 pr-4" color="primary">
           <v-icon left>mdi-file-excel-outline</v-icon> Exporter
         </v-btn>
@@ -125,8 +132,7 @@
             text
             type="success"
           >
-            La tâche de localisation {{ clientTaskName }} a été générée le
-            {{ new Date().toLocaleString() }} sur l'environnement QA1
+            La tâche de localisation {{ clientTaskName }} a été générée sur l'environnement QA2
           </v-alert>
           <v-alert
             v-if="nbAvailablePack === 0"
@@ -258,12 +264,12 @@ import axios from 'axios'
 export default {
   props: {
     idPROCESS: {
-      type: String,
-      default: '1'
+      type: Number,
+      default: 1
     },
     reportJsonData: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     idInstanceWF: {
       type: String,
@@ -274,10 +280,18 @@ export default {
       default: ''
     },
     nbAvailablePack: {
+      type: Number,
+      default: 0
+    },
+    clientID: {
       type: String,
       default: ''
     },
-    clientID: {
+    currentID_STATUT: {
+      type: String,
+      default: ''
+    },
+    clientName: {
       type: String,
       default: ''
     }
@@ -334,6 +348,8 @@ export default {
   created() {
     this.titleTable = this.reportJsonData[0].name
     this.selectedItemTable = this.reportJsonData[0].children
+    this.nbLocalisation = this.reportJsonData[1].nbElements
+    this.clientTaskName = this.reportJsonData[1].cctTaskID
   },
 
   methods: {
@@ -392,7 +408,6 @@ export default {
 
     showLocalisation(selectedItem) {
       this.titleTable = selectedItem.name
-      this.clientTaskName = selectedItem.cctTaskID
       this.itemsDataTable = selectedItem.elements
       this.nbLocalisation = selectedItem.nbElements
       this.headersDataTable = [

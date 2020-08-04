@@ -21,8 +21,15 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "clients/dashboard/{workflowId}/{idInstanceWF}")]
-        IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId, string idInstanceWF);
+            UriTemplate = "clients/dashboard/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "clients/dashboard/{workflowID}/{idInstanceWF}/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string sHabilitation, string sUser, string workflowID, string idInstanceWF);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -42,8 +49,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "workflow/historic")]
-        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow();
+            UriTemplate = "dashboard/workflow/historic/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -204,8 +211,8 @@ namespace WcfService1
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "worflow/{WorkflowId}/uploadFile")]
-        void UploadFile(Stream stream, string WorkflowId);
+            UriTemplate = "worflow/uploadFile")]
+        void UploadFile(Stream stream);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -231,6 +238,43 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "livraison/availablePack/{workflowId}/{idInstanceWF}/{clientId}")]
         int GetNbAvailablePack(string workflowId, string idInstanceWF, string clientId);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "auth/signin")]
+        string AuthUser(Stream stream);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "auth/me/?token={token}")]
+        string ConnectUser(string token);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "auth/signout")]
+        string SignOutUser(Stream stream);
+
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "auth/habilitation/?user={user}&token={token}")]
+        string GetHabilitation(string user, string token);
+
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "auth/habilitation/clients/?user={user}&habilitation={habilitation}")]
+        IEnumerable<InfoClient> GetListClients(string user, string habilitation);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

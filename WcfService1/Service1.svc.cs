@@ -17,6 +17,7 @@ using AntsCode.Util;
 using System.Configuration;
 using HttpMultipartParser;
 using System.Net;
+using System.Data;
 
 namespace WcfService1
 {
@@ -58,16 +59,13 @@ namespace WcfService1
             return string.Format("You entered: {0}", value);
         }
 
-        public IEnumerable<InfoClientStep> GetInfoAllClient(string workflowId_, string idInstanceWF_)
+        public IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser)
         {
-            int workflowId = int.Parse(workflowId_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            return RequestTool.GetAllInfoClient(workflowId, idInstanceWF);
-            //return RequestTool.GetAllStep(); 
+            return RequestTool.GetInfoDashboardCard(sHabilitation, sUser);
         }
-        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow()
+        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser)
         {
-            return RequestTool.GetHWorkflow();
+            return RequestTool.GetHWorkflow(sHabilitation, sUser);
         }
 
         public string GetInfoOneClient(string ClientName)
@@ -156,7 +154,7 @@ namespace WcfService1
         {
         }
 
-        public void UploadFile(Stream stream, string workflowId_)
+        public void UploadFile(Stream stream)
         {
             var parser = MultipartFormDataParser.Parse(stream);
 
@@ -164,12 +162,11 @@ namespace WcfService1
             string clients = parser.GetParameterValue("clients"); // separate by ,
             bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
             string instanceName = parser.GetParameterValue("instanceName");
+            int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
             
             // Files are stored in a list:
             FilePart file = parser.Files.First();
             string FileName = file.FileName;
-
-            int workflowId = int.Parse(workflowId_);
 
             //EST CE QUE LE DOSSIER TEMP EXISTE
             if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
@@ -352,6 +349,46 @@ namespace WcfService1
             int nbAvailablePack = int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));
 
             return nbAvailablePack;
+        }
+
+        public string AuthUser(Stream stream)
+        {
+            string sToken = Authentification.AuthUser(stream);
+
+            if (sToken == string.Empty)
+            {
+                throw new WebFaultException(HttpStatusCode.Unauthorized);
+            }
+
+            return sToken;
+        
+        }
+
+        public string ConnectUser(string sToken)
+        {
+            return Authentification.ConnectUser(sToken);
+        }
+
+        public string SignOutUser(Stream stream)
+        {
+            return Authentification.SignOutUser(stream) ? "Déconnection effectué avec succès" : throw new WebFaultException(HttpStatusCode.BadRequest);
+        }
+
+        public string GetHabilitation(string user, string token)
+        {
+            return Authentification.GetHabilitation(user, token);
+        }
+
+        public IEnumerable<InfoClient> GetListClients(string user, string habilitation)
+        {
+            return Authentification.GetListClient(habilitation, user);
+        }
+
+        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string user, string habilitation, string workflowID_, string idInstanceWF_)
+        {
+            decimal workflowID = decimal.Parse(workflowID_);
+            decimal idInstanceWF = decimal.Parse(idInstanceWF_);
+            return RequestTool.GetInfoDashboardCardByWorkflow(user, habilitation, workflowID, idInstanceWF);
         }
     }
 

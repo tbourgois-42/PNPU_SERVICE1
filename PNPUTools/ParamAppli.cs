@@ -114,14 +114,14 @@ namespace PNPUTools
 
         public static string LogLevel = "DEBUG";
 
-        public const string connectionStringSupport = "server=M4FRDB16;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
+        public const string connectionStringSupport = "server=M4FRDB16.fr.meta4.com;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
         public const string connectionTemplate = "server={0};uid={1};pwd={2};database={3};";
 
-        // public const string ConnectionStringBaseQA2 = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
-        // public const string ConnectionStringBaseQA1 = "server=M4FRDB18;uid=CAPITAL_LIV;pwd=Cplliv2017;database=CAPITAL_LIV;";
+        // public const string ConnectionStringBaseQA2 = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+        // public const string ConnectionStringBaseQA1 = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_LIV;pwd=Cplliv2017;database=CAPITAL_LIV;";
 
-        public const string ConnectionStringBaseQA2 = "server=M4FRDB20;uid=GLS_TNR;pwd=F3?6D!Fk*f.;database=GLS_TNR;";
-        public const string ConnectionStringBaseQA1 = "server=M4FRDB20;uid=GLS_REF;pwd=o8lfIwUOBW;database=GLS_REF;";
+        public const string ConnectionStringBaseQA2 = "server=M4FRDB20.fr.meta4.com;uid=GLS_TNR;pwd=F3?6D!Fk*f.;database=GLS_TNR;";
+        public const string ConnectionStringBaseQA1 = "server=M4FRDB20.fr.meta4.com;uid=GLS_REF;pwd=o8lfIwUOBW;database=GLS_REF;";
 
         public static int ProcessControlePacks = 1;
         public static int ProcessInit = 2;
@@ -198,7 +198,7 @@ namespace PNPUTools
             {
                 qFIFO = new Queue<string>();
 
-                //ConnectionStringBaseAppli = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+                //ConnectionStringBaseAppli = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
                 FileIniDataParser iniParser;
                 IniData iniData;
                 try
