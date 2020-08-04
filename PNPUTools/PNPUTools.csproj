@@ -71,6 +71,7 @@
     <Compile Include="GereMDBDansBDD.cs" />
     <Compile Include="MultipartParser.cs" />
     <Compile Include="ParamAppli.cs" />
+    <Compile Include="ParamToolbox.cs" />
     <Compile Include="RamdlTool.cs" />
     <Compile Include="RequestTool.cs" />
     <Compile Include="DataManagerAccess.cs" />

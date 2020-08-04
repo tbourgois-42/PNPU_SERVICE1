@@ -24,7 +24,7 @@ namespace PNPUTools
         static string requestAllProcess = "select * from PNPU_PROCESS";
         static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
 
-        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL";
+        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
@@ -247,8 +247,8 @@ namespace PNPUTools
         /// <returns></returns>
         public static string CreateWorkflow(PNPU_WORKFLOW input)
         {
-            string[] requests = { "INSERT INTO PNPU_WORKFLOW ( WORKFLOW_LABEL) VALUES( @WORKFLOW_LABEL)" };
-            string[] parameters = new string[] { "@WORKFLOW_LABEL", input.WORKFLOW_LABEL };
+            string[] requests = { "INSERT INTO PNPU_WORKFLOW ( WORKFLOW_LABEL, IS_TOOLBOX) VALUES( @WORKFLOW_LABEL, @IS_TOOLBOX)" };
+            string[] parameters = new string[] { "@WORKFLOW_LABEL", input.WORKFLOW_LABEL, "@IS_TOOLBOX", input.IS_TOOLBOX.ToString() };
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_WORKFLOW", parameters, true);
         }
