@@ -466,9 +466,9 @@ namespace WcfService1
             throw new NotImplementedException();
         }
 
-        public IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(bool bToolbox)
+        public IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(int isToolBox)
         {
-            return RequestTool.GetAllWorkFLow(bToolbox);
+            return RequestTool.GetAllWorkFLow(isToolBox);
         }
     }
 
