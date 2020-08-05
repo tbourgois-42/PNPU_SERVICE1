@@ -284,19 +284,19 @@ namespace WcfService1
             UriTemplate = "toolbox")]
         string LaunchToolBoxProcess(Stream stream);
 
-        /*[OperationContract]
+        [OperationContract]
         [WebGet(
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "toolbox/dashboard/{workflowId}/{idInstanceWF}")]
-        IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);*/
+        IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);
 
         [OperationContract]
         [WebGet(
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "toolbox/workflow/?toolbox={bToolbox}")]
-        IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(bool bToolbox);
+            UriTemplate = "toolbox/workflow/?toolbox={isToolBox}")]
+        IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(int isToolBox);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
