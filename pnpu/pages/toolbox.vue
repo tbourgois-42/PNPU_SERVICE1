@@ -68,7 +68,7 @@
                       <v-col cols="6">
                         <v-select
                           v-model="toolboxName"
-                          :items="items"
+                          :items="workflows"
                           label="Sélectionner un processus"
                           solo
                         ></v-select>
@@ -138,6 +138,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapGetters } from 'vuex'
 import TlbxTNR from '../components/Toolbox/TlbxTNR'
 import TlbxAnalyseData from '../components/Toolbox/TlbxAnalyseData'
@@ -177,21 +178,18 @@ export default {
     showResultats: true,
     showExecution: false,
     tab: null,
-    clientID: ''
+    clientID: '',
+    workflows: []
   }),
   computed: {
     ...mapGetters({
       clients: 'modules/auth/clients'
     })
   },
-  watch: {
-    clientID() {
-      console.log(this.clientID)
-    }
-  },
   created() {
     this.toolboxName = 'Tests de Non Régressions (TNR)'
     this.createLstClient()
+    this.getListWorkflow()
   },
   methods: {
     createLstClient() {
@@ -207,6 +205,24 @@ export default {
         this.showResultats = !this.showResultats
       } else {
         this.showExecution = !showExecution
+      }
+    },
+    async getListWorkflow() {
+      try {
+        const response = await axios.get(`${process.env.WEB_SERVICE_WCF}/toolbox/workflow`, {
+          params: {
+            toolbox : true
+          }
+        })
+        if (response.status === 200) {
+          response.data.forEach(element => {
+            this.workflows.push(element.WORKFLOW_LABEL)
+          })
+        } else {
+          console.log(response)
+        }
+      } catch (error) {
+        console.log(response)
       }
     }
   }

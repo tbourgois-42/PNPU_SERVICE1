@@ -63,8 +63,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "workflow")]
-        IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow();
+            UriTemplate = "workflow/?toolbox={bToolbox}")]
+        IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(bool bToolbox);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -290,6 +290,13 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "toolbox/dashboard/{workflowId}/{idInstanceWF}")]
         IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);
+
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "toolbox/workflow/?toolbox={bToolbox}")]
+        IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(bool bToolbox);
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

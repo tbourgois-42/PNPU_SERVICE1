@@ -1,0 +1,85 @@
+[
+  {
+    "id": "1",
+    "name": "Intégration",
+    "result": "mdi-alert-circle",
+    "debut": "10/07/20 15:51:14",
+    "fin": "10/07/20 15:53:13",
+    "children": [
+      {
+        "id": "2",
+        "name": "Installation des packs de dépendance Niveau 3",
+        "result": "mdi-alert",
+        "children": [
+          {
+            "id": "21",
+            "name": "TEST_INSTALL_N3.mdb",
+            "Tooltip": "",
+            "result": "mdi-alert",
+            "message": [
+              { "id": "211", "name": "Aucun nouveau pack trouvé dans le mdb." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Installation des packs de dépendance Niveau 2",
+        "result": "mdi-check-circle",
+        "children": [
+          {
+            "id": "31",
+            "name": "TEST_INSTALL_N2.mdb",
+            "Tooltip": "",
+            "result": "mdi-check-circle"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "Installation des packs de dépendance Niveau 1",
+        "result": "mdi-alert",
+        "children": [
+          {
+            "id": "41",
+            "name": "TEST_INSTALL_N1.mdb",
+            "Tooltip": "",
+            "result": "mdi-alert",
+            "message": [
+              { "id": "411", "name": "Aucun nouveau pack trouvé dans le mdb." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "name": "Installation des packs du HF",
+        "result": "mdi-alert-circle",
+        "children": [
+          {
+            "id": "51",
+            "name": "TEST_INSTALL.mdb",
+            "Tooltip": "",
+            "result": "mdi-alert",
+            "message": [
+              { "id": "511", "name": "Aucun nouveau pack trouvé dans le mdb." }
+            ]
+          },
+          {
+            "id": "52",
+            "name": "TEST_INSTALL3.mdb",
+            "Tooltip": "",
+            "result": "mdi-alert-circle",
+            "message": [
+              { "id": "521", "name": "Aucun nouveau pack trouvé dans le mdb." },
+              {
+                "id": "522",
+                "name": "Erreur d'installation du pack TEST_INSTAL3_L."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

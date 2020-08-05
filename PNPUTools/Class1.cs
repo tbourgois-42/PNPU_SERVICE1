@@ -261,6 +261,20 @@ namespace PNPUTools.DataManager
         }
     }
 
+	public class PNPU_TRANSCO_DATABASE
+    {
+		public string CLIENT_ID { get; set; }
+		public string DATABASE_NAME_TRANSCO { get; set; }
+		public string DATABASE_NAME_CLIENT { get; set; }
+		public PNPU_TRANSCO_DATABASE() { }
+		public PNPU_TRANSCO_DATABASE(string CLIENT_ID_, string DATABSE_NAME_TRANSCO_, string DATABASE_NAME_CLIENT_)
+        {
+			this.CLIENT_ID = CLIENT_ID_;
+			this.DATABASE_NAME_TRANSCO = DATABSE_NAME_TRANSCO_;
+			this.DATABASE_NAME_CLIENT = DATABASE_NAME_CLIENT_;
+        }
+    }
+
 	public class PNPU_WORKFLOW_HABILITATION
 	{
 		public decimal WORKFLOW_ID { get; set; }

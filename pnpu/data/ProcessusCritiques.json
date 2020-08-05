@@ -1,0 +1,103 @@
+[
+  {
+    "id": "1",
+
+    "name": "Tests des processus critiques",
+
+    "result": "mdi-alert-circle",
+
+    "debut": "17/07/20 15:01:29",
+
+    "fin": "17/07/20 15:06:08",
+
+    "children": [
+      {
+        "id": "2",
+
+        "name": "Planification des processus critiques",
+
+        "result": "mdi-check-circle",
+
+        "children": [
+          {
+            "id": "21",
+
+            "name": "Planification (2727)",
+
+            "Tooltip": "Génération de la planification des processus critiques",
+
+            "result": "mdi-check-circle"
+          }
+        ]
+      },
+
+      {
+        "id": "3",
+
+        "name": "Processus critiques",
+
+        "result": "mdi-alert-circle",
+
+        "children": [
+          {
+            "id": "31",
+
+            "name": "Suppression Cumuls (2733)",
+
+            "Tooltip": "",
+
+            "result": "mdi-check-circle"
+          },
+
+          {
+            "id": "32",
+
+            "name": "Calcul paie (2738)",
+
+            "Tooltip": "",
+
+            "result": "mdi-check-circle"
+          },
+
+          {
+            "id": "33",
+
+            "name": "Bulletin Paie (2743)",
+
+            "Tooltip": "",
+
+            "result": "mdi-check-circle"
+          },
+
+          {
+            "id": "34",
+
+            "name": "Calcul paie (2748)",
+
+            "Tooltip": "",
+
+            "result": "mdi-alert-circle",
+
+            "message": [
+              {
+                "id": "341",
+
+                "name": "Le traitement s'est terminé en erreur"
+              }
+            ]
+          },
+
+          {
+            "id": "35",
+
+            "name": "Bulletin Paie (2753)",
+
+            "Tooltip": "",
+
+            "result": "mdi-check-circle"
+          }
+        ]
+      }
+    ]
+  }
+]

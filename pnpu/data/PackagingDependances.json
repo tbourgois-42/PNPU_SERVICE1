@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1",
+    "name": "Packaging des dépendances",
+    "result": "mdi-check-circle",
+    "debut": "18/06/20 11:29:33",
+    "fin": "18/06/20 11:30:57",
+    "children": [
+      {
+        "id": "2",
+        "name": "IdRapport - ProcessGestionDependance",
+        "result": "mdi-check-circle",
+        "children": [
+          {
+            "id": "21",
+            "name": "Contrôle des dépendances de niveau 1",
+            "Tooltip": "Récupération des tâches CCT dépendantes de niveau 1",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "22",
+            "name": "Contrôle des dépendances de niveau 2",
+            "Tooltip": "Récupération des tâches CCT dépendantes de niveau 2",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "23",
+            "name": "Contrôle des dépendances de niveau 3",
+            "Tooltip": "Récupération des tâches CCT dépendantes de niveau 3",
+            "result": "mdi-check-circle"
+          }
+        ]
+      }
+    ]
+  }
+]

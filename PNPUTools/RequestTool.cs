@@ -514,11 +514,17 @@ namespace PNPUTools
         /// Get all workflow from PNPU_WORKFLOW
         /// </summary>
         /// <returns>Return a list of workflow</returns>
-        public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
+        public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(bool bToolbox)
         {
-            DataSet result = DataManagerSQLServer.GetDatas(requestAllWorkflow, ParamAppli.ConnectionStringBaseAppli);
-            DataTable table = result.Tables[0];
+            string sSelect = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX ";
+            string sFrom = "FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID ";
+            string sWhere = "WHERE PW.IS_TOOLBOX = " + Convert.ToInt32(bToolbox) + " ";
+            string sGroupBy = "GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
 
+            string sRequest = sSelect + sFrom + sWhere + sGroupBy;            
+            
+            DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
 
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 

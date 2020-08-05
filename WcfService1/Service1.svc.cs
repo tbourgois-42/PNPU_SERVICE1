@@ -84,9 +84,9 @@ namespace WcfService1
             return RequestTool.GetProcess(processId);
         }
 
-        public IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
+        public IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(bool bToolbox)
         {
-            return RequestTool.GetAllWorkFLow();
+            return RequestTool.GetAllWorkFLow(bToolbox);
         }
 
         public PNPU_WORKFLOW getWorkflow(string workflowId)
@@ -431,6 +431,16 @@ namespace WcfService1
                 throw new WebFaultException(HttpStatusCode.BadRequest);
             }
             return result;
+        }
+
+        public IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(bool bToolbox)
+        {
+            return RequestTool.GetAllWorkFLow(bToolbox);
         }
     }
 
