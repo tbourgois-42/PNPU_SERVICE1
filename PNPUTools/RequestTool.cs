@@ -24,7 +24,7 @@ namespace PNPUTools
         static string requestAllProcess = "select * from PNPU_PROCESS";
         static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
 
-        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
+        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID {0} GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
         static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
 
         static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
@@ -44,9 +44,9 @@ namespace PNPUTools
         /// Get workflow hitoric
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser)
+        public static IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser, int isToolBox)
         {
-            string request = Authentification.BuildRequestWorkflowHistoricByProfil(sHabilitation, sUser, requestHistoricWorkflow);
+            string request = Authentification.BuildRequestWorkflowHistoricByProfil(sHabilitation, sUser, requestHistoricWorkflow, isToolBox);
 
             DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
@@ -514,9 +514,19 @@ namespace PNPUTools
         /// Get all workflow from PNPU_WORKFLOW
         /// </summary>
         /// <returns>Return a list of workflow</returns>
-        public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
+        public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(int isToolBox)
         {
-            DataSet result = DataManagerSQLServer.GetDatas(requestAllWorkflow, ParamAppli.ConnectionStringBaseAppli);
+            String request;
+            if( isToolBox >= 0)
+            {
+                request = String.Format(requestAllWorkflow, "WHERE PW.IS_TOOLBOX = " + isToolBox.ToString());
+            }
+            else
+            {
+                request = String.Format(requestAllWorkflow, "");
+            }
+
+            DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
 

@@ -51,6 +51,10 @@ namespace PNPUCore.Controle
 
             DataManagerSQLServer dataManagerSQLServer;
 
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID);
+
             try
             {
                 // Chargement de la liste des tâche CCT de niveau 1 depuis la base de référence
@@ -80,7 +84,7 @@ namespace PNPUCore.Controle
                 // Recherche sur la base du client si les tâches ont été installées
                 if (bPremier == false)
                 {
-                    dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                    dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -119,7 +123,7 @@ namespace PNPUCore.Controle
                     {
                         sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
                         bPremier = true;
-                        foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                        foreach (DataRow drRow in dsDataSet.Tables[0].Rows) 
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
                             if (bPremier == true)
@@ -130,7 +134,7 @@ namespace PNPUCore.Controle
                         }
                         sRequete += ")";
 
-                        dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                        dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
                         {
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {

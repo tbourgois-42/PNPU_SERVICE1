@@ -53,6 +53,9 @@ namespace PNPUCore.Controle
             List<TacheCCT> lTacheCCT = new List<TacheCCT>();
 
             DataManagerSQLServer dataManagerSQLServer;
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID);
 
             try
             {
@@ -85,7 +88,7 @@ namespace PNPUCore.Controle
                 // Recherche sur la base du client si les tâches ont été installées
                 if (bPremier == false)
                 {
-                    dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                    dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -146,7 +149,7 @@ namespace PNPUCore.Controle
                         }
                         sRequete += ")";
 
-                        dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                        dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
                         {
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {

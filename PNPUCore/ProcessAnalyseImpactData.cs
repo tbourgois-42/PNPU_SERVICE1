@@ -61,21 +61,25 @@ namespace PNPUCore.Process
 
 
             //On génère les historic au début pour mettre en inprogress
-            //DEVGenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+            //GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress);
+
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
 
             // MHUM POUR TEST
-            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = "server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseQA1;//"server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";
-            ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "1600";//"0002";//
+            // TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = "server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseQA1;//"server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";
+            //TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "1600";//"0002";//
 
             // Récupération de la liste des champs à ignorer
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
-            dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
+            dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(sConnectionStringBaseQA1);
 
             //Recupération des tables liées à une personne
-            lListPersonnalTables = dmsDataManager.GetPersonnalTables(ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
+            lListPersonnalTables = dmsDataManager.GetPersonnalTables(sConnectionStringBaseQA1);
 
             // Recupération de la liste des tables DSN avec un champ SFR_ID_ORIG_PARAM
-            dsDataSet = dmsDataManager.GetData("select ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD = 'SFR_ID_ORIG_PARAM' AND ID_REAL_OBJECT LIKE '%DSN%'", ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1);
+            dsDataSet = dmsDataManager.GetData("select ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD = 'SFR_ID_ORIG_PARAM' AND ID_REAL_OBJECT LIKE '%DSN%'", sConnectionStringBaseQA1);
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -205,6 +209,7 @@ namespace PNPUCore.Process
 
             GenerateHistoric(rapportAnalyseImpactData.Fin, rapportAnalyseImpactData.Result, rapportAnalyseImpactData.Debut);
 
+            paramToolbox.DeleteParamsToolbox(this.WORKFLOW_ID, this.ID_INSTANCEWF);
 
             /*DEVif (GlobalResult == ParamAppli.StatutOk)
             {*/

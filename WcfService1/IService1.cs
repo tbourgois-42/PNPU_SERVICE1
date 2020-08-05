@@ -49,8 +49,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "dashboard/workflow/historic/?user={sUser}&habilitation={sHabilitation}")]
-        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser);
+            UriTemplate = "dashboard/workflow/historic/?user={sUser}&habilitation={sHabilitation}&isToolBox={isToolBox}")]
+        IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser, int isToolBox = -1);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -63,8 +63,8 @@ namespace WcfService1
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "workflow")]
-        IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow();
+            UriTemplate = "workflow/?isToolBox={isToolBox}")]
+        IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(int isToolBox = -1);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -284,12 +284,12 @@ namespace WcfService1
             UriTemplate = "toolbox")]
         string LaunchToolBoxProcess(Stream stream);
 
-        [OperationContract]
+        /*[OperationContract]
         [WebGet(
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "toolbox/dashboard/{workflowId}/{idInstanceWF}")]
-        IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);
+        IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF);*/
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]

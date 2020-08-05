@@ -114,7 +114,8 @@ namespace PNUDispatcher
                 if (ParamAppli.qFIFO.Count > 0)
                 {
                     string requestInit = ParamAppli.qFIFO.Dequeue();
-
+                    //TODO Gestion d'exception dans le cas où requetsInit est null (Cas possible)
+                    //TODO En cas d'exception loggé ce qui a tenté d'être lancé
                     Console.WriteLine(requestInit);
                     //Gestion des fin de fichiers
                     string request = requestInit.Replace("\0", "");

@@ -27,14 +27,14 @@ namespace PNPUTools
          * string sChaineDeConnexion = "";
         string sLogin = "";
         string sMdp = "";
+        */
 
-        string cbBaseSQLQA1 = "XXXM4QA1";
-        string cbBaseSQLQA2 = "XXXM4QA2";*/
+        string sConnectionStringBaseQA1 = "XXXM4QA1";
+        string sConnectionStringBaseQA2 = "XXXM4QA2";
 
         private string iniFile;
 
         //TMP
-        string sChaineDeConnexion = "";
         string sLogin = "";
         string sMdp = "";
 
@@ -45,7 +45,10 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             //string sEnvironnement = InfoClient.;
-            sChaineDeConnexion = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";//"DSN =CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+            ParamToolbox paramToolbox = new ParamToolbox();
+            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, id_client);
+            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, id_client);
+
             sLogin = "M4ADM";
             sMdp = "M4ADM";//"CapitalM4ADM";
             ParamRamDlInit();
@@ -56,8 +59,11 @@ namespace PNPUTools
             InfoClient = infoClient_;
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
-            //TODO in waiting having r eal data;
-            sChaineDeConnexion = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";//"DSN =CAPITAL_DEV;SRVR=M4FRDB18;UID=CAPITAL_DEV;PWD=Cpldev2017;";
+
+            ParamToolbox paramToolbox = new ParamToolbox();
+            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, infoClient_.ID_CLIENT);
+            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, infoClient_.ID_CLIENT);
+            
             sLogin = "M4ADM";
             sMdp = "M4ADM";// "CapitalM4ADM";
             ParamRamDlInit();
@@ -76,9 +82,6 @@ namespace PNPUTools
             System.Diagnostics.Process pProcess;
             StreamWriter swFichierIni;
             string sCheminCommandFile;
-
-            // MHUM pour test
-            InfoClient.ConnectionStringQA2 = "DSN=SAASSN305;SRVR=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;";
 
             List<string> lListError = null;
 
@@ -124,7 +127,7 @@ namespace PNPUTools
                         //<ORIGIN_CONN>
                         string originConn = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + sCheminMDB;
                         //<TARGET_CONN>
-                        string targetConn = InfoClient.ConnectionStringQA2;
+                        string targetConn = sConnectionStringBaseQA2;
                         //<USER_CVM>
                         string userCVM = sLogin;
                         //<PWD_CVM>
@@ -387,7 +390,7 @@ namespace PNPUTools
             //<ORIGIN_CONN>
             string originConn = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + sCheminMDB;
             //<TARGET_CONN>
-            string targetConn = sChaineDeConnexion;
+            string targetConn = sConnectionStringBaseQA1;
             //<USER_CVM>
             string userCVM = sLogin;
             //<PWD_CVM>
@@ -433,8 +436,6 @@ namespace PNPUTools
             StreamReader srResultat;
             string sContenuFichierLog;
 
-            // MHUM pour test
-            this.sChaineDeConnexion = "DSN=SAASSN305;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseRefPlateforme;
             ParamAppli.GeneratePackPath = ParamAppli.DossierTemporaire+"\\RAMDL";
             this.pathIni = ParamAppli.GeneratePackPath +"\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT + "\\RamdlCmd.INI";
             // FIN MHUM pour test
@@ -494,7 +495,7 @@ namespace PNPUTools
         private void GenerateIniForGeneratePack(string namePack, string[] listTask)
         {
             //<ORIGIN_CONN>
-            string originConn = sChaineDeConnexion; //{0}
+            string originConn = sConnectionStringBaseQA1; //{0}
             string slistTask = ""; //{ 2}
             foreach (String sTask in listTask)
             {

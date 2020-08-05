@@ -57,6 +57,11 @@ namespace PNPUCore.Controle
             string sRequeteSqlServer = string.Empty;
 
             DataManagerAccess dmaManagerAccess = null;
+
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID);
+
             try
             {
                 dmaManagerAccess = new DataManagerAccess();
@@ -94,7 +99,7 @@ namespace PNPUCore.Controle
                         if (Process.STANDARD == true)
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                         else
-                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ListeInfoClient[Process.CLIENT_ID].ConnectionStringQA1);
+                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, sConnectionStringBaseQA1);
                         
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {

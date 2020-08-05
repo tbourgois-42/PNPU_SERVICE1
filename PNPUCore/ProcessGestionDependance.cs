@@ -38,7 +38,10 @@ namespace PNPUCore.Process
 
             GetListControle(ref listControl);
             //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
-            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
+            //ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
+
+            ParamToolbox paramToolbox = new ParamToolbox();
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
 
             sRapport = string.Empty;
             RapportProcess.Name = this.LibProcess;

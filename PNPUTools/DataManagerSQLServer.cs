@@ -76,6 +76,7 @@ namespace PNPUTools.DataManager
             {
                 // A gérer la mise à jour du log
                 //Console.WriteLine(ex.Message);
+                //TODO throw exception
                 dataSet = null;
             }
             return dataSet;

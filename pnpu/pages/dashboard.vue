@@ -438,7 +438,8 @@ export default {
           {
             params: {
               user: this.user,
-              habilitation: this.profil
+              habilitation: this.profil,
+              isToolBox: 0
             }
           }
         )

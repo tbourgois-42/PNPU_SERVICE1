@@ -18,7 +18,6 @@ using System.Configuration;
 using HttpMultipartParser;
 using System.Net;
 using System.Data;
-using PNPUCore;
 
 namespace WcfService1
 {
@@ -64,9 +63,10 @@ namespace WcfService1
         {
             return RequestTool.GetInfoDashboardCard(sHabilitation, sUser);
         }
-        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser)
+
+        public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser, int isToolBox = -1)
         {
-            return RequestTool.GetHWorkflow(sHabilitation, sUser);
+            return RequestTool.GetHWorkflow(sHabilitation, sUser, isToolBox);
         }
 
         public string GetInfoOneClient(string ClientName)
@@ -84,9 +84,9 @@ namespace WcfService1
             return RequestTool.GetProcess(processId);
         }
 
-        public IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow()
+        public IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(int isToolBox = -1)
         {
-            return RequestTool.GetAllWorkFLow();
+            return RequestTool.GetAllWorkFLow(isToolBox);
         }
 
         public PNPU_WORKFLOW getWorkflow(string workflowId)
@@ -397,39 +397,67 @@ namespace WcfService1
             var parser = MultipartFormDataParser.Parse(stream);
             string clientId = parser.GetParameterValue("clientID");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
-            int idInstanceWF = 1234;
-            ParamToolbox paramToolbox = new ParamToolbox();
+            int idInstanceWF = -1;
+            string result = "";
+            string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
+            bool hadFile = parser.Files.Count > 0;
+            string FilePath = "";
 
-            string result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
 
-            LaunchProcess(7, workflowId, clientId.ToString(), 1234);
-            /*string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PHW.IS_TOOLBOX = 1";
-
-            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
-
-            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            if (hadFile)
             {
-                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                // Files are stored in a list:
+                FilePart file = parser.Files.First();
+                string FileName = file.FileName;
+
+                //EST CE QUE LE DOSSIER TEMP EXISTE
+                if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+                    Directory.CreateDirectory(ParamAppli.DossierTemporaire);
+
+                FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
+
+                using (FileStream fileStream = File.Create(FilePath))
                 {
-                    // We generate instance of workflow in PNPU_H_WORKFLOW
-                    PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-                    historicWorkflow.WORKFLOW_ID = workflowId;
-                    historicWorkflow.CLIENT_ID = clientId;
-                    historicWorkflow.LAUNCHING_DATE = DateTime.Now;
-                    historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-                    historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
-                    historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId ;
-
-                    int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
-
-            LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), 1234);
+                    file.Data.Seek(0, SeekOrigin.Begin);
+                    file.Data.CopyTo(fileStream);
                 }
-            }*/
-            // LaunchProcess(ParamAppli.ProcessControlePacks, workflowId, clientToLaunch, idInstanceWF);
-            if (result != "Requête traité avec succès")
-            {
-                throw new WebFaultException(HttpStatusCode.BadRequest);
             }
+
+            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli); 
+ 
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0)) 
+            {
+                DataRow drRow = dsDataSet.Tables[0].Rows[0]; 
+                // We generate instance of workflow in PNPU_H_WORKFLOW 
+                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW(); 
+                historicWorkflow.WORKFLOW_ID = workflowId; 
+                historicWorkflow.CLIENT_ID = clientId; 
+                historicWorkflow.LAUNCHING_DATE = DateTime.Now; 
+                historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1); 
+                historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress; 
+                historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId ;
+
+                idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+
+                if (hadFile)
+                {
+                    GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
+                    // Add zip into database
+                    gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
+                }
+
+                ParamToolbox paramToolbox = new ParamToolbox();
+                result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
+
+                if (result != "Requête traité avec succès")
+                {
+                    //TODO Suppresion historic workflow
+                    //TODO LOG
+                    throw new WebFaultException(HttpStatusCode.BadRequest);
+                }
+                LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
+            }
+            
             return result;
         }
     }

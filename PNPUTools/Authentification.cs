@@ -118,16 +118,26 @@ namespace PNPUTools
             return sToken;
         }
 
-        internal static string BuildRequestWorkflowHistoricByProfil(string sHabilitation, string sUser, string requestHistoricWorkflow)
+        internal static string BuildRequestWorkflowHistoricByProfil(string sHabilitation, string sUser, string requestHistoricWorkflow, int isToolBox)
         {
             string sWhere = string.Empty;
             string sRequest = string.Empty;
             string sOrderBy = "ORDER BY PHW.LAUNCHING_DATE";
 
+            if(isToolBox >= 0)
+            {
+                sWhere += "WHERE PW.IS_TOOLBOX =  " + isToolBox.ToString();
+            }
+            else
+            {
+                sWhere += "WHERE 1 = 1";
+            }
+
             if (sHabilitation != "ADMIN")
             {
-                sWhere += "WHERE (" + BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHW") + ") ";
+                sWhere += " AND (" + BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHW") + ") ";
             }
+
             sRequest = requestHistoricWorkflow + sWhere + sOrderBy;
             return sRequest;
         }
