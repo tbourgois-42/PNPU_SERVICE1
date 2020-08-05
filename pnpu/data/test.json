@@ -1,146 +1,653 @@
-{
-    "workflow":"01/2020",
-    "clients": [
+UPDATE PNPU_H_REPORT
+
+SET JSON_TEMPLATE = '[
+  {
+    "id": "1",
+    "name": "Pré contrôle des .mdb",
+    "result": "mdi-alert-circle",
+    "debut": "07/07/20 16:07:28",
+    "fin": "07/07/20 16:07:39",
+    "children": [
+      {
+        "id": "2",
+        "name": "8.1.6_HF1215.mdb",
+        "result": "mdi-alert-circle",
+        "children": [
+          {
+            "id": "201",
+            "name": "Contrôle du catalogue des tables",
+            "Tooltip": "Vérifie que les nouvelles tables standards livrées sont référencées dans le catalogue des tables. Ce catalogue est utilisé par l''outil utransfer qui permet de transférer des données entre ID_ORGA ou entre Environnements.",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "202",
+            "name": "Contrôle des commandes interdites",
+            "Tooltip": "Vérifie si le mdb standard ne contient pas de commande risquant de provoquer un dysfonctionnement. Par exemple les commandes TRANSFER \"SECURITY... ou KILL \"SECURITY.... Liste des commandes interdites : - TRANSFER \"SECURITY - KILL \"SECURITY - REPLACE M4RSC_APPROLE - TRANSFER \"META4OBJECT & NODE STRUCTURES",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "203",
+            "name": "Contrôle des données Replace",
+            "Tooltip": "Vérifie si les données des tables présentes dans les scripts Replace Row sont bien présentes dans le mdb afin de détecter une erreur de packaging ou un oubli de livraison de paramétrage",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "204",
+            "name": "Contrôle des ID Synonym",
+            "Tooltip": "Vérifie si les items de paie standards livrés dans le mdb ne sont pas livrés sur des plages d''ID Synonym réservées au client.Cela permet d''éviter de livrer un item standard ayant le même ID Synonym qu''un item spécifique. Liste des plages réservées aux clients : - De 5001 à 9999 - De 10301 à 10999 - De 11301 à 11999 - De 13301 à 13999 - De 14501 à 14999 - De 17000 à 25000 - De 27001 à 29999 - De 33001 à 39999 - De 43001 à 49999 - De 53001 à 59999 - De 60501 à 60999 - De 63001 à 69999 - De 73001 à 79999 - De 83001 à 89999 - De 90301 à 95999 - De 97000 à 99999 - De 150000 à 199999 - De 250000 à 299999 - De 350000 à 399999 - De 450000 à 499999 - De 550000 à 599999 - De 650000 à 799999 - De 950000 à 999999 - De 1150000 à 1199999 - De 1250000 à 1299999 - De 1350000 à 1399999 - De 1450000 à 1499999 - De 1550000 à 1599999 - De 1650000 à 1999999 - De 2500000 à 2999999 - De 3500000 à 4999999 - De 5400000 à 5999999",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "205",
+            "name": "Contrôles des ID Synonym existant",
+            "Tooltip": "Vérifie si les items de paie livrés dans le mdb n''utilisent pas un ID Synonym déjà pris sur la base de référence afin d''éviter le risque de sélectionner le mauvais item si on utilise la sélection par CODE dans la saisie de EV par exemple",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "206",
+            "name": "Contrôle des totaux",
+            "Tooltip": "Vérifie que les items de paie utilisés dans les totaux livrés dans le mdb standard existent sur la base de référence ou dans le mdb standard afin d''éviter d''avoir une erreur lors du calcul de paie",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "207",
+            "name": "Contrôle des niveaux d''héritage",
+            "Tooltip": "Vérifie que les éléments standards livrés sont au niveau d''héritage le plus fin afin d''éviter que la modification livrée ne soit neutralisée par une surécriture standard",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "208",
+            "name": "Contrôle des niveaux de saisies",
+            "Tooltip": "Vérifie qu''il n''y a pas de perte de niveau de saisie d''un item de paie entre le mdb standard et la base de référence pour éviter les régressions et rappels intempestifs sur cet item lors du calcul de paie",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "209",
+            "name": "Contrôle livraison d''objets techno",
+            "Tooltip": "Vérifie que le mdb standard ne livre pas d''élément techno. Les éléments techno doivent être livrés exclusivement dans des HF Technos",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "210",
+            "name": "Contrôle des paramètres applicatifs",
+            "Tooltip": "Vérifie que le mdb standard ne livre pas des paramètres applicatifs risquant de provoquer un dysfonctionnement. Par exemple les paramètres concernant le machine to machine.. Liste des clés interdites : - ENC_CONN_STR_RAMDL - FILESERVICE_URI - M2M_PROXY_HOST - M2M_PROXY_LOGIN - M2M_PROXY_PORT - M2M_PROXY_PROTOCOLE - M2M_PROXY_PWD - PROXY_HOST - PROXY_PORT - PROXY_USER - PROXY_USER_DOMAIN - PROXY_USER_PASSWORD - PARTNER_PROCESS_SERVER - PARTNER_PROCESS_USER - SERVER_URL - MAIL_SERVICE_URL - Liste des sections interdites : - AUTHENTICATION - PORTS - SERVERS - SMTP_TRANSPORT",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "211",
+            "name": "Contrôle propagation des données",
+            "Tooltip": "Vérifie l''existence d''une commande de propagation pour les données livrées dans le pack sur des tables multi organization",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "212",
+            "name": "Contrôle de sécurité sur les tables",
+            "Tooltip": "Vérifie que les tables livrées sont sécurisées afin d''éviter que tous les utilisateurs puissent accéder aux données sans avoir les accès",
+            "result": "mdi-alert-circle",
+            "message": [
+              {
+                "id": "2121",
+                "name": "Table CFR_VW_H_HR_SAISIE_PAIE non sécurisée."
+              },
+              { "id": "2122", "name": "Table STD_CHILD_EL non sécurisée." },
+              { "id": "2123", "name": "Table STD_SPOU_EMP non sécurisée." }
+            ]
+          },
+          {
+            "id": "213",
+            "name": "Contrôle de sécurité sur les tâches",
+            "Tooltip": "Vérifie que les business process livrés sont sécurisés afin d''éviter que tous les utilisateurs puissent lancer la tâche sans avoir les accès",
+            "result": "mdi-check-circle"
+          },
+          {
+            "id": "214",
+            "name": "Contrôle des types de packages",
+            "Tooltip": "Vérifie la cohérence entre le contenu des commandes et le type de package pour éviter par exemple la livraison d''une commande TRANSFER \"ITEM\" dans un pack de données (D) au lieu d''un pack logique (L)",
+            "result": "mdi-alert",
+            "message": [
+              {
+                "id": "2141",
+                "name": "La commande 1 du pack 8.1.6_HF1215_SFR_120637_L est interdite."
+              }
+            ]
+          }
+        ]
+      },
         {
-        "id": 1,
-        "step": 2,
-        "percent": 25,
-        "client": "SANEF",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-close-circle",
-        "colorIconStatus": "error",
-        "textStatus": "En erreur"
+          "id": "3",
+          "name": "Contrôle des dépendances du livrable",
+          "result": "mdi-check-circle",
+          "children": [
+            {
+              "id": "301",
+              "name": "8.1.6_HF1215.mdb",
+              "children": [
+                {
+                  "id": "30101",
+                  "name": "8.1.6_HF1215_SFR_150692_B",
+                  "children": [
+                    {
+                      "id": "3010101",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301010101",
+                          "name": "8.1.6_HF1215_SFR_122290_B",
+                          "elements": [
+                            {
+                              "id": "36239029",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.ID_ORGANIZATION"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30102",
+                  "name": "8.1.6_HF1215_SFR_93641_L",
+                  "children": [
+                    {
+                      "id": "3010201",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301020101",
+                          "name": "8.1.6_HF1215_SFR_120637_L",
+                          "elements": [
+                            {
+                              "id": "37239029",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "CFR_H_HR_SAISIE"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30103",
+                  "name": "8.1.6_HF1215_SFR_150692_L",
+                  "children": [
+                    {
+                      "id": "3010301",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301030101",
+                          "name": "8.1.6_HF1215_SFR_122290_L",
+                          "elements": [
+                            {
+                              "id": "38239029",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_IND_LEG_SPEC"
+                            },
+                            {
+                              "id": "38239030",
+                              "objectType": "PRESENTATION",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "38239031",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_IND_LEG_SPEC"
+                            },
+                            {
+                              "id": "38239032",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INIT_INDEMN_ASSOCIEE"
+                            },
+                            {
+                              "id": "38239033",
+                              "objectType": "ITEM",
+                              "objectID": "SFR_TRANSFERT_INDEMN_RUPT.SFR_TRANSFERT"
+                            },
+                            {
+                              "id": "38239034",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_AFTER_NEW"
+                            },
+                            {
+                              "id": "38239035",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            },
+                            {
+                              "id": "38239036",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MAIN_CALC"
+                            },
+                            {
+                              "id": "38239037",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_EXPORT_EXCEL"
+                            },
+                            {
+                              "id": "38239038",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_INIT_PARAM"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "301030102",
+                          "name": "8.1.6_HF1215_SFR_124343_L",
+                          "elements": [
+                            {
+                              "id": "38239129",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30104",
+                  "name": "8.1.6_HF1215_SFR_124343_L",
+                  "children": [
+                    {
+                      "id": "3010401",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301040101",
+                          "name": "8.1.6_HF1215_SFR_122290_L",
+                          "elements": [
+                            {
+                              "id": "39239029",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_ACCORD"
+                            },
+                            {
+                              "id": "39239030",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_SUPRA_1"
+                            },
+                            {
+                              "id": "39239031",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD"
+                            },
+                            {
+                              "id": "39239032",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD_F"
+                            },
+                            {
+                              "id": "39239033",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_RETENUE_SIMUL"
+                            },
+                            {
+                              "id": "39239034",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_ACCORD"
+                            },
+                            {
+                              "id": "39239035",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_SUPRA_1"
+                            },
+                            {
+                              "id": "39239036",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_RETENUE_SIMUL"
+                            },
+                            {
+                              "id": "39239037",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "39239038",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            },
+                            {
+                              "id": "39239039",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_ACCORD_F"
+                            },
+                            {
+                              "id": "39239040",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_CONV"
+                            },
+                            {
+                              "id": "39239041",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_CONV_F"
+                            },
+                            {
+                              "id": "39239042",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_TOT_F"
+                            },
+                            {
+                              "id": "39239043",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_TOT"
+                            },
+                            {
+                              "id": "39239044",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SUP_F"
+                            },
+                            {
+                              "id": "39239045",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_ACCORD"
+                            },
+                            {
+                              "id": "39239046",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SUP"
+                            },
+                            {
+                              "id": "39239047",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_ASSIETTE_CONV"
+                            },
+                            {
+                              "id": "39239048",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_ASSIETTE_LEG"
+                            },
+                            {
+                              "id": "39239049",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SPEC_F"
+                            },
+                            {
+                              "id": "39239050",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SPEC"
+                            },
+                            {
+                              "id": "39239051",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_F"
+                            },
+                            {
+                              "id": "39239052",
+                              "objectType": "NODE STRUCTURE / ITEM",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV / SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "301040102",
+                          "name": "8.1.6_HF1215_SFR_150692_L",
+                          "elements": [
+                            {
+                              "id": "39239129",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30105",
+                  "name": "8.1.6_HF1215_SFR_122290_L",
+                  "children": [
+                    {
+                      "id": "3010501",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301050101",
+                          "name": "8.1.6_HF1215_SFR_124343_L",
+                          "elements": [
+                            {
+                              "id": "40239029",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_SUPRA_1"
+                            },
+                            {
+                              "id": "40239030",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD"
+                            },
+                            {
+                              "id": "40239031",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_IND_LEG_CONV.SFR_MNT_ACCORD_F"
+                            },
+                            {
+                              "id": "40239032",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_RETENUE_SIMUL"
+                            },
+                            {
+                              "id": "40239033",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_INDEMNITE_ACCORD"
+                            },
+                            {
+                              "id": "40239034",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_SUPRA_1"
+                            },
+                            {
+                              "id": "40239035",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_RETENUE_SIMUL"
+                            },
+                            {
+                              "id": "40239036",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INDEMNITE_ACCORD"
+                            },
+                            {
+                              "id": "40239037",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239038",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            },
+                            {
+                              "id": "40239039",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_ACCORD_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239040",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_CONV / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239041",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_CONV_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239042",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_TOT_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239043",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_TOT / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239044",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SUP_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239045",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_ACCORD / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239046",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SUP / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239047",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_ASSIETTE_CONV / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239048",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_ASSIETTE_LEG / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239049",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SPEC_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239050",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_SPEC / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239051",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG_F / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239052",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MNT_LEG / SRFR_MN_CALC_IND_LEG_CONV"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "301050102",
+                          "name": "8.1.6_HF1215_SFR_150692_L",
+                          "elements": [
+                            {
+                              "id": "40239129",
+                              "objectType": "FIELD",
+                              "objectID": "SFR_CALC_INDEMN_RUPT.SFR_IND_LEG_SPEC"
+                            },
+                            {
+                              "id": "40239130",
+                              "objectType": "PRESENTATION",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239131",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_IND_LEG_SPEC"
+                            },
+                            {
+                              "id": "40239132",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_AFTER_NEW"
+                            },
+                            {
+                              "id": "40239133",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.SFR_INIT_INDEMN_ASSOCIEE"
+                            },
+                            {
+                              "id": "40239134",
+                              "objectType": "ITEM",
+                              "objectID": "SFR_TRANSFERT_INDEMN_RUPT.SFR_TRANSFERT"
+                            },
+                            {
+                              "id": "40239135",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "SFR_CALC_INDEMN_RUPT"
+                            },
+                            {
+                              "id": "40239136",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_MAIN_CALC / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239137",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_EXPORT_EXCEL / SRFR_MN_CALC_IND_LEG_CONV"
+                            },
+                            {
+                              "id": "40239138",
+                              "objectType": "ITEM / NODE STRUCTURE",
+                              "objectID": "SRFR_MN_CALC_IND_LEG_CONV.SFR_INIT_PARAM / SRFR_MN_CALC_IND_LEG_CONV"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30106",
+                  "name": "8.1.6_HF1215_SFR_122290_B",
+                  "children": [
+                    {
+                      "id": "3010601",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301060101",
+                          "name": "8.1.6_HF1215_SFR_150692_B",
+                          "elements": [
+                            {
+                              "id": "41239029",
+                              "objectType": "ITEM",
+                              "objectID": "SRFR_MN_CALC_INDEMN.ID_ORGANIZATION"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "30107",
+                  "name": "8.1.6_HF1215_SFR_120637_L",
+                  "children": [
+                    {
+                      "id": "3010701",
+                      "name": "Dépendances internes",
+                      "children": [
+                        {
+                          "id": "301070101",
+                          "name": "8.1.6_HF1215_SFR_93641_L",
+                          "elements": [
+                            {
+                              "id": "42239029",
+                              "objectType": "CREATE_EXE_DIF_SCRIPT",
+                              "objectID": "CFR_H_HR_SAISIE"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
-        {
-        "id": 2,
-        "step": 6,
-        "percent": 75,
-        "client": "GALILEO",
-        "typologie": "SaaS Désynchronisé",
-        "iconStatus": "mdi-close-circle",
-        "colorIconStatus": "grey",
-        "textStatus": "En cours"
-        },
-        {
-        "id": 3,
-        "step": 7,
-        "percent": 87.5,
-        "client": "ICL",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-progress-circle",
-        "colorIconStatus": "grey lighten-1",
-        "textStatus": "En cours"
-        },
-        {
-        "id": 4,
-        "step": 8,
-        "percent": 75,
-        "client": "IQERA",
-        "typologie": "SaaS Désynchronisé",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "En cours"
-        },
-        {
-        "id": 5,
-        "step": 8,
-        "percent": 100,
-        "client": "UNICANCER",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 6,
-        "step": 5,
-        "percent": 62.5,
-        "client": "DASSAULT SYSTEME",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-hand",
-        "colorIconStatus": "warning",
-        "textStatus": "Manuel"
-        },
-        {
-        "id": 7,
-        "step": 8,
-        "percent": 100,
-        "client": "VEOLIA",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 8,
-        "step": 8,
-        "percent": 100,
-        "client": "DANONE",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 9,
-        "step": 8,
-        "percent": 100,
-        "client": "SANEF",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 10,
-        "step": 4,
-        "percent": 50,
-        "client": "HOLDER",
-        "typologie": "Plateforme",
-        "iconStatus": "mdi-hand",
-        "colorIconStatus": "warning",
-        "textStatus": "Manuel"
-        },
-        {
-        "id": 11,
-        "step": 8,
-        "percent": 100,
-        "client": "FRAMATOME",
-        "typologie": "Plateforme",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 12,
-        "step": 8,
-        "percent": 100,
-        "client": "CAMAIEU",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        },
-        {
-        "id": 13,
-        "step": 8,
-        "percent": 100,
-        "client": "OCP",
-        "typologie": "SaaS Dédié",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        }
-        ,
-        {
-        "id": 14,
-        "step": 8,
-        "percent": 100,
-        "client": "TEST",
-        "typologie": "Plateforme",
-        "iconStatus": "mdi-check-circle",
-        "colorIconStatus": "success",
-        "textStatus": "Terminé"
-        }
+      {
+        "id": "4",
+        "name": "Recherche des dépendances avec les tâches CCT sur la base de référence",
+        "result": "mdi-check-circle"
+      }
     ]
   }
+]
+'
+
+WHERE WORKFLOW_ID = 20 AND ID_H_WORKFLOW = 43 AND CLIENT_ID = 101 AND ITERATION = 1 AND ID_PROCESS = 1

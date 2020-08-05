@@ -529,7 +529,6 @@ namespace PNPUTools
             DataSet result = DataManagerSQLServer.GetDatas(request, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
-
             IEnumerable<PNPU_WORKFLOW> listTest = table.DataTableToList<PNPU_WORKFLOW>();
 
             return listTest;

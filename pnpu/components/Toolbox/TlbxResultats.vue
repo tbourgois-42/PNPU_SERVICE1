@@ -5,18 +5,28 @@
         :headers="headers"
         :items="items"
         :items-per-page="6"
-        class="elevation-1"
+        class="elevation-1 cursor"
+        @click:row="getReport($event)"
         ><template v-slot:item.statut="{ item }">
           <v-chip :color="getColor(item.statut)" dark>{{ item.statut }}</v-chip>
         </template></v-data-table
       >
+      <ReportTNR v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportName === 'Tests de Non Régression (TNR)'"
+          :idPROCESS="currentID_PROCESS"
+          :reportJsonData="JSON_TEMPLATE"
+          :idInstanceWF="idInstanceWF"
+          :workflowID="workflowID"
+          :currentID_STATUT="currentID_STATUT"
+        />
     </v-container>
   </v-form>
 </template>
 <script>
 import axios from 'axios'
 import aes from 'aes-js'
+import ReportTNR from '../../components/ReportTNR'
 export default {
+  components: { ReportTNR },
   data() {
     return {
       headers: [
@@ -30,10 +40,15 @@ export default {
           value: 'idInstanceWF'
         },
         {
-          text: 'Client',
-          value: 'client'
+          text: 'Nom du client',
+          value: 'clientName'
+        },
+        {
+          text: 'Client ID',
+          value: 'clientID'
         },
         { text: 'Processus', value: 'processus' },
+        { text: 'Process ID', value: 'idPROCESSS' },
         { text: 'Statut', value: 'statut' }
       ],
       items: [
@@ -45,10 +60,12 @@ export default {
           statut: 'En cours'
         },
         {
-          workflowID: '1',
-          idInstanceWF: '1',
-          client: 'CAMAIEU',
+          workflowID: '30',
+          idInstanceWF: '181',
+          clientName: 'CAMAIEU',
+          clientID: '12',
           processus: 'Tests de Non Régression (TNR)',
+          idPROCESS: '7',
           statut: 'Terminé'
         },
         {
@@ -79,7 +96,14 @@ export default {
           processus: 'Analyse logique',
           statut: 'Manuel'
         }
-      ]
+      ],
+      JSON_TEMPLATE: {},
+      idPROCESS: '',
+      idInstanceWF: '',
+      workflowID: '',
+      currentID_STATUT: '',
+      reportName: '',
+      currentID_PROCESS: ''
     }
   },
   computed: {
@@ -151,7 +175,54 @@ export default {
       else if (statut === 'En erreur') return 'error'
       else if (statut === 'Manuel') return 'warning'
       else return 'success'
-    }
+    },
+    getReport(row) {
+      debugger
+      const vm = this
+      axios
+        .get(`${process.env.WEB_SERVICE_WCF}/report/` +
+            row.workflowID +
+            '/' +
+            row.idInstanceWF +
+            '/' +
+            row.idPROCESS +
+            '/' +
+            row.clientID
+        )
+        .then(function(response) {
+          if (response.data.getReportResult.length > 0) {
+            vm.JSON_TEMPLATE = JSON.parse(
+              response.data.getReportResult[0].JSON_TEMPLATE
+            )
+            debugger
+            vm.reportName = vm.JSON_TEMPLATE[0].name
+            vm.idInstanceWF = row.idInstanceWF
+            vm.workflowID = row.workflowID
+            vm.currentID_PROCESS = row.idPROCESS
+            vm.currentID_STATUT = vm.JSON_TEMPLATE[0].result
+          } else {
+            vm.JSON_TEMPLATE = {}
+          }
+        })
+        .catch(function(error) {
+          vm.showSnackbar('error', `${error} !`)
+        })
+    },
   }
 }
 </script>
+<style lang="css">
+.cursor {
+  cursor: pointer;
+}
+.v-treeview-node__root {
+  cursor: pointer !important;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>

@@ -1,0 +1,524 @@
+[
+  {
+    "id": "1",
+    "name": "Analyse d'impact sur les données",
+    "idClient": "111",
+    "result": "mdi-alert-circle",
+    "debut": "07/07/20 16:08:54",
+    "fin": "07/07/20 16:08:59",
+    "children": [
+      {
+        "id": "101",
+        "name": "TESTS_ANALYSE_DATA.mdb",
+        "result": "mdi-alert-circle",
+        "tooltip": "Analyse d'impact des données livrées dans le fichier TESTS_ANALYSE_DATA.mdb",
+        "children": [
+          {
+            "id": "10101",
+            "name": "8.1_HF2001_PLFR_142112_D - 1",
+            "result": "mdi-information-variant",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010101",
+                "name": "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.011' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010102",
+                "name": "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.012' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010103",
+                "name": "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.013' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010104",
+                "name": "Replace M4SFR_DSN_PARAM_RUB From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.014' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010105",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.011' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010106",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.012' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010107",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.013' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010108",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT05 From Origin To Destination Where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.40.014' and SFR_ID_ORIG_PARAM = 'CLI' \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010109",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '02'  \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010110",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '03'  \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010111",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '23'  \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              },
+              {
+                "id": "1010112",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT08  from origin to destination where \"ID_ORGANIZATION = '0001' and SFR_ID_RUBRIQUE = 'S21.G00.78.004' and SFR_ID_CODE_DSN = '43'  \"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ]
+          },
+          {
+            "id": "10102",
+            "name": "8.1_HF2001_PLFR_142112_D - 2",
+            "result": "mdi-alert-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010201",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010202",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010203",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010204",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010205",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010206",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010207",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010208",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010209",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''02'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010210",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''03'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010211",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''23'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010212",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''43'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Les données du client contiennent du spécifique. Commande à traiter à la main."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010213",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010215",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010217",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010219",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010221",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.011'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010223",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.012'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010225",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.013'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010227",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT05', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.40.014'' and SFR_ID_ORIG_PARAM = ''CLI'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010229",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''02'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010231",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''03'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010233",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''23'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              },
+              {
+                "id": "1010235",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = 'ID_ORGANIZATION = ''0001'' and SFR_ID_RUBRIQUE = ''S21.G00.78.004'' and SFR_ID_CODE_DSN = ''43'' ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Les données du client contiennent du spécifique. Commande à traiter à la main."
+              }
+            ]
+          },
+          {
+            "id": "10103",
+            "name": "ANALYSE_DATA_D - 1",
+            "result": "mdi-alert-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010301",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROWS', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 45000 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Paramétrage spécifique client à un emplacement différent du standard (SCO_ID_ROW = 59100)."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010302",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROWS', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 45000 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Paramétrage spécifique client à un emplacement différent du standard (SCO_ID_ROW = 59100)."
+              }
+            ]
+          },
+          {
+            "id": "10104",
+            "name": "ANALYSE_DATA_D - 2",
+            "result": "mdi-alert-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010401",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROW_COL_DEF', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 45000 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Paramétrage spécifique client à un emplacement différent du standard (SCO_ID_ROW = 59100)."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010402",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROW_COL_DEF', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 45000 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Paramétrage spécifique client à un emplacement différent du standard (SCO_ID_ROW = 59100)."
+              }
+            ]
+          },
+          {
+            "id": "10105",
+            "name": "ANALYSE_DATA_D - 3",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010501",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROWS', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 49403 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010502",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROWS', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 49403 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10106",
+            "name": "ANALYSE_DATA_D - 4",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010601",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROW_COL_DEF', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 49403 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010602",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SCO_ROW_COL_DEF', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' and SCO_ID_REPORT = ''FISC'' and SCO_ID_BODY = ''1'' AND SCO_ID_ROW = 49403 ', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10107",
+            "name": "ANALYSE_DATA_D - 5",
+            "result": "mdi-information-variant",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010701",
+                "name": "UPDATE STD_INT_WORK_CONT SET SFR_CK_CIRCUIT_DEROG = '1' WHERE ID_ORGANIZATION = '0002' AND SFR_CK_CIRCUIT_DEROG IS NULL",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1010702",
+                "name": "UPDATE STD_INT_WORK_CONT SET SFR_CK_CIRCUIT_DEROG = '1' WHERE ID_ORGANIZATION = '0002' AND SFR_CK_CIRCUIT_DEROG IS NULL",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ]
+          },
+          {
+            "id": "10108",
+            "name": "ANALYSE_DATA2_D - 1",
+            "result": "mdi-information-variant",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010801",
+                "name": "Replace M4SFR_DSN_PARAM_RUB_NAT08 From Origin To Destination Where \" ID_ORGANIZATION = '0001'  AND SFR_ID_CODE_DSN = '902' AND SFR_ID_ORIG_PARAM = 'STD' AND SFR_ID_RUBRIQUE = 'S21.G00.52.002'\"",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ]
+          },
+          {
+            "id": "10109",
+            "name": "ANALYSE_DATA2_D - 2",
+            "result": "mdi-information-variant",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1010901",
+                "name": "Update M4SCO_ROWS set SCO_NM_ROW = 'Prime gain pouvoir d''achat', DT_LAST_UPDATE = GETDATE() where ID_ORGANIZATION = '0001' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ]
+          },
+          {
+            "id": "10110",
+            "name": "ANALYSE_DATA2_D - 3",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011001",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' AND SFR_ID_CODE_DSN = ''902'' AND SFR_ID_ORIG_PARAM = ''STD'' AND SFR_ID_RUBRIQUE = ''S21.G00.52.002''', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011002",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_PARAM_RUB_NAT08', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' AND SFR_ID_CODE_DSN = ''902'' AND SFR_ID_ORIG_PARAM = ''STD'' AND SFR_ID_RUBRIQUE = ''S21.G00.52.002''', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10111",
+            "name": "ANALYSE_DATA2_D - 4",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011101",
+                "name": "Update M4SCO_ROWS set SCO_NM_ROW = 'Prime gain pouvoir d''achat', DT_LAST_UPDATE = GETDATE() where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les champs mis à jour dans le script ont la valeur standard. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011102",
+                "name": "Update M4SCO_ROWS set SCO_NM_ROW = 'Prime gain pouvoir d''achat', DT_LAST_UPDATE = GETDATE() where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les champs mis à jour dans le script ont la valeur standard. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10112",
+            "name": "ANALYSE_DATA2_D - 5",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011201",
+                "name": "Update M4SCO_ROW_COL_DEF set DT_LAST_UPDATE = GETDATE() where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011202",
+                "name": "Update M4SCO_ROW_COL_DEF set DT_LAST_UPDATE = GETDATE() where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10113",
+            "name": "ANALYSE_DATA2_D - 6",
+            "result": "mdi-information-variant",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011301",
+                "name": "UPDATE M4SCO_AC_HR_PERIOD SET SCO_PAY_FREQ_PAY='004' WHERE ID_ORGANIZATION='2100' AND SCO_ID_HR='00000002' AND SCO_OR_HR_PERIOD=2 AND SCO_DT_ALLOC=SCO_DT_PAY AND SCO_DT_PAY ={d'2018-11-25'}",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011302",
+                "name": "UPDATE M4SCO_AC_HR_PERIOD SET SCO_PAY_FREQ_PAY='004' WHERE ID_ORGANIZATION='2100' AND SCO_ID_HR='00000002' AND SCO_OR_HR_PERIOD=2 AND SCO_DT_ALLOC=SCO_DT_PAY AND SCO_DT_PAY ={d'2018-11-25'}",
+                "result": "mdi-information-variant",
+                "message": "Pas de contrôle automatique sur cette commande."
+              }
+            ]
+          },
+          {
+            "id": "10114",
+            "name": "ANALYSE_DATA2_D - 7",
+            "result": "mdi-check-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011401",
+                "name": "Update A set DT_LAST_UPDATE = GETDATE() FROM M4SCO_ROW_COL_DEF A where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011402",
+                "name": "Update A set DT_LAST_UPDATE = GETDATE() FROM M4SCO_ROW_COL_DEF A where ID_ORGANIZATION = '9999' AND SCO_ID_REPORT = 'JOURNAL_PAIE' AND SCO_ID_ROW = 86000",
+                "result": "mdi-check-circle",
+                "message": "Les données du client sont standards. La commande peut être exécutée."
+              }
+            ]
+          },
+          {
+            "id": "10115",
+            "name": "ANALYSE_DATA2_D - 8",
+            "result": "mdi-alert-circle",
+            "tooltip": "",
+            "listCommand": [
+              {
+                "id": "1011501",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_CTP_PARAM', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' AND SFR_ID_CTP=''012''', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Les données du client contiennent du spécifique (CLI). Commande à traiter à la main."
+              }
+            ],
+            "Eléments à localiser": [
+              {
+                "id": "1011502",
+                "name": "EXEC M4SFR_COPY_DATA_ORG @table='M4SFR_DSN_CTP_PARAM', @id_orga_origin = '0001', @id_orgas_dest = '9999', @opt_where = ' ID_ORGANIZATION = ''0001'' AND SFR_ID_CTP=''012''', @opt_suppr = 1, @debug = 0",
+                "result": "mdi-alert-circle",
+                "message": "Les données du client contiennent du spécifique (CLI). Commande à traiter à la main."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

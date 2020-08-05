@@ -460,6 +460,16 @@ namespace WcfService1
             
             return result;
         }
+
+        public IEnumerable<InfoClient> GetInfoDashboardToolbox(string workflowId, string idInstanceWF)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(bool bToolbox)
+        {
+            return RequestTool.GetAllWorkFLow(bToolbox);
+        }
     }
 
 
