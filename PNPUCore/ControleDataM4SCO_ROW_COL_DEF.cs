@@ -99,7 +99,7 @@ namespace PNPUCore.Controle
                             if (ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW) == false)
                             {
                                 sCommandeGeneree = dmsDataManager.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
-                                RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
+                                RequestTool.AddLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
 
                             }
                         }

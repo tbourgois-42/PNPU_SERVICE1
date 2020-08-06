@@ -59,7 +59,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "process/{processId}")]
-        PNPU_PROCESS getProcess(string processId);
+        PNPU_PROCESS GetProcess(string processId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -73,14 +73,14 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "workflow/{workflowId}")]
-        PNPU_WORKFLOW getWorkflow(string workflowId);
+        PNPU_WORKFLOW GetWorkflow(string workflowId);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "report/{workflowId}/{idInstanceWF}/{idProcess}/{clientId}")]
-        IEnumerable<PNPU_H_REPORT> getReport(string idProcess, string workflowId, string clientId, string idInstanceWF);
+        IEnumerable<PNPU_H_REPORT> GetReport(string idProcess, string workflowId, string clientId, string idInstanceWF);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -221,14 +221,14 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo/{TypologyId}")]
-        IEnumerable<InfoClient> getListClientsByTypo(string TypologyId);
-
+        IEnumerable<InfoClient> GetListClientsByTypo( string TypologyId);
+        
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo")]
-        IEnumerable<InfoClient> getListClients();
+        IEnumerable<InfoClient> GetListClients();
 
         [OperationContract]
         [WebGet(UriTemplate = "clients/livraison/{workflowId}/{idInstanceWF}/{clientId}")]
@@ -253,8 +253,8 @@ namespace WcfService1
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "auth/me/?token={token}")]
-        string ConnectUser(string token);
+            UriTemplate = "auth/me/?token={sToken}")]
+        string ConnectUser(string sToken);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
@@ -276,7 +276,7 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "auth/habilitation/clients/?user={user}&habilitation={habilitation}")]
-        IEnumerable<InfoClient> GetListClients(string user, string habilitation);
+        IEnumerable<InfoClient> GetListClientsHabilitation(string user, string habilitation);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
@@ -302,7 +302,7 @@ namespace WcfService1
 
         [OperationContract]
         [WebInvoke(Method = "OPTIONS", UriTemplate = "*", ResponseFormat = WebMessageFormat.Json)]
-        void preflightRequest();
+        void PreflightRequest();
 
     }
 }

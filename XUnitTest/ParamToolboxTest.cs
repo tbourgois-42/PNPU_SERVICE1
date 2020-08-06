@@ -3,7 +3,7 @@ using Xunit;
 
 namespace XUnitTest
 {
-    public class UnitTest1
+    public class ParamToolboxTest
     {
         [Fact]
         public void SouldGetClientTrigramGLS()

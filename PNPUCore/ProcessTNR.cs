@@ -36,8 +36,6 @@ namespace PNPUCore.Process
 
             string[] listClientId = CLIENT_ID.Split(',');
 
-            //int idInstanceWF = ID_INSTANCEWF;
-
             ControleTNR CTNR = new ControleTNR(this);
 
             sRapport = string.Empty;
@@ -48,17 +46,23 @@ namespace PNPUCore.Process
             //On génère l'historic en In_PROGRESS
             GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, ID_INSTANCEWF, RapportTNR.Debut);
 
-            Domaine RapportDomaine = new RapportTNR.Domaine();
-            RapportDomaine.Name = "Paie";
-            RapportDomaine.Result = string.Empty;
+            Domaine RapportDomaine = new RapportTNR.Domaine
+            {
+                Name = "Paie",
+                Result = string.Empty
+            };
 
-            SousDomaine RapportSousDomaine = new SousDomaine();
-            RapportSousDomaine.Name = "Cumuls long de paie";
-            RapportSousDomaine.Result = string.Empty;
+            SousDomaine RapportSousDomaine = new SousDomaine
+            {
+                Name = "Cumuls long de paie",
+                Result = string.Empty
+            };
 
-            SousDomaineParts RapportSousDomaineParts = new SousDomaineParts();
-            RapportSousDomaineParts.Name = "Ecarts agrégés par classification";
-            RapportSousDomaineParts.Result = string.Empty;
+            SousDomaineParts RapportSousDomaineParts = new SousDomaineParts
+            {
+                Name = "Ecarts agrégés par classification",
+                Result = string.Empty
+            };
 
             // Client TNR database Read Node items
             DataSet ItemsNoeudReadTNR = CTNR.GetItemsNoeudRead(sConnectionStringBaseQA2);
@@ -74,7 +78,7 @@ namespace PNPUCore.Process
             Dictionary<string, Classification> lstClassification = new Dictionary<string, Classification>();
             Classification RapportClassification = null;
 
-            int index = -1;
+            int index;
             decimal reg = 1;
 
             // Loop into TNR node.

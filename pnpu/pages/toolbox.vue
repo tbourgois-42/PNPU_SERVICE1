@@ -211,7 +211,7 @@ export default {
       try {
         const response = await axios.get(`${process.env.WEB_SERVICE_WCF}/toolbox/workflow`, {
           params: {
-            toolbox : true
+            isToolBox : true
           }
         })
         if (response.status === 200) {
