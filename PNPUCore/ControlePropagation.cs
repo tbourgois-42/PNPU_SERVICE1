@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -35,7 +31,7 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControlePropagation(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
@@ -75,7 +71,7 @@ namespace PNPUCore.Controle
                         int iIndex2 = 0;
                         int iIndex3 = 0;
                         bool bMultiOrga;
-                        
+
                         dmaManagerAccess = new DataManagerAccess();
 
                         iIndex = stempo.ToUpper().IndexOf("REPLACE ", iIndex);
@@ -126,7 +122,7 @@ namespace PNPUCore.Controle
                                     dsDataSet2 = dataManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                                     if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                     {
-                                         if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
+                                        if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
                                             bMultiOrga = true;
                                     }
                                 }
@@ -152,9 +148,9 @@ namespace PNPUCore.Controle
 
                                         if (Process.TYPOLOGY == "Dédié") sTypeBase = " SQL Server ";
 
-                                            bResultat = ParamAppli.StatutError;
+                                        bResultat = ParamAppli.StatutError;
                                         if (sWhere != string.Empty)
-                                            Process.AjouteRapport("Propagation " + sTypeBase +"manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + " (filtre " + sWhere + ").");
+                                            Process.AjouteRapport("Propagation " + sTypeBase + "manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + " (filtre " + sWhere + ").");
                                         else
                                             Process.AjouteRapport("Propagation " + sTypeBase + "manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + ".");
 

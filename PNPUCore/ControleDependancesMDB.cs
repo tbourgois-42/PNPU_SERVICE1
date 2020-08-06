@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -17,7 +14,7 @@ namespace PNPUCore.Controle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private RapportDependancesInterPack rapDependancesInterPack;
-        
+
 
 
 
@@ -39,11 +36,11 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleDependancesMDB(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
-         }
+        }
 
         /// <summary>  
         /// Méthode effectuant le contrôle. 
@@ -53,13 +50,13 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sRequete;
-            Dictionary<string,string> dListeAControler = new Dictionary<string,string>();
+            Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
             string sRequeteControle = string.Empty;
             bool bPremierElement = true;
             rapDependancesInterPack = Process.RapportProcess.rapportDependancesInterPack;
 
             DataSet dsDataSet = null;
-            
+
             string sNomMdb1;
             string sNomMdb2;
 
@@ -137,7 +134,7 @@ namespace PNPUCore.Controle
                                         string sTable = drRow[2].ToString().Substring(0, drRow[2].ToString().IndexOf("."));
                                         sRequete = "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'LOGICAL TABLE' AND A.ID_OBJECT = '" + sTable + "' AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
                                         ChercheDependanceEntreMDB(ref bPremierElement, sRequete, Process.listMDB[iIndex2], dmaManagerAccess2, Process.listMDB[iIndex], drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString());
-                                        
+
                                         break;
 
                                     case "LOGICAL TABLE":
@@ -157,7 +154,7 @@ namespace PNPUCore.Controle
 
                                     case "META4OBJECT":
                                         // Recherche des dépendances entre M4O et Node livrés dans 2 packs de 2 mdb
-                                        sRequete= "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'NODE' AND A.ID_OBJECT LIKE '" + drRow[2].ToString() + ".%' AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
+                                        sRequete = "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'NODE' AND A.ID_OBJECT LIKE '" + drRow[2].ToString() + ".%' AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
                                         ChercheDependanceEntreMDB(ref bPremierElement, sRequete, Process.listMDB[iIndex2], dmaManagerAccess2, Process.listMDB[iIndex], drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString());
                                         break;
 
@@ -169,7 +166,7 @@ namespace PNPUCore.Controle
                                         dsDataSet2 = dmaManagerAccess2.GetData("select ID_TI +'.' + ID_ITEM FROM M4RCH_PICOMPONENTS WHERE ID_T3 + '.' + ID_PAYROLL_ITEM = '" + drRow[2].ToString() + "'", Process.listMDB[iIndex]);
                                         if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                         {
-                                            foreach(DataRow drRow2 in dsDataSet2.Tables[0].Rows)
+                                            foreach (DataRow drRow2 in dsDataSet2.Tables[0].Rows)
                                             {
                                                 if (sListeComposant == string.Empty)
                                                     sListeComposant = "('" + drRow2[0].ToString() + "'";
@@ -180,7 +177,7 @@ namespace PNPUCore.Controle
                                         if (sListeComposant != string.Empty)
                                         {
                                             sListeComposant += ")";
-                                            sRequete= "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'ITEM' AND A.ID_OBJECT IN " + sListeComposant + " AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
+                                            sRequete = "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'ITEM' AND A.ID_OBJECT IN " + sListeComposant + " AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
                                             ChercheDependanceEntreMDB(ref bPremierElement, sRequete, Process.listMDB[iIndex2], dmaManagerAccess2, Process.listMDB[iIndex], drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString());
                                         }
 
@@ -248,7 +245,7 @@ namespace PNPUCore.Controle
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                 {
                     AjouteDependance(ref bPremierElement, true, sNomMdb1, sPack1, sNomMdb2, drRow[0].ToString(), sClasse1, drRow[1].ToString(), sElt1, drRow[2].ToString());
-                 }
+                }
             }
 
         }
@@ -266,7 +263,7 @@ namespace PNPUCore.Controle
         /// <param name="sClasse2">Classe du deuxième élément de la dépendance.</param>
         /// <param name="sElt1">Nom du premier élément de la dépendance.</param>
         /// <param name="sElt2">Nom du deuxième élément de la dépendance.</param>
-        private void AjouteDependance(ref bool  bPremierElement, bool bGereInversion, string sNomMdb1, string sNomPack1, string sNomMdb2, string sNomPack2, string sClasse1, string sClasse2, string sElt1, string sElt2 )
+        private void AjouteDependance(ref bool bPremierElement, bool bGereInversion, string sNomMdb1, string sNomPack1, string sNomMdb2, string sNomPack2, string sClasse1, string sClasse2, string sElt1, string sElt2)
         {
             // On ne prend pas en compte les dépendances sur le bulletin électronique
             if ((sClasse1 == "PRESENTATION") && (sElt1.IndexOf("DP_PAYROLL_CHANNEL") > -1))

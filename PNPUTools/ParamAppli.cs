@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using IniParser;
+using IniParser.Model;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO.Pipes;
-using System.Data.SqlClient;
-using IniParser;
-using IniParser.Model;
 
 
 namespace PNPUTools
@@ -65,7 +63,7 @@ namespace PNPUTools
         /// <summary>  
         /// Chaine de connexion à la base de référence.
         /// </summary> 
-        public static Dictionary<string,string> ConnectionStringBaseRef { get; }
+        public static Dictionary<string, string> ConnectionStringBaseRef { get; }
 
         /// <summary>  
         /// Chaine de connexion à la base de référence SAAS dédié.
@@ -94,7 +92,7 @@ namespace PNPUTools
 
         public static Dictionary<string, InfoClient> ListeInfoClient { get; }
         public static string GeneratePackPath { get; internal set; }
-        public static DateTime DateNullPPN = new DateTime(1800,1,1);
+        public static DateTime DateNullPPN = new DateTime(1800, 1, 1);
 
         public const int TypologyDedie = 256;
 
@@ -203,7 +201,7 @@ namespace PNPUTools
                 IniData iniData;
                 try
                 {
-                    string sCheminINI ="C:\\PNPU\\PNPUTools.ini";
+                    string sCheminINI = "C:\\PNPU\\PNPUTools.ini";
 
                     iniParser = new FileIniDataParser();
                     iniData = iniParser.ReadFile(sCheminINI);
@@ -274,7 +272,7 @@ namespace PNPUTools
 
                 // On valorise en fonction de la typologie
                 ConnectionStringBaseRef = new Dictionary<string, string>();
-                 ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
                 ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
@@ -284,7 +282,7 @@ namespace PNPUTools
                 // N'existe que sur la base plateforme
                 if (ConnectionStringBaseRefPlateforme != string.Empty)
                 {
-                     dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
+                    dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -294,7 +292,7 @@ namespace PNPUTools
                             ListeLimSup.Add(Int32.Parse(drRow[1].ToString()));
                         }
                     }
-  
+
                 }
 
                 //Chargement des infos clients
@@ -308,7 +306,7 @@ namespace PNPUTools
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             bool bOracle = drRow[4].ToString().ToUpper().Contains("ORACLE");
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty,bOracle)) ;
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty, bOracle));
                         }
                     }
                 }
@@ -331,7 +329,7 @@ namespace PNPUTools
                 Analyse d'impact Data
             */
             IEnumerable<PNPU_PROCESS> listAllProcess = RequestTool.GetAllProcesses();
-            foreach(PNPU_PROCESS process in listAllProcess)
+            foreach (PNPU_PROCESS process in listAllProcess)
             {
                 switch (process.PROCESS_LABEL)
                 {

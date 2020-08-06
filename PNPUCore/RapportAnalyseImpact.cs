@@ -1,10 +1,8 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.IO;
+using System.Text;
 
 
 namespace PNPUCore.Rapport
@@ -58,31 +56,31 @@ namespace PNPUCore.Rapport
                 sCote = "'";
                 sCote2 = "*";
             }
-            this.Id = "1";
+            Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("idClient");
-            jw.WriteValue(sCote + this.IdClient + sCote);
+            jw.WriteValue(sCote + IdClient + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + this.Result + sCote);
+            jw.WriteValue(sCote + Result + sCote);
             jw.WritePropertyName("debut");
-            jw.WriteValue(sCote + this.Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
-            jw.WriteValue(sCote + this.Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
-            rapportAnalyseLogique.ToJSONRepresentation(jw, this.Id);
+            rapportAnalyseLogique.ToJSONRepresentation(jw, Id);
 
-            rapportAnalyseData.ToJSONRepresentation(jw, this.Id);
+            rapportAnalyseData.ToJSONRepresentation(jw, Id);
 
-            rapportElementLocaliser.ToJSONRepresentation(jw, this.Id);
+            rapportElementLocaliser.ToJSONRepresentation(jw, Id);
 
             jw.WriteEndArray();
             jw.WriteEndObject();
@@ -114,15 +112,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -153,15 +151,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -190,13 +188,13 @@ namespace PNPUCore.Rapport
                 sCote = "'";
                 sCote2 = "*";
             }
-            this.Id = "1";
+            Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
@@ -226,19 +224,19 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("line");
             jw.WriteStartArray();
-            foreach (LineAnalyseLogique line in this.listLineAnalyseLogique)
+            foreach (LineAnalyseLogique line in listLineAnalyseLogique)
             {
                 line.ToJSONRepresentation(jw, id);
             }
@@ -264,15 +262,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
             jw.WriteEndObject();
         }
     }
@@ -293,15 +291,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -332,15 +330,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("message");
             jw.WriteStartArray();
@@ -370,17 +368,17 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("message");
-            jw.WriteValue(sCote + this.Message + sCote);
+            jw.WriteValue(sCote + Message + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
             jw.WriteEndObject();
         }
     }
@@ -399,15 +397,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -439,13 +437,13 @@ namespace PNPUCore.Rapport
                 sCote = "'";
                 sCote2 = "*";
             }
-            this.Id = "1";
+            Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
@@ -472,15 +470,15 @@ namespace PNPUCore.Rapport
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 10) + 1).ToString();
+            Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
             jw.WriteEndObject();
         }
     }

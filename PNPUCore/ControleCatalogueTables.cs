@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -53,7 +50,7 @@ namespace PNPUCore.Controle
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete;
-            Dictionary<string,string> dListeAControler = new Dictionary<string,string>();
+            Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
             string sRequeteControle = string.Empty;
             bool bPremierElement = true;
 
@@ -110,14 +107,14 @@ namespace PNPUCore.Controle
                     }
 
                     //Le tables restant dans la liste sont en erreur
-                    foreach(string sCle in dListeAControler.Keys)
+                    foreach (string sCle in dListeAControler.Keys)
                     {
                         Process.AjouteRapport("Livraison de la table " + sCle + " dans le pack " + dListeAControler[sCle] + " sans mise à jour du catalogue des tables.");
                         bResultat = ResultatErreur;
                     }
                 }
 
-                
+
             }
             catch (Exception ex)
             {

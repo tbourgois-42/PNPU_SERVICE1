@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -52,8 +50,8 @@ namespace PNPUCore.Controle
             try
             {
                 dmaManagerAccess = new DataManagerAccess();
-                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_BP FROM M4RBP_DEF  WHERE SECURITY_TYPE <> 2", sPathMdb); 
-                
+                DataSet dsDataSet = dmaManagerAccess.GetData("select ID_BP FROM M4RBP_DEF  WHERE SECURITY_TYPE <> 2", sPathMdb);
+
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
                     bResultat = ResultatErreur;
@@ -70,7 +68,7 @@ namespace PNPUCore.Controle
             }
 
             return bResultat;
-            
+
         }
     }
 }

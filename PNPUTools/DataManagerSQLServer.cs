@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Linq;
 
 namespace PNPUTools.DataManager
@@ -136,7 +133,7 @@ namespace PNPUTools.DataManager
                 SqlCommand command = connection.CreateCommand();
                 SqlTransaction transaction;
 
-                string UniqueID = Guid.NewGuid().ToString().Substring(0,32);
+                string UniqueID = Guid.NewGuid().ToString().Substring(0, 32);
 
                 transaction = connection.BeginTransaction(UniqueID);
 
@@ -145,7 +142,7 @@ namespace PNPUTools.DataManager
 
                 try
                 {
-                    foreach(string request in reqInsert)
+                    foreach (string request in reqInsert)
                     {
                         // Requete d'insertion
                         for (int i = 0; i < parameters.Count(); i += 2)
@@ -165,7 +162,7 @@ namespace PNPUTools.DataManager
                     transaction.Commit();
                     // Si on n'est pas sur une requête d'insertion on renvoi une chaine de caractère
                     ReturnValue = (ReturnValue == null) ? "Requête traité avec succès" : ReturnValue;
-                } 
+                }
                 catch (Exception ex)
                 {
                     ReturnValue = ex.ToString();
@@ -190,7 +187,7 @@ namespace PNPUTools.DataManager
         /// </summary>
         /// <param name="transactionName">Nom de la transaction.</param>
         /// <param name="reqInsert">Tableau de requêtes à traiter.</param>
-         /// <param name="parameters">Paramètres nécessaire à la requête</param>
+        /// <param name="parameters">Paramètres nécessaire à la requête</param>
         /// <returns>Retourne le dernier ID auto incrément en cas d'INSERT, autrement "Requête traité avec succès".</returns>
         public static string ExecuteSqlTransaction(string[] reqInsert, string[] parameters, string sConnectionString)
         {
@@ -220,7 +217,7 @@ namespace PNPUTools.DataManager
                     foreach (string request in reqInsert)
                     {
                         // Requete d'insertion
-                       
+
                         command.CommandText = request;
                         command.ExecuteNonQuery();
                     }
@@ -303,8 +300,8 @@ namespace PNPUTools.DataManager
         /// <returns>Return list of byte array</returns>
         internal static List<byte[]> ReadBinaryDatas(string sRequest, string connectionStringBaseAppli)
         {
-            byte[] MDB = null;
-            DataSet dataSet = null;
+            byte[] MDB;
+            DataSet dataSet;
             List<byte[]> lstMDB = new List<byte[]>();
 
             try

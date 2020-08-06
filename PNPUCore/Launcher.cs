@@ -1,8 +1,6 @@
-﻿using PNPUCore.Database;
-using PNPUCore.Process;
+﻿using PNPUCore.Process;
 using PNPUTools;
 using System;
-using System.Collections.Generic;
 
 
 namespace PNPUCore
@@ -47,22 +45,22 @@ namespace PNPUCore
                 return ProcessGestionDependance.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessIntegration)
-                    return ProcessIntegration.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessIntegration.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessProcessusCritique)
-                    return ProcessProcessusCritique.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessProcessusCritique.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessTNR)
-                    return ProcessTNR.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessTNR.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessLivraison)
-                    return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessAnalyseImpactLogique)
-                    return ProcessAnalyseImpactLogique.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessAnalyseImpactLogique.CreateProcess(workflowId, client, idInstanceWF);
 
             if (process == ParamAppli.ProcessAnalyseImpactData)
-                    return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
+                return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
 
             return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);
 

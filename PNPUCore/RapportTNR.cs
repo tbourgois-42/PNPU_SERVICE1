@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.IO;
+using System.Text;
 
 namespace PNPUCore.RapportTNR
 {
@@ -246,37 +244,37 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
-   
+
         public DateTime Debut
         {
-            set { this.debut = value; }
-            get { return this.debut; }
+            set { debut = value; }
+            get { return debut; }
         }
 
         public DateTime Fin
         {
-            set { this.fin = value; }
-            get { return this.fin; }
+            set { fin = value; }
+            get { return fin; }
         }
 
         public String Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
         public List<Domaine> Domaine
         {
-            set { this.domaine = value; }
-            get { return this.domaine; }
+            set { domaine = value; }
+            get { return domaine; }
         }
         public string IdClient { get; internal set; }
     }
@@ -296,26 +294,26 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public List<SousDomaine> SousDomaine
         {
-            set { this.sousdomaine = value; }
-            get { return this.sousdomaine; }
+            set { sousdomaine = value; }
+            get { return sousdomaine; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
 
     }
@@ -334,26 +332,26 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public List<SousDomaineParts> SousDomaineParts
         {
-            set { this.sousdomaineparts = value; }
-            get { return this.sousdomaineparts; }
+            set { sousdomaineparts = value; }
+            get { return sousdomaineparts; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
     }
 
@@ -371,26 +369,26 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public List<Classification> Classification
         {
-            set { this.classification = value; }
-            get { return this.classification; }
+            set { classification = value; }
+            get { return classification; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
     }
 
@@ -408,29 +406,29 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public List<Ecarts> Ecarts
         {
-            set { this.ecarts = value; }
-            get { return this.ecarts; }
+            set { ecarts = value; }
+            get { return ecarts; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
     }
-    
+
     class Ecarts
     {
         private string id;
@@ -448,38 +446,38 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
         public decimal ValueBefore
         {
-            set { this.valueBefore = value; }
-            get { return this.valueBefore; }
+            set { valueBefore = value; }
+            get { return valueBefore; }
         }
         public decimal ValueAfter
         {
-            set { this.valueAfter = value; }
-            get { return this.valueAfter; }
+            set { valueAfter = value; }
+            get { return valueAfter; }
         }
         public decimal Difference
         {
-            set { this.difference = value; }
-            get { return this.difference; }
+            set { difference = value; }
+            get { return difference; }
         }
         public string Comment
         {
-            set { this.comment = value; }
-            get { return this.comment; }
+            set { comment = value; }
+            get { return comment; }
         }
         public List<Matricules> Matricules
         {
-            set { this.matricules = value; }
-            get { return this.matricules; }
+            set { matricules = value; }
+            get { return matricules; }
         }
     }
     class Matricules
@@ -498,58 +496,58 @@ namespace PNPUCore.RapportTNR
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
         public DateTime Dtpaie
         {
-            set { this.dtpaie = value; }
-            get { return this.dtpaie; }
+            set { dtpaie = value; }
+            get { return dtpaie; }
         }
         public DateTime Dtalloc
         {
-            set { this.dtalloc = value; }
-            get { return this.dtalloc; }
+            set { dtalloc = value; }
+            get { return dtalloc; }
         }
         public string Idorga
         {
-            set { this.idorga = value; }
-            get { return this.idorga; }
+            set { idorga = value; }
+            get { return idorga; }
         }
         public string Societe
         {
-            set { this.societe = value; }
-            get { return this.societe; }
+            set { societe = value; }
+            get { return societe; }
         }
         public string Etablissement
         {
-            set { this.etablissement = value; }
-            get { return this.etablissement; }
+            set { etablissement = value; }
+            get { return etablissement; }
         }
         public string Matricule
         {
-            set { this.matricule = value; }
-            get { return this.matricule; }
+            set { matricule = value; }
+            get { return matricule; }
         }
         public decimal Periode
         {
-            set { this.periode = value; }
-            get { return this.periode; }
+            set { periode = value; }
+            get { return periode; }
         }
         public decimal ValueBefore
         {
-            set { this.valueBefore = value; }
-            get { return this.valueBefore; }
+            set { valueBefore = value; }
+            get { return valueBefore; }
         }
         public decimal ValueAfter
         {
-            set { this.valueAfter = value; }
-            get { return this.valueAfter; }
+            set { valueAfter = value; }
+            get { return valueAfter; }
         }
         public decimal Difference
         {
-            set { this.difference = value; }
-            get { return this.difference; }
+            set { difference = value; }
+            get { return difference; }
         }
     }
 

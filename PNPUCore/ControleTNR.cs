@@ -4,10 +4,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUCore.Controle
 {
@@ -65,7 +61,7 @@ namespace PNPUCore.Controle
                 {
                     lstCumulativeTable.Add(SetAlias(index), drRow[2].ToString());
                 }
-                index ++;
+                index++;
             }
             return lstCumulativeTable;
         }
@@ -131,7 +127,7 @@ namespace PNPUCore.Controle
             if (isEmptyDataSet(itemValuesBaseQA1) == false && isEmptyDataSet(itemValuesBaseQA2) == false)
             {
                 int indexTNR = 0;
-                
+
                 foreach (DataRow drRowQA2 in itemValuesBaseQA2.Tables[0].Rows)
                 {
                     DataRow drRowQA1 = itemValuesBaseQA1.Tables[0].Rows[indexTNR];
@@ -239,7 +235,7 @@ namespace PNPUCore.Controle
             return "CO" + index;
         }
 
-        public string GetAlias(string table, Dictionary<string, string>  lstCumulativeTable)
+        public string GetAlias(string table, Dictionary<string, string> lstCumulativeTable)
         {
             string sAlias = string.Empty;
 

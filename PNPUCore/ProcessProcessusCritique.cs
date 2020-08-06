@@ -1,5 +1,4 @@
-﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
+﻿using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
 
@@ -21,9 +20,9 @@ namespace PNPUCore.Process
 
         public ProcessProcessusCritique(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessProcessusCritique;
-            this.LibProcess = "Tests des processus critiques";
-            
+            PROCESS_ID = ParamAppli.ProcessProcessusCritique;
+            LibProcess = "Tests des processus critiques";
+
 
         }
 
@@ -40,11 +39,11 @@ namespace PNPUCore.Process
             //List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportProcess.Name = this.LibProcess;
+            RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
             string sResultTask;
             string sRequete;
             string sModelCode = "PNPU_TRT_CRIT"; // MHUM pour tests
@@ -58,7 +57,7 @@ namespace PNPUCore.Process
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
-           
+
 
             // MHUM POUR TESTS 
             ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
@@ -100,10 +99,10 @@ namespace PNPUCore.Process
             lParameters.Add("M4ADM");
             lParameters.Add("@ROLE");
             lParameters.Add("M4ADM");
-/*            lParameters.Add("@SERVER_NAME");
-            lParameters.Add(null);
-            lParameters.Add("@SERVICE_NAME");
-            lParameters.Add(null);*/
+            /*            lParameters.Add("@SERVER_NAME");
+                        lParameters.Add(null);
+                        lParameters.Add("@SERVICE_NAME");
+                        lParameters.Add(null);*/
             lParameters.Add("@TASK_DESC");
             lParameters.Add("PNPU - Planification des processus critiques");
             lParameters.Add("@DATE_LAUNCH");
@@ -217,7 +216,7 @@ namespace PNPUCore.Process
                     }
                 }
             }
-           
+
 
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
@@ -228,7 +227,7 @@ namespace PNPUCore.Process
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessProcessusCritique);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
 
         }
@@ -305,7 +304,7 @@ namespace PNPUCore.Process
                     else
                         sResultTask = ParamAppli.StatutError;
                 }
-                
+
             }
             return sStatus;
         }

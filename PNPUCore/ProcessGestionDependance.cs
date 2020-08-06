@@ -1,7 +1,6 @@
 ﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
-using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 
@@ -17,8 +16,8 @@ namespace PNPUCore.Process
 
         public ProcessGestionDependance(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessGestionDependance;
-            this.LibProcess = "Gestion des dépendances";
+            PROCESS_ID = ParamAppli.ProcessGestionDependance;
+            LibProcess = "Gestion des dépendances";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -33,7 +32,7 @@ namespace PNPUCore.Process
             List<IControle> listControl = new List<IControle>();//ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
 
             GetListControle(ref listControl);
@@ -44,11 +43,11 @@ namespace PNPUCore.Process
             string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
 
             sRapport = string.Empty;
-            RapportProcess.Name = this.LibProcess;
+            RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
 
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
@@ -87,7 +86,7 @@ namespace PNPUCore.Process
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
-            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
+            Logger.Log(this, GlobalResult, "Fin du process " + ToString());
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
@@ -95,7 +94,7 @@ namespace PNPUCore.Process
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessGestionDependance);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
 
         }

@@ -1,12 +1,8 @@
 ﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
-using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Odbc;
-using System.Diagnostics;
 using System.IO;
 
 namespace PNPUCore.Process
@@ -22,8 +18,8 @@ namespace PNPUCore.Process
 
         public ProcessAnalyseImpactLogique(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessAnalyseImpactLogique;
-            this.LibProcess = "Analyse d'impact logique";
+            PROCESS_ID = ParamAppli.ProcessAnalyseImpactLogique;
+            LibProcess = "Analyse d'impact logique";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -40,7 +36,7 @@ namespace PNPUCore.Process
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportAnalyseImpactLogique = new RapportAnalyseLogique();
-            RapportAnalyseImpactLogique.Name = this.LibProcess;
+            RapportAnalyseImpactLogique.Name = LibProcess;
             RapportAnalyseImpactLogique.Debut = DateTime.Now;
             RapportAnalyseImpactLogique.IdClient = CLIENT_ID;
 
@@ -70,7 +66,7 @@ namespace PNPUCore.Process
                 }
             }
 
-            this.addRapportAnalyseLogique(RapportAnalyseImpactLogique, resultFileList);
+            addRapportAnalyseLogique(RapportAnalyseImpactLogique, resultFileList);
 
 
             //Elements à localiser
@@ -86,7 +82,7 @@ namespace PNPUCore.Process
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessAnalyseImpact);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, this.ID_INSTANCEWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, ID_INSTANCEWF);
             }
 
         }
@@ -146,7 +142,7 @@ namespace PNPUCore.Process
                     }
                     else if (line.OriginDestination == "Modified")
                     {
-                        
+
                         lineAnalyseLogique = new LineAnalyseLogique();
                         lineAnalyseLogique.Name = "MODIFIED  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
                         lineAnalyseLogique.Tooltip = "";
@@ -154,7 +150,7 @@ namespace PNPUCore.Process
                         if (line.CommandDetail == "Inherit")
                         {
                             typeHerited.listLineAnalyseLogique.Add(lineAnalyseLogique);
-                            RequestTool.addLocalisationByALineAnalyseLogique(this.CLIENT_ID, this.WORKFLOW_ID, line.Package, line, this.ID_INSTANCEWF);
+                            RequestTool.addLocalisationByALineAnalyseLogique(CLIENT_ID, WORKFLOW_ID, line.Package, line, ID_INSTANCEWF);
                             //TODO ADD LOCALISATION ON THIS ELEMENT
                         }
                         else

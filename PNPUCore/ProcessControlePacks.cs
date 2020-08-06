@@ -1,15 +1,8 @@
 ﻿using PNPUCore.Controle;
+using PNPUCore.Rapport;
+using PNPUTools;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Globalization;
-using PNPUTools;
-using PNPUTools.DataManager;
-using System.Xml;
-
-using PNPUCore.Rapport;
-using System.Linq;
 
 namespace PNPUCore.Process
 {
@@ -28,8 +21,8 @@ namespace PNPUCore.Process
 
         public ProcessControlePacks(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessControlePacks;
-            this.LibProcess = "Pré contrôle des .mdb";
+            PROCESS_ID = ParamAppli.ProcessControlePacks;
+            LibProcess = "Pré contrôle des .mdb";
         }
 
         /// <summary>  
@@ -47,15 +40,15 @@ namespace PNPUCore.Process
             RControle RapportControle;
             Rapport.Source RapportSource;
             string[] listClientId = CLIENT_ID.Split(',');
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
 
             //POUR TEST 
             /*this.CLIENT_ID = "101";*/
-            this.STANDARD = true;
+            STANDARD = true;
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
-            RapportProcess.Name = this.LibProcess;
+            RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
@@ -71,7 +64,7 @@ namespace PNPUCore.Process
             }
 
             GetListControle(ref listControl);
- 
+
             foreach (string sMDB in listMDB)
             {
                 MDBCourant = sMDB;
@@ -141,13 +134,13 @@ namespace PNPUCore.Process
             RapportProcess.Source.Add(RapportSource);
 
             // Génération du fichier CSV des dépendances
-           /* StreamWriter swFichierDep = new StreamWriter(Path.Combine(ParamAppli.DossierTemporaire, this.WORKFLOW_ID.ToString("000000") + "_DEPENDANCES.csv"));
-            foreach (string sLig in RapportControle.Message)
-                swFichierDep.WriteLine(sLig);
-            swFichierDep.Close();
-            // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
-            RapportControle.Message.Clear();
-            RapportSource.Result = RapportControle.Result;*/
+            /* StreamWriter swFichierDep = new StreamWriter(Path.Combine(ParamAppli.DossierTemporaire, this.WORKFLOW_ID.ToString("000000") + "_DEPENDANCES.csv"));
+             foreach (string sLig in RapportControle.Message)
+                 swFichierDep.WriteLine(sLig);
+             swFichierDep.Close();
+             // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
+             RapportControle.Message.Clear();
+             RapportSource.Result = RapportControle.Result;*/
 
             // Recherche des dépendances avec les tâches CCT sur la base de référence
             ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
@@ -172,19 +165,19 @@ namespace PNPUCore.Process
 
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
-            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
+            Logger.Log(this, GlobalResult, "Fin du process " + ToString());
 
 
             //Si le contrôle est ok on update les lignes d'historique pour signifier que le workflow est lancé
             GenerateHistoricGlobal(listClientId, RapportProcess.Fin, GlobalResult, idInstanceWF, RapportProcess.Debut);
-            
+
             // TEST ajout MDB
             //gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { "D:\\PNPU\\Tests_RAMDL\\test.mdb" }, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, CLIENT_ID,1);
 
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessControlePacks);
-            foreach(string clienId in listClientId)
+            foreach (string clienId in listClientId)
             {
-              LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), clienId, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), clienId, idInstanceWF);
             }
         }
 

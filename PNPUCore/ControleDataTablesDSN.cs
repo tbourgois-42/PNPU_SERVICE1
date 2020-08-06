@@ -4,10 +4,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUCore.Rapport;
 
 namespace PNPUCore.Controle
 {
@@ -91,16 +87,16 @@ namespace PNPUCore.Controle
 
                 sFiltreClient += " AND SFR_ID_ORIG_PARAM = 'CLI'";
 
- 
+
                 sRequeteRef = "SELECT * FROM " + sTable + " WHERE " + sFiltreRef;
                 //sRequeteClient = "SELECT * FROM " + sTable + " WHERE " + sFiltreClient;
                 dsDataSetRef = dmsDataManager.GetData(sRequeteRef, sConnectionString);
-               // dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
+                // dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
 
                 if ((dsDataSetRef != null) && (dsDataSetRef.Tables[0].Rows.Count > 0))
                 {
                     bSFR_CK_IS_ACTIF = dmsDataManager.ExistsField(dsDataSetRef.Tables[0], "SFR_CK_IS_ACTIF");
-                     // Cas particulier du paramétrage client sur une autre ligne
+                    // Cas particulier du paramétrage client sur une autre ligne
                     foreach (DataRow drRowRef in dsDataSetRef.Tables[0].Rows)
                     {
                         string sSFR_ID_ORIG_PARAM_REF;
@@ -113,7 +109,7 @@ namespace PNPUCore.Controle
 
                         if ((sSFR_CK_IS_ACTIF_REF == "1") && (sSFR_ID_ORIG_PARAM_REF == "STD"))
                         {
-                            sRequeteClient = "SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='" + sOrgaCour +"' ";
+                            sRequeteClient = "SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='" + sOrgaCour + "' ";
                             sFiltreSuite = " AND NOT EXISTS (SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='0001' ";
                             foreach (string sField in lPKFields)
                             {
@@ -121,7 +117,7 @@ namespace PNPUCore.Controle
                                 {
                                     if ((sField != "SFR_ID_ORIG_PARAM") && (sField != "SFR_CK_IS_ACTIF"))
                                     {
-                                        sRequeteClient += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) +"'";
+                                        sRequeteClient += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
                                         sFiltreSuite += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
                                     }
                                 }
@@ -157,7 +153,7 @@ namespace PNPUCore.Controle
 
                     }
                 }
-                
+
             }
         }
 

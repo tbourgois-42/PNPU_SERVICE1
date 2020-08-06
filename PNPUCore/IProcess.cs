@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
+using PNPUCore.RapportLivraison;
+using PNPUCore.RapportTNR;
 using PNPUTools;
 using PNPUTools.DataManager;
-using PNPUCore.Controle;
-using PNPUCore.RapportTNR;
-using PNPUCore.RapportLivraison;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace PNPUCore.Process
 {
@@ -134,7 +133,7 @@ namespace PNPUCore.Process
                 return (rapportAnalyseImpactData.ToJSONRepresentation());
             }
             else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
-            { 
+            {
                 RapportAnalyseImpactLogique.Fin = DateTime.Now;
                 return (RapportAnalyseImpactLogique.ToJSONRepresentation());
             }
@@ -184,24 +183,24 @@ namespace PNPUCore.Process
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             PNPU_H_STEP historicStep = new PNPU_H_STEP();
 
-            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.CLIENT_ID = CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = debut;
-            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
-            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
+            historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
+            InfoClient client = RequestTool.getClientsById(CLIENT_ID);
 
-            historicStep.ID_H_WORKFLOW = this.ID_INSTANCEWF;
-            historicStep.ID_PROCESS = this.PROCESS_ID;
+            historicStep.ID_H_WORKFLOW = ID_INSTANCEWF;
+            historicStep.ID_PROCESS = PROCESS_ID;
             historicStep.ITERATION = 1;
-            historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.WORKFLOW_ID = WORKFLOW_ID;
+            historicStep.CLIENT_ID = CLIENT_ID;
             historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
-            if(client.TYPOLOGY == "Dédié")
+            if (client.TYPOLOGY == "Dédié")
             {
                 historicStep.TYPOLOGY = "SAAS DEDIE";
             }
-            else if(client.TYPOLOGY == "Désynchronisé")
+            else if (client.TYPOLOGY == "Désynchronisé")
             {
                 historicStep.TYPOLOGY = "SAAS DESYNCHRONISE";
             }
@@ -231,12 +230,12 @@ namespace PNPUCore.Process
         public void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult, int idInstanceWF, DateTime debut)
         {
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.CLIENT_ID = CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = debut;
             historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
             historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
-            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
+            historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
 
             idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
@@ -244,9 +243,9 @@ namespace PNPUCore.Process
             {
                 InfoClient client = RequestTool.getClientsById(clientId);
                 PNPU_H_STEP historicStep = new PNPU_H_STEP();
-                historicStep.ID_PROCESS = this.PROCESS_ID;
+                historicStep.ID_PROCESS = PROCESS_ID;
                 historicStep.ITERATION = 1;
-                historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
+                historicStep.WORKFLOW_ID = WORKFLOW_ID;
                 historicStep.CLIENT_ID = clientId;
                 historicStep.CLIENT_NAME = client.CLIENT_NAME;
                 historicStep.USER_ID = "PNPUADM";
@@ -270,7 +269,7 @@ namespace PNPUCore.Process
                 {
                     historicStep.TYPOLOGY = "Typo not found";
                 }
-                
+
                 historicStep.ID_STATUT = globalResult;
                 RequestTool.CreateUpdateStepHistoric(historicStep);
             }
@@ -286,17 +285,17 @@ namespace PNPUCore.Process
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
             DataSet dsDataSet;
             string sTypo;
-            string sRequete = "SELECT ID_CONTROLE, CONTROLE_LABEL, TYPOLOGY, RUN_STANDARD, ID_PROCESS, ERROR_TYPE, TOOLTIP FROM PNPU_CONTROLE WHERE ID_PROCESS =" + this.PROCESS_ID.ToString();
+            string sRequete = "SELECT ID_CONTROLE, CONTROLE_LABEL, TYPOLOGY, RUN_STANDARD, ID_PROCESS, ERROR_TYPE, TOOLTIP FROM PNPU_CONTROLE WHERE ID_PROCESS =" + PROCESS_ID.ToString();
 
-            if ((this.CLIENT_ID != string.Empty) && (this.CLIENT_ID != "ALL"))
+            if ((CLIENT_ID != string.Empty) && (CLIENT_ID != "ALL"))
             {
                 try
                 {
                     string sClient_ID;
-                    if (this.CLIENT_ID.Contains(",") == true)
-                        sClient_ID = this.CLIENT_ID.Split(',')[0];
+                    if (CLIENT_ID.Contains(",") == true)
+                        sClient_ID = CLIENT_ID.Split(',')[0];
                     else
-                        sClient_ID = this.CLIENT_ID;
+                        sClient_ID = CLIENT_ID;
                     sTypo = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
                     if (sTypo != string.Empty)
                         sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + sTypo + "*%'))";
@@ -309,13 +308,13 @@ namespace PNPUCore.Process
                 sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
             }
             */
-            if (this.STANDARD == false)
+            if (STANDARD == false)
             {
                 sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
             }
 
             listControl.Clear();
-            dsDataSet = dmsDataManager.GetData(sRequete,ParamAppli.ConnectionStringBaseAppli);
+            dsDataSet = dmsDataManager.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {

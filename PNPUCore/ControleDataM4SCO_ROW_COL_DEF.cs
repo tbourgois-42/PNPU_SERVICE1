@@ -4,10 +4,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUCore.Rapport;
 
 namespace PNPUCore.Controle
 {
@@ -34,7 +30,7 @@ namespace PNPUCore.Controle
             string sRequeteClient;
             DataSet dsDataSetRef;
             DataSet dsDataSetClient;
-             string sFiltreRef;
+            string sFiltreRef;
             string sFiltreClient;
             string sOrgaOrg;
             string sOrgaOrgFiltre;
@@ -123,11 +119,11 @@ namespace PNPUCore.Controle
 
             string sSCO_ID_BODY_CLIENT;
             string sSCO_ID_ROW_CLIENT;
-            
+
 
             string sRequete = "SELECT * FROM M4SCO_ROW_COL_DEF WHERE ID_ORGANIZATION = '0001' AND SCO_ID_REPORT = '" + sSCO_ID_REPORT + "' AND SCO_ID_BODY = '" + sSCO_ID_BODY + "' AND SCO_ID_ROW = '" + sSCO_ID_ROW + "' AND (SCO_ID_PRT_ITEM IS NOT NULL OR SFR_ID_SOURCE_ITEM IS NOT NULL)";
             DataSet dsDataset = dmsDataManager.GetData(sRequete, sConnectionString);
-            
+
             if ((dsDataset != null) && (dsDataset.Tables[0].Rows.Count > 0))
             {
                 sSCO_ID_PRT_ITEM = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_PRT_ITEM");
