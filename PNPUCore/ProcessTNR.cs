@@ -158,7 +158,7 @@ namespace PNPUCore.Process
             historicWorkflow.LAUNCHING_DATE = RapportTNR.Debut;
             historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
             historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
-            InfoClient client = RequestTool.getClientsById(CLIENT_ID);
+            InfoClient client = RequestTool.GetClientsById(CLIENT_ID);
 
             historicStep.ID_PROCESS = PROCESS_ID;
             historicStep.ITERATION = 1;

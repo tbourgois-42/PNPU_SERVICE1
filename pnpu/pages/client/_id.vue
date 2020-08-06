@@ -472,9 +472,9 @@ export default {
             vm.clientId
         )
         .then(function(response) {
-          if (response.data.getReportResult.length > 0) {
+          if (response.data.GetReportResult.length > 0) {
             vm.JSON_TEMPLATE = JSON.parse(
-              response.data.getReportResult[0].JSON_TEMPLATE
+              response.data.GetReportResult[0].JSON_TEMPLATE
             )
             vm.getWichReport(vm.JSON_TEMPLATE[0].name)
             vm.selectedItemTable = vm.JSON_TEMPLATE[0].children
