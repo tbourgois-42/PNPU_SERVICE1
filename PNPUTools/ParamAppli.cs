@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using IniParser;
+using IniParser.Model;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO.Pipes;
-using System.Data.SqlClient;
-using IniParser;
-using IniParser.Model;
 
 
 namespace PNPUTools
@@ -65,7 +63,7 @@ namespace PNPUTools
         /// <summary>  
         /// Chaine de connexion à la base de référence.
         /// </summary> 
-        public static Dictionary<string,string> ConnectionStringBaseRef { get; }
+        public static Dictionary<string, string> ConnectionStringBaseRef { get; }
 
         /// <summary>  
         /// Chaine de connexion à la base de référence SAAS dédié.
@@ -94,7 +92,7 @@ namespace PNPUTools
 
         public static Dictionary<string, InfoClient> ListeInfoClient { get; }
         public static string GeneratePackPath { get; internal set; }
-        public static DateTime DateNullPPN = new DateTime(1800,1,1);
+        readonly public static DateTime DateNullPPN = new DateTime(1800, 1, 1);
 
         public const int TypologyDedie = 256;
 
@@ -112,7 +110,7 @@ namespace PNPUTools
         public const string StatutInfo = "INFORMATION";
         public const string StatutInProgress = "IN PROGRESS";
 
-        public static string LogLevel = "DEBUG";
+        public const string LogLevel = "DEBUG";
 
         public const string connectionStringSupport = "server=M4FRDB16.fr.meta4.com;uid=META4_DOCSUPPREAD;pwd=META4_DOCSUPPREAD;database=META4_DOCSUPP;";
         public const string connectionTemplate = "server={0};uid={1};pwd={2};database={3};";
@@ -123,24 +121,24 @@ namespace PNPUTools
         public const string ConnectionStringBaseQA2 = "server=M4FRDB20.fr.meta4.com;uid=GLS_TNR;pwd=F3?6D!Fk*f.;database=GLS_TNR;";
         public const string ConnectionStringBaseQA1 = "server=M4FRDB20.fr.meta4.com;uid=GLS_REF;pwd=o8lfIwUOBW;database=GLS_REF;";
 
-        public static int ProcessControlePacks = 1;
-        public static int ProcessInit = 2;
-        public static int ProcessGestionDependance = 3;
-        public static int ProcessAnalyseImpact = 4;
-        public static int ProcessIntegration = 5;
-        public static int ProcessProcessusCritique = 6;
-        public static int ProcessTNR = 7;
-        public static int ProcessLivraison = 8;
-        public static int ProcessAnalyseImpactData = 11;
-        public static int ProcessAnalyseImpactLogique = 10;
+        readonly public static int ProcessControlePacks;
+        readonly public static int ProcessInit;
+        readonly public static int ProcessGestionDependance;
+        readonly public static int ProcessAnalyseImpact;
+        readonly public static int ProcessIntegration;
+        readonly public static int ProcessProcessusCritique;
+        readonly public static int ProcessTNR;
+        readonly public static int ProcessLivraison;
+        readonly public static int ProcessAnalyseImpactData;
+        readonly public static int ProcessAnalyseImpactLogique;
 
         public const int ProcessFinished = -1;
 
         public const bool SimpleCotesReport = true;
 
-        public static NamedPipeClientStream npcsPipeClient;
+        readonly public static NamedPipeClientStream npcsPipeClient;
 
-        public static Dictionary<string, string> TranscoSatut;
+        readonly public static Dictionary<string, string> TranscoSatut;
 
         public const string templateIniFileAnalyseImpact = "<ORIGIN_CONN>\r\n{0}\r\n<TARGET_CONN>\r\n{1}\r\n<LOG_FILE>\r\n{2}\r\n<USER_CVM>\r\n{3}\r\n<PWD_CVM>\r\n{4}\r\n";//<CLEAR_PREVIOUS_ANALYSIS>\r\nYES\r\n<PACK_ANALYSIS>\r\n{5}\r\n<ANALYSE_RESULTS_FILE>\r\n{6}
         public const string templateIniFileGeneratePack = "<ORIGIN_CONN>\r\n{0}\r\n<LOG_FILE>\r\n{1}\r\n<PKGWZ_CONTENT_TYPE>\r\n3\r\n<PKGWZ_CCT_VERSION>\r\n8.1\r\n<PKGWZ_CCT_TASK_LIST>\r\n{2}\r\n<PKGWZ_MDB_ADD_TABLES>\r\n3\r\n<PKGWZ_MDB_PATH>\r\n{3}\r\n<PKGWZ_PACK_NAME>\r\nPNPU_\r\n<PKGWZ_PACK_LOAD_DATA>\r\n1\r\n<PKGWZ_PACK_REFRESH_CHANGES>\r\n0\r\n<PKGWZ_PACK_SAVE_ORDER>\r\n1\r\n<PKGWZ_PACK_SAVE_SCRIPT>\r\n0";
@@ -159,14 +157,14 @@ namespace PNPUTools
         public const string statusScheduleTaskAbandon1 = "10";
         public const string statusScheduleTaskAbandon2 = "11";
 
-        public static Queue<string> qFIFO = null;
+        readonly public static Queue<string> qFIFO = null;
 
         /// <summary>  
         /// Constructeur de la classe. Il charge toutes les valeurs du paramétrage.
         /// </summary>  
         static ParamAppli()
         {
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
             TranscoSatut = new Dictionary<string, string>();
@@ -203,13 +201,16 @@ namespace PNPUTools
                 IniData iniData;
                 try
                 {
-                    string sCheminINI ="C:\\PNPU\\PNPUTools.ini";
+                    string sCheminINI = "C:\\PNPU\\PNPUTools.ini";
 
                     iniParser = new FileIniDataParser();
                     iniData = iniParser.ReadFile(sCheminINI);
                     ConnectionStringBaseAppli = iniData["ConnectionStrings"]["BaseAppli"];
                 }
-                catch (Exception) { }
+                catch (Exception ex) {
+                    //TODO LOG
+                    Console.WriteLine(ex.Message);
+                }
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
@@ -274,7 +275,7 @@ namespace PNPUTools
 
                 // On valorise en fonction de la typologie
                 ConnectionStringBaseRef = new Dictionary<string, string>();
-                 ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
                 ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
                 ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
@@ -284,7 +285,7 @@ namespace PNPUTools
                 // N'existe que sur la base plateforme
                 if (ConnectionStringBaseRefPlateforme != string.Empty)
                 {
-                     dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
+                    dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -294,7 +295,7 @@ namespace PNPUTools
                             ListeLimSup.Add(Int32.Parse(drRow[1].ToString()));
                         }
                     }
-  
+
                 }
 
                 //Chargement des infos clients
@@ -308,14 +309,15 @@ namespace PNPUTools
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             bool bOracle = drRow[4].ToString().ToUpper().Contains("ORACLE");
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty,bOracle)) ;
+                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty, bOracle));
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-
+                //TODO LOG
+                Console.WriteLine(ex.Message);
             }
 
 
@@ -331,7 +333,7 @@ namespace PNPUTools
                 Analyse d'impact Data
             */
             IEnumerable<PNPU_PROCESS> listAllProcess = RequestTool.GetAllProcesses();
-            foreach(PNPU_PROCESS process in listAllProcess)
+            foreach (PNPU_PROCESS process in listAllProcess)
             {
                 switch (process.PROCESS_LABEL)
                 {

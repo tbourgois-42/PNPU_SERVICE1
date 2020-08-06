@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
+using System.Linq;
 
 
 namespace PNPUCore.Controle
@@ -59,7 +57,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. Elle va appeler la méthode ControleUnTypack pour chaque type de pack (L, B, D et F).
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             DataManagerAccess dmaManagerAccess = null;
@@ -107,10 +105,10 @@ namespace PNPUCore.Controle
         /// <param name="CMD">Contient la liste des commandes autorisées pour le type de pack à contrôler.</param>
         /// <param name="dmaManagerAccess">Objet permettant de faire des requêtes dans le MDB à contrôler.</param>
         /// </summary>  
-        private bool ControleUnTypack(string TypePack, List<string> CMD, DataManagerAccess dmaManagerAccess )
+        private bool ControleUnTypack(string TypePack, List<string> CMD, DataManagerAccess dmaManagerAccess)
         {
             bool bResultat = true;
-            
+
             bool bTrouve;
             int iCpt;
             string sCommandPack;
@@ -138,7 +136,7 @@ namespace PNPUCore.Controle
                         }
                         if (bTrouve == false)
                         {
-                             double dConv;
+                            double dConv;
 
                             try
                             {

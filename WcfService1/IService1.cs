@@ -1,14 +1,9 @@
-using PNPUCore.Database;
 using PNPUTools;
 using PNPUTools.DataManager;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.Text;
 
 namespace WcfService1
 {
@@ -23,6 +18,13 @@ namespace WcfService1
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "clients/dashboard/?user={sUser}&habilitation={sHabilitation}")]
         IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "toolbox/dashboard/?user={sUser}&habilitation={sHabilitation}")]
+        IEnumerable<ToolboxInfoLaunch> GetInfoLaunchToolBox(string sHabilitation, string sUser);
 
         [OperationContract]
         [WebInvoke(Method = "GET",
@@ -219,8 +221,8 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo/{TypologyId}")]
-        IEnumerable<InfoClient> getListClientsByTypo( string TypologyId);
-        
+        IEnumerable<InfoClient> getListClientsByTypo(string TypologyId);
+
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,

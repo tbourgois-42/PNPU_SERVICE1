@@ -13,19 +13,19 @@ namespace AntsCode.Util
     public class MultipartParser
     {
         public MultipartParser(Stream stream)
-        {   
-            this.Parse(stream, Encoding.UTF8);
+        {
+            Parse(stream, Encoding.UTF8);
         }
 
         public MultipartParser(Stream stream, Encoding encoding)
         {
-            this.Parse(stream, encoding);
+            Parse(stream, encoding);
         }
 
         private void Parse(Stream stream, Encoding encoding)
         {
-            this.Success = false;
-            
+            Success = false;
+
             // Read the stream into a byte array
             byte[] data = ToByteArray(stream);
 
@@ -51,8 +51,8 @@ namespace AntsCode.Util
                 if (contentTypeMatch.Success && filenameMatch.Success)
                 {
                     // Set properties
-                    this.ContentType = contentTypeMatch.Value.Trim();
-                    this.Filename = filenameMatch.Value.Trim();
+                    ContentType = contentTypeMatch.Value.Trim();
+                    Filename = filenameMatch.Value.Trim();
 
                     // Get the start & end indexes of the file contents
                     int startIndex = contentTypeMatch.Index + contentTypeMatch.Length + "\r\n\r\n".Length;
@@ -67,8 +67,8 @@ namespace AntsCode.Util
 
                     Buffer.BlockCopy(data, startIndex, fileData, 0, contentLength);
 
-                    this.FileContents = fileData;
-                    this.Success = true;
+                    FileContents = fileData;
+                    Success = true;
                 }
             }
         }

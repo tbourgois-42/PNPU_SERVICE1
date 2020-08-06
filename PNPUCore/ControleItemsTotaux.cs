@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -23,7 +20,7 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleItemsTotaux(PNPUCore.Process.IProcess pProcess)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie que les éléments utilisés dans les totaux livrés existent";
             LibControle = "Contrôle des totaux";
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
@@ -37,7 +34,7 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleItemsTotaux(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
@@ -48,7 +45,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
@@ -59,7 +56,7 @@ namespace PNPUCore.Controle
             DataSet dsDataSet;
 
             string sListeItemsLivres = string.Empty;
- 
+
             DataManagerAccess dmaManagerAccess = null;
 
             try
@@ -80,12 +77,12 @@ namespace PNPUCore.Controle
                     }
                 }
 
- 
+
                 sRequete = "select ID_TI, ID_ITEM, ID_ITEM_USED_TI, ID_ITEM_USED FROM M4RCH_TOTAL_REF A";
                 // On livre le total 
                 sRequete += " WHERE (A.ID_TI+'.'+A.ID_ITEM IN (" + sListeItemsLivres + ")) ";
                 sRequete += " AND  (A.ID_ITEM_USED_TI+'.'+ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")) ";
-                 
+
                 // Et il existe des items du total qu'on ne livre pas
                 sRequete += " AND (EXISTS (SELECT * FROM M4RCH_TOTAL_REF C WHERE A.ID_TI=C.ID_TI AND A.ID_ITEM=C.ID_ITEM AND C.ID_ITEM_USED_TI+'.'+C.ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")))";
 
@@ -102,14 +99,14 @@ namespace PNPUCore.Controle
                         sItem = drRow[2].ToString() + "." + drRow[3].ToString();
 
                         lListeAControler.Add(new string[] { sItem, drRow[0].ToString() + "." + drRow[1].ToString() });
-                        
+
                         if (bPremierElement == true)
                             bPremierElement = false;
                         else
                             sRequete += ",";
 
                         sRequete += "'" + sItem + "'";
-                       
+
                     }
                     sRequete += ")";
                 }
@@ -131,15 +128,15 @@ namespace PNPUCore.Controle
                                     iCpt--;
                                 }
                             }
-                            
+
                         }
                     }
-                    
-                     if (lListeAControler.Count > 0)
+
+                    if (lListeAControler.Count > 0)
                     {
                         bResultat = ResultatErreur;
-                        foreach (string[] sElements  in lListeAControler)
-                            Process.AjouteRapport("Le total " + sElements[1] + " utilise un item inexistant (" + sElements[0] +").");
+                        foreach (string[] sElements in lListeAControler)
+                            Process.AjouteRapport("Le total " + sElements[1] + " utilise un item inexistant (" + sElements[0] + ").");
                     }
                 }
 

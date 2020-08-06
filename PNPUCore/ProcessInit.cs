@@ -1,7 +1,6 @@
 ﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
-using PNPUTools.DataManager;
 
 using System;
 using System.Collections.Generic;
@@ -19,8 +18,8 @@ namespace PNPUCore.Process
 
         public ProcessInit(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessInit;
-            this.LibProcess = "Initialisation";
+            PROCESS_ID = ParamAppli.ProcessInit;
+            LibProcess = "Initialisation";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -35,11 +34,11 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportProcess.Name = this.LibProcess;
+            RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
 
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
@@ -67,7 +66,7 @@ namespace PNPUCore.Process
                     GlobalResult = statutControle;
                 }
                 RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
-                
+
 
                 RapportSource.Controle.Add(RapportControle);
             }
@@ -81,7 +80,7 @@ namespace PNPUCore.Process
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessInit);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
 
         }

@@ -1,10 +1,4 @@
 ﻿using PNPUCore.Controle;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUCore
 {
@@ -12,7 +6,7 @@ namespace PNPUCore
     {
 
 
-        public string MakeControl()
+        new public string MakeControl()
         {
             //Parcourir Copydata
             //For each copy data {

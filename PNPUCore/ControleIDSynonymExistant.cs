@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -16,7 +13,7 @@ namespace PNPUCore.Controle
     class ControleIDSynonymExistant : PControle, IControle
     {
         private string sPathMdb = string.Empty;
-         private PNPUCore.Process.ProcessControlePacks Process;
+        private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -24,7 +21,7 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleIDSynonymExistant(PNPUCore.Process.IProcess pProcess)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ToolTipControle = "Vérifie si les items livrés dans le mdb n'utilisent pas un ID Synonym déjà utilisé";
             LibControle = "Contrôles des ID Synonym existant";
             ResultatErreur = ParamAppli.StatutError;
@@ -47,7 +44,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
@@ -56,7 +53,7 @@ namespace PNPUCore.Controle
             bool bItemAControler = false;
             string sRequeteSqlServer = string.Empty;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             ParamToolbox paramToolbox = new ParamToolbox();
 
@@ -72,7 +69,7 @@ namespace PNPUCore.Controle
                     sRequeteSqlServer = "select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE (ID_TI LIKE '%HRPERIOD%CALC' OR ID_TI LIKE '%HRROLE%CALC') ";
                     // Ne faire que si pack standard
                     sRequeteSqlServer += "AND(ID_TI LIKE 'SCO%' OR ID_TI LIKE 'SFR%' OR ID_TI LIKE 'CFR%') ";
-                    
+
                     sRequeteSqlServer += "AND ID_TI NOT LIKE '%DIF%' AND (";
 
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -100,7 +97,7 @@ namespace PNPUCore.Controle
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                         else
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, sConnectionStringBaseQA1);
-                        
+
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
                             bResultat = ResultatErreur;
@@ -112,7 +109,7 @@ namespace PNPUCore.Controle
 
                     }
                 }
-            
+
             }
 
             catch (Exception ex)

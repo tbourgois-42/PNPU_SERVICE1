@@ -1,23 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
-using System.IO;
-using System.IO.Pipes;
-using PNPUCore.Database;
-using System.Collections.Specialized;
-using System.Web;
+using HttpMultipartParser;
 using PNPUTools;
 using PNPUTools.DataManager;
-using System.Web.Hosting;
-using AntsCode.Util;
-using System.Configuration;
-using HttpMultipartParser;
-using System.Net;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.IO.Pipes;
+using System.Linq;
+using System.Net;
+using System.ServiceModel.Web;
+using System.Text;
 
 namespace WcfService1
 {
@@ -42,11 +34,11 @@ namespace WcfService1
             if (sw == null)
                 sw = new StreamWriter(npcsPipeClient);
 
-            
+
             sw.AutoFlush = true;
             Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
             sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
-            
+
 
 
             //string result = ssStreamString.ReadString();
@@ -62,6 +54,11 @@ namespace WcfService1
         public IEnumerable<InfoClientStep> GetInfoDashboardCard(string sHabilitation, string sUser)
         {
             return RequestTool.GetInfoDashboardCard(sHabilitation, sUser);
+        }
+
+        public IEnumerable<ToolboxInfoLaunch> GetInfoLaunchToolBox(string sHabilitation, string sUser)
+        {
+            return RequestTool.GetToolBoxInfoLaunch(sHabilitation, sUser);
         }
 
         public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser, int isToolBox = -1)
@@ -153,6 +150,7 @@ namespace WcfService1
 
         public void preflightRequest()
         {
+            // Method intentionally left empty.
         }
 
         public void UploadFile(Stream stream)
@@ -164,7 +162,7 @@ namespace WcfService1
             bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
             string instanceName = parser.GetParameterValue("instanceName");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
-            
+
             // Files are stored in a list:
             FilePart file = parser.Files.First();
             string FileName = file.FileName;
@@ -203,6 +201,7 @@ namespace WcfService1
             else
             {
                 //GENERATE EXCEPTION
+                //TODO generate specific Exception
                 throw new Exception();
             }
 
@@ -304,9 +303,9 @@ namespace WcfService1
         public Stream GetMdbLivraison(string workflowId, string idInstanceWF, string clientId)
         {
             MemoryStream stream = new MemoryStream();
-            
+
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/octet-stream";
-            
+
             List<byte[]> mdb = RequestTool.GetMdbLivraison(workflowId, idInstanceWF, clientId);
             string sDossierTempo = string.Empty;
 
@@ -362,7 +361,7 @@ namespace WcfService1
             }
 
             return sToken;
-        
+
         }
 
         public string ConnectUser(string sToken)
@@ -397,7 +396,7 @@ namespace WcfService1
             var parser = MultipartFormDataParser.Parse(stream);
             string clientId = parser.GetParameterValue("clientID");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
-            int idInstanceWF = -1;
+            int idInstanceWF;
             string result = "";
             string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
             bool hadFile = parser.Files.Count > 0;
@@ -423,19 +422,19 @@ namespace WcfService1
                 }
             }
 
-            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli); 
- 
-            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0)) 
+            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
-                DataRow drRow = dsDataSet.Tables[0].Rows[0]; 
+                DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 // We generate instance of workflow in PNPU_H_WORKFLOW 
-                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW(); 
-                historicWorkflow.WORKFLOW_ID = workflowId; 
-                historicWorkflow.CLIENT_ID = clientId; 
-                historicWorkflow.LAUNCHING_DATE = DateTime.Now; 
-                historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1); 
-                historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress; 
-                historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId ;
+                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
+                historicWorkflow.WORKFLOW_ID = workflowId;
+                historicWorkflow.CLIENT_ID = clientId;
+                historicWorkflow.LAUNCHING_DATE = DateTime.Now;
+                historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
+                historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
+                historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId;
 
                 idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
@@ -457,7 +456,7 @@ namespace WcfService1
                 }
                 LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
             }
-            
+
             return result;
         }
 
@@ -501,7 +500,7 @@ namespace WcfService1
             int len = outBuffer.Length;
             if (len > UInt16.MaxValue)
             {
-                len = (int)UInt16.MaxValue;
+                len = ushort.MaxValue;
             }
             ioStream.WriteByte((byte)(len / 256));
             ioStream.WriteByte((byte)(len & 255));

@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Policy;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace PNPUCore.RapportLivraison
 {
@@ -25,37 +22,37 @@ namespace PNPUCore.RapportLivraison
 
         public string Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public string Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public DateTime Debut
         {
-            set { this.debut = value; }
-            get { return this.debut; }
+            set { debut = value; }
+            get { return debut; }
         }
 
         public DateTime Fin
         {
-            set { this.fin = value; }
-            get { return this.fin; }
+            set { fin = value; }
+            get { return fin; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
         public List<Processus> Processus
         {
-            set { this.processus = value; }
-            get { return this.processus; }
+            set { processus = value; }
+            get { return processus; }
         }
         public string IdClient { get; internal set; }
 
@@ -180,18 +177,18 @@ namespace PNPUCore.RapportLivraison
         private string result { get; set; }
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
     }
 
@@ -212,39 +209,39 @@ namespace PNPUCore.RapportLivraison
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public String CctTaskID
         {
-            set { this.cctTaskID = value; }
-            get { return this.cctTaskID; }
+            set { cctTaskID = value; }
+            get { return cctTaskID; }
         }
         public String CctVersion
         {
-            set { this.cctVersion = value; }
-            get { return this.cctVersion; }
+            set { cctVersion = value; }
+            get { return cctVersion; }
         }
         public int NbElements
         {
-            set { this.nbElements = value; }
-            get { return this.nbElements; }
+            set { nbElements = value; }
+            get { return nbElements; }
         }
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
         public List<Elements> Elements
         {
-            set { this.elements = value; }
-            get { return this.elements; }
+            set { elements = value; }
+            get { return elements; }
         }
     }
 
@@ -260,38 +257,38 @@ namespace PNPUCore.RapportLivraison
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
         public String ObjectType
         {
-            set { this.objectType = value; }
-            get { return this.objectType; }
+            set { objectType = value; }
+            get { return objectType; }
         }
         public String ObjectID
         {
-            set { this.objectID = value; }
-            get { return this.objectID; }
+            set { objectID = value; }
+            get { return objectID; }
         }
         public String ParentObj
         {
-            set { this.parentObj = value; }
-            get { return this.parentObj; }
+            set { parentObj = value; }
+            get { return parentObj; }
         }
         public String AuxObj
         {
-            set { this.auxObj = value; }
-            get { return this.auxObj; }
+            set { auxObj = value; }
+            get { return auxObj; }
         }
         public String Aux2Obj
         {
-            set { this.aux2Obj = value; }
-            get { return this.aux2Obj; }
+            set { aux2Obj = value; }
+            get { return aux2Obj; }
         }
         public String Aux3Obj
         {
-            set { this.aux3Obj = value; }
-            get { return this.aux3Obj; }
+            set { aux3Obj = value; }
+            get { return aux3Obj; }
         }
     }
 }

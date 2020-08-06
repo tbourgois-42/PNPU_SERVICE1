@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.Odbc;
 
@@ -8,7 +6,7 @@ namespace PNPUTools.DataManager
 {
     public class DataManagerAccess : IDataManager
     {
-    
+
         public string GetConnectionString(string sMdbPath)
         {
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq="
@@ -21,8 +19,8 @@ namespace PNPUTools.DataManager
             DataSet dataSet = null;
             string sTableName = string.Empty;
 
-             using (OdbcConnection connection =
-              new OdbcConnection(GetConnectionString(sMdbPath)))
+            using (OdbcConnection connection =
+             new OdbcConnection(GetConnectionString(sMdbPath)))
             {
                 OdbcDataAdapter adapter =
                     new OdbcDataAdapter(sRequest, connection);
@@ -36,20 +34,20 @@ namespace PNPUTools.DataManager
                     if (sTableName == string.Empty)
                         adapter.Fill(dataSet);
                     else
-                        adapter.Fill(dataSet,sTableName);
+                        adapter.Fill(dataSet, sTableName);
                 }
                 catch (Exception ex)
                 {
-                    // A gérer la mise à jour du log
-                    //Console.WriteLine(ex.Message);
+                    //TODO LOG
+                    Console.WriteLine(ex.Message);
                     dataSet = null;
                 }
 
             }
 
-             return dataSet;
+            return dataSet;
         }
 
-        
+
     }
 }

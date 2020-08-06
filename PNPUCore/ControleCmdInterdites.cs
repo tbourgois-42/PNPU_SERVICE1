@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
+using System.Linq;
 
 namespace PNPUCore.Controle
 {
@@ -51,8 +49,8 @@ namespace PNPUCore.Controle
         /// </summary>
         private void CompleteToolTip()
         {
-            ToolTipControle +=  ". Liste des commandes interdites :";
-            foreach(string sElt in lL_INTERDIT)
+            ToolTipControle += ". Liste des commandes interdites :";
+            foreach (string sElt in lL_INTERDIT)
             {
                 ToolTipControle += " - " + sElt;
             }
@@ -63,7 +61,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sCommandPack = string.Empty;
@@ -107,7 +105,7 @@ namespace PNPUCore.Controle
                                 }
                                 bTrouve = true;
                                 Process.AjouteRapport("La commande " + dConv.ToString("###0") + " du pack " + drRow[0].ToString() + " est interdite.");
-                          
+
                             }
                         }
 

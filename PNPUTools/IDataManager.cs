@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 
 namespace PNPUTools.DataManager
@@ -15,7 +14,7 @@ namespace PNPUTools.DataManager
         {
             return null;
         }*/
-   
+
         /// <summary>
         /// Donne la valeur convertie en chaine de caractères du champ passé en paramètre.
         /// </summary>
@@ -113,7 +112,7 @@ namespace PNPUTools.DataManager
                 else
                     bResulat = false;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 bResulat = false;
             }
@@ -179,7 +178,7 @@ namespace PNPUTools.DataManager
             string sRequete = "select A.ID_REAL_OBJECT, A.ID_REAL_FIELD from M4RDC_REAL_FIELDS A,M4RDC_FIELDS B where A.ID_OBJECT=B.ID_OBJECT AND A.ID_FIELD=B.ID_FIELD AND B.OWNER_FLAG = 1 AND B.ID_INTERNAL_FIELD IN('6', '30', '31', '64') ORDER BY 1,2";
 
 
-            dsDataSet = this.GetData(sRequete, sConnectionInfo);
+            dsDataSet = GetData(sRequete, sConnectionInfo);
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -204,7 +203,7 @@ namespace PNPUTools.DataManager
         {
             List<string> lListPersoTables = new List<string>();
 
-            DataSet dsDataSet = this.GetData("select DISTINCT ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD LIKE '%ID_HR' OR ID_REAL_FIELD LIKE '%ID_PERSON'", sConnectionInfo);
+            DataSet dsDataSet = GetData("select DISTINCT ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD LIKE '%ID_HR' OR ID_REAL_FIELD LIKE '%ID_PERSON'", sConnectionInfo);
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -235,7 +234,7 @@ namespace PNPUTools.DataManager
                     sResultat = sRequest.Substring(iIndex1, iIndex2 - iIndex1);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 sResultat = string.Empty;
             }
@@ -340,7 +339,7 @@ namespace PNPUTools.DataManager
             iIndex1 = sCommandMAJ.IndexOf("REPLACE");
             if (iIndex1 >= 0)
             {
-                
+
                 iIndex1 += "REPLACE".Length;
 
                 // Récupération du nom de la table
@@ -360,7 +359,7 @@ namespace PNPUTools.DataManager
                     iIndex2 += "WHERE".Length + 1;
                     iIndex1 = sCommandMAJ.IndexOf("\"", iIndex2) + 1;
                     iIndex2 = sCommandMAJ.IndexOf("\"", iIndex1);
-                    sFilter = sCommand.Substring(iIndex1, iIndex2- iIndex1);
+                    sFilter = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
                     sFilter = sFilter.Trim();
                 }
 
@@ -640,7 +639,7 @@ namespace PNPUTools.DataManager
         }
 
 
-       
+
 
         /// <summary>
         /// Methode permettant de gérer les scripts contenant un test sur la base de destination (Oracle). Elle retourne uniquement
@@ -849,7 +848,7 @@ namespace PNPUTools.DataManager
             Array.Resize(ref arr, arr.Length - 1);
         }
 
-       
+
     }
 }
 

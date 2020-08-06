@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUTools
 {
     public class LauncherViaDIspatcher
     {
-        private static StreamString ssStreamString = null;
-        private static StreamWriter sw = null;
+
+        protected LauncherViaDIspatcher()
+        {
+
+        }
 
         public static void LaunchProcess(int ProcFile, int workflowId, String clientId, int idInstanceWF)
         {
@@ -51,7 +50,7 @@ namespace PNPUTools
             int len = outBuffer.Length;
             if (len > UInt16.MaxValue)
             {
-                len = (int)UInt16.MaxValue;
+                len = ushort.MaxValue;
             }
             ioStream.WriteByte((byte)(len / 256));
             ioStream.WriteByte((byte)(len & 255));

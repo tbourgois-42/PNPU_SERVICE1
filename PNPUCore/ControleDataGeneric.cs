@@ -4,10 +4,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUCore.Rapport;
 
 namespace PNPUCore.Controle
 {
@@ -24,7 +20,6 @@ namespace PNPUCore.Controle
         {
             string sTable = String.Empty;
             string sFilter = String.Empty;
-            string sID_OrgaOrg;
             string sRequeteRef;
             string sRequeteClient;
             DataSet dsDataSetRef;
@@ -33,7 +28,6 @@ namespace PNPUCore.Controle
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
             string sFiltreRef;
             string sFiltreClient;
-            //ControleCommandData controleCommandData;
             bool bIdentique;
             string sOrgaCour;
             List<string> lColumnsList = new List<string>();
@@ -65,7 +59,7 @@ namespace PNPUCore.Controle
                 }
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001") ;
+                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
                     sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else

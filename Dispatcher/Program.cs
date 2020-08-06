@@ -1,12 +1,4 @@
-﻿using Newtonsoft.Json;
-using PNPUTools.DataManager;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System;
 
 
 namespace PNUDispatcher
@@ -15,7 +7,7 @@ namespace PNUDispatcher
     {
 
 
-       static void Main(string[] args)
+        static void Main(string[] args)
         {
             Watcher wWatcher = new Watcher();
 

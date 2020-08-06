@@ -1,5 +1,4 @@
 ﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
 using PNPUCore.RapportTNR;
 using PNPUTools;
 using PNPUTools.DataManager;
@@ -19,8 +18,8 @@ namespace PNPUCore.Process
 
         public ProcessTNR(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessTNR;
-            this.LibProcess = "Tests de Non Régression (TNR)";
+            PROCESS_ID = ParamAppli.ProcessTNR;
+            LibProcess = "Tests de Non Régression (TNR)";
         }
 
         /// <summary>  
@@ -33,21 +32,21 @@ namespace PNPUCore.Process
             string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
             string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
 
-            int idInstanceWF = this.ID_INSTANCEWF;
+            //int idInstanceWF = ID_INSTANCEWF;
 
             ControleTNR CTNR = new ControleTNR(this);
 
             sRapport = string.Empty;
-            RapportTNR.Name = this.LibProcess;
+            RapportTNR.Name = LibProcess;
             RapportTNR.Debut = DateTime.Now;
             RapportTNR.IdClient = CLIENT_ID;
 
             //On génère l'historic en In_PROGRESS
-            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, this.ID_INSTANCEWF, RapportTNR.Debut);
+            GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, ID_INSTANCEWF, RapportTNR.Debut);
 
             Domaine RapportDomaine = new RapportTNR.Domaine();
             RapportDomaine.Name = "Paie";
@@ -69,10 +68,10 @@ namespace PNPUCore.Process
 
             // Payment date
             DateTime sDate = paramToolbox.GetDtPaie(WORKFLOW_ID, ID_INSTANCEWF);
-            
+
             Dictionary<string, string> lstCumulativeTable = CTNR.GetListOfCumulativeTable(ItemsNoeudReadTNR);
 
-            Dictionary<string, Classification>  lstClassification = new Dictionary<string, Classification>();
+            Dictionary<string, Classification> lstClassification = new Dictionary<string, Classification>();
             Classification RapportClassification = null;
 
             int index = -1;
@@ -83,11 +82,11 @@ namespace PNPUCore.Process
             {
                 Console.WriteLine("Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
                 Logger.Log(this, ParamAppli.StatutInfo, "Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
-                
+
                 index = CTNR.FindIndexOfBaseRef(drRow[1].ToString(), ItemsNoeudReadREF, ItemsNoeudReadTNR);
 
                 if (!lstClassification.ContainsKey(drRow[6].ToString()))
-                {   
+                {
                     RapportClassification = new Classification();
                     CTNR.CreateClassification(RapportClassification, drRow, lstClassification, RapportSousDomaineParts);
                 }
@@ -109,7 +108,8 @@ namespace PNPUCore.Process
                     DataSet itemValuesBaseQA1 = CTNR.GetItemValues(drRow, sDate, sConnectionStringBaseQA1, lstCumulativeTable);
                     CTNR.CheckDifference(RapportEcarts, itemValuesBaseQA1, itemValuesBaseQA2, drRow, sDate);
 
-                } else
+                }
+                else
                 {
                     CTNR.SetStatusCorrect(RapportClassification);
                 }
@@ -150,33 +150,33 @@ namespace PNPUCore.Process
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
             PNPU_H_STEP historicStep = new PNPU_H_STEP();
 
-            historicWorkflow.CLIENT_ID = this.CLIENT_ID;
+            historicWorkflow.CLIENT_ID = CLIENT_ID;
             historicWorkflow.LAUNCHING_DATE = RapportTNR.Debut;
-            historicWorkflow.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicWorkflow.ID_H_WORKFLOW = this.ID_INSTANCEWF;
-            InfoClient client = RequestTool.getClientsById(this.CLIENT_ID);
+            historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
+            historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
+            InfoClient client = RequestTool.getClientsById(CLIENT_ID);
 
-            historicStep.ID_PROCESS = this.PROCESS_ID;
+            historicStep.ID_PROCESS = PROCESS_ID;
             historicStep.ITERATION = 1;
-            historicStep.WORKFLOW_ID = this.WORKFLOW_ID;
-            historicStep.CLIENT_ID = this.CLIENT_ID;
+            historicStep.WORKFLOW_ID = WORKFLOW_ID;
+            historicStep.CLIENT_ID = CLIENT_ID;
             historicStep.CLIENT_NAME = client.CLIENT_NAME;
             historicStep.USER_ID = "PNPUADM";
             historicStep.TYPOLOGY = "SAAS DEDIE";
             historicStep.LAUNCHING_DATE = RapportTNR.Debut;
             historicStep.ENDING_DATE = RapportTNR.Fin;
             historicStep.ID_STATUT = RapportTNR.Result;
-            historicStep.ID_H_WORKFLOW = this.ID_INSTANCEWF;
+            historicStep.ID_H_WORKFLOW = ID_INSTANCEWF;
 
             GenerateHistoric(RapportTNR.Fin, RapportTNR.Result, RapportTNR.Debut);
 
-            paramToolbox.DeleteParamsToolbox(this.WORKFLOW_ID, this.ID_INSTANCEWF);
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             if (RapportTNR.Result == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessTNR);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, this.ID_INSTANCEWF);
-            } 
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, ID_INSTANCEWF);
+            }
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)

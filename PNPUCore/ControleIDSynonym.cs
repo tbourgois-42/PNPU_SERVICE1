@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
-using System.Security.Permissions;
 
 namespace PNPUCore.Controle
 {
@@ -19,7 +15,7 @@ namespace PNPUCore.Controle
         private List<int> lLIM_INF;
         private List<int> lLIM_SUP;
         private PNPUCore.Process.ProcessControlePacks Process;
- 
+
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -58,9 +54,9 @@ namespace PNPUCore.Controle
         private void CompleteToolTip()
         {
             ToolTipControle += ". Liste des plages réservées aux clients :";
-            for(int i=0; i<lLIM_INF.Count;i++)
+            for (int i = 0; i < lLIM_INF.Count; i++)
             {
-                ToolTipControle +=  " - De " + lLIM_INF[i].ToString() + " à "+ lLIM_SUP[i].ToString();
+                ToolTipControle += " - De " + lLIM_INF[i].ToString() + " à " + lLIM_SUP[i].ToString();
             }
         }
 
@@ -68,7 +64,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             int iID_SYNONYM;
@@ -89,7 +85,7 @@ namespace PNPUCore.Controle
                         iID_SYNONYM = Int32.Parse(drRow[1].ToString());
                         for (int j = 0; j < lLIM_INF.Count && bPlageOK == true; j++)
                         {
-                             if (iID_SYNONYM >= lLIM_INF[j] && iID_SYNONYM <= lLIM_SUP[j])
+                            if (iID_SYNONYM >= lLIM_INF[j] && iID_SYNONYM <= lLIM_SUP[j])
                                 bPlageOK = false;
 
                         }
@@ -97,7 +93,7 @@ namespace PNPUCore.Controle
                         {
                             bResultat = ResultatErreur;
                             Process.AjouteRapport("L'ID_SYNONYM de l'item " + drRow[0].ToString() + "(" + drRow[1].ToString() + ") est dans les plages réservées client.");
-                                
+
                         }
                     }
                 }

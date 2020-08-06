@@ -1,8 +1,5 @@
-﻿using PNPUCore.Controle;
-using PNPUTools;
+﻿using PNPUTools;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -26,18 +23,18 @@ namespace PNPUCore.Controle
             int random = rnd.Next(0, 5000);
             System.Threading.Thread.Sleep(random);
             random = rnd.Next(1, 100);
-           if (random < 99)
+            if (random < 99)
                 return ParamAppli.StatutOk;
-           else if (random >= 99 && random < 99.5)
-           {
-                this.GetProcessControle().AjouteRapport("Warning sur le controle MOCK");
+            else if (random >= 99 && random < 99.5)
+            {
+                GetProcessControle().AjouteRapport("Warning sur le controle MOCK");
                 return ParamAppli.StatutWarning;
-           }
-           else
-           {
-                this.GetProcessControle().AjouteRapport("Erreur sur le controle MOCK");
+            }
+            else
+            {
+                GetProcessControle().AjouteRapport("Erreur sur le controle MOCK");
                 return ParamAppli.StatutError;
-           }
+            }
         }
     }
 }

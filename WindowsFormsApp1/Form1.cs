@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using System.IO.Pipes;
+using System.Text;
+using System.Windows.Forms;
 
 
 namespace WindowsFormsApp1
@@ -76,7 +70,7 @@ namespace WindowsFormsApp1
         private void button4_Click(object sender, EventArgs e)
         {
 
-            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+            //PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
 
             //gereMDBDansBDD.AjouteFichiersMDBBDD(Directory.GetFiles("D:\\PNPU\\TEST", "*.mdb"), 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
 
@@ -84,10 +78,10 @@ namespace WindowsFormsApp1
 
         private void button5_Click(object sender, EventArgs e)
         {
-            string[] sFichiers=null;
+            string[] sFichiers = null;
             string sResultat = string.Empty;
 
-            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+            //PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
 
             //gereMDBDansBDD.ExtraitFichiersMDBBDD(ref sFichiers, 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
             foreach (string sNom in sFichiers)
@@ -124,7 +118,7 @@ namespace WindowsFormsApp1
             int len = outBuffer.Length;
             if (len > UInt16.MaxValue)
             {
-                len = (int)UInt16.MaxValue;
+                len = ushort.MaxValue;
             }
             ioStream.WriteByte((byte)(len / 256));
             ioStream.WriteByte((byte)(len & 255));

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -35,7 +31,7 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControleDonneesReplace(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
@@ -45,7 +41,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
@@ -73,7 +69,7 @@ namespace PNPUCore.Controle
                         int iIndex = 0;
                         int iIndex2 = 0;
                         int iIndex3 = 0;
-                        
+
                         dmaManagerAccess = new DataManagerAccess();
 
                         iIndex = stempo.ToUpper().IndexOf("REPLACE ", iIndex);
@@ -110,7 +106,7 @@ namespace PNPUCore.Controle
                                 }
 
                                 sRequete = "SELECT COUNT(*) FROM " + sTable;
-                                
+
                                 if (sWhere != string.Empty)
                                     sRequete += " WHERE " + sWhere;
 

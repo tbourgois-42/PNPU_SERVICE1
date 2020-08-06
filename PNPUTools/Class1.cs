@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUTools.DataManager
 {
@@ -15,8 +13,8 @@ namespace PNPUTools.DataManager
 
 		public PNPU_CLIENT_HABILITATION(string USER_ID_, string CLIENT_ID_)
 		{
-			this.USER_ID = USER_ID_;
-			this.CLIENT_ID = CLIENT_ID_;
+			USER_ID = USER_ID_;
+			CLIENT_ID = CLIENT_ID_;
 		}
 	}
 
@@ -36,12 +34,12 @@ namespace PNPUTools.DataManager
 
 		public PNPU_H_REPORT(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string JSON_TEMPLATE_, int ID_H_WORKFLOW_)
 		{
-			this.ITERATION = ITERATION_;
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.ID_PROCESS = ID_PROCESS_;
-			this.CLIENT_ID = CLIENT_ID_;
-			this.JSON_TEMPLATE = JSON_TEMPLATE_;
-			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
+			ITERATION = ITERATION_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			ID_PROCESS = ID_PROCESS_;
+			CLIENT_ID = CLIENT_ID_;
+			JSON_TEMPLATE = JSON_TEMPLATE_;
+			ID_H_WORKFLOW = ID_H_WORKFLOW_;
 		}
 	}
 
@@ -65,16 +63,16 @@ namespace PNPUTools.DataManager
 		}
 		public PNPU_H_STEP(decimal ITERATION_, decimal WORKFLOW_ID_, decimal ID_PROCESS_, string CLIENT_ID_, string CLIENT_NAME_, string USER_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string ID_STATUT_, string TYPOLOGY_)
 		{
-			this.ITERATION = ITERATION_;
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.ID_PROCESS = ID_PROCESS_;
-			this.CLIENT_ID = CLIENT_ID_;
-			this.CLIENT_NAME = CLIENT_NAME_;
-			this.USER_ID = USER_ID_;
-			this.LAUNCHING_DATE = LAUNCHING_DATE_;
-			this.ENDING_DATE = ENDING_DATE_;
-			this.ID_STATUT = ID_STATUT_;
-			this.TYPOLOGY = TYPOLOGY_;
+			ITERATION = ITERATION_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			ID_PROCESS = ID_PROCESS_;
+			CLIENT_ID = CLIENT_ID_;
+			CLIENT_NAME = CLIENT_NAME_;
+			USER_ID = USER_ID_;
+			LAUNCHING_DATE = LAUNCHING_DATE_;
+			ENDING_DATE = ENDING_DATE_;
+			ID_STATUT = ID_STATUT_;
+			TYPOLOGY = TYPOLOGY_;
 		}
 	}
 
@@ -96,13 +94,13 @@ namespace PNPUTools.DataManager
 
 		public PNPU_H_WORKFLOW(decimal ID_H_WORKFLOW_, string CLIENT_ID_, decimal WORKFLOW_ID_, DateTime LAUNCHING_DATE_, DateTime ENDING_DATE_, string STATUT_GLOBAL_, string INSTANCE_NAME_)
 		{
-			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
-			this.CLIENT_ID = CLIENT_ID_;
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.LAUNCHING_DATE = LAUNCHING_DATE_;
-			this.ENDING_DATE = ENDING_DATE_;
-			this.STATUT_GLOBAL = STATUT_GLOBAL_;
-			this.INSTANCE_NAME = INSTANCE_NAME_;
+			ID_H_WORKFLOW = ID_H_WORKFLOW_;
+			CLIENT_ID = CLIENT_ID_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			LAUNCHING_DATE = LAUNCHING_DATE_;
+			ENDING_DATE = ENDING_DATE_;
+			STATUT_GLOBAL = STATUT_GLOBAL_;
+			INSTANCE_NAME = INSTANCE_NAME_;
 		}
 	}
 
@@ -125,19 +123,19 @@ namespace PNPUTools.DataManager
 
 		public PNPU_LOG(decimal ID_LOG_, decimal ID_PROCESS_, decimal ITERATION_, decimal WORKFLOW_ID_, string MESSAGE_, string STATUT_MESSAGE_, string ID_CONTROLE_, string IS_CONTROLE_, DateTime DATE_LOG_, string SERVER_, string BASE_, string NIVEAU_LOG_, int ID_H_WORKFLOW_)
 		{
-			this.ID_LOG = ID_LOG_;
-			this.ID_PROCESS = ID_PROCESS_;
-			this.ITERATION = ITERATION_;
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.MESSAGE = MESSAGE_;
-			this.STATUT_MESSAGE = STATUT_MESSAGE_;
-			this.ID_CONTROLE = ID_CONTROLE_;
-			this.IS_CONTROLE = IS_CONTROLE_;
-			this.DATE_LOG = DATE_LOG_;
-			this.SERVER = SERVER_;
-			this.BASE = BASE_;
-			this.NIVEAU_LOG = NIVEAU_LOG_;
-			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
+			ID_LOG = ID_LOG_;
+			ID_PROCESS = ID_PROCESS_;
+			ITERATION = ITERATION_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			MESSAGE = MESSAGE_;
+			STATUT_MESSAGE = STATUT_MESSAGE_;
+			ID_CONTROLE = ID_CONTROLE_;
+			IS_CONTROLE = IS_CONTROLE_;
+			DATE_LOG = DATE_LOG_;
+			SERVER = SERVER_;
+			BASE = BASE_;
+			NIVEAU_LOG = NIVEAU_LOG_;
+			ID_H_WORKFLOW = ID_H_WORKFLOW_;
 		}
 	}
 
@@ -148,8 +146,8 @@ namespace PNPUTools.DataManager
 
 		public PNPU_PARAMETERS(string PARAMETER_ID_, string PARAMETER_VALUE_)
 		{
-			this.PARAMETER_ID = PARAMETER_ID_;
-			this.PARAMETER_VALUE = PARAMETER_VALUE_;
+			PARAMETER_ID = PARAMETER_ID_;
+			PARAMETER_VALUE = PARAMETER_VALUE_;
 		}
 	}
 
@@ -160,8 +158,8 @@ namespace PNPUTools.DataManager
 
 		public PNPU_STATUT(string ID_STATUT_, string MESSAGE_STATUT_)
 		{
-			this.ID_STATUT = ID_STATUT_;
-			this.MESSAGE_STATUT = MESSAGE_STATUT_;
+			ID_STATUT = ID_STATUT_;
+			MESSAGE_STATUT = MESSAGE_STATUT_;
 		}
 	}
 
@@ -177,9 +175,9 @@ namespace PNPUTools.DataManager
 
 		public PNPU_STEP(int ID_ORDER_, int ID_PROCESS_, string ID_WORKFLOW_)
 		{
-			this.ID_ORDER = ID_ORDER_;
-			this.ID_PROCESS = ID_PROCESS_;
-			this.ID_WORKFLOW = ID_WORKFLOW_;
+			ID_ORDER = ID_ORDER_;
+			ID_PROCESS = ID_PROCESS_;
+			ID_WORKFLOW = ID_WORKFLOW_;
 		}
 	}
 
@@ -190,8 +188,8 @@ namespace PNPUTools.DataManager
 
 		public PNPU_USER(string USER_ID_, string USER_PROFILE_)
 		{
-			this.USER_ID = USER_ID_;
-			this.USER_PROFILE = USER_PROFILE_;
+			USER_ID = USER_ID_;
+			USER_PROFILE = USER_PROFILE_;
 		}
 	}
 
@@ -206,15 +204,15 @@ namespace PNPUTools.DataManager
 		public PNPU_WORKFLOW() { }
 		public PNPU_WORKFLOW(decimal WORKFLOW_ID_, string WORKFLOW_LABEL_, decimal NB_PROCESS_, bool IS_TOOLBOX_)
 		{
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.WORKFLOW_LABEL = WORKFLOW_LABEL_;
-			this.NB_PROCESS = NB_PROCESS_;
-			this.IS_TOOLBOX = IS_TOOLBOX_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			WORKFLOW_LABEL = WORKFLOW_LABEL_;
+			NB_PROCESS = NB_PROCESS_;
+			IS_TOOLBOX = IS_TOOLBOX_;
 		}
 	}
 
 	public class PNPU_TMP_PARAM_TOOLBOX
-    {
+	{
 		public string SERVER_BEFORE { get; set; }
 		public string DATABASE_BEFORE { get; set; }
 		public string PASSWORD_BEFORE { get; set; }
@@ -228,22 +226,22 @@ namespace PNPUTools.DataManager
 
 		public PNPU_TMP_PARAM_TOOLBOX() { }
 		public PNPU_TMP_PARAM_TOOLBOX(string SERVER_BEFORE_, string DATABASE_BEFORE_, string PASSWORD_BEFORE_, string SERVER_AFTER_, string DATABASE_AFTER_, string PASSWORD_AFTER_, DateTime DT_PAIE_, int WORKFLOW_ID_, int ID_H_WORKFLOW_, string CLIENT_ID_)
-        {
-			this.SERVER_AFTER = SERVER_AFTER_;
-			this.DATABASE_AFTER = DATABASE_AFTER_;
-			this.PASSWORD_AFTER = PASSWORD_AFTER_;
-			this.SERVER_BEFORE = SERVER_BEFORE_;
-			this.DATABASE_BEFORE = DATABASE_BEFORE_;
-			this.PASSWORD_BEFORE = PASSWORD_BEFORE_;
-			this.DT_PAIE = DT_PAIE_;
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.ID_H_WORKFLOW = ID_H_WORKFLOW_;
-			this.CLIENT_ID = CLIENT_ID_;
-        }
+		{
+			SERVER_AFTER = SERVER_AFTER_;
+			DATABASE_AFTER = DATABASE_AFTER_;
+			PASSWORD_AFTER = PASSWORD_AFTER_;
+			SERVER_BEFORE = SERVER_BEFORE_;
+			DATABASE_BEFORE = DATABASE_BEFORE_;
+			PASSWORD_BEFORE = PASSWORD_BEFORE_;
+			DT_PAIE = DT_PAIE_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			ID_H_WORKFLOW = ID_H_WORKFLOW_;
+			CLIENT_ID = CLIENT_ID_;
+		}
 	}
-	
+
 	public class SUPPORT_DBS
-    {
+	{
 		public int DATABASE_ID { get; set; }
 		public string HOST { get; set; }
 		public string USER_ACCOUNT { get; set; }
@@ -252,28 +250,28 @@ namespace PNPUTools.DataManager
 
 		public SUPPORT_DBS() { }
 		public SUPPORT_DBS(int DATABASE_ID_, string HOST_, string USER_ACCOUNT_, string USER_PASSWORD_, int CLIENT_ID_)
-        {
-			this.DATABASE_ID = DATABASE_ID_;
-			this.HOST = HOST_;
-			this.USER_ACCOUNT = USER_ACCOUNT_;
-			this.USER_PASSWORD = USER_PASSWORD_;
-			this.CLIENT_ID = CLIENT_ID_;
-        }
-    }
+		{
+			DATABASE_ID = DATABASE_ID_;
+			HOST = HOST_;
+			USER_ACCOUNT = USER_ACCOUNT_;
+			USER_PASSWORD = USER_PASSWORD_;
+			CLIENT_ID = CLIENT_ID_;
+		}
+	}
 
 	public class PNPU_TRANSCO_DATABASE
-    {
+	{
 		public string CLIENT_ID { get; set; }
 		public string DATABASE_NAME_TRANSCO { get; set; }
 		public string DATABASE_NAME_CLIENT { get; set; }
 		public PNPU_TRANSCO_DATABASE() { }
 		public PNPU_TRANSCO_DATABASE(string CLIENT_ID_, string DATABSE_NAME_TRANSCO_, string DATABASE_NAME_CLIENT_)
-        {
-			this.CLIENT_ID = CLIENT_ID_;
-			this.DATABASE_NAME_TRANSCO = DATABSE_NAME_TRANSCO_;
-			this.DATABASE_NAME_CLIENT = DATABASE_NAME_CLIENT_;
-        }
-    }
+		{
+			CLIENT_ID = CLIENT_ID_;
+			DATABASE_NAME_TRANSCO = DATABSE_NAME_TRANSCO_;
+			DATABASE_NAME_CLIENT = DATABASE_NAME_CLIENT_;
+		}
+	}
 
 	public class PNPU_WORKFLOW_HABILITATION
 	{
@@ -282,8 +280,8 @@ namespace PNPUTools.DataManager
 
 		public PNPU_WORKFLOW_HABILITATION(decimal WORKFLOW_ID_, string USER_PROFILE_)
 		{
-			this.WORKFLOW_ID = WORKFLOW_ID_;
-			this.USER_PROFILE = USER_PROFILE_;
+			WORKFLOW_ID = WORKFLOW_ID_;
+			USER_PROFILE = USER_PROFILE_;
 		}
 	}
 
@@ -308,6 +306,22 @@ namespace PNPUTools.DataManager
 		public InfoClientStep() { }
 	}
 
+	public class ToolboxInfoLaunch
+	{
+		public decimal WORKFLOW_ID { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
+		public string INSTANCE_NAME { get; set; }
+		public string ID_STATUT { get; set; }
+		public string CLIENT_ID { get; set; }
+		public string CLIENT_NAME { get; set; }
+		public decimal ID_PROCESS { get; set; }
+		public string PROCESS_LABEL { get; set; }
+		public string LAUNCHING_DATE { get; set; }
+
+		public ToolboxInfoLaunch() { }
+
+	}
+
 	public class PNPU_PROCESS
 	{
 		public decimal ID_PROCESS { get; set; }
@@ -319,9 +333,9 @@ namespace PNPUTools.DataManager
 		}
 		public PNPU_PROCESS(decimal ID_PROCESS_, string PROCESS_LABEL_, string IS_LOOPABLE_)
 		{
-			this.ID_PROCESS = ID_PROCESS_;
-			this.PROCESS_LABEL = PROCESS_LABEL_;
-			this.IS_LOOPABLE = IS_LOOPABLE_;
+			ID_PROCESS = ID_PROCESS_;
+			PROCESS_LABEL = PROCESS_LABEL_;
+			IS_LOOPABLE = IS_LOOPABLE_;
 		}
 	}
 
@@ -378,7 +392,7 @@ namespace PNPUTools.DataManager
 
 							prop.SetValue(obj, safeValue, null);
 						}
-						catch(Exception exc)
+						catch (Exception)
 						{
 							// ignored
 						}

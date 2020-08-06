@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.IO;
+using System.Text;
 
 
 namespace PNPUCore.Rapport
@@ -18,26 +16,26 @@ namespace PNPUCore.Rapport
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public List<RProcess> Process
         {
-            set { this.process = value; }
-            get { return this.process; }
+            set { process = value; }
+            get { return process; }
         }
 
         public DateTime Debut
         {
-            set { this.debut = value; }
-            get { return this.debut; }
+            set { debut = value; }
+            get { return debut; }
         }
 
         public DateTime Fin
         {
-            set { this.fin = value; }
-            get { return this.fin; }
+            set { fin = value; }
+            get { return fin; }
         }
     }
 
@@ -69,27 +67,21 @@ namespace PNPUCore.Rapport
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.name + sCote);
+            jw.WriteValue(sCote + name + sCote);
             /*jw.WritePropertyName("id-client"); 
             jw.WriteValue(this.IdClient);*/
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + this.result + sCote);
+            jw.WriteValue(sCote + result + sCote);
             jw.WritePropertyName("debut");
-            jw.WriteValue(sCote + this.Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
-            jw.WriteValue(sCote + this.Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -101,7 +93,7 @@ namespace PNPUCore.Rapport
                 // Cas particulier des dépendances 
                 if (Source[i].Name == "Contrôle des dépendances du livrable")
                 {
-                    rapportDependancesInterPack.ToJSONRepresentation(jw,"3",0);
+                    rapportDependancesInterPack.ToJSONRepresentation(jw, "3", 0);
                 }
                 else
                 {
@@ -167,47 +159,42 @@ namespace PNPUCore.Rapport
 
             jw.WriteEndArray();
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sb = sb.Replace("\"", "");
-                sb = sb.Replace(sCote2, "\"");
-            }
             return sb.ToString();
         }
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
         public List<Source> Source
         {
-            set { this.source = value; }
-            get { return this.source; }
+            set { source = value; }
+            get { return source; }
         }
 
         public DateTime Debut
         {
-            set { this.debut = value; }
-            get { return this.debut; }
+            set { debut = value; }
+            get { return debut; }
         }
 
         public DateTime Fin
         {
-            set { this.fin = value; }
-            get { return this.fin; }
+            set { fin = value; }
+            get { return fin; }
         }
 
         public String Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
 
         public string IdClient { get; internal set; }
@@ -223,26 +210,26 @@ namespace PNPUCore.Rapport
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public List<RControle> Controle
         {
-            set { this.controle = value; }
-            get { return this.controle; }
+            set { controle = value; }
+            get { return controle; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
 
     }
@@ -257,32 +244,32 @@ namespace PNPUCore.Rapport
 
         public String Id
         {
-            set { this.id = value; }
-            get { return this.id; }
+            set { id = value; }
+            get { return id; }
         }
 
         public String Name
         {
-            set { this.name = value; }
-            get { return this.name; }
+            set { name = value; }
+            get { return name; }
         }
 
         public String Tooltip
         {
-            set { this.tooltip = value; }
-            get { return this.tooltip; }
+            set { tooltip = value; }
+            get { return tooltip; }
         }
 
         public string Result
         {
-            set { this.result = value; }
-            get { return this.result; }
+            set { result = value; }
+            get { return result; }
         }
 
         public List<string> Message
         {
-            set { this.message = value; }
-            get { return this.message; }
+            set { message = value; }
+            get { return message; }
         }
     }
 

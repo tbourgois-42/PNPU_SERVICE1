@@ -1,12 +1,8 @@
-﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
+﻿using PNPUCore.RapportLivraison;
 using PNPUTools;
 using PNPUTools.DataManager;
-using PNPUCore.RapportLivraison;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Net.Mail;
 
 namespace PNPUCore.Process
 {
@@ -21,8 +17,8 @@ namespace PNPUCore.Process
 
         public ProcessLivraison(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessLivraison;
-            this.LibProcess = "Livraison";
+            PROCESS_ID = ParamAppli.ProcessLivraison;
+            LibProcess = "Livraison";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -34,33 +30,33 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
 
             string GlobalResult = ParamAppli.StatutOk;
 
-            RapportLivraison.Name = this.LibProcess;
+            RapportLivraison.Name = LibProcess;
             RapportLivraison.Debut = DateTime.Now;
             RapportLivraison.IdClient = CLIENT_ID;
 
             //Generate historic line with in progress status
             GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, idInstanceWF, RapportLivraison.Debut);
 
-            DataSet workflowProcesses = GetworkflowProcesses(ParamAppli.ConnectionStringBaseAppli, this.WORKFLOW_ID);
+            DataSet workflowProcesses = GetworkflowProcesses(ParamAppli.ConnectionStringBaseAppli, WORKFLOW_ID);
 
             foreach (DataRow drRow in workflowProcesses.Tables[0].Rows)
             {
                 Processus processus = new Processus();
 
                 processus.Name = drRow[0].ToString();
-                processus.Result = GetProcessStatut(this.WORKFLOW_ID, int.Parse(drRow[2].ToString()), this.CLIENT_ID, idInstanceWF, ParamAppli.ConnectionStringBaseAppli);
+                processus.Result = GetProcessStatut(WORKFLOW_ID, int.Parse(drRow[2].ToString()), CLIENT_ID, idInstanceWF, ParamAppli.ConnectionStringBaseAppli);
                 GlobalResult = SetGlobalStatut(RapportLivraison);
                 RapportLivraison.Processus.Add(processus);
             }
 
-            DataSet elementsLocalisation = GetHistLocalisation(ParamAppli.ConnectionStringBaseAppli, this.WORKFLOW_ID, this.ID_INSTANCEWF, this.CLIENT_ID);
+            DataSet elementsLocalisation = GetHistLocalisation(ParamAppli.ConnectionStringBaseAppli, WORKFLOW_ID, ID_INSTANCEWF, CLIENT_ID);
 
             RapportLocalisation.Name = "Eléments à localiser";
             RapportLocalisation.NbElements = elementsLocalisation.Tables[0].Rows.Count;
@@ -76,7 +72,7 @@ namespace PNPUCore.Process
                 RapportLocalisation.CctTaskID = "#N/A";
                 RapportLocalisation.CctVersion = "#N/A";
             }
-            
+
             foreach (DataRow drRow in elementsLocalisation.Tables[0].Rows)
             {
                 Elements elements = new Elements();
@@ -100,7 +96,7 @@ namespace PNPUCore.Process
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessLivraison);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
 
         }
@@ -133,7 +129,7 @@ namespace PNPUCore.Process
                 RapportLivraison.Result = ParamAppli.TranscoSatut["ERROR"];
                 Logger.Log(this, ParamAppli.StatutError, "Une erreur s'est produite lors de la récupération des éléments à localiser depuis la table PNPU_H_LOCALISATION, " + ex.ToString());
             }
-            
+
             return result;
         }
 
@@ -167,7 +163,7 @@ namespace PNPUCore.Process
                 return ParamAppli.TranscoSatut["CORRECT"];
             }
             return table.Rows[0].ItemArray[0].ToString() == "mdi-alert" ? "mdi-alert" : null;
-            return table.Rows.Count == 0 ? null : ParamAppli.TranscoSatut[table.Rows[0].ItemArray[0].ToString()];
+            //return table.Rows.Count == 0 ? null : ParamAppli.TranscoSatut[table.Rows[0].ItemArray[0].ToString()];
         }
 
         /// <summary>

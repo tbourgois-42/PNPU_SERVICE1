@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
+using PNPUTools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using PNPUTools;
 
 namespace PNPUCore
 {
-     class TemplateReport
+    class TemplateReport
     {
         public String Id { set; get; }
 
@@ -48,45 +46,34 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-            this.Id = "1";
+            Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("idClient");
-            jw.WriteValue(sCote + this.IdClient + sCote);
+            jw.WriteValue(sCote + IdClient + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("debut");
-            jw.WriteValue(sCote + this.Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
-            jw.WriteValue(sCote + this.Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
             foreach (RapportAnalyseImpactMDBData type in listRapportAnalyseImpactMDBData)
             {
                 iIndex++;
-                 type.ToJSONRepresentation(jw, this.Id,iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
             jw.WriteEndObject();
             jw.WriteEndArray();
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sb = sb.Replace("\"", "");
-                sb = sb.Replace(sCote2, "\"");
-            }
 
             return sb.ToString();
         }
@@ -103,30 +90,24 @@ namespace PNPUCore
             string sCote2 = string.Empty;
             int iIndex = 0;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
             foreach (RapportAnalyseImpactPackData type in listRapportAnalyseImpactPackData)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -148,17 +129,11 @@ namespace PNPUCore
             string sCote2 = string.Empty;
             int iIndex = 0;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             /*jw.WritePropertyName("name");
             jw.WriteValue(sCote + this.Name + sCote);
             jw.WritePropertyName("codePack");
@@ -166,30 +141,30 @@ namespace PNPUCore
             jw.WritePropertyName("numCommande");
             jw.WriteValue(this.NumCommande);*/
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.CodePack +" - " + this.NumCommande + sCote);
+            jw.WriteValue(sCote + CodePack + " - " + NumCommande + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("listCommand");
             jw.WriteStartArray();
             foreach (CommandData type in listCommandData)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
             jw.WriteEndArray();
 
             if (listEltsALocaliserData.Count > 0)
             {
                 jw.WritePropertyName("Eléments à localiser");
-                
+
                 jw.WriteStartArray();
                 foreach (EltsALocaliserData elts in listEltsALocaliserData)
                 {
                     iIndex++;
-                    elts.ToJSONRepresentation(jw, this.Id, iIndex++);
+                    elts.ToJSONRepresentation(jw, Id, iIndex++);
                 }
                 jw.WriteEndArray();
             }
@@ -201,30 +176,22 @@ namespace PNPUCore
     {
         public String Result { get; set; }
         public String Message { get; set; }
-        //public List<ControleCommandData> listControleCommandData;
+
         internal void ToJSONRepresentation(JsonWriter jw, string id, int index)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
-            int iIndex = 0;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("message");
-            jw.WriteValue(sCote + this.Message + sCote);
+            jw.WriteValue(sCote + Message + sCote);
             //jw.WritePropertyName("tooltip");
             //jw.WriteValue(sCote + this.Tooltip + sCote);
             /* if (listControleCommandData.Count > 0)
@@ -253,23 +220,17 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             //jw.WritePropertyName("name");
             //jw.WriteValue(sCote + this.Name + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Message + sCote);
+            jw.WriteValue(sCote + Message + sCote);
             //jw.WritePropertyName("tooltip");
             //jw.WriteValue(sCote + this.Tooltip + sCote);
             jw.WriteEndObject();
@@ -287,23 +248,17 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
             jw.WritePropertyName("message");
-            jw.WriteValue(sCote + this.Message + sCote);
+            jw.WriteValue(sCote + Message + sCote);
             jw.WriteEndObject();
         }
     }

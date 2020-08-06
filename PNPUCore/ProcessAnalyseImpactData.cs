@@ -5,16 +5,12 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Odbc;
-using System.Diagnostics;
 using System.IO;
-using System.Xml.XPath;
 
 namespace PNPUCore.Process
 {
     internal class ProcessAnalyseImpactData : ProcessCore, IProcess
     {
-        public List<ElementLocaliser> listElementALocaliser;
         public Dictionary<string, List<string>> dListeTablesFieldsIgnore;
         public List<string> lListPersonnalTables;
 
@@ -25,8 +21,8 @@ namespace PNPUCore.Process
 
         public ProcessAnalyseImpactData(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessAnalyseImpactData;
-            this.LibProcess = "Analyse d'impact sur les données";
+            PROCESS_ID = ParamAppli.ProcessAnalyseImpactData;
+            LibProcess = "Analyse d'impact sur les données";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -40,11 +36,10 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = ListControls.listOfMockControl;
-            string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             rapportAnalyseImpactData = new RapportAnalyseData();
             rapportAnalyseImpactData.Debut = DateTime.Now;
-            rapportAnalyseImpactData.Name = this.LibProcess;
+            rapportAnalyseImpactData.Name = LibProcess;
             rapportAnalyseImpactData.IdClient = CLIENT_ID;
             rapportAnalyseImpactData.Result = ParamAppli.StatutInfo;
             rapportAnalyseImpactData.listRapportAnalyseImpactMDBData = new List<RapportAnalyseImpactMDBData>();
@@ -55,7 +50,7 @@ namespace PNPUCore.Process
             List<string> lColumnsList = new List<string>();
             List<string> lTablesPostPaie = new List<string> { "M4SCO_ROWS", "M4SCO_ROW_COL_DEF" };
             List<string> lTablesDSN = new List<string>();// { "M4SFR_DSN_CTP_PARAM","M4SFR_DSN_PARAM_RUB_NAT08","M4SFR_DSN_PARAM_RUB_NAT05"};
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
             DataSet dsDataSet;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
@@ -107,7 +102,7 @@ namespace PNPUCore.Process
                 rapportAnalyseImpactPackData = null;
 
                 //Récupération de toutes les commandes data
-                List<RmdCommandData> listCommandData = this.getAllDataCmd(sMDB, ParamAppli.ListeInfoClient[CLIENT_ID].bORACLE);
+                List<RmdCommandData> listCommandData = getAllDataCmd(sMDB, ParamAppli.ListeInfoClient[CLIENT_ID].bORACLE);
 
                 foreach (RmdCommandData commandData in listCommandData)
                 {
@@ -209,12 +204,12 @@ namespace PNPUCore.Process
 
             GenerateHistoric(rapportAnalyseImpactData.Fin, rapportAnalyseImpactData.Result, rapportAnalyseImpactData.Debut);
 
-            paramToolbox.DeleteParamsToolbox(this.WORKFLOW_ID, this.ID_INSTANCEWF);
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             /*DEVif (GlobalResult == ParamAppli.StatutOk)
             {*/
             int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, PROCESS_ID);
-            LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+            LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             /* }*/
 
         }

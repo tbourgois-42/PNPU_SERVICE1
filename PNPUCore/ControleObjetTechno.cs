@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUTools;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace PNPUCore.Controle
@@ -49,7 +46,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
@@ -60,7 +57,7 @@ namespace PNPUCore.Controle
             List<string> lListeM4O = new List<string>();
             List<string> lListeNODESTRUCTURE = new List<string>();
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             try
             {
@@ -83,14 +80,14 @@ namespace PNPUCore.Controle
                         {
                             if ((sIDPackageCourant != String.Empty) && (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0))
                             {
-                                 if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
+                                if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
                                     bResultat = ResultatErreur;
                                 lListeM4O.Clear();
                                 lListeNODESTRUCTURE.Clear();
                             }
                             sIDPackageCourant = drRow[0].ToString();
                         }
-                        
+
                         switch (drRow[1].ToString())
                         {
                             case "META4OBJECT & NODE STRUCTURES":
@@ -128,10 +125,10 @@ namespace PNPUCore.Controle
                         lListeM4O.Clear();
                         lListeNODESTRUCTURE.Clear();
                     }
-                    
+
                     //Process.AjouteRapport("Livraison de la table " + sCle + " dans le pack " + dListeAControler[sCle] + " sans mise à jour du catalogue des tables.");
                 }
-             }
+            }
             catch (Exception ex)
             {
                 Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
@@ -151,12 +148,12 @@ namespace PNPUCore.Controle
         /// </summary>  
         private bool ControleM4OModifiesPack(List<string> lListeM4O, List<string> lListeNODESTRUCTURE, string sIDPackageCourant)
         {
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerSQLServer dmsManagerSQL = null;
-            bool bPremier = true;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerSQLServer dmsManagerSQL;
+            bool bPremier;
             string sRequete = string.Empty;
             string sPathMdb = Process.MDBCourant;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
             bool bResultat = true;
 
             try
@@ -191,7 +188,7 @@ namespace PNPUCore.Controle
                     }
                     sRequete += ")";
 
-                    
+
                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -322,7 +319,8 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 bResultat = true;
             }
 

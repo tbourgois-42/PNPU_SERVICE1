@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 using System.Data.Odbc;
-using System.Data.OleDb;
 
 namespace PNPUCore.Controle
 {
@@ -45,7 +43,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string  MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sRequete = string.Empty;
@@ -97,14 +95,14 @@ namespace PNPUCore.Controle
                             if (lListeCCTManquants.Contains(sCCT) == true)
                             {
                                 lListeCCTManquants.Remove(sCCT);
-                                for(int cpt = 0; cpt <lTacheCCT.Count; cpt++)
+                                for (int cpt = 0; cpt < lTacheCCT.Count; cpt++)
                                 {
                                     if (lTacheCCT[cpt].CCT_TASK_ID == sCCT)
                                     {
                                         lTacheCCT.RemoveAt(cpt);
                                         cpt--;
                                     }
-                                        
+
                                 }
                             }
                         }
@@ -123,7 +121,7 @@ namespace PNPUCore.Controle
                     Dictionary<string, string> dCorrespondanceCCT = new Dictionary<string, string>();
                     sRequete = "SELECT CCT_TASK_ID,CCT_TASK_ID_ORG FROM PNPU_H_CCT WHERE CLIENT_ID='" + Process.CLIENT_ID + "' AND LEVEL_DEPENDANCE = 1 AND CCT_TASK_ID_ORG IN (";
                     bPremier = true;
-                    foreach(string sTacheCCT in lListeCCTManquants)
+                    foreach (string sTacheCCT in lListeCCTManquants)
                     {
                         if (bPremier == true)
                             bPremier = false;
@@ -183,7 +181,7 @@ namespace PNPUCore.Controle
                 if (lListeCCTManquants.Count > 0)
                 {
                     List<string> lListeTacheCrees = new List<string>();
-                    if (DupliqueTachesCCTN3(lListeCCTManquants,lTacheCCT, "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees) == false)
+                    if (DupliqueTachesCCTN3(lListeCCTManquants, lTacheCCT, "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees) == false)
                         bResultat = ResultatErreur;
                     else if (lListeTacheCrees.Count > 0)
                     {
@@ -223,10 +221,10 @@ namespace PNPUCore.Controle
             }
 
             return bResultat;
-            
+
         }
 
-        public bool DupliqueTachesCCTN3(List<string> lListeCCTManquants,List<TacheCCT> lTacheCCT, string sPrefixe, ref List<string> lListeTachesCrees)
+        public bool DupliqueTachesCCTN3(List<string> lListeCCTManquants, List<TacheCCT> lTacheCCT, string sPrefixe, ref List<string> lListeTachesCrees)
         {
             string sRequete;
             string sNouvTacheCCT;
@@ -254,12 +252,12 @@ namespace PNPUCore.Controle
                                 bPremier = false;
                             else
                                 sFiltre += ",";
-                            sFiltre += "'" + cCT.CCT_TASK_ID + "*" + cCT.CCT_OBJECT_ID + "*" + cCT.CCT_OBJECT_TYPE + "*" + cCT.CCT_PARENT_OBJ_ID +"'";
+                            sFiltre += "'" + cCT.CCT_TASK_ID + "*" + cCT.CCT_OBJECT_ID + "*" + cCT.CCT_OBJECT_TYPE + "*" + cCT.CCT_PARENT_OBJ_ID + "'";
                         }
                     }
 
                     Process.AjouteRapport("Création de la tâche CCT " + sNouvTacheCCT + " pour livrer les éléments de la tâche " + sTacheCCT);
-                    
+
                     // POUR TEST MHUM, je ne travaille que sur la base de ref plateforme en attendant des vraies bases de ref 
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRefPlateforme))
                     //using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
@@ -425,7 +423,7 @@ namespace PNPUCore.Controle
                     }
                 }
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 Logger.Log(Process, this, ParamAppli.StatutError, Ex.Message);
                 bResultat = false;

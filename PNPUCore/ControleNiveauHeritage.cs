@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -56,27 +53,27 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete = string.Empty;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
 
-            DataManagerAccess dmaManagerAccess = null;
-            
+            DataManagerAccess dmaManagerAccess;
+
             try
             {
                 if (ConnectionStringBaseRef != string.Empty)
                 {
-                    
+
                     dmaManagerAccess = new DataManagerAccess();
 
                     // Contrôle des M4O hérités.
                     sRequete = "select OC.ID_T3, PMP.ID_PROJECT,PMP.ID_INSTANCE FROM SPR_DIN_OBJECTS OC inner join M4RDM_OS_PROJ_MEMS PMP on (OC.ID = PMP.ID_INSTANCE and PMP.ID_CLASS = 'DIN_OBJECT' AND PMP.ID_PROJECT NOT IN ('STANDARD','_M4ROOT','PLATFORM')) ";
                     sRequete += "WHERE OC.ID_T3 IN (" + sListeID_T3 + ")";
 
-                    dsDataSet = dmaManagerAccess.GetData(sRequete,sPathMdb);
+                    dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -99,7 +96,7 @@ namespace PNPUCore.Controle
                     sRequete = "select  PC.ID_PRESENTATION,PMP.ID_PROJECT,PMP.ID_INSTANCE from SPR_DIN_PRESENTS PC  inner join M4RDM_OS_PROJ_MEMS PMP on (PC.ID = PMP.ID_INSTANCE and PMP.ID_CLASS = 'DIN_PRESENT' AND PMP.ID_PROJECT NOT IN ('STANDARD','_M4ROOT','PLATFORM')) ";
                     sRequete += "WHERE PC.ID_PRESENTATION IN (" + sListeID_PRES + ")";
 
-                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                    dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
@@ -135,8 +132,8 @@ namespace PNPUCore.Controle
         private void ChargeM4OPresHerites()
         {
             string sRequete = string.Empty;
-            DataSet dsDataSet = null;
-            DataManagerSQLServer dmaManagersqlServer = null;
+            DataSet dsDataSet;
+            DataManagerSQLServer dmaManagersqlServer;
             lObjetsHeritesSTD = new List<string[]>();
             lPresentsHeritesSTD = new List<string[]>();
 
@@ -183,8 +180,8 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
-
+                //TODO LOG
+                Console.WriteLine(ex.Message);
             }
         }
     }

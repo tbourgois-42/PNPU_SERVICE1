@@ -3,24 +3,19 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PNPUTools
 {
-    public class RequestTool
+    static public class RequestTool
     {
 
         static string requestAllClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID";
         static string requestOneClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID AND TRIGRAMME = ";
 
         static string requestAllStep = "select * from PNPU_STEP";
-        
+
         static string requestAllProcess = "select * from PNPU_PROCESS";
         static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
 
@@ -36,10 +31,10 @@ namespace PNPUTools
         static string requestClientById = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.CLIENT_ID = '{0}'";
 
         private static string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
-        
+
         private static string requestGetStepHistoric = "SELECT COUNT(*) FROM PNPU_H_STEP WHERE WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3} AND ID_H_WORKFLOW = {4}";
         private static string requestGetWorkflowHistoric = "SELECT COUNT(*) FROM PNPU_H_WORKFLOW WHERE WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
-        
+
         /// <summary>
         /// Get workflow hitoric
         /// </summary>
@@ -84,7 +79,7 @@ namespace PNPUTools
             string sOrderBy = "ORDER BY PHS.ID_PROCESS DESC";
 
             string sRequest = sSelect + sFrom + sWhere + sGroupBy + sOrderBy;
-            
+
             DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
 
@@ -93,6 +88,29 @@ namespace PNPUTools
             return listTest;
         }
 
+        public static IEnumerable<ToolboxInfoLaunch> GetToolBoxInfoLaunch(string sHabilitation, string sUser)
+        {
+            // Load lastest workflow how has been lauched for client's user
+
+            List<string> lstWORKFLOW = new List<string>();
+
+            string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
+
+            string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE ";
+            string sFrom = "from PNPU_H_WORKFLOW PHW, PNPU_H_STEP PHS, PNPU_PROCESS PS, PNPU_WORKFLOW PW ";
+            string sWhere = "where PHS.ID_H_WORKFLOW = PHW.ID_H_WORKFLOW AND PS.ID_PROCESS = PHS.ID_PROCESS AND PW.WORKFLOW_ID = PHW.WORKFLOW_ID AND PW.IS_TOOLBOX = 1 AND (";
+            sWhere += whereClauseHabilitation + ")";
+            string sOrderBy = " ORDER BY PHW.LAUNCHING_DATE";
+
+            string sRequest = sSelect + sFrom + sWhere + sOrderBy;
+
+            DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<ToolboxInfoLaunch> listTest = table.DataTableToList<ToolboxInfoLaunch>();
+
+            return listTest;
+        }
         /// <summary>
         /// Get next process to be executed
         /// </summary>
@@ -235,7 +253,7 @@ namespace PNPUTools
         {
             string sRequest = "SELECT COUNT(*) FROM PNPU_H_LOCALISATION WHERE WORKFLOW_ID = " + workflowId + " AND CLIENT_ID = " + clientId + " AND ID_H_WORKFLOW = " + idInstanceWF;
             string nbLocalisation = DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli);
-            
+
             return nbLocalisation;
 
         }
@@ -389,7 +407,7 @@ namespace PNPUTools
         /// <param name="instanceId"></param>
         /// <returns></returns>
         public static int getWorkflowHistoric(int workflowId, int instanceId)
-        {            
+        {
             string sRequest = string.Format(requestGetWorkflowHistoric, workflowId, instanceId);
 
             return int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));
@@ -517,7 +535,7 @@ namespace PNPUTools
         public static IEnumerable<PNPU_WORKFLOW> GetAllWorkFLow(int isToolBox)
         {
             String request;
-            if( isToolBox >= 0)
+            if (isToolBox >= 0)
             {
                 request = String.Format(requestAllWorkflow, "WHERE PW.IS_TOOLBOX = " + isToolBox.ToString());
             }
@@ -572,7 +590,7 @@ namespace PNPUTools
             string cct_version = "PNPU" + DateTime.Now.ToString("d");
 
             string[] requests = { "INSERT INTO PNPU_H_LOCALISATION (CLIENT_ID, WORKFLOW_ID, CCT_TASK_ID, CCT_VERSION, CCT_OBJECT_ID, CCT_OBJECT_TYPE, CCT_PARENT_OBJ_ID, CCT_AUX_OBJECT_ID, CCT_RULE_START_DAT, CCT_ACTION_TYPE, CCT_PACK_TYPE, CCT_LAST_CHG_DATE, CCT_USER_ID, CCT_COMMAND_TYPE, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, CCT_RDL, CCT_AUX2_OBJECT_ID, CCT_AUX3_OBJECT_ID, ID_H_WORKFLOW) VALUES (@client_id, @workflow_id, @cct_task_id, @cct_version, @cct_object_id, @cct_object_type, @cct_parent_obj_id, @cct_aux_object_id, @cct_rule_start_dat, @cct_action_type, @cct_pack_type, @cct_last_chg_date, @cct_user_id, @cct_command_type, @id_approle, @id_secuser, @dt_last_update, @cct_rdl, @cct_aux2_object_id, @cct_aux3_object_id, @id_h_workflow)" };
-            string[] parameters = new string[] { "@client_id", clientId, "@workflow_id", workflowId.ToString(), "@cct_task_id", taskId, "@cct_version", cct_version,  "@cct_object_id", analyseLine.IdObject2, "@cct_object_type", analyseLine.ObjectType, "@cct_parent_obj_id", analyseLine.IdObject, "@cct_aux_object_id", analyseLine.IdObject3, "@cct_rule_start_dat", ParamAppli.DateNullPPN.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_action_type", "MODIFIED", "@cct_pack_type", "1", "@cct_last_chg_date", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"),  "@cct_user_id", "PNPUADM", "@cct_command_type", "2", "@id_approle", "M4ADM", "@id_secuser", "PNPUADM", "@dt_last_update", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_rdl", null, "@cct_aux2_object_id", analyseLine.IdObject3, "@cct_aux3_object_id", analyseLine.IdObject3, "@id_h_workflow", idWfInstance.ToString() };
+            string[] parameters = new string[] { "@client_id", clientId, "@workflow_id", workflowId.ToString(), "@cct_task_id", taskId, "@cct_version", cct_version, "@cct_object_id", analyseLine.IdObject2, "@cct_object_type", analyseLine.ObjectType, "@cct_parent_obj_id", analyseLine.IdObject, "@cct_aux_object_id", analyseLine.IdObject3, "@cct_rule_start_dat", ParamAppli.DateNullPPN.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_action_type", "MODIFIED", "@cct_pack_type", "1", "@cct_last_chg_date", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_user_id", "PNPUADM", "@cct_command_type", "2", "@id_approle", "M4ADM", "@id_secuser", "PNPUADM", "@dt_last_update", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), "@cct_rdl", null, "@cct_aux2_object_id", analyseLine.IdObject3, "@cct_aux3_object_id", analyseLine.IdObject3, "@id_h_workflow", idWfInstance.ToString() };
 
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
         }

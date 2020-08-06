@@ -3,19 +3,20 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
-using System.Reflection.Emit;
-using System.Net;
 
 namespace PNPUTools
 {
     public class Authentification
     {
+
+        protected Authentification()
+        {
+
+        }
+
         /// <summary>
         /// Main method to Authenticate user
         /// </summary>
@@ -85,7 +86,7 @@ namespace PNPUTools
             {
                 string sRequest = "SELECT USER_ID FROM PNPU_USER WHERE USER_ID = '" + User + "'";
                 DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
-                
+
                 return result.Tables.Count > 0 ? true : false;
             }
             catch (Exception)
@@ -102,10 +103,10 @@ namespace PNPUTools
         static string GenerateToken(string User)
         {
             string sToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            
+
             string[] sRequest = { "INSERT INTO PNPU_USER_TOKEN (USER_ID, TOKEN, EXPIRED_DATE) VALUES (@USER_ID, @TOKEN, @EXPIRED_DATE)" };
             string[] parameters = new string[] { "@USER_ID", User, "@TOKEN", sToken, "@EXPIRED_DATE", DateTime.UtcNow.AddHours(24).ToString("MM/dd/yyyy HH:mm:ss") };
-           
+
             try
             {
                 DataManagerSQLServer.ExecuteSqlTransaction(sRequest, "PNPU_USER_TOKEN", parameters);
@@ -124,7 +125,7 @@ namespace PNPUTools
             string sRequest = string.Empty;
             string sOrderBy = "ORDER BY PHW.LAUNCHING_DATE";
 
-            if(isToolBox >= 0)
+            if (isToolBox >= 0)
             {
                 sWhere += "WHERE PW.IS_TOOLBOX =  " + isToolBox.ToString();
             }
@@ -214,6 +215,7 @@ namespace PNPUTools
             }
             catch (Exception)
             {
+                //TODO Add specific exception
                 throw;
             }
             return value;
@@ -542,7 +544,7 @@ namespace PNPUTools
                     }
                     sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";
                 }
-                
+
             }
             sLike += " ";
             return sLike;
@@ -557,8 +559,8 @@ namespace PNPUTools
         /// <returns></returns>
         public static string GetHabilitationWhereClause(string sHabilitation, string sUser, string sAlias)
         {
-            
-            List<string> lstClient  = null;
+
+            List<string> lstClient = null;
 
             lstClient = BuildListStringClient(sHabilitation, sUser);
 

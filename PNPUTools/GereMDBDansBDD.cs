@@ -1,10 +1,5 @@
-﻿using ICSharpCode.SharpZipLib.Core;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUTools
 {
@@ -43,6 +38,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -65,8 +62,8 @@ namespace PNPUTools
                 {
                     conn.Open();
                     sRequete = "DELETE FROM PNPU_MDB WHERE WORKFLOW_ID = " + WORKFLOW_ID.ToString("#########0") + " AND CLIENT_ID = '" + CLIENT_ID + "' AND NIV_DEP = '" + iNiv.ToString() + "' AND ID_H_WORKFLOW = " + idInstanceWF;
-                        
-                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete,conn))
+
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -90,6 +87,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -136,6 +135,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -167,6 +168,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }

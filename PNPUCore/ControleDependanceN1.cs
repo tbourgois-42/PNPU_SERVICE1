@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -43,7 +42,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string  MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sRequete = string.Empty;
@@ -108,7 +107,7 @@ namespace PNPUCore.Controle
                     Dictionary<string, string> dCorrespondanceCCT = new Dictionary<string, string>();
                     sRequete = "SELECT CCT_TASK_ID,CCT_TASK_ID_ORG FROM PNPU_H_CCT WHERE CLIENT_ID='" + Process.CLIENT_ID + "' AND LEVEL_DEPENDANCE = 1 AND CCT_TASK_ID_ORG IN (";
                     bPremier = true;
-                    foreach(string sTacheCCT in lListeCCTManquants)
+                    foreach (string sTacheCCT in lListeCCTManquants)
                     {
                         if (bPremier == true)
                             bPremier = false;
@@ -123,7 +122,7 @@ namespace PNPUCore.Controle
                     {
                         sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
                         bPremier = true;
-                        foreach (DataRow drRow in dsDataSet.Tables[0].Rows) 
+                        foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
                             if (bPremier == true)
@@ -150,14 +149,14 @@ namespace PNPUCore.Controle
                 /*lListeCCTManquants.Clear();
                 lListeCCTManquants.Add("SFR_152319");*/
                 //FIN POUR TEST
-                
+
                 // La liste ne doit contenir que les tâches CCT non instalées sur le client
                 if (lListeCCTManquants.Count > 0)
                 {
                     List<string> lListeTacheCrees = new List<string>();
-                    if (DupliqueTachesCCT(lListeCCTManquants, "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID,ref lListeTacheCrees) == false)
+                    if (DupliqueTachesCCT(lListeCCTManquants, "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees) == false)
                         bResultat = ResultatErreur;
-                    else if (lListeTacheCrees.Count>0)
+                    else if (lListeTacheCrees.Count > 0)
                     {
                         string sName = "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
                         GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
@@ -183,7 +182,7 @@ namespace PNPUCore.Controle
             }
 
             return bResultat;
-            
+
         }
 
         public bool DupliqueTachesCCT(List<string> lListeTachesCCT, string sPrefixe, ref List<string> lListeTachesCrees)
@@ -202,7 +201,7 @@ namespace PNPUCore.Controle
                     sNouvTacheCCT = sPrefixe + "_" + iCptPack.ToString("000");
 
                     Process.AjouteRapport("Création de la tâche CCT " + sNouvTacheCCT + " pour livrer les éléments de la tâche " + sTacheCCT);
-                    
+
                     // POUR TEST MHUM, je ne travaille que sur la base de ref plateforme en attendant des vraies bases de ref 
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRefPlateforme))
                     //using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
@@ -369,7 +368,7 @@ namespace PNPUCore.Controle
                     }
                 }
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 Logger.Log(Process, this, ParamAppli.StatutError, Ex.Message);
                 bResultat = false;
@@ -378,7 +377,7 @@ namespace PNPUCore.Controle
         }
 
 
-}
+    }
 }
 
 

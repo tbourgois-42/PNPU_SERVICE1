@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUCore
 {
@@ -38,27 +36,22 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-            this.Id = "1";
+            Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("idClient");
-            jw.WriteValue(sCote + this.IdClient + sCote);
+            jw.WriteValue(sCote + IdClient + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + this.Result + sCote);
+            jw.WriteValue(sCote + Result + sCote);
             jw.WritePropertyName("debut");
-            jw.WriteValue(sCote + this.Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
-            jw.WriteValue(sCote + this.Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
+            jw.WriteValue(sCote + Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
@@ -66,18 +59,12 @@ namespace PNPUCore
             int i = 0;
             foreach (RapportAnalyseImpactMDBLogique type in listRapportAnalyseImpactMDBLogique)
             {
-                type.ToJSONRepresentation(jw, this.Id, i);
+                type.ToJSONRepresentation(jw, Id, i);
                 i++;
             }
 
             jw.WriteEndArray();
             jw.WriteEndObject();
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sb = sb.Replace("\"", "");
-                sb = sb.Replace(sCote2, "\"");
-            }
 
             return sb.ToString();
         }
@@ -93,20 +80,14 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
+            Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
             jw.Formatting = Formatting.Indented;
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("children");
             jw.WriteStartArray();
 
@@ -131,27 +112,21 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
+            Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
 
             jw.WritePropertyName("line");
             jw.WriteStartArray();
 
             int i = 0;
-            foreach (LineAnalyseLogique line in this.listLineAnalyseLogique)
+            foreach (LineAnalyseLogique line in listLineAnalyseLogique)
             {
                 line.ToJSONRepresentation(jw, id, i);
                 i++;
@@ -172,21 +147,15 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
-            this.Id = ((Int32.Parse(id) * 10) + increment).ToString();
+            Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("tooltip");
-            jw.WriteValue(sCote + this.Tooltip + sCote);
+            jw.WriteValue(sCote + Tooltip + sCote);
             jw.WriteEndObject();
         }
     }
