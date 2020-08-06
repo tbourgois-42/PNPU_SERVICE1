@@ -10,7 +10,9 @@ namespace PNPUCore.Process
     internal class ProcessAnalyseImpactLogique : ProcessCore, IProcess
     {
 
-        public List<ElementLocaliser> listElementALocaliser;
+        public RapportProcessAnalyseImpact RapportAnalyseImpact;
+
+
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  

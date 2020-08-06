@@ -11,6 +11,12 @@ namespace PNPUTools
 {
     public class Authentification
     {
+
+        protected Authentification()
+        {
+
+        }
+
         /// <summary>
         /// Main method to Authenticate user
         /// </summary>
@@ -209,6 +215,7 @@ namespace PNPUTools
             }
             catch (Exception)
             {
+                //TODO Add specific exception
                 throw;
             }
             return value;

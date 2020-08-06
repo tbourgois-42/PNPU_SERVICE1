@@ -51,7 +51,6 @@ namespace PNPUCore.Process
         public RProcess RapportProcess;
         public RTNR RapportTNR;
         public RControle RapportControleCourant;
-        public RapportProcessAnalyseImpact RapportAnalyseImpact;
         public RLivraison RapportLivraison;
         public Localisation RapportLocalisation;
         public RapportAnalyseData rapportAnalyseImpactData;
@@ -96,8 +95,7 @@ namespace PNPUCore.Process
         /// </summary>  
         public void AjouteRapport(string sMessage)
         {
-            if (ParamAppli.SimpleCotesReport == true)
-                sMessage = sMessage.Replace("'", "''");
+            sMessage = sMessage.Replace("'", "''");
             RapportControleCourant.Message.Add(sMessage);
         }
 
@@ -300,8 +298,11 @@ namespace PNPUCore.Process
                     if (sTypo != string.Empty)
                         sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + sTypo + "*%'))";
                 }
-                catch (Exception)
-                { }
+                catch (Exception ex)
+                {
+                    //TODO LOG
+                    Console.WriteLine(ex.Message);
+                }
             }
             /*else if (this.TYPOLOGY != string.Empty)
             {

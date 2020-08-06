@@ -43,7 +43,8 @@ namespace PNPUTools.DataManager
             catch (Exception ex)
             {
                 // A gérer la mise à jour du log
-                //Console.WriteLine(ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 dataSet = null;
             }
             return dataSet;
@@ -72,7 +73,8 @@ namespace PNPUTools.DataManager
             catch (Exception ex)
             {
                 // A gérer la mise à jour du log
-                //Console.WriteLine(ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 //TODO throw exception
                 dataSet = null;
             }
@@ -106,7 +108,8 @@ namespace PNPUTools.DataManager
             catch (Exception ex)
             {
                 // A gérer la mise à jour du log
-                //Console.WriteLine(ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 dataSet = null;
             }
             return dataSet;
@@ -222,8 +225,6 @@ namespace PNPUTools.DataManager
                         command.ExecuteNonQuery();
                     }
                     transaction.Commit();
-                    // Si on n'est pas sur une requête d'insertion on renvoi une chaine de caractère
-                    ReturnValue = (ReturnValue == null) ? "Requête traité avec succès" : ReturnValue;
                 }
                 catch (Exception ex)
                 {
@@ -287,6 +288,8 @@ namespace PNPUTools.DataManager
                 catch (Exception ex)
                 {
                     Console.WriteLine("La requete : " + sRequest + " a échoué.");
+                    //TODO LOG
+                    Console.WriteLine(ex.Message);
                 }
             }
             return result;
@@ -300,7 +303,6 @@ namespace PNPUTools.DataManager
         /// <returns>Return list of byte array</returns>
         internal static List<byte[]> ReadBinaryDatas(string sRequest, string connectionStringBaseAppli)
         {
-            byte[] MDB;
             DataSet dataSet;
             List<byte[]> lstMDB = new List<byte[]>();
 
@@ -328,6 +330,8 @@ namespace PNPUTools.DataManager
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 Console.WriteLine("La requete : " + sRequest + " a échoué.");
                 return lstMDB;
             }

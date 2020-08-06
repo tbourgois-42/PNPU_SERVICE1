@@ -46,7 +46,7 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
             List<string> lListeM4O = new List<string>();
             List<string> lListeNODESTRUCTURE = new List<string>();
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             try
             {
@@ -148,12 +148,12 @@ namespace PNPUCore.Controle
         /// </summary>  
         private bool ControleM4OModifiesPack(List<string> lListeM4O, List<string> lListeNODESTRUCTURE, string sIDPackageCourant)
         {
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerSQLServer dmsManagerSQL = null;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerSQLServer dmsManagerSQL;
             bool bPremier;
             string sRequete = string.Empty;
             string sPathMdb = Process.MDBCourant;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
             bool bResultat = true;
 
             try
@@ -319,7 +319,8 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 bResultat = true;
             }
 

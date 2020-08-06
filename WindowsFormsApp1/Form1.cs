@@ -70,7 +70,7 @@ namespace WindowsFormsApp1
         private void button4_Click(object sender, EventArgs e)
         {
 
-            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+            //PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
 
             //gereMDBDansBDD.AjouteFichiersMDBBDD(Directory.GetFiles("D:\\PNPU\\TEST", "*.mdb"), 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
 
@@ -81,7 +81,7 @@ namespace WindowsFormsApp1
             string[] sFichiers = null;
             string sResultat = string.Empty;
 
-            PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+            //PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
 
             //gereMDBDansBDD.ExtraitFichiersMDBBDD(ref sFichiers, 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
             foreach (string sNom in sFichiers)

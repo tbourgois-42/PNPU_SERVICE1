@@ -53,14 +53,14 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
             string sRequete = string.Empty;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             try
             {
@@ -132,8 +132,8 @@ namespace PNPUCore.Controle
         private void ChargeM4OPresHerites()
         {
             string sRequete = string.Empty;
-            DataSet dsDataSet = null;
-            DataManagerSQLServer dmaManagersqlServer = null;
+            DataSet dsDataSet;
+            DataManagerSQLServer dmaManagersqlServer;
             lObjetsHeritesSTD = new List<string[]>();
             lPresentsHeritesSTD = new List<string[]>();
 
@@ -180,8 +180,8 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                // TODO, loguer l'exception
-
+                //TODO LOG
+                Console.WriteLine(ex.Message);
             }
         }
     }

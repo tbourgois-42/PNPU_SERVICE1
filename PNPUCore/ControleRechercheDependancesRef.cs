@@ -30,13 +30,13 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             bool bResultat;
             string sResultat = ParamAppli.StatutOk;
             string sRequete;
             string sNomMdb;
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             DataSet dsDataSet;
             string sTacheCCT;
             List<string> lTacheCCTHF;
@@ -126,11 +126,11 @@ namespace PNPUCore.Controle
             bool bResultat = true;
             string sTacheCCT;
 
-            DataManagerSQLServer dmsManagerSQL = null;
+            DataManagerSQLServer dmsManagerSQL;
             List<string> lTacheCCT;
             string sRequete;
             bool bPremierElement;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
             const string CCT_OBJECT_TYPE_INT = "'WEB FILE','WEB LITERAL SOC'";
 
 
@@ -270,13 +270,13 @@ namespace PNPUCore.Controle
         private bool RechercheDepN1(ref List<string> lTacheDepN2)
         {
             bool bResultat = true;
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerSQLServer dmsManagerSQL = null;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerSQLServer dmsManagerSQL;
             List<string> lTacheCCTHF;
             List<string> lTacheDepN1;
             string sRequete;
             bool bPremierElement = true;
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
             string sNomMdb;
             string sTacheCCT;
             string sListeTacheCCT = string.Empty;

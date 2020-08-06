@@ -38,8 +38,8 @@ namespace PNPUTools.DataManager
                 }
                 catch (Exception ex)
                 {
-                    // A gérer la mise à jour du log
-                    //Console.WriteLine(ex.Message);
+                    //TODO LOG
+                    Console.WriteLine(ex.Message);
                     dataSet = null;
                 }
 

@@ -28,6 +28,8 @@ namespace PNPUTools.ZIP
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -78,6 +80,8 @@ namespace PNPUTools.ZIP
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -132,6 +136,8 @@ namespace PNPUTools.ZIP
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }

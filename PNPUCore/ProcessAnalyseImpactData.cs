@@ -11,7 +11,6 @@ namespace PNPUCore.Process
 {
     internal class ProcessAnalyseImpactData : ProcessCore, IProcess
     {
-        public List<ElementLocaliser> listElementALocaliser;
         public Dictionary<string, List<string>> dListeTablesFieldsIgnore;
         public List<string> lListPersonnalTables;
 
@@ -37,7 +36,6 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             List<IControle> listControl = ListControls.listOfMockControl;
-            string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             rapportAnalyseImpactData = new RapportAnalyseData();
             rapportAnalyseImpactData.Debut = DateTime.Now;

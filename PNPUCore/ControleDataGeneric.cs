@@ -20,7 +20,6 @@ namespace PNPUCore.Controle
         {
             string sTable = String.Empty;
             string sFilter = String.Empty;
-            string sID_OrgaOrg;
             string sRequeteRef;
             string sRequeteClient;
             DataSet dsDataSetRef;
@@ -29,7 +28,6 @@ namespace PNPUCore.Controle
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
             string sFiltreRef;
             string sFiltreClient;
-            //ControleCommandData controleCommandData;
             bool bIdentique;
             string sOrgaCour;
             List<string> lColumnsList = new List<string>();

@@ -6,7 +6,7 @@ namespace PNPUCore
     {
 
 
-        public string MakeControl()
+        new public string MakeControl()
         {
             //Parcourir Copydata
             //For each copy data {

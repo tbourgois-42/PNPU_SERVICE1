@@ -46,11 +46,6 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
             Id = "1";
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
@@ -80,12 +75,6 @@ namespace PNPUCore
             jw.WriteEndObject();
             jw.WriteEndArray();
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sb = sb.Replace("\"", "");
-                sb = sb.Replace(sCote2, "\"");
-            }
-
             return sb.ToString();
         }
     }
@@ -100,12 +89,6 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
             int iIndex = 0;
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
 
             Id = ((Int32.Parse(id) * 100) + index).ToString();
 
@@ -145,12 +128,6 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
             int iIndex = 0;
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
 
             Id = ((Int32.Parse(id) * 100) + index).ToString();
 
@@ -199,18 +176,10 @@ namespace PNPUCore
     {
         public String Result { get; set; }
         public String Message { get; set; }
-        //public List<ControleCommandData> listControleCommandData;
+
         internal void ToJSONRepresentation(JsonWriter jw, string id, int index)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
-            int iIndex = 0;
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
 
             Id = ((Int32.Parse(id) * 100) + index).ToString();
 
@@ -251,12 +220,6 @@ namespace PNPUCore
             string sCote = string.Empty;
             string sCote2 = string.Empty;
 
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
-
             Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
@@ -284,12 +247,6 @@ namespace PNPUCore
         {
             string sCote = string.Empty;
             string sCote2 = string.Empty;
-
-            if (PNPUTools.ParamAppli.SimpleCotesReport == false)
-            {
-                sCote = "'";
-                sCote2 = "*";
-            }
 
             Id = ((Int32.Parse(id) * 100) + index).ToString();
 

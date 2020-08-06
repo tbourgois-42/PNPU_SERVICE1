@@ -56,6 +56,11 @@ namespace WcfService1
             return RequestTool.GetInfoDashboardCard(sHabilitation, sUser);
         }
 
+        public IEnumerable<ToolboxInfoLaunch> GetInfoLaunchToolBox(string sHabilitation, string sUser)
+        {
+            return RequestTool.GetToolBoxInfoLaunch(sHabilitation, sUser);
+        }
+
         public IEnumerable<PNPU_H_WORKFLOW> GetHWorkflow(string sHabilitation, string sUser, int isToolBox = -1)
         {
             return RequestTool.GetHWorkflow(sHabilitation, sUser, isToolBox);
@@ -145,6 +150,7 @@ namespace WcfService1
 
         public void preflightRequest()
         {
+            // Method intentionally left empty.
         }
 
         public void UploadFile(Stream stream)
@@ -195,6 +201,7 @@ namespace WcfService1
             else
             {
                 //GENERATE EXCEPTION
+                //TODO generate specific Exception
                 throw new Exception();
             }
 
@@ -389,7 +396,7 @@ namespace WcfService1
             var parser = MultipartFormDataParser.Parse(stream);
             string clientId = parser.GetParameterValue("clientID");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
-            int idInstanceWF = -1;
+            int idInstanceWF;
             string result = "";
             string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
             bool hadFile = parser.Files.Count > 0;

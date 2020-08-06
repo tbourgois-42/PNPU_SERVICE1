@@ -306,6 +306,22 @@ namespace PNPUTools.DataManager
 		public InfoClientStep() { }
 	}
 
+	public class ToolboxInfoLaunch
+	{
+		public decimal WORKFLOW_ID { get; set; }
+		public int ID_H_WORKFLOW { get; set; }
+		public string INSTANCE_NAME { get; set; }
+		public string ID_STATUT { get; set; }
+		public string CLIENT_ID { get; set; }
+		public string CLIENT_NAME { get; set; }
+		public decimal ID_PROCESS { get; set; }
+		public string PROCESS_LABEL { get; set; }
+		public string LAUNCHING_DATE { get; set; }
+
+		public ToolboxInfoLaunch() { }
+
+	}
+
 	public class PNPU_PROCESS
 	{
 		public decimal ID_PROCESS { get; set; }
@@ -376,7 +392,7 @@ namespace PNPUTools.DataManager
 
 							prop.SetValue(obj, safeValue, null);
 						}
-						catch (Exception exc)
+						catch (Exception)
 						{
 							// ignored
 						}

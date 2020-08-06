@@ -6,8 +6,11 @@ namespace PNPUTools
 {
     public class LauncherViaDIspatcher
     {
-        private static StreamString ssStreamString = null;
-        private static StreamWriter sw = null;
+
+        protected LauncherViaDIspatcher()
+        {
+
+        }
 
         public static void LaunchProcess(int ProcFile, int workflowId, String clientId, int idInstanceWF)
         {

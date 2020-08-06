@@ -38,6 +38,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -85,6 +87,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -131,6 +135,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -162,6 +168,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
