@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControlePropagation : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -127,7 +127,7 @@ namespace PNPUCore.Controle
                                     }
                                 }
 
-                                if (bMultiOrga == true)
+                                if (bMultiOrga)
                                 {
                                     // Recherche de la commande de propagation SQL Server
                                     sRequete = "select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%EXEC%M4SFR_COPY_DATA_ORG%" + sTable + "%";
@@ -164,7 +164,7 @@ namespace PNPUCore.Controle
                                         {
                                             sWhere2 = sWhere.ToUpper();
                                             sWhere2 = sWhere2.Replace("'", "' + CHR(39) + CHR(39) + '");
-                                            if (sWhere2.Contains("{D") == true)
+                                            if (sWhere2.Contains("{D"))
                                             {
                                                 sWhere2 = sWhere2.Replace("{D", "TO_DATE(");
                                                 sWhere2 = sWhere2.Replace("}", ",' + CHR(39) + CHR(39) + 'YYYY-MM-DD' + CHR(39) + CHR(39) +')");

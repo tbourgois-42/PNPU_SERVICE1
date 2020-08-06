@@ -290,7 +290,7 @@ namespace PNPUCore.Process
                 try
                 {
                     string sClient_ID;
-                    if (CLIENT_ID.Contains(",") == true)
+                    if (CLIENT_ID.Contains(","))
                         sClient_ID = CLIENT_ID.Split(',')[0];
                     else
                         sClient_ID = CLIENT_ID;
@@ -304,12 +304,8 @@ namespace PNPUCore.Process
                     Console.WriteLine(ex.Message);
                 }
             }
-            /*else if (this.TYPOLOGY != string.Empty)
-            {
-                sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
-            }
-            */
-            if (STANDARD == false)
+
+            if (!STANDARD )
             {
                 sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
             }

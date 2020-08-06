@@ -4,33 +4,24 @@ namespace PNPUCore.Process
 {
     class RmdCommandData
     {
-
-        String idPackage;
-        String idClass;
-        String cmdCode;
-        String idObject;
-        String cmdSequence;
-        IProcess process;
-        String idCCTTask;
-
         public RmdCommandData(string idPackage, string idClass, string idObject, string cmdCode, string cmdSequence, IProcess process, string idCCTTask)
         {
-            this.idPackage = idPackage;
-            this.idClass = idClass;
-            this.cmdCode = cmdCode;
-            this.idObject = idObject;
-            this.cmdSequence = cmdSequence;
-            this.process = process;
-            this.idCCTTask = idCCTTask;
+            this.IdPackage = idPackage;
+            this.IdClass = idClass;
+            this.CmdCode = cmdCode;
+            this.IdObject = idObject;
+            this.CmdSequence = cmdSequence;
+            this.Process = process;
+            this.IdCCTTask = idCCTTask;
         }
 
-        public string IdPackage { get => idPackage; set => idPackage = value; }
-        public string IdClass { get => idClass; set => idClass = value; }
-        public string CmdCode { get => cmdCode; set => cmdCode = value; }
-        public string IdObject { get => idObject; set => idObject = value; }
-        public string CmdSequence { get => cmdSequence; set => cmdSequence = value; }
-        public IProcess Process { get => process; set => process = value; }
-        public string IdCCTTask { get => idCCTTask; set => idCCTTask = value; }
+        public string IdPackage { get; set; }
+        public string IdClass { get; set; }
+        public string CmdCode { get; set; }
+        public string IdObject { get; set; }
+        public string CmdSequence { get; set; }
+        public IProcess Process { get; set; }
+        public string IdCCTTask { get; set; }
     }
 }
 

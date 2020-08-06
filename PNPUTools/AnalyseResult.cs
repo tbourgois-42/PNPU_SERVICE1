@@ -6,9 +6,10 @@ namespace PNPUTools
 
     public class AnalyseResultFile
     {
-        public String pathFile;
-        public String fileName;
-        List<AnalyseResultLine> listLine;
+        public String pathFile { get; set; }
+        public String fileName { get; set; }
+
+        readonly List<AnalyseResultLine> listLine;
 
         public List<AnalyseResultLine> ListLine()
         {
@@ -30,20 +31,20 @@ namespace PNPUTools
 
     public class AnalyseResultLine
     {
-        public String Result;
-        public String AnalysedFlag;
-        public String PersistFlag;
-        public String TransferFlag;
-        public String OriginDestination;
-        public String CommandDetail;
-        public String Sequence;
-        public String Package;
-        public String ObjectType;
-        public String IdObject;
-        public String IdObject2;
-        public String IdObject3;
-        public String IdObject4;
-        public String Comments;
+        public String Result { get; set; }
+        public String AnalysedFlag { get; set; }
+        public String PersistFlag { get; set; }
+        public String TransferFlag { get; set; }
+        public String OriginDestination { get; set; }
+        public String CommandDetail { get; set; }
+        public String Sequence { get; set; }
+        public String Package { get; set; }
+        public String ObjectType { get; set; }
+        public String IdObject { get; set; }
+        public String IdObject2 { get; set; }
+        public String IdObject3 { get; set; }
+        public String IdObject4 { get; set; }
+        public String Comments { get; set; }
 
         public AnalyseResultLine(string result, string analysedFlag, string persistFlag, string transferFlag, string originDestination, string commandDetail, string sequence, string package, string objectType, string idObject, string idObject2, string idObject3, string idObject4, string comments)
         {

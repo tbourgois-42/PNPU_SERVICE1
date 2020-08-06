@@ -9,8 +9,8 @@ namespace PNPUCore.Controle
 {
     class ControleDataM4SCO_ROW_COL_DEF
     {
-        private List<string> TableTraitee = new List<string>() { "M4SCO_ROW_COL_DEF", "M4SCO_ROWS" };
-        ProcessAnalyseImpactData processAnalyseImpactData;
+        readonly private List<string> TableTraitee = new List<string>() { "M4SCO_ROW_COL_DEF", "M4SCO_ROWS" };
+        readonly ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
         private string sConnectionString;
         private DataManagerSQLServer dmsDataManager;
@@ -41,7 +41,7 @@ namespace PNPUCore.Controle
             dmsDataManager = new DataManagerSQLServer();
             dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
-            if (TableTraitee.Contains(sTable) == false) return;
+            if (!TableTraitee.Contains(sTable)) return;
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
             sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
             commandDataCour = commandData;
@@ -96,7 +96,7 @@ namespace PNPUCore.Controle
                             sSCO_ID_BODY = drRowRef[2].ToString();
                             sSCO_ID_ROW = drRowRef[3].ToString();
 
-                            if (ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW) == false)
+                            if (!ControleAutreLigne(sSCO_ID_REPORT, sSCO_ID_BODY, sSCO_ID_ROW))
                             {
                                 sCommandeGeneree = dmsDataManager.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
                                 RequestTool.addLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);
@@ -136,29 +136,26 @@ namespace PNPUCore.Controle
                     sRequete += "AND SFR_ID_SOURCE_ITEM = '" + sSFR_ID_SOURCE_ITEM + "'";
 
                 dsDataset = dmsDataManager.GetData(sRequete, sConnectionString);
-                if ((dsDataset != null) && (dsDataset.Tables[0].Rows.Count > 0))
+                if ((dsDataset != null) && (dsDataset.Tables[0].Rows.Count > 0) )
                 {
-                    if (dsDataset.Tables[0].Rows.Count > 0)
+                    commandDataCour.Result = ParamAppli.StatutError;
+                    bResultat = false;
+                    if (commandDataCour.Message != String.Empty)
+                        commandDataCour.Message += " - ";
+
+                    sSCO_ID_BODY_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_BODY");
+                    sSCO_ID_ROW_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_ROW");
+                    commandDataCour.Message += "Paramétrage spécifique client à un emplacement différent du standard (";
+                    if (sSCO_ID_BODY_CLIENT != sSCO_ID_BODY)
                     {
-                        commandDataCour.Result = ParamAppli.StatutError;
-                        bResultat = false;
-                        if (commandDataCour.Message != String.Empty)
-                            commandDataCour.Message += " - ";
-
-                        sSCO_ID_BODY_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_BODY");
-                        sSCO_ID_ROW_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_ROW");
-                        commandDataCour.Message += "Paramétrage spécifique client à un emplacement différent du standard (";
-                        if (sSCO_ID_BODY_CLIENT != sSCO_ID_BODY)
-                        {
-                            commandDataCour.Message += "SCO_ID_BODY = " + sSCO_ID_BODY_CLIENT;
-                            if (sSCO_ID_ROW_CLIENT != sSCO_ID_ROW)
-                                commandDataCour.Message += " / SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
-                        }
-                        else
-                            commandDataCour.Message += "SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
-                        commandDataCour.Message += ").";
-
+                        commandDataCour.Message += "SCO_ID_BODY = " + sSCO_ID_BODY_CLIENT;
+                        if (sSCO_ID_ROW_CLIENT != sSCO_ID_ROW)
+                            commandDataCour.Message += " / SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
                     }
+                    else
+                        commandDataCour.Message += "SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
+
+                    commandDataCour.Message += ").";
                 }
             }
             return bResultat;

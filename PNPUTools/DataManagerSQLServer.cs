@@ -155,7 +155,7 @@ namespace PNPUTools.DataManager
                         command.CommandText = request;
                         command.ExecuteNonQuery();
                         // Récupère la dernière clé auto incrément
-                        if (reqInsert.Length == 1 && getKeyAutoIndent == true)
+                        if (reqInsert.Length == 1 && getKeyAutoIndent)
                         {
                             // TODO : Retourner un tableau key value des clé auto incrément en cas d'insertion multiple
                             command.CommandText = "SELECT IDENT_CURRENT('" + sTable + "') AS [IDENT_CURRENT]";

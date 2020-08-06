@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleDonneesReplace : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 

@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace PNPUCore
 {
-    class Logger
+    static class Logger
     {
 
         public static void Log(IProcess process, IControle controle, string statutMessage, string message)
@@ -34,7 +34,7 @@ namespace PNPUCore
                         cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.VarChar, 50).Value = ParamAppli.LogLevel;
                         cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int).Value = process.ID_INSTANCEWF;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
                     }
                 }
                 catch (SqlException ex)
@@ -70,7 +70,7 @@ namespace PNPUCore
                         cmd.Parameters.Add("@NIVEAU_LOG", SqlDbType.VarChar, 50).Value = ParamAppli.LogLevel;
                         cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int).Value = process.ID_INSTANCEWF;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
                     }
                 }
                 catch (SqlException ex)

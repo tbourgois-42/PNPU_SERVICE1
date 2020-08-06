@@ -49,7 +49,6 @@ namespace PNPUCore.Rapport
 
 
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = "1";
             jw.Formatting = Formatting.Indented;
@@ -94,8 +93,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
-
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -128,8 +125,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
-
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -161,7 +156,6 @@ namespace PNPUCore.Rapport
         public void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = "1";
             jw.Formatting = Formatting.Indented;
@@ -191,7 +185,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -223,7 +216,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -246,7 +238,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -279,7 +270,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -311,7 +301,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -334,7 +323,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
@@ -369,7 +357,6 @@ namespace PNPUCore.Rapport
         public void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = "1";
             jw.Formatting = Formatting.Indented;
@@ -396,7 +383,6 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 

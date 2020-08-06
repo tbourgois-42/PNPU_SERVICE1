@@ -35,7 +35,6 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            List<IControle> listControl = ListControls.listOfMockControl;
             sRapport = string.Empty;
             rapportAnalyseImpactData = new RapportAnalyseData();
             rapportAnalyseImpactData.Debut = DateTime.Now;
@@ -145,20 +144,19 @@ namespace PNPUCore.Process
                             commandData1.Result = ParamAppli.StatutInfo;
                             commandData1.Name = listLineRequest[iIndex];
                             commandData1.Message = string.Empty;
-                            //commandData1.listControleCommandData = new List<ControleCommandData>();
                             EltsALocaliserData eltsALocaliserData = new EltsALocaliserData();
 
-                            if ((commandData.IdObject.Contains("0002") == true) || (commandData.IdObject.Contains("COPY_DATA_9999") == true))
+                            if ((commandData.IdObject.Contains("0002")) || (commandData.IdObject.Contains("COPY_DATA_9999")))
                             {
 
                                 dataManagerSQLServer.ExtractTableFilter(listLineRequest[iIndex], ref sTable, ref sFilter, ref lColumnsList);
                                 // Traitement des tables postpaie
-                                if (lTablesPostPaie.Contains(sTable) == true)
+                                if (lTablesPostPaie.Contains(sTable) )
                                 {
                                     controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
                                 // Traitement des tables DSN
-                                else if (lTablesDSN.Contains(sTable) == true)
+                                else if (lTablesDSN.Contains(sTable))
                                 {
                                     controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
@@ -237,7 +235,7 @@ namespace PNPUCore.Process
             foreach (DataRow row in tableCmd.Rows)
             {
                 sCommande = row[3].ToString();
-                if (sCommande.Contains("DBMS") == true)
+                if (sCommande.Contains("DBMS"))
                     sCommande = dataManager.GereOracle(sCommande, bOracle);
                 if (sCommande != string.Empty)
                 {

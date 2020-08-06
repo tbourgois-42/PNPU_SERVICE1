@@ -11,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleNiveauSaisie : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -83,7 +83,7 @@ namespace PNPUCore.Controle
 
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
-                            if (bPremierElement == true)
+                            if (bPremierElement)
                                 bPremierElement = false;
                             else
                                 sRequeteControle += ",";
@@ -94,7 +94,7 @@ namespace PNPUCore.Controle
                                 sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
 
                             bItemTrouve = false;
-                            for (int elt = 0; elt < lListeITEMS.Count && bItemTrouve == false; elt++)
+                            for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
                             {
                                 if (lListeITEMS[elt][0] == drRow[1].ToString())
                                 {
@@ -103,7 +103,7 @@ namespace PNPUCore.Controle
                                 }
                             }
 
-                            if (bItemTrouve == false)
+                            if (!bItemTrouve)
                             {
                                 string sDMD_COMPONENT = string.Empty;
 
@@ -129,7 +129,7 @@ namespace PNPUCore.Controle
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
-                            if (bPremierElement == true)
+                            if (bPremierElement)
                                 bPremierElement = false;
                             else
                                 sRequeteControle += ",";
@@ -140,7 +140,7 @@ namespace PNPUCore.Controle
                                 sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
 
                             bItemTrouve = false;
-                            for (int elt = 0; elt < lListeITEMS.Count && bItemTrouve == false; elt++)
+                            for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
                             {
                                 if (lListeITEMS[elt][0] == drRow[1].ToString())
                                 {
@@ -149,7 +149,7 @@ namespace PNPUCore.Controle
                                 }
                             }
 
-                            if (bItemTrouve == false)
+                            if (!bItemTrouve)
                             {
                                 string sDMD_COMPONENT = string.Empty;
 
@@ -167,7 +167,7 @@ namespace PNPUCore.Controle
                     }
 
                     // Recherche des niveaux de saisie dans le mdb
-                    if (bPremierElement == false)
+                    if (!bPremierElement)
                     {
                         sRequeteControle += ") ORDER BY ID_DMD_COMPONENT, ID_DMD_GROUP";
 
@@ -178,7 +178,7 @@ namespace PNPUCore.Controle
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {
                                 bItemTrouve = false;
-                                for (int elt = 0; elt < lListeITEMS.Count && bItemTrouve == false; elt++)
+                                for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
                                 {
                                     if (lListeITEMS[elt][2] == drRow[0].ToString())
                                     {
@@ -203,7 +203,7 @@ namespace PNPUCore.Controle
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {
                                 bItemTrouve = false;
-                                for (int elt = 0; elt < lListeITEMS.Count && bItemTrouve == false; elt++)
+                                for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
                                 {
                                     if (lListeITEMS[elt][2] == drRow[0].ToString())
                                     {

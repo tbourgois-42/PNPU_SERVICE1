@@ -17,31 +17,24 @@ namespace WcfService1
     // REMARQUE : pour lancer le client test WCF afin de tester ce service, sélectionnez Service1.svc ou Service1.svc.cs dans l'Explorateur de solutions et démarrez le débogage. 
     public class Service1 : IService1
     {
-        private static NamedPipeClientStream npcsPipeClient;
+        private static NamedPipeClientStream npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
         private static StreamString ssStreamString = null;
-        private static StreamWriter sw = null;
+        private static StreamWriter streamWriter = new StreamWriter(npcsPipeClient);
+
         public string LaunchProcess(int ProcId, int workflowId, String clientId, int idInstanceWF)
         {
-            if (npcsPipeClient == null)
+            if (!npcsPipeClient.IsConnected)
             {
-                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
                 npcsPipeClient.Connect();
             }
 
-            /*if (ssStreamString == null)
-                ssStreamString = new StreamString(npcsPipeClient);
-            ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);*/
-            if (sw == null)
-                sw = new StreamWriter(npcsPipeClient);
-
-
-            sw.AutoFlush = true;
+            streamWriter.AutoFlush = true;
             Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
-            sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
+            streamWriter.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
 
 
 
-            //string result = ssStreamString.ReadString();
+            //Old code string result = ssStreamString.ReadString();
             return "OK";
         }
 
@@ -168,7 +161,7 @@ namespace WcfService1
             string FileName = file.FileName;
 
             //EST CE QUE LE DOSSIER TEMP EXISTE
-            if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+            if (!Directory.Exists(ParamAppli.DossierTemporaire))
                 Directory.CreateDirectory(ParamAppli.DossierTemporaire);
 
             string FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
@@ -316,7 +309,7 @@ namespace WcfService1
                     sNom += "_C" + clientId + "_N0";
                 sDossierTempo = ParamAppli.DossierTemporaire + "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
-                if (Directory.Exists(sDossierTempo) == false)
+                if (!Directory.Exists(sDossierTempo))
                     Directory.CreateDirectory(sDossierTempo);
 
                 File.WriteAllBytes(sFichierZip, fichier);
@@ -410,7 +403,7 @@ namespace WcfService1
                 string FileName = file.FileName;
 
                 //EST CE QUE LE DOSSIER TEMP EXISTE
-                if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+                if (!Directory.Exists(ParamAppli.DossierTemporaire))
                     Directory.CreateDirectory(ParamAppli.DossierTemporaire);
 
                 FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
@@ -474,8 +467,8 @@ namespace WcfService1
 
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding streamEncoding;
+        readonly private Stream ioStream;
+        readonly private UnicodeEncoding streamEncoding;
 
         public StreamString(Stream ioStream)
         {

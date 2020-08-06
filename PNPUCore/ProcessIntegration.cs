@@ -30,7 +30,6 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportProcess.Name = LibProcess;

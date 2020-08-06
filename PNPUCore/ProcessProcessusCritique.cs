@@ -77,7 +77,7 @@ namespace PNPUCore.Process
             DataSet dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
             if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
             {
-                if (Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASK) == true)
+                if (Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASK))
                     iID_SCHED_TASK++;
                 else
                     iID_SCHED_TASK = 1;
@@ -181,13 +181,13 @@ namespace PNPUCore.Process
                             sRequete = "select ID_SCHED_TASK from M4RJS_SCHED_TASKS where SCHED_TASK_NAME like 'Traitement " + sNumTraitement + " : " + sTraitement + "' and ID_SCHED_TASK> " + iID_SCHED_TASK.ToString("########0");
                             bBoucle = true;
 
-                            while (bBoucle == true)
+                            while (bBoucle)
                             {
                                 dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
                                 if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
                                 {
                                     bBoucle = false;
-                                    if (Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASKTrt) == false)
+                                    if (!Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASKTrt))
                                         iID_SCHED_TASKTrt = -1;
                                 }
                                 else
@@ -276,7 +276,7 @@ namespace PNPUCore.Process
             bool bBoucle = true;
             sResultTask = string.Empty;
 
-            while (bBoucle == true)
+            while (bBoucle)
             {
                 dataSet = dataManagerSQL.GetData("SELECT STATUS FROM M4RJS_TASK_EXE WHERE ID_SCHED_TASK =" + iID_SCHED_TASK.ToString("########0"), ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
                 if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
@@ -286,7 +286,7 @@ namespace PNPUCore.Process
                     if ((sStatus != ParamAppli.statusScheduleTaskAttente) && (sStatus != ParamAppli.statusScheduleTaskEnCours))
                         bBoucle = false;
 
-                    if (bBoucle == true)
+                    if (bBoucle)
                     {
                         System.Threading.Thread.Sleep(iTimeOut);
                     }

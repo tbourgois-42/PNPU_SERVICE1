@@ -12,8 +12,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleCmdInterdites : PControle, IControle
     {
-        private List<string> lL_INTERDIT;
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private List<string> lL_INTERDIT;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -87,7 +87,7 @@ namespace PNPUCore.Controle
 
                         iCpt = 0;
                         bTrouve = false;
-                        while ((iCpt < lL_INTERDIT.Count()) && (bTrouve == false))
+                        while ((iCpt < lL_INTERDIT.Count()) && !bTrouve)
                         {
                             if (sCommandPack.IndexOf(lL_INTERDIT[iCpt++]) >= 0)
                             {

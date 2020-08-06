@@ -13,11 +13,11 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleTypePack : PControle, IControle
     {
-        private List<string> lCMD_L;
-        private List<string> lCMD_D;
-        private List<string> lCMD_F;
-        private List<string> lCMD_B;
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private List<string> lCMD_L;
+        readonly private List<string> lCMD_D;
+        readonly private List<string> lCMD_F;
+        readonly private List<string> lCMD_B;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -67,22 +67,22 @@ namespace PNPUCore.Controle
             {
                 dmaManagerAccess = new DataManagerAccess();
 
-                if (ControleUnTypack("_L", lCMD_L, dmaManagerAccess) == false)
+                if (!ControleUnTypack("_L", lCMD_L, dmaManagerAccess))
                 {
                     bResultat = ResultatErreur;
                 }
 
-                if (ControleUnTypack("_D", lCMD_D, dmaManagerAccess) == false)
+                if (!ControleUnTypack("_D", lCMD_D, dmaManagerAccess))
                 {
                     bResultat = ResultatErreur;
                 }
 
-                if (ControleUnTypack("_F", lCMD_F, dmaManagerAccess) == false)
+                if (!ControleUnTypack("_F", lCMD_F, dmaManagerAccess))
                 {
                     bResultat = ResultatErreur;
                 }
 
-                if (ControleUnTypack("_B", lCMD_B, dmaManagerAccess) == false)
+                if (!ControleUnTypack("_B", lCMD_B, dmaManagerAccess))
                 {
                     bResultat = ResultatErreur;
                 }
@@ -129,12 +129,12 @@ namespace PNPUCore.Controle
                         // Je remplace les espaces et tabulation par un seul espace.
                         sCommandPack = System.Text.RegularExpressions.Regex.Replace(sCommandPack, "\\s+", " ");
 
-                        while ((iCpt < CMD.Count()) && (bTrouve == false))
+                        while ((iCpt < CMD.Count()) && !bTrouve)
                         {
                             if (sCommandPack.IndexOf(CMD[iCpt++]) >= 0)
                                 bTrouve = true;
                         }
-                        if (bTrouve == false)
+                        if (!bTrouve)
                         {
                             double dConv;
 

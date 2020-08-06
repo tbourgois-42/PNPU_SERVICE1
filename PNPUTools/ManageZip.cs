@@ -7,7 +7,7 @@ namespace PNPUTools.ZIP
     /// <summary>
     /// Cette classe permet de gérer simplement la compression et décompression de fichiers ZIP.
     /// </summary>
-    public class ManageZip
+    static public class ManageZip
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace PNPUTools.ZIP
         {
             try
             {
-                if (File.Exists(pNomFichierZip) == true)
+                if (File.Exists(pNomFichierZip))
                     File.Delete(pNomFichierZip);
 
                 using (ZipOutputStream ZipStream = new ZipOutputStream(File.Create(pNomFichierZip)))
@@ -99,7 +99,7 @@ namespace PNPUTools.ZIP
         {
             try
             {
-                if (Directory.Exists(pDossierDestination) == false)
+                if (!Directory.Exists(pDossierDestination))
                     Directory.CreateDirectory(pDossierDestination);
 
                 using (ZipInputStream ZipStream = new ZipInputStream(File.OpenRead(pNomFichierZip)))
@@ -107,7 +107,7 @@ namespace PNPUTools.ZIP
                     ZipEntry zipEntry = ZipStream.GetNextEntry();
                     while (zipEntry != null)
                     {
-                        if (zipEntry.IsFile == true)
+                        if (zipEntry.IsFile)
                         {
                             FileInfo fiFileInfo = new FileInfo(pDossierDestination + "\\" + zipEntry.Name);
                             Directory.CreateDirectory(fiFileInfo.DirectoryName);

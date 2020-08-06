@@ -10,9 +10,9 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleParamAppli : PControle, IControle
     {
-        string sCLE = string.Empty;
-        string sSECTION = string.Empty;
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly string sCLE = string.Empty;
+        readonly string sSECTION = string.Empty;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 

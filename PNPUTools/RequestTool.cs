@@ -91,9 +91,6 @@ namespace PNPUTools
         public static IEnumerable<ToolboxInfoLaunch> GetToolBoxInfoLaunch(string sHabilitation, string sUser)
         {
             // Load lastest workflow how has been lauched for client's user
-
-            List<string> lstWORKFLOW = new List<string>();
-
             string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
 
             string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE ";
@@ -422,7 +419,7 @@ namespace PNPUTools
         public static bool historicWorkflowExist(int workflowId, int instanceId)
         {
             // return getWorkflowHistoric(workflowId) != null
-            return getWorkflowHistoric(workflowId, instanceId) == 0 ? false : true;
+            return getWorkflowHistoric(workflowId, instanceId) != 0;
         }
 
         /// <summary>
@@ -444,7 +441,7 @@ namespace PNPUTools
         /// <returns>Return true if exist, false if not</returns>
         public static bool historicStepExist(PNPU_H_STEP step)
         {
-            return getStepHistoric(step) == 0 ? false : true;
+            return getStepHistoric(step) != 0;
         }
 
         /// <summary>

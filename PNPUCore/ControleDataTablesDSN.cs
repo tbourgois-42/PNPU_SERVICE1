@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
 {
     class ControleDataTablesDSN
     {
-        ProcessAnalyseImpactData processAnalyseImpactData;
+        readonly ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
         private string sConnectionString;
         private DataManagerSQLServer dmsDataManager;
@@ -89,9 +89,7 @@ namespace PNPUCore.Controle
 
 
                 sRequeteRef = "SELECT * FROM " + sTable + " WHERE " + sFiltreRef;
-                //sRequeteClient = "SELECT * FROM " + sTable + " WHERE " + sFiltreClient;
                 dsDataSetRef = dmsDataManager.GetData(sRequeteRef, sConnectionString);
-                // dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
 
                 if ((dsDataSetRef != null) && (dsDataSetRef.Tables[0].Rows.Count > 0))
                 {
@@ -102,7 +100,7 @@ namespace PNPUCore.Controle
                         string sSFR_ID_ORIG_PARAM_REF;
                         string sSFR_CK_IS_ACTIF_REF;
                         sSFR_ID_ORIG_PARAM_REF = dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], "SFR_ID_ORIG_PARAM");
-                        if (bSFR_CK_IS_ACTIF == true)
+                        if (bSFR_CK_IS_ACTIF)
                             sSFR_CK_IS_ACTIF_REF = dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], "SFR_CK_IS_ACTIF");
                         else
                             sSFR_CK_IS_ACTIF_REF = "1";
@@ -113,18 +111,15 @@ namespace PNPUCore.Controle
                             sFiltreSuite = " AND NOT EXISTS (SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='0001' ";
                             foreach (string sField in lPKFields)
                             {
-                                if (processAnalyseImpactData.dListeTablesFieldsIgnore[sTable].Contains(sField) == false)
+                                if (!processAnalyseImpactData.dListeTablesFieldsIgnore[sTable].Contains(sField) && (sField != "SFR_ID_ORIG_PARAM") && (sField != "SFR_CK_IS_ACTIF"))
                                 {
-                                    if ((sField != "SFR_ID_ORIG_PARAM") && (sField != "SFR_CK_IS_ACTIF"))
-                                    {
-                                        sRequeteClient += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
-                                        sFiltreSuite += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
-                                    }
+                                    sRequeteClient += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
+                                    sFiltreSuite += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
                                 }
                             }
                             sRequeteClient += " AND SFR_ID_ORIG_PARAM = 'CLI'";
                             sFiltreSuite += " AND SFR_ID_ORIG_PARAM = 'CLI'";
-                            if (bSFR_CK_IS_ACTIF == true)
+                            if (bSFR_CK_IS_ACTIF)
                             {
                                 sRequeteClient += " AND SFR_CK_IS_ACTIF='1'";
                                 sFiltreSuite += " AND SFR_CK_IS_ACTIF='1'";
@@ -141,7 +136,7 @@ namespace PNPUCore.Controle
                                 eltsALocaliserData.Name = commandDataCour.Name;
                                 eltsALocaliserData.Message = commandDataCour.Message;
                                 eltsALocaliserData.Result = commandDataCour.Result;
-                                if (bFlagCommandAjoutee == false)
+                                if (!bFlagCommandAjoutee)
                                 {
                                     bFlagCommandAjoutee = true;
                                     sCommandeGeneree = dmsDataManager.GenerateReplace(sTable, sFilter, sOrgaOrgFiltre, sOrgaCour);
@@ -171,9 +166,9 @@ namespace PNPUCore.Controle
                     iIndex2 = iIndex;
                     iIndex--;
 
-                    while (Char.IsWhiteSpace(sFilter[iIndex]) == true)
+                    while (Char.IsWhiteSpace(sFilter[iIndex]))
                         iIndex--;
-                    while (Char.IsLetter(sFilter[iIndex]) == true)
+                    while (Char.IsLetter(sFilter[iIndex]))
                         iIndex--;
                     sResultat = sFilter.Substring(0, iIndex);
                     bPremier = false;
@@ -183,17 +178,17 @@ namespace PNPUCore.Controle
                     sResultat = string.Empty;
 
                 iIndex = iIndex + sChampASupprimer.Length;
-                while ((Char.IsWhiteSpace(sFilter[iIndex]) == true) || (sFilter[iIndex] == '=')) iIndex++;
+                while ((Char.IsWhiteSpace(sFilter[iIndex])) || (sFilter[iIndex] == '=')) iIndex++;
 
-                while (((Char.IsLetter(sFilter[iIndex]) == true) || (sFilter[iIndex] == '\'')) && (iIndex < sFilter.Length - 1)) iIndex++;
+                while (((Char.IsLetter(sFilter[iIndex])) || (sFilter[iIndex] == '\'')) && (iIndex < sFilter.Length - 1)) iIndex++;
 
                 if (iIndex < sFilter.Length - 1)
                 {
-                    if (bPremier == true)
+                    if (bPremier)
                     {
-                        while (Char.IsWhiteSpace(sFilter[iIndex]) == true)
+                        while (Char.IsWhiteSpace(sFilter[iIndex]))
                             iIndex++;
-                        while (Char.IsLetter(sFilter[iIndex]) == true)
+                        while (Char.IsLetter(sFilter[iIndex]))
                             iIndex++;
                     }
 

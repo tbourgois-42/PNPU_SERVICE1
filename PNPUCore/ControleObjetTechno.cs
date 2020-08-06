@@ -11,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleObjetTechno : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -80,7 +80,7 @@ namespace PNPUCore.Controle
                         {
                             if ((sIDPackageCourant != String.Empty) && (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0))
                             {
-                                if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
+                                if (!ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant))
                                     bResultat = ResultatErreur;
                                 lListeM4O.Clear();
                                 lListeNODESTRUCTURE.Clear();
@@ -92,26 +92,26 @@ namespace PNPUCore.Controle
                         {
                             case "META4OBJECT & NODE STRUCTURES":
                             case "META4OBJECT":
-                                if (lListeM4O.Contains(drRow[2].ToString()) == false)
+                                if (!lListeM4O.Contains(drRow[2].ToString()))
                                     lListeM4O.Add(drRow[2].ToString());
                                 break;
 
                             case "NODE":
                                 sTempo = drRow[2].ToString();
                                 sTempo = sTempo.Substring(0, sTempo.IndexOf('.'));
-                                if (lListeM4O.Contains(sTempo) == false)
+                                if (!lListeM4O.Contains(sTempo))
                                     lListeM4O.Add(sTempo);
                                 break;
 
                             case "NODE STRUCTURE":
-                                if (lListeNODESTRUCTURE.Contains(drRow[2].ToString()) == false)
+                                if (!lListeNODESTRUCTURE.Contains(drRow[2].ToString()))
                                     lListeNODESTRUCTURE.Add(drRow[2].ToString());
                                 break;
 
                             case "ITEM":
                                 sTempo = drRow[2].ToString();
                                 sTempo = sTempo.Substring(0, sTempo.IndexOf('.'));
-                                if (lListeNODESTRUCTURE.Contains(sTempo) == false)
+                                if (!lListeNODESTRUCTURE.Contains(sTempo))
                                     lListeNODESTRUCTURE.Add(sTempo);
                                 break;
                         }
@@ -120,7 +120,7 @@ namespace PNPUCore.Controle
 
                     if (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0)
                     {
-                        if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
+                        if (!ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant))
                             bResultat = ResultatErreur;
                         lListeM4O.Clear();
                         lListeNODESTRUCTURE.Clear();
@@ -168,7 +168,7 @@ namespace PNPUCore.Controle
                     bPremier = true;
                     foreach (string s in lListeNODESTRUCTURE)
                     {
-                        if (bPremier == true)
+                        if (bPremier)
                             bPremier = false;
                         else
                             sRequete += ",";
@@ -179,7 +179,7 @@ namespace PNPUCore.Controle
                     bPremier = true;
                     foreach (string s in lListeNODESTRUCTURE)
                     {
-                        if (bPremier == true)
+                        if (bPremier)
                             bPremier = false;
                         else
                             sRequete += ",";
@@ -195,7 +195,7 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             lListeNODESTRUCTURE.Remove(drRow[1].ToString()); // Je supprime les NS dont on trouve le M4O dans le MDB
-                            if (lListeM4O.Contains(drRow[0].ToString()) == false)
+                            if (!lListeM4O.Contains(drRow[0].ToString()))
                                 lListeM4O.Add(drRow[0].ToString());
                         }
                         dsDataSet.Clear();
@@ -208,7 +208,7 @@ namespace PNPUCore.Controle
                         bPremier = true;
                         foreach (string s in lListeNODESTRUCTURE)
                         {
-                            if (bPremier == true)
+                            if (bPremier)
                                 bPremier = false;
                             else
                                 sRequete += ",";
@@ -219,7 +219,7 @@ namespace PNPUCore.Controle
                         bPremier = true;
                         foreach (string s in lListeNODESTRUCTURE)
                         {
-                            if (bPremier == true)
+                            if (bPremier)
                                 bPremier = false;
                             else
                                 sRequete += ",";
@@ -236,7 +236,7 @@ namespace PNPUCore.Controle
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                                 {
                                     lListeNODESTRUCTURE.Remove(drRow[1].ToString()); // Je supprime les NS dont on trouve le M4O dans le MDB
-                                    if (lListeM4O.Contains(drRow[0].ToString()) == false)
+                                    if (!lListeM4O.Contains(drRow[0].ToString()))
                                         lListeM4O.Add(drRow[0].ToString());
                                 }
                                 dsDataSet.Clear();
@@ -254,7 +254,7 @@ namespace PNPUCore.Controle
                     bPremier = true;
                     foreach (string s in lListeM4O)
                     {
-                        if (bPremier == true)
+                        if (bPremier)
                             bPremier = false;
                         else
                             sRequete += ",";
@@ -286,7 +286,7 @@ namespace PNPUCore.Controle
                         bPremier = true;
                         foreach (string s in lListeM4O)
                         {
-                            if (bPremier == true)
+                            if (bPremier)
                                 bPremier = false;
                             else
                                 sRequete += ",";

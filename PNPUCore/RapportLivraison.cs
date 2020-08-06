@@ -8,52 +8,21 @@ namespace PNPUCore.RapportLivraison
 {
     class RLivraison
     {
-        private string id;
-        private string name;
-        private DateTime debut;
-        private DateTime fin;
-        private string result;
-        private List<Processus> processus;
-
         public RLivraison()
         {
-            processus = new List<Processus>();
+            Processus = new List<Processus>();
         }
 
-        public string Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public string Id { set; get; }
 
-        public string Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public string Name { set; get; }
 
-        public DateTime Debut
-        {
-            set { debut = value; }
-            get { return debut; }
-        }
+        public DateTime Debut { set; get; }
 
-        public DateTime Fin
-        {
-            set { fin = value; }
-            get { return fin; }
-        }
+        public DateTime Fin { set; get; }
 
-        public string Result
-        {
-            set { result = value; }
-            get { return result; }
-        }
-        public List<Processus> Processus
-        {
-            set { processus = value; }
-            get { return processus; }
-        }
+        public string Result { set; get; }
+        public List<Processus> Processus { set; get; }
         public string IdClient { get; internal set; }
 
         public string ToJSONRepresentation(Localisation RapportLocalisation)
@@ -155,9 +124,9 @@ namespace PNPUCore.RapportLivraison
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue(rapportLivraison.name);
+            jw.WriteValue(rapportLivraison.Name);
             jw.WritePropertyName("result");
-            jw.WriteValue(rapportLivraison.result);
+            jw.WriteValue(rapportLivraison.Result);
             jw.WritePropertyName("debut");
             jw.WriteValue(rapportLivraison.Debut.ToString("dd/MM/yy H:mm:ss"));
             jw.WritePropertyName("fin");
@@ -172,19 +141,9 @@ namespace PNPUCore.RapportLivraison
 
     class Processus
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Id { set; get; }
+        public String Name { set; get; }
         public string Result
         {
             set { result = value; }
@@ -194,101 +153,29 @@ namespace PNPUCore.RapportLivraison
 
     class Localisation
     {
-        private string id;
-        private string name;
-        private string cctTaskID;
-        private string cctVersion;
-        private int nbElements;
-        private string result;
-        private List<Elements> elements;
-
         public Localisation()
         {
-            elements = new List<Elements>();
+            Elements = new List<Elements>();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Id { set; get; }
+        public String Name { set; get; }
 
-        public String CctTaskID
-        {
-            set { cctTaskID = value; }
-            get { return cctTaskID; }
-        }
-        public String CctVersion
-        {
-            set { cctVersion = value; }
-            get { return cctVersion; }
-        }
-        public int NbElements
-        {
-            set { nbElements = value; }
-            get { return nbElements; }
-        }
-        public string Result
-        {
-            set { result = value; }
-            get { return result; }
-        }
-        public List<Elements> Elements
-        {
-            set { elements = value; }
-            get { return elements; }
-        }
+        public String CctTaskID { set; get; }
+        public String CctVersion { set; get; }
+        public int NbElements { set; get; }
+        public string Result { set; get; }
+        public List<Elements> Elements { set; get; }
     }
 
     class Elements
     {
-        private string id;
-        private string objectType;
-        private string objectID;
-        private string parentObj;
-        private string auxObj;
-        private string aux2Obj;
-        private string aux3Obj;
-
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
-        public String ObjectType
-        {
-            set { objectType = value; }
-            get { return objectType; }
-        }
-        public String ObjectID
-        {
-            set { objectID = value; }
-            get { return objectID; }
-        }
-        public String ParentObj
-        {
-            set { parentObj = value; }
-            get { return parentObj; }
-        }
-        public String AuxObj
-        {
-            set { auxObj = value; }
-            get { return auxObj; }
-        }
-        public String Aux2Obj
-        {
-            set { aux2Obj = value; }
-            get { return aux2Obj; }
-        }
-        public String Aux3Obj
-        {
-            set { aux3Obj = value; }
-            get { return aux3Obj; }
-        }
+        public String Id { set; get; }
+        public String ObjectType { set; get; }
+        public String ObjectID { set; get; }
+        public String ParentObj { set; get; }
+        public String AuxObj { set; get; }
+        public String Aux2Obj { set; get; }
+        public String Aux3Obj { set; get; }
     }
 }

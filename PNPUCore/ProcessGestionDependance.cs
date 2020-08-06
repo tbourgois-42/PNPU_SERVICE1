@@ -39,9 +39,6 @@ namespace PNPUCore.Process
             //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
             //ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
 
-            ParamToolbox paramToolbox = new ParamToolbox();
-            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
-
             sRapport = string.Empty;
             RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;

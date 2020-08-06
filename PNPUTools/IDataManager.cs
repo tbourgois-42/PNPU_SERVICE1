@@ -57,7 +57,7 @@ namespace PNPUTools.DataManager
                     bResulat = false;
                 else
                 {
-                    while ((iCpt < Table1.Columns.Count) && (bResulat == true))
+                    while ((iCpt < Table1.Columns.Count) && bResulat)
                     {
                         if (Table1.Columns[iCpt].ColumnName != Table2.Columns[iCpt].ColumnName)
                             bResulat = false;
@@ -93,13 +93,13 @@ namespace PNPUTools.DataManager
 
             try
             {
-                if (CompareColumns(Table1, Table2) == true)
+                if (CompareColumns(Table1, Table2))
                 {
                     sNomTable = Table1.TableName;
-                    while ((iCpt < Table1.Columns.Count) && (bResulat == true))
+                    while ((iCpt < Table1.Columns.Count) && bResulat)
                     {
                         sNomChamp = Table1.Columns[iCpt].ColumnName;
-                        if (dListeTablesFieldsIgnore[sNomTable].Contains(sNomChamp) == false)
+                        if (!dListeTablesFieldsIgnore[sNomTable].Contains(sNomChamp))
                         {
                             sValeur1 = pDataRow1[iCpt].ToString();
                             sValeur2 = pDataRow2[iCpt].ToString();
@@ -140,13 +140,13 @@ namespace PNPUTools.DataManager
             try
             {
                 ListColumnsDif.Clear();
-                if (CompareColumns(Table1, Table2) == true)
+                if (CompareColumns(Table1, Table2))
                 {
                     sNomTable = Table1.TableName;
                     while (iCpt < Table1.Columns.Count)
                     {
                         sNomChamp = Table1.Columns[iCpt].ColumnName;
-                        if (dListeTablesFieldsIgnore[sNomTable].Contains(sNomChamp) == false)
+                        if (!dListeTablesFieldsIgnore[sNomTable].Contains(sNomChamp))
                         {
                             sValeur1 = pDataRow1[iCpt].ToString();
                             sValeur2 = pDataRow2[iCpt].ToString();
@@ -228,9 +228,9 @@ namespace PNPUTools.DataManager
                 if (iIndex1 >= 0)
                 {
                     iIndex1 += "FROM".Length;
-                    while (char.IsWhiteSpace(sRequest[iIndex1]) == true) iIndex1++;
+                    while (char.IsWhiteSpace(sRequest[iIndex1])) iIndex1++;
                     iIndex2 = iIndex1 + 1;
-                    while ((char.IsLetterOrDigit(sRequest[iIndex2]) == true) || (sRequest[iIndex2] == '_')) iIndex2++;
+                    while ((char.IsLetterOrDigit(sRequest[iIndex2])) || (sRequest[iIndex2] == '_')) iIndex2++;
                     sResultat = sRequest.Substring(iIndex1, iIndex2 - iIndex1);
                 }
             }
@@ -246,7 +246,7 @@ namespace PNPUTools.DataManager
         {
             string sResultat = string.Empty;
 
-            if (sFilter.Contains("ID_ORGANIZATION") == false)
+            if (!sFilter.Contains("ID_ORGANIZATION"))
                 sFilter = " AND ID_ORGANIZATION='" + sOrgaDest + "'";
             sResultat = "Replace " + sTable + "  from origin to destination where \"" + sFilter + "\"";
             sResultat = ReplaceID_ORGA(sResultat, sOrgaOrg, sOrgaDest);
@@ -298,19 +298,19 @@ namespace PNPUTools.DataManager
         public void ExtractTableFilter(string sCommand, ref string sTable, ref string sFilter, ref List<string> lColumnsList)
         {
             lColumnsList.Clear();
-            if (sCommand.Contains("M4SFR_COPY_DATA_ORG") == true)
+            if (sCommand.Contains("M4SFR_COPY_DATA_ORG"))
             {
                 ExtractTableFilterCOPY_DATA(sCommand, ref sTable, ref sFilter);
             }
-            else if (sCommand.Contains("REPLACE") == true)
+            else if (sCommand.Contains("REPLACE"))
             {
                 ExtractTableFilterREPLACE(sCommand, ref sTable, ref sFilter);
             }
-            else if (sCommand.ToUpper().Contains("DELETE") == true)
+            else if (sCommand.ToUpper().Contains("DELETE"))
             {
                 ExtractTableFilterDELETE(sCommand, ref sTable, ref sFilter);
             }
-            else if (sCommand.ToUpper().Contains("UPDATE") == true)
+            else if (sCommand.ToUpper().Contains("UPDATE"))
             {
                 ExtractTableFilterUPDATE(sCommand, ref sTable, ref sFilter, ref lColumnsList);
             }
@@ -343,11 +343,11 @@ namespace PNPUTools.DataManager
                 iIndex1 += "REPLACE".Length;
 
                 // Récupération du nom de la table
-                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]) == true)
+                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
                     iIndex1++;
 
                 iIndex2 = iIndex1;
-                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2]) == true) || (sCommandMAJ[iIndex2] == '_'))
+                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
                     iIndex2++;
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
@@ -387,11 +387,11 @@ namespace PNPUTools.DataManager
             {
                 iIndex1 += "UPDATE".Length;
                 // Récupération du nom de la table
-                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]) == true)
+                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
                     iIndex1++;
 
                 iIndex2 = iIndex1;
-                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2]) == true) || (sCommandMAJ[iIndex2] == '_'))
+                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
                     iIndex2++;
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
@@ -401,11 +401,11 @@ namespace PNPUTools.DataManager
                 while (iIndex1 >= 0)
                 {
                     iIndex1 += "SET".Length;
-                    while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]) == true)
+                    while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
                         iIndex1++;
 
                     iIndex2 = iIndex1;
-                    while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2]) == true) || (sCommandMAJ[iIndex2] == '_'))
+                    while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
                         iIndex2++;
                     sColumn = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
                     lColumnsList.Add(sColumn);
@@ -424,10 +424,10 @@ namespace PNPUTools.DataManager
                     {
                         int iIndex3;
                         iIndex2 += "FROM".Length;
-                        while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]) == true)
+                        while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]))
                             iIndex2++;
                         iIndex3 = iIndex2;
-                        while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3]) == true) || (sCommandMAJ[iIndex3] == '_'))
+                        while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3])) || (sCommandMAJ[iIndex3] == '_'))
                             iIndex3++;
 
                         sTable = sCommand.Substring(iIndex2, iIndex3 - iIndex2);
@@ -443,10 +443,10 @@ namespace PNPUTools.DataManager
                     {
                         int iIndex3;
                         iIndex2 += "FROM".Length;
-                        while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]) == true)
+                        while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]))
                             iIndex2++;
                         iIndex3 = iIndex2;
-                        while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3]) == true) || (sCommandMAJ[iIndex3] == '_'))
+                        while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3])) || (sCommandMAJ[iIndex3] == '_'))
                             iIndex3++;
 
                         sTable = sCommand.Substring(iIndex2, iIndex3 - iIndex2);
@@ -483,11 +483,11 @@ namespace PNPUTools.DataManager
                     iIndex1 += "DELETE".Length;
 
                 // Récupération du nom de la table
-                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]) == true)
+                while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
                     iIndex1++;
 
                 iIndex2 = iIndex1;
-                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2]) == true) || (sCommandMAJ[iIndex2] == '_'))
+                while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
                     iIndex2++;
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
@@ -545,7 +545,7 @@ namespace PNPUTools.DataManager
                     while (sCommand[iIndex1] != '\'') iIndex1++;
                     iIndex1++;
                     iIndex2 = iIndex1;
-                    while (bContinue == true)
+                    while (bContinue)
                     {
                         if (iIndex2 >= sCommand.Length)
                             return (String.Empty);
@@ -610,7 +610,7 @@ namespace PNPUTools.DataManager
                     if (iNumeroParam == iParameterPos)
                     {
                         iIndex2 = iIndex1;
-                        while (bContinue == true)
+                        while (bContinue)
                         {
                             if (iIndex2 >= sCommand.Length)
                                 return (String.Empty);
@@ -659,7 +659,7 @@ namespace PNPUTools.DataManager
             string sEtiquette;
 
 
-            while (bContinue == true)
+            while (bContinue)
             {
                 iIndex1 = sCommandeMaj.IndexOf("DBMS(", iIndex1);
                 if (iIndex1 >= 0)
@@ -678,9 +678,9 @@ namespace PNPUTools.DataManager
                         if (iIndex1 >= 0)
                         {
                             iIndex1 += "GOTO".Length;
-                            while (Char.IsWhiteSpace(sCommandeMaj[iIndex1]) == true) iIndex1++;
+                            while (Char.IsWhiteSpace(sCommandeMaj[iIndex1])) iIndex1++;
                             iIndex2 = iIndex1;
-                            while ((char.IsLetterOrDigit(sCommandeMaj[iIndex2]) == true) || (sCommandeMaj[iIndex2] == '_')) iIndex2++;
+                            while ((char.IsLetterOrDigit(sCommandeMaj[iIndex2])) || (sCommandeMaj[iIndex2] == '_')) iIndex2++;
                             sEtiquette = sCommandeMaj.Substring(iIndex1, iIndex2 - iIndex1);
 
                             iIndex2 = sCommandeMaj.IndexOf("->" + sEtiquette, iIndex2);
@@ -738,7 +738,7 @@ namespace PNPUTools.DataManager
 
             foreach (string orga in sID_OrgaDest)
             {
-                if (bPremierElement == true)
+                if (bPremierElement)
                 {
                     bPremierElement = false;
                     sORGA_COPY = "'";

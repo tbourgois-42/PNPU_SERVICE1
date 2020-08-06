@@ -99,9 +99,9 @@ namespace PNPUTools
         public const string ConnectionStringAccess = "Driver={Microsoft Access Driver (*.mdb)};Dbq={0};Uid=Admin;Pwd=;";
 
 
-        public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact";
+        public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact"; //TODO à mettre en table
         public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
-        public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation";
+        public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation"; //TODO à mettre en table
 
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";

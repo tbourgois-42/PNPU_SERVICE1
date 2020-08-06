@@ -13,29 +13,20 @@ namespace PNUDispatcher
     /// </summary>  
     public class Watcher
     {
-        private static NamedPipeServerStream[] npssPipeClient = null;
-        private static StreamString[] ssStreamString = null;
-        private static Thread tListen = null;
+        private static NamedPipeServerStream[] npssPipeClient = new NamedPipeServerStream[2];;
+        private static StreamString[] ssStreamString = new StreamString[2];
+        private static Thread tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
         private static Thread tListen2 = null;
-        private static Thread tLaunchQueue = null;
-        //private static Queue<string> qFIFO = null;
+        private static Thread tLaunchQueue = new Thread(() => LaunchQueue());
 
         /// <summary>  
         /// Constructeur de la classe. Lance juste la fonction ListenRequest dans un thread.  
         /// </summary>  
         public Watcher()
         {
-            npssPipeClient = new NamedPipeServerStream[2];
-            ssStreamString = new StreamString[2];
-            //qFIFO = new Queue<string>();
-
-            tLaunchQueue = new Thread(() => LaunchQueue());
             tLaunchQueue.Start();
-
-            tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
             tListen.Start();
-            /*tListen2 = new Thread(() => ListenRequest("PNPU_PIPE2",1));
-            tListen2.Start();*/
+
         }
 
         /// <summary>  
@@ -72,7 +63,7 @@ namespace PNUDispatcher
 
                 Console.WriteLine("TEST LECTURE STRING : " + sMessage);
 
-                if (IsValideJSON(sMessage) == false)
+                if (!IsValideJSON(sMessage))
                     sMessageResultat = "KO";
                 else
                 {
@@ -152,8 +143,8 @@ namespace PNUDispatcher
 
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding streamEncoding;
+        readonly private Stream ioStream;
+        readonly private UnicodeEncoding streamEncoding;
 
         public StreamString(Stream ioStream)
         {

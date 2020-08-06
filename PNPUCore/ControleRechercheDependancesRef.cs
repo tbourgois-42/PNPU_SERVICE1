@@ -12,8 +12,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleRechercheDependancesRef : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -62,10 +62,10 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             sTacheCCT = drRow[0].ToString();
-                            if ((sTacheCCT != string.Empty) && (lTacheCCTHF.Contains(sTacheCCT) == false))
+                            if ((sTacheCCT != string.Empty) && (!lTacheCCTHF.Contains(sTacheCCT)))
                             {
                                 lTacheCCTHF.Add(sTacheCCT);
-                                if (bPremierElement == true)
+                                if (bPremierElement)
                                     bPremierElement = false;
                                 else
                                     sFiltreNiveauN += ",";
@@ -81,7 +81,7 @@ namespace PNPUCore.Controle
                 bResultat = RechercheDependances(1, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
 
                 // Recherche des dépendances de Niveau 2
-                if (bResultat == true)
+                if (bResultat)
                 {
                     sFiltreNiveauPrec = sFiltreNiveauN;
                     sFiltreNiveauN = sFiltreNiveauN1;
@@ -90,7 +90,7 @@ namespace PNPUCore.Controle
                 }
 
                 // Recherche des dépendances de Niveau 3
-                if (bResultat == true)
+                if (bResultat)
                 {
                     if (sFiltreNiveauPrec != string.Empty)
                         sFiltreNiveauPrec += ",";
@@ -99,7 +99,7 @@ namespace PNPUCore.Controle
                     sFiltreNiveauN1 = string.Empty;
                     bResultat = RechercheDependances(3, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
                 }
-                if (bResultat == false)
+                if (!bResultat)
                     sResultat = ParamAppli.StatutError;
             }
             catch (Exception ex)
@@ -132,10 +132,6 @@ namespace PNPUCore.Controle
             bool bPremierElement;
             DataSet dsDataSet;
             const string CCT_OBJECT_TYPE_INT = "'WEB FILE','WEB LITERAL SOC'";
-
-
-
-            string sListeTacheCCT = string.Empty;
 
             try
             {
@@ -170,7 +166,7 @@ namespace PNPUCore.Controle
                             sRequete = "DELETE FROM PNPU_DEP_REF WHERE WORKFLOW_ID = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = " + iNiveau.ToString() + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF.ToString();
                             using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                             {
-                                int rowsAffected = cmd.ExecuteNonQuery();
+                                cmd.ExecuteNonQuery();
                             }
 
                             sRequete = "INSERT INTO PNPU_DEP_REF (";
@@ -227,10 +223,10 @@ namespace PNPUCore.Controle
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                                 {
                                     sTacheCCT = drRow[4].ToString();
-                                    if (lTacheCCT.Contains(sTacheCCT) == false)
+                                    if (!lTacheCCT.Contains(sTacheCCT))
                                     {
                                         lTacheCCT.Add(sTacheCCT);
-                                        if (bPremierElement == true)
+                                        if (bPremierElement)
                                             bPremierElement = false;
                                         else
                                             sFiltreNiveauN1 += ",";
@@ -244,7 +240,7 @@ namespace PNPUCore.Controle
                                     for (int iCpt = 0; iCpt < 11; iCpt++)
                                         cmd.Parameters[iCpt + 2].Value = drRow[iCpt];
 
-                                    int rowsAffected = cmd.ExecuteNonQuery();
+                                    cmd.ExecuteNonQuery();
                                 }
                             }
                         }
@@ -301,10 +297,10 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             sTacheCCT = drRow[0].ToString();
-                            if (lTacheCCTHF.Contains(sTacheCCT) == false)
+                            if (!lTacheCCTHF.Contains(sTacheCCT))
                             {
                                 lTacheCCTHF.Add(sTacheCCT);
-                                if (bPremierElement == true)
+                                if (bPremierElement)
                                     bPremierElement = false;
                                 else
                                     sListeTacheCCT += ",";
@@ -341,16 +337,16 @@ namespace PNPUCore.Controle
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                                 {
                                     sTacheCCT = drRow[0].ToString() + "*" + drRow[1].ToString();
-                                    if (lTacheDepN1.Contains(sTacheCCT) == false)
+                                    if (!lTacheDepN1.Contains(sTacheCCT))
                                     {
                                         lTacheDepN1.Add(sTacheCCT);
-                                        if (lTacheDepN2.Contains(drRow[1].ToString()) == false)
+                                        if (!lTacheDepN2.Contains(drRow[1].ToString()))
                                             lTacheDepN2.Add(drRow[1].ToString());
                                         cmd.Parameters[0].Value = Process.WORKFLOW_ID;
                                         cmd.Parameters[1].Value = drRow[0].ToString();
                                         cmd.Parameters[2].Value = drRow[1].ToString();
                                         cmd.Parameters[3].Value = Process.ID_INSTANCEWF;
-                                        int rowsAffected = cmd.ExecuteNonQuery();
+                                        cmd.ExecuteNonQuery();
                                     }
                                 }
                             }

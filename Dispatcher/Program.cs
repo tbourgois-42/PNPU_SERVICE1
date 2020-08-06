@@ -3,7 +3,7 @@
 
 namespace PNUDispatcher
 {
-    class Program
+    static class Program
     {
 
 
