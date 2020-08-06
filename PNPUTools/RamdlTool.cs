@@ -201,7 +201,8 @@ namespace PNPUTools
             catch (Exception ex)
             {
                 //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
-
+                //TODO LOG
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -283,6 +284,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 bResultat = false;
             }
 
@@ -373,6 +376,8 @@ namespace PNPUTools
             catch (Exception ex)
             {
                 //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return new List<String>();
             }
             return listPathResult;
@@ -485,6 +490,8 @@ namespace PNPUTools
             catch (Exception ex)
             {
                 //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
                 return;
             }
         }
@@ -540,6 +547,8 @@ namespace PNPUTools
             {
                 //lbErreurs.Items.Add("LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
                 //Logger.Log(this, "ERROR", "LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
+                //TODO LOG
+                Console.WriteLine(ex.Message);
             }
             return (sResultat);
         }
@@ -572,7 +581,7 @@ namespace PNPUTools
         private string MiseEnformeChaineConnexion(string sChaineConnexion, string sNomSourceODBC)
         {
             string sResultat = string.Empty;
-            int iIndex = 0;
+            int iIndex;
 
             if (sChaineConnexion.ToUpper().Substring(0, 6) == "SERVER")
             {
@@ -594,7 +603,7 @@ namespace PNPUTools
         private void ParamRamDlInit()
         {
             //=> MHUM le 22/11/2019 - Lecture du paramétrage de RAMDL et création des dossiers si nécessaire 
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\META4\\regmeta4.xml") == true)
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\META4\\regmeta4.xml"))
             {
                 StreamReader srRegMeta4 = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\META4\\regmeta4.xml");
                 bool bContinue = !srRegMeta4.EndOfStream;

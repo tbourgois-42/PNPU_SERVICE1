@@ -36,7 +36,7 @@ namespace PNPUCore.Process
 
             string[] listClientId = CLIENT_ID.Split(',');
 
-            int idInstanceWF = ID_INSTANCEWF;
+            //int idInstanceWF = ID_INSTANCEWF;
 
             ControleTNR CTNR = new ControleTNR(this);
 

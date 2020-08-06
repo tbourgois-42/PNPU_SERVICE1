@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace PNPUTools
 {
-    public class RequestTool
+    static public class RequestTool
     {
 
         static string requestAllClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID";
@@ -88,6 +88,29 @@ namespace PNPUTools
             return listTest;
         }
 
+        public static IEnumerable<ToolboxInfoLaunch> GetToolBoxInfoLaunch(string sHabilitation, string sUser)
+        {
+            // Load lastest workflow how has been lauched for client's user
+
+            List<string> lstWORKFLOW = new List<string>();
+
+            string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
+
+            string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE ";
+            string sFrom = "from PNPU_H_WORKFLOW PHW, PNPU_H_STEP PHS, PNPU_PROCESS PS, PNPU_WORKFLOW PW ";
+            string sWhere = "where PHS.ID_H_WORKFLOW = PHW.ID_H_WORKFLOW AND PS.ID_PROCESS = PHS.ID_PROCESS AND PW.WORKFLOW_ID = PHW.WORKFLOW_ID AND PW.IS_TOOLBOX = 1 AND (";
+            sWhere += whereClauseHabilitation + ")";
+            string sOrderBy = " ORDER BY PHW.LAUNCHING_DATE";
+
+            string sRequest = sSelect + sFrom + sWhere + sOrderBy;
+
+            DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+            DataTable table = result.Tables[0];
+
+            IEnumerable<ToolboxInfoLaunch> listTest = table.DataTableToList<ToolboxInfoLaunch>();
+
+            return listTest;
+        }
         /// <summary>
         /// Get next process to be executed
         /// </summary>

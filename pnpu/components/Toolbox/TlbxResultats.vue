@@ -22,6 +22,7 @@
   </v-form>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 import aes from 'aes-js'
 import ReportTNR from '../../components/ReportTNR'
@@ -120,8 +121,17 @@ export default {
         this.form.passwordAfter &&
         this.computedDateFormatted
       )
-    }
+    },
+    ...mapGetters({
+        user: 'modules/auth/user',
+        profil: 'modules/auth/profil'
+    })
+    },
+
+  created() {
+    this.initialize()
   },
+
 
   watch: {
     loader() {
@@ -136,7 +146,30 @@ export default {
       this.dateFormatted = this.formatDate(this.date)
     }
   },
-  methods: {
+    methods: {
+      /**
+      * Chargement des informations pour les cartes.
+      */
+      initialize() {
+        const vm = this
+        vm.loadingData = true
+        axios
+          .get(`${process.env.WEB_SERVICE_WCF}/toolbox/Dashboard/`, {
+            params: {
+              user: this.user,
+              habilitation: this.profil
+            }
+          })
+          .then(function (response) {
+            debugger
+          })
+          .catch(function (error) {
+            vm.showSnackbar(
+              'error',
+              `${error} ! Impossible de récupérer l'historique des steps`
+            )
+          })
+      },
     formatDate(date) {
       if (!date) return null
 

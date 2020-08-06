@@ -46,22 +46,19 @@ namespace PNPUCore.Controle
         /// Méthode effectuant le contrôle. 
         /// <returns>Retourne un booléen, vrai si le contrôle est concluant et sinon faux.</returns>
         /// </summary>  
-        public string MakeControl()
+        new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
             string sRequete;
-            Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
-            string sRequeteControle = string.Empty;
             bool bPremierElement = true;
             rapDependancesInterPack = Process.RapportProcess.rapportDependancesInterPack;
 
-            DataSet dsDataSet = null;
+            DataSet dsDataSet;
 
             string sNomMdb1;
-            string sNomMdb2;
 
-            DataManagerAccess dmaManagerAccess1 = null;
-            DataManagerAccess dmaManagerAccess2 = null;
+            DataManagerAccess dmaManagerAccess1;
+            DataManagerAccess dmaManagerAccess2;
 
             try
             {

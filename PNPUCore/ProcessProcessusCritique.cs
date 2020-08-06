@@ -272,7 +272,7 @@ namespace PNPUCore.Process
         {
             DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
             string sStatus = string.Empty;
-            DataSet dataSet = null;
+            DataSet dataSet;
             bool bBoucle = true;
             sResultTask = string.Empty;
 
