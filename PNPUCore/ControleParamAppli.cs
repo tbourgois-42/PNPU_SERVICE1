@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
-using PNPUTools;
+using System;
 using System.Data;
 
 namespace PNPUCore.Controle
@@ -40,10 +36,10 @@ namespace PNPUCore.Controle
                 sSECTION += "'" + section + "'";
             }
 
-            Process = (PNPUCore.Process.ProcessControlePacks) pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             ResultatErreur = ParamAppli.StatutError;
             CompleteToolTip();
-         }
+        }
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -78,7 +74,7 @@ namespace PNPUCore.Controle
         private void CompleteToolTip()
         {
             ToolTipControle += ". Liste des clés interdites :";
-            foreach(string sElt in ParamAppli.ListeCleInterdite)
+            foreach (string sElt in ParamAppli.ListeCleInterdite)
             {
                 ToolTipControle += " - " + sElt;
             }
@@ -100,7 +96,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
 
 
-             DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess = null;
             try
             {
                 if (sCLE != string.Empty)

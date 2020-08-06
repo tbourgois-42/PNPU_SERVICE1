@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -86,7 +83,7 @@ namespace PNPUCore.Controle
                 // Recherche des dépendances de Niveau 2
                 if (bResultat == true)
                 {
-                     sFiltreNiveauPrec = sFiltreNiveauN;
+                    sFiltreNiveauPrec = sFiltreNiveauN;
                     sFiltreNiveauN = sFiltreNiveauN1;
                     sFiltreNiveauN1 = string.Empty;
                     bResultat = RechercheDependances(2, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
@@ -132,7 +129,7 @@ namespace PNPUCore.Controle
             DataManagerSQLServer dmsManagerSQL = null;
             List<string> lTacheCCT;
             string sRequete;
-            bool bPremierElement; 
+            bool bPremierElement;
             DataSet dsDataSet = null;
             const string CCT_OBJECT_TYPE_INT = "'WEB FILE','WEB LITERAL SOC'";
 
@@ -144,8 +141,8 @@ namespace PNPUCore.Controle
             {
                 dmsManagerSQL = new DataManagerSQLServer();
                 lTacheCCT = new List<string>();
- 
-               
+
+
 
                 if (sFiltreNiveauN != string.Empty)
                 {
@@ -161,7 +158,7 @@ namespace PNPUCore.Controle
                         sRequete += "AND A.CCT_OBJECT_TYPE NOT IN (" + CCT_OBJECT_TYPE_INT + ") ";
                     sRequete += "AND A.DEP_CCT_TASK_ID not like '%DEF%' ";
                     sRequete += "AND A.CCT_OBJECT_TYPE+A.CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL') ";
-                    
+
 
                     dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -170,7 +167,7 @@ namespace PNPUCore.Controle
                         using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                         {
                             conn.Open();
-                            sRequete = "DELETE FROM PNPU_DEP_REF WHERE WORKFLOW_ID = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = "+ iNiveau.ToString() + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF.ToString();
+                            sRequete = "DELETE FROM PNPU_DEP_REF WHERE WORKFLOW_ID = " + Process.WORKFLOW_ID.ToString() + " AND  NIV_DEP = " + iNiveau.ToString() + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF.ToString();
                             using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                             {
                                 int rowsAffected = cmd.ExecuteNonQuery();
@@ -244,9 +241,9 @@ namespace PNPUCore.Controle
                                     cmd.Parameters[0].Value = Process.WORKFLOW_ID;
                                     cmd.Parameters[1].Value = iNiveau;
                                     cmd.Parameters[13].Value = Process.ID_INSTANCEWF;
-                                    for (int iCpt=0; iCpt<11;iCpt++)
-                                        cmd.Parameters[iCpt+2].Value = drRow[iCpt];
-                                    
+                                    for (int iCpt = 0; iCpt < 11; iCpt++)
+                                        cmd.Parameters[iCpt + 2].Value = drRow[iCpt];
+
                                     int rowsAffected = cmd.ExecuteNonQuery();
                                 }
                             }

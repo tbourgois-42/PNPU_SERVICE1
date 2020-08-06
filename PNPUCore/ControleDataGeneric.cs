@@ -4,10 +4,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUCore.Rapport;
 
 namespace PNPUCore.Controle
 {
@@ -65,7 +61,7 @@ namespace PNPUCore.Controle
                 }
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
-                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001") ;
+                    sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
                     sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else

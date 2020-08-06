@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using PNPUCore;
+using PNPUTools;
+using System;
 using System.IO;
 using System.IO.Pipes;
-using PNPUCore;
-using PNPUTools; 
+using System.Text;
+using System.Threading;
 
 namespace PNUDispatcher
 {
@@ -35,7 +32,7 @@ namespace PNUDispatcher
             tLaunchQueue = new Thread(() => LaunchQueue());
             tLaunchQueue.Start();
 
-            tListen = new Thread(() => ListenRequest("PNPU_PIPE",0));
+            tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
             tListen.Start();
             /*tListen2 = new Thread(() => ListenRequest("PNPU_PIPE2",1));
             tListen2.Start();*/
@@ -72,7 +69,7 @@ namespace PNUDispatcher
                 //TEST TBO sMessage = ssStreamString[iNum].ReadString();
 
                 sMessage = sr.ReadLine();
-                
+
                 Console.WriteLine("TEST LECTURE STRING : " + sMessage);
 
                 if (IsValideJSON(sMessage) == false)
@@ -88,7 +85,7 @@ namespace PNUDispatcher
 
                 //ssStreamString[iNum].WriteString(sMessageResultat);
                 //npssPipeClient[iNum].Flush();
-             }
+            }
         }
 
         private static void LaunchProcess(string listclientId, int workflowId, int process, int idInstanceWF)
@@ -148,12 +145,12 @@ namespace PNUDispatcher
 
             return true;
         }
-        
+
     }
 
 
 
-        public class StreamString
+    public class StreamString
     {
         private Stream ioStream;
         private UnicodeEncoding streamEncoding;
@@ -181,7 +178,7 @@ namespace PNUDispatcher
             int len = outBuffer.Length;
             if (len > UInt16.MaxValue)
             {
-                len = (int)UInt16.MaxValue;
+                len = ushort.MaxValue;
             }
             ioStream.WriteByte((byte)(len / 256));
             ioStream.WriteByte((byte)(len & 255));

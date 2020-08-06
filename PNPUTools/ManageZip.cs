@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.IO;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace PNPUTools.ZIP
 {
@@ -20,11 +17,11 @@ namespace PNPUTools.ZIP
         /// <param name="pNomFichierZip">Nom du fichier zip à générer</param>
         /// <param name="pFiltre">Filtre à appliquer sur les noms de fichiers. Par défaut prend tous les fichiers.</param>
         /// <returns>Retourne 0 si ok, -1 en cas de problème.</returns>
-        static public int CompresseDossier(string pDossierAZiper, string pNomFichierZip, string pFiltre="*.*")
+        static public int CompresseDossier(string pDossierAZiper, string pNomFichierZip, string pFiltre = "*.*")
         {
             try
             {
-                string[] tsListeFichiers = Directory.GetFiles(pDossierAZiper,pFiltre);
+                string[] tsListeFichiers = Directory.GetFiles(pDossierAZiper, pFiltre);
 
                 return (CompresseListeFichiers(tsListeFichiers, pNomFichierZip));
 
@@ -45,7 +42,7 @@ namespace PNPUTools.ZIP
         {
             try
             {
-                 if (File.Exists(pNomFichierZip) == true)
+                if (File.Exists(pNomFichierZip) == true)
                     File.Delete(pNomFichierZip);
 
                 using (ZipOutputStream ZipStream = new ZipOutputStream(File.Create(pNomFichierZip)))

@@ -1,7 +1,6 @@
 ﻿using PNPUCore.Controle;
 using PNPUCore.Rapport;
 using PNPUTools;
-using PNPUTools.DataManager;
 
 using System;
 using System.Collections.Generic;
@@ -18,8 +17,8 @@ namespace PNPUCore.Process
 
         public ProcessIntegration(int wORKFLOW_ID, string cLIENT_ID, int idInstanceWF) : base(wORKFLOW_ID, cLIENT_ID, idInstanceWF)
         {
-            this.PROCESS_ID = ParamAppli.ProcessIntegration;
-            this.LibProcess = "Intégration";
+            PROCESS_ID = ParamAppli.ProcessIntegration;
+            LibProcess = "Intégration";
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)
@@ -34,11 +33,11 @@ namespace PNPUCore.Process
             List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportProcess.Name = this.LibProcess;
+            RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
-            int idInstanceWF = this.ID_INSTANCEWF;
+            int idInstanceWF = ID_INSTANCEWF;
             Dictionary<string, List<string>> dResultat = new Dictionary<string, List<string>>();
             Rapport.Source RapportSource;
             string SourceResult = ParamAppli.StatutOk;
@@ -57,7 +56,7 @@ namespace PNPUCore.Process
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + this.ToString());
+            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
             RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID), ID_INSTANCEWF);
 
 
@@ -111,7 +110,7 @@ namespace PNPUCore.Process
 
 
             //Lancement installation mdb
-              
+
             RapportSource = new Rapport.Source();
             RapportSource.Name = "Installation des packs du HF";
             RapportSource.Controle = new List<RControle>();
@@ -119,7 +118,7 @@ namespace PNPUCore.Process
 
             ramdlTool.InstallMdbRAMDL(0, ref dResultat, bRemovePack);
 
-           
+
             foreach (string sMdb in dResultat.Keys)
             {
                 RControle RapportControle = new RControle();
@@ -159,12 +158,12 @@ namespace PNPUCore.Process
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
-            Logger.Log(this, GlobalResult, "Fin du process " + this.ToString());
+            Logger.Log(this, GlobalResult, "Fin du process " + ToString());
 
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessIntegration);
-                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(this.WORKFLOW_ID), this.CLIENT_ID, idInstanceWF);
+                LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
 
         }

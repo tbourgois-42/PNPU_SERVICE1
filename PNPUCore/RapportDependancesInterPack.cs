@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
+using PNPUTools;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUTools;
 
 namespace PNPUCore
 {
@@ -40,23 +36,23 @@ namespace PNPUCore
                 sCote = "'";
                 sCote2 = "*";
             }
-            this.Id = id;
+            Id = id;
             jw.Formatting = Formatting.Indented;
             jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + ParamAppli.TranscoSatut[this.Result] + sCote);
+            jw.WriteValue(sCote + ParamAppli.TranscoSatut[Result] + sCote);
 
             jw.WritePropertyName("children");
             jw.WriteStartArray();
             foreach (RapportDependancesInterPackMDB type in listRapportDependancesInterPackMDB)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -89,13 +85,13 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
 
 
             jw.WritePropertyName("children");
@@ -103,7 +99,7 @@ namespace PNPUCore
             foreach (RapportDependancesInterPackPack type in listRapportDependancesInterPackPack)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -127,13 +123,13 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
 
 
             jw.WritePropertyName("elements");
@@ -141,7 +137,7 @@ namespace PNPUCore
             foreach (RapportDependancesInterPackMDBN2 type in listRapportDependancesInterPackMDBN2)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -165,13 +161,13 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
 
 
             jw.WritePropertyName("children");
@@ -179,7 +175,7 @@ namespace PNPUCore
             foreach (RapportDependancesInterPack2 type in listRapportDependancesInterPack2)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -188,7 +184,7 @@ namespace PNPUCore
     }
 
     class RapportDependancesInterPack2 : TemplateReport
-     {
+    {
         public List<RapportDependancesInterPackElt> listRapportDependancesInterPackElt { set; get; }
 
         internal void ToJSONRepresentation(JsonWriter jw, string id, int index)
@@ -203,13 +199,13 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + this.Name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
 
 
             jw.WritePropertyName("elements");
@@ -217,7 +213,7 @@ namespace PNPUCore
             foreach (RapportDependancesInterPackElt type in listRapportDependancesInterPackElt)
             {
                 iIndex++;
-                type.ToJSONRepresentation(jw, this.Id, iIndex);
+                type.ToJSONRepresentation(jw, Id, iIndex);
             }
 
             jw.WriteEndArray();
@@ -242,15 +238,15 @@ namespace PNPUCore
                 sCote2 = "*";
             }
 
-            this.Id = ((Int32.Parse(id) * 100) + index).ToString();
+            Id = ((Int32.Parse(id) * 100) + index).ToString();
 
             jw.WriteStartObject();
             jw.WritePropertyName("id");
-            jw.WriteValue(this.Id);
+            jw.WriteValue(Id);
             jw.WritePropertyName("objectType");
-            jw.WriteValue(sCote + this.ObjectType + sCote);
+            jw.WriteValue(sCote + ObjectType + sCote);
             jw.WritePropertyName("objectID");
-            jw.WriteValue(sCote + this.ObjectID + sCote);
+            jw.WriteValue(sCote + ObjectID + sCote);
             jw.WriteEndObject();
         }
     }

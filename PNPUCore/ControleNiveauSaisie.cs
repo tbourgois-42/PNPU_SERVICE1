@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -16,7 +13,7 @@ namespace PNPUCore.Controle
     {
         private PNPUCore.Process.ProcessControlePacks Process;
         private string ConnectionStringBaseRef;
- 
+
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -151,7 +148,7 @@ namespace PNPUCore.Controle
                                     bItemTrouve = true;
                                 }
                             }
-                            
+
                             if (bItemTrouve == false)
                             {
                                 string sDMD_COMPONENT = string.Empty;
@@ -174,7 +171,7 @@ namespace PNPUCore.Controle
                     {
                         sRequeteControle += ") ORDER BY ID_DMD_COMPONENT, ID_DMD_GROUP";
 
-                         dsDataSet = dmaManagerAccess.GetData(sRequeteControle, sPathMdb);
+                        dsDataSet = dmaManagerAccess.GetData(sRequeteControle, sPathMdb);
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
@@ -273,7 +270,7 @@ namespace PNPUCore.Controle
                 iIndexPrec = iIndex;
                 iIndex = sListeAvant.IndexOf("*", iIndexPrec + 1);
             }
-               
+
             return sResultat;
         }
 

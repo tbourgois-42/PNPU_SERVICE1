@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUTools
 {
@@ -13,7 +10,7 @@ namespace PNPUTools
         public String fileName;
         List<AnalyseResultLine> listLine;
 
-        public List<AnalyseResultLine>  ListLine()
+        public List<AnalyseResultLine> ListLine()
         {
             return listLine;
         }
@@ -31,7 +28,7 @@ namespace PNPUTools
         }
     }
 
-    public class AnalyseResultLine 
+    public class AnalyseResultLine
     {
         public String Result;
         public String AnalysedFlag;

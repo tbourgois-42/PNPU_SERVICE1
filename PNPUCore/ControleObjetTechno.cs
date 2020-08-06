@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PNPUTools;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace PNPUCore.Controle
@@ -83,14 +80,14 @@ namespace PNPUCore.Controle
                         {
                             if ((sIDPackageCourant != String.Empty) && (lListeM4O.Count + lListeNODESTRUCTURE.Count > 0))
                             {
-                                 if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
+                                if (ControleM4OModifiesPack(lListeM4O, lListeNODESTRUCTURE, sIDPackageCourant) == false)
                                     bResultat = ResultatErreur;
                                 lListeM4O.Clear();
                                 lListeNODESTRUCTURE.Clear();
                             }
                             sIDPackageCourant = drRow[0].ToString();
                         }
-                        
+
                         switch (drRow[1].ToString())
                         {
                             case "META4OBJECT & NODE STRUCTURES":
@@ -128,10 +125,10 @@ namespace PNPUCore.Controle
                         lListeM4O.Clear();
                         lListeNODESTRUCTURE.Clear();
                     }
-                    
+
                     //Process.AjouteRapport("Livraison de la table " + sCle + " dans le pack " + dListeAControler[sCle] + " sans mise à jour du catalogue des tables.");
                 }
-             }
+            }
             catch (Exception ex)
             {
                 Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
@@ -153,7 +150,7 @@ namespace PNPUCore.Controle
         {
             DataManagerAccess dmaManagerAccess = null;
             DataManagerSQLServer dmsManagerSQL = null;
-            bool bPremier = true;
+            bool bPremier;
             string sRequete = string.Empty;
             string sPathMdb = Process.MDBCourant;
             DataSet dsDataSet = null;
@@ -191,7 +188,7 @@ namespace PNPUCore.Controle
                     }
                     sRequete += ")";
 
-                    
+
                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {

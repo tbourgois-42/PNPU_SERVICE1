@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PNPUTools;
 using PNPUTools.DataManager;
+using System;
 using System.Data;
-using PNPUTools;
 
 namespace PNPUCore.Controle
 {
@@ -35,7 +31,7 @@ namespace PNPUCore.Controle
         /// <param name="drRow">Enregistrement contnenant les informations sur le contrôle</param>
         public ControlePropaProjectExplorer(PNPUCore.Process.IProcess pProcess, DataRow drRow)
         {
-             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
             ToolTipControle = drRow[6].ToString();
             ResultatErreur = drRow[5].ToString();
@@ -53,7 +49,7 @@ namespace PNPUCore.Controle
 
             DataManagerAccess dmaManagerAccess = null;
             DataSet dsDataSet = null;
- 
+
             try
             {
                 dmaManagerAccess = new DataManagerAccess();

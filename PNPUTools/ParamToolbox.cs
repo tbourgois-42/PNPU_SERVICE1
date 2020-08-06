@@ -1,11 +1,10 @@
-﻿using PNPUTools;
+﻿using HttpMultipartParser;
 using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using HttpMultipartParser;
 
 namespace PNPUTools
 {
@@ -42,11 +41,12 @@ namespace PNPUTools
                 IEnumerable<PNPU_TMP_PARAM_TOOLBOX> lstParams = dsDataSet.Tables[0].DataTableToList<PNPU_TMP_PARAM_TOOLBOX>();
 
                 return "server=" + lstParams.ElementAt(0).SERVER_BEFORE + ";uid=" + lstParams.ElementAt(0).DATABASE_BEFORE + ";pwd=" + lstParams.ElementAt(0).PASSWORD_BEFORE + ";database=" + lstParams.ElementAt(0).DATABASE_BEFORE + ";";
-            } else
+            }
+            else
             {
                 return GetConnexionStringFromInfoClient("QA1", sClientId);
             }
-            
+
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace PNPUTools
             string sDatabaseNameTranscoded = GetDatabaseNameTranscoded(sClientId, sDatabase);
 
             string sRequestSelect = "SELECT DATABASE_ID, HOST, USER_ACCOUNT, USER_PASSWORD, CLIENT_ID FROM DBS WHERE CLIENT_ID = {0} AND USER_ACCOUNT LIKE '%{1}%'";
-            
+
             string sRequest = string.Format(sRequestSelect, sClientId, sDatabaseNameTranscoded);
 
             DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringSupport);
@@ -111,7 +111,8 @@ namespace PNPUTools
             {
                 /// Database name as MT4XXXQAX was found in support database
                 return GenerateODBCConnexionString(dsDataSet.Tables[0]);
-            } else
+            }
+            else
             {
                 // Database name as MT4XXXQAX format does not exist
                 string sDatabaseNameClient = GetDatabaseNameClient(sClientId, sDatabase);
@@ -124,7 +125,8 @@ namespace PNPUTools
                 {
                     /// Database client name was found in support database
                     return GenerateODBCConnexionString(dsDataSet.Tables[0]);
-                } else
+                }
+                else
                 {
                     return "No database was found for client " + sClientId;
                 }
@@ -243,7 +245,8 @@ namespace PNPUTools
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 return "MT4" + sTrigram + sDatabase;
-            } else
+            }
+            else
             {
                 return "No transcoded database name was found for client" + sClientId;
             }

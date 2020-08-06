@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNPUCore.Process
 {
@@ -16,7 +12,7 @@ namespace PNPUCore.Process
         String cmdSequence;
         IProcess process;
         String idCCTTask;
-  
+
         public RmdCommandData(string idPackage, string idClass, string idObject, string cmdCode, string cmdSequence, IProcess process, string idCCTTask)
         {
             this.idPackage = idPackage;
