@@ -129,6 +129,12 @@
         </v-btn>
       </v-col>
     </v-container>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-form>
 </template>
 <script>
@@ -137,6 +143,10 @@ import aes from 'aes-js'
 export default {
   props: {
     client: {
+      type: Number,
+      default: null
+    },
+    workflowID: {
       type: Number,
       default: null
     }
@@ -160,7 +170,10 @@ export default {
       showPassword: false,
       rules: {
         required: (value) => !!value || 'Champ obligatoire.'
-      }
+      },
+      snackbar: '',
+      colorsnackbar: '',
+      snackbarMessage: ''
     }
   },
   computed: {
@@ -208,22 +221,32 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     async launch() {
-      console.log(this.client)
       const fd = new FormData()
       fd.append('serverBefore', this.form.serverBefore)
       fd.append('databaseBefore', this.form.databaseBefore)
-      fd.append('passwordBefore',this.form.passwordBefore)
+      fd.append('passwordBefore', this.form.passwordBefore)
       fd.append('serverAfter', this.form.serverAfter)
       fd.append('databaseAfter', this.form.databaseAfter)
-      fd.append('passwordAfter',this.form.passwordAfter)
+      fd.append('passwordAfter', this.form.passwordAfter)
       fd.append('dtPaie', this.computedDateFormatted)
       fd.append('clientID', this.client)
-      fd.append('workflowID', "30")
+      fd.append('workflowID', this.workflowID)
       try {
         await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox`, fd)
       } catch (error) {
-        console.log(error)
+        vm.showSnackbar('error', `${error} !`)
       }
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

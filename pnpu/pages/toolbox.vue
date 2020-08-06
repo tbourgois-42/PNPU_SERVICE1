@@ -68,9 +68,10 @@
                       <v-col cols="6">
                         <v-select
                           v-model="toolboxName"
-                          :items="workflows"
+                          :items="lstNameWorkflow"
                           label="Sélectionner un processus"
                           solo
+                          @change="getSelected($event)"
                         ></v-select>
                       </v-col>
                       <v-col cols="6">
@@ -85,10 +86,11 @@
                   </v-row>
                   <TlbxTNR
                     v-if="
-                      toolboxName === 'Tests de Non Régression (TNR)' &&
+                      toolboxName === 'TNR Toolbox' &&
                       tab === 1
                     "
                     :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxAnalyseData
                     v-if="toolboxName === 'Analyse de données' && tab === 1"
@@ -105,7 +107,7 @@
                     "
                   />
                   <TlbxPreControl
-                    v-if="toolboxName === 'Pré contrôle mdb' && tab === 1"
+                    v-if="toolboxName === 'Pré Controle mdb' && tab === 1"
                   />
                   <TlbxTestsProcessusCritiques
                     v-if="
@@ -133,6 +135,12 @@
           </v-col>
         </v-row>
       </v-flex>
+      <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+        {{ snackbarMessage }}
+        <v-btn dark text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-container>
   </v-layout>
 </template>
@@ -162,15 +170,6 @@ export default {
   data: () => ({
     title: 'Toolbox',
     subTitle: 'Executer un processus',
-    items: [
-      'Pré contrôle mdb',
-      'Packaging des dépendances',
-      "Test d'intégration",
-      'Tests de Non Régression (TNR)',
-      'Analyse de données',
-      'Analyse logique',
-      'Tests des processus critiques'
-    ],
     tabs: ['Résultats', 'Execution'],
     toolboxName: '',
     alert: true,
@@ -179,7 +178,12 @@ export default {
     showExecution: false,
     tab: null,
     clientID: '',
-    workflows: []
+    lstNameWorkflow: [],
+    workflows: [],
+    snackbar: '',
+    colorsnackbar: '',
+    snackbarMessage: '',
+    workflowIdSelected: ''
   }),
   computed: {
     ...mapGetters({
@@ -209,21 +213,45 @@ export default {
     },
     async getListWorkflow() {
       try {
-        const response = await axios.get(`${process.env.WEB_SERVICE_WCF}/toolbox/workflow`, {
-          params: {
-            isToolBox : true
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/toolbox/workflow`,
+          {
+            params: {
+              isToolBox: '1'
+            }
           }
-        })
+        )
         if (response.status === 200) {
-          response.data.forEach(element => {
-            this.workflows.push(element.WORKFLOW_LABEL)
+          this.workflows = response.data
+          response.data.forEach((element) => {
+            this.lstNameWorkflow.push(element.WORKFLOW_LABEL)
           })
         } else {
-          console.log(response)
+          vm.showSnackbar('error', `${reponse} !`)
         }
       } catch (error) {
-        console.log(response)
+        vm.showSnackbar('error', `${error} !`)
       }
+    },
+
+    getSelected(item) {
+      this.workflows.forEach(element => {
+        debugger
+        if (element.WORKFLOW_LABEL === item) {
+          this.workflowIdSelected = element.WORKFLOW_ID
+        }
+      })
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

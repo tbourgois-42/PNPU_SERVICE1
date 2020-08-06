@@ -7,8 +7,8 @@
         :items-per-page="6"
         class="elevation-1 cursor mb-6"
         @click:row="getReport($event)"
-        ><template v-slot:item.statut="{ item }">
-          <v-chip :color="getColor(item.statut)" dark>{{ item.statut }}</v-chip>
+        ><template v-slot:item.ID_STATUT="{ item }">
+          <v-chip :color="getColor(item.ID_STATUT)" dark>{{ item.ID_STATUT }}</v-chip>
         </template></v-data-table
       >
       <ReportLivraison
@@ -26,7 +26,8 @@
       />
       <ReportPreControle
         v-if="
-          Object.entries(JSON_TEMPLATE).length > 0 && reportName === 'Pré contrôle des .mdb'
+          Object.entries(JSON_TEMPLATE).length > 0 &&
+          reportName === 'Pré contrôle des .mdb'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -58,7 +59,8 @@
       />
       <ReportAnalyseData
         v-if="
-          Object.entries(JSON_TEMPLATE).length > 0 && reportName === 'Analyse de données'
+          Object.entries(JSON_TEMPLATE).length > 0 &&
+          reportName === 'Analyse de données'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -90,7 +92,8 @@
       />
       <ReportIntegration
         v-if="
-          Object.entries(JSON_TEMPLATE).length > 0 && reportName === 'Intégration'
+          Object.entries(JSON_TEMPLATE).length > 0 &&
+          reportName === 'Intégration'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -99,7 +102,10 @@
         :currentID_STATUT="currentID_STATUT"
       />
       <ReportTNR
-        v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportName === 'Tests de Non Régression (TNR)'"
+        v-if="
+          Object.entries(JSON_TEMPLATE).length > 0 &&
+          reportName === 'Tests de Non Régression (TNR)'
+        "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
         :idInstanceWF="idInstanceWF"
@@ -145,84 +151,27 @@ export default {
         {
           text: 'Workflow ID',
           align: 'start',
-          value: 'workflowID'
+          value: 'WORKFLOW_ID'
         },
         {
           text: 'Instance ID',
-          value: 'idInstanceWF'
+          value: 'ID_H_WORKFLOW'
         },
         {
           text: 'Nom du client',
-          value: 'clientName'
+          value: 'CLIENT_NAME'
         },
         {
           text: 'Client ID',
-          value: 'clientID'
+          value: 'CLIENT_ID'
         },
-        { text: "Nom de l'instance", value: 'instanceName' },
-        { text: 'Nom du processus', value: 'processName' },
-        { text: 'Process ID', value: 'processID' },
-        { text: "Lancé le", value: 'dtLaunchDate' },
-        { text: 'Statut', value: 'statut' },
+        { text: "Nom de l'instance", value: 'INSTANCE_NAME' },
+        { text: 'Nom du processus', value: 'PROCESS_LABEL' },
+        { text: 'Process ID', value: 'ID_PROCESS' },
+        { text: 'Lancé le', value: 'LAUNCHING_DATE' },
+        { text: 'Statut', value: 'ID_STATUT' }
       ],
-      items: [
-        {
-          workflowID: '20',
-          idInstanceWF: '27',
-          clientName: 'OCP Répartition',
-          clientID: '110',
-          instanceName: 'test',
-          processName: 'Initialisation',
-          processID: '2',
-          dtLaunchDate: '29/07/2020 13:34:19',
-          statut: 'Terminé'
-        },
-        {
-          workflowID: '30',
-          idInstanceWF: '181',
-          clientName: 'CAMAIEU',
-          clientID: '12',
-          processus: 'Tests de Non Régression (TNR)',
-          idPROCESS: '7',
-          statut: 'En erreur'
-        },
-        {
-         workflowID: '28',
-          idInstanceWF: '129',
-          clientName: 'Allez & Cie',
-          clientID: '111',
-          processus: 'Intégration',
-          idPROCESS: '5',
-          statut: 'En erreur'
-        },
-        {
-          workflowID: '29',
-          idInstanceWF: '168',
-          clientName: 'Allez & Cie',
-          clientID: '101',
-          processus: 'Tests des processus critiques',
-          idPROCESS: '6',
-          statut: 'Terminé'
-        },
-        {
-          workflowID: '28',
-          idInstanceWF: '115',
-          clientName: 'Allez & Cie',
-          clientID: '111',
-          processus: 'Pré contrôle mdb',
-          idPROCESS: '1',
-          statut: 'Terminé'
-        },
-        {
-          workflowID: '26',
-          idInstanceWF: '47',
-          clientName: 'Radio France',
-          clientID: '101',
-          processus: 'Livraison',
-          idPROCESS: '8',
-          statut: 'Terminé'
-        }
-      ],
+      items: [],
       JSON_TEMPLATE: {},
       idPROCESS: '',
       idInstanceWF: '',
@@ -243,43 +192,43 @@ export default {
       return this.formatDate(this.date)
     },
     ...mapGetters({
-        user: 'modules/auth/user',
-        profil: 'modules/auth/profil'
+      user: 'modules/auth/user',
+      profil: 'modules/auth/profil'
     })
-    },
+  },
 
   created() {
     this.initialize()
   },
 
   methods: {
-      /**
-      * Chargement des informations pour les cartes.
-      */
-      initialize() {
-        const vm = this
-        vm.loadingData = true
-        axios
-          .get(`${process.env.WEB_SERVICE_WCF}/toolbox/Dashboard/`, {
-            params: {
-              user: this.user,
-              habilitation: this.profil
-            }
-          })
-          .then(function (response) {
-            debugger
-          })
-          .catch(function (error) {
-            vm.showSnackbar(
-              'error',
-              `${error} ! Impossible de récupérer l'historique des steps`
-            )
-          })
-      },
+    /**
+     * Chargement des informations pour les cartes.
+     */
+    initialize() {
+      const vm = this
+      vm.loadingData = true
+      axios
+        .get(`${process.env.WEB_SERVICE_WCF}/toolbox/Dashboard/`, {
+          params: {
+            user: this.user,
+            habilitation: this.profil
+          }
+        })
+        .then(function (response) {
+          vm.items = response.data.GetInfoLaunchToolBoxResult
+        })
+        .catch(function (error) {
+          vm.showSnackbar(
+            'error',
+            `${error} ! Impossible de récupérer l'historique des steps`
+          )
+        })
+    },
     getColor(statut) {
-      if (statut === 'En cours') return 'grey lighten-1'
-      else if (statut === 'En erreur') return 'error'
-      else if (statut === 'Manuel') return 'warning'
+      if (statut === 'IN PROGRESS') return 'grey lighten-1'
+      else if (statut === 'ERROR') return 'error'
+      else if (statut === 'WARNING') return 'warning'
       else return 'success'
     },
 
@@ -291,13 +240,13 @@ export default {
       try {
         const response = await axios.get(
           `${process.env.WEB_SERVICE_WCF}/report/` +
-            row.workflowID +
+            row.WORKFLOW_ID +
             '/' +
-            row.idInstanceWF +
+            row.ID_H_WORKFLOW +
             '/' +
-            row.processID +
+            row.ID_PROCESS +
             '/' +
-            row.clientID
+            row.CLIENT_ID
         )
         if (response.status === 200) {
           if (response.data.GetReportResult.length > 0) {

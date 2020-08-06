@@ -297,7 +297,7 @@ namespace WcfService1
         [WebGet(
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "toolbox/workflow/?toolbox={isToolBox}")]
+            UriTemplate = "toolbox/workflow/?isToolBox={isToolBox}")]
         IEnumerable<PNPU_WORKFLOW> GetToolboxWorkflow(int isToolBox);
 
         [OperationContract]

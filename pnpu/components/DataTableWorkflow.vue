@@ -44,7 +44,10 @@
                           required
                           @keypress="pressEnter($event)"
                         ></v-text-field>
-                        <v-checkbox v-model="editedItem.IS_TOOLBOX" label="Toolbox"></v-checkbox>
+                        <v-checkbox
+                          v-model="editedItem.IS_TOOLBOX"
+                          label="Toolbox"
+                        ></v-checkbox>
                       </v-form>
                     </v-col>
                   </v-row>
@@ -104,7 +107,10 @@
         <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
       <template v-slot:item.IS_TOOLBOX="{ item }">
-        <v-simple-checkbox v-model="item.IS_TOOLBOX" disabled></v-simple-checkbox>
+        <v-simple-checkbox
+          v-model="item.IS_TOOLBOX"
+          disabled
+        ></v-simple-checkbox>
       </template>
     </v-data-table>
     <div class="text-center pt-2">
@@ -167,7 +173,7 @@ export default {
       },
       { text: 'Identifiant', value: 'WORKFLOW_ID', sortable: true },
       { text: 'Nombre de processus', value: 'NB_PROCESS', sortable: false },
-      { text: 'Toolbox', value: 'IS_TOOLBOX', sortable: true},
+      { text: 'Toolbox', value: 'IS_TOOLBOX', sortable: true },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     headersProcessus: [
@@ -237,7 +243,11 @@ export default {
     async initialize() {
       const vm = this
       try {
-        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/workflow`)
+        const res = await axios.get(`${process.env.WEB_SERVICE_WCF}/workflow`, {
+          params: {
+            isToolBox: '-1'
+          }
+        })
         this.workflows = res.data.GetAllWorkFLowResult
         this.loadingData = false
       } catch (error) {
@@ -261,7 +271,7 @@ export default {
               item.WORKFLOW_ID +
               `/Delete`
           )
-          .then(function(response) {
+          .then(function (response) {
             if (response.status !== 200) {
               vm.showSnackbar(
                 'error',
@@ -275,7 +285,7 @@ export default {
               vm.workflows.splice(index, 1)
             }
           })
-          .catch(function(error) {
+          .catch(function (error) {
             vm.showSnackbar('error', `${error} !`)
           })
       }
@@ -302,26 +312,25 @@ export default {
               WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL
             }
           )
-          .then(function(response) {
+          .then(function (response) {
             Object.assign(vm.workflows[index], item)
             vm.showSnackbar(
               'success',
               'Modification du workflow effectuée avec succès !'
             )
           })
-          .catch(function(error) {
+          .catch(function (error) {
             vm.showSnackbar('error', `${error} !`)
           })
       } else if (this.editedItem.WORKFLOW_LABEL !== '') {
         const vm = this
         debugger
         axios
-          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, 
-          {
+          .post(`${process.env.WEB_SERVICE_WCF}/Workflow/CreateWorkflow/`, {
             WORKFLOW_LABEL: this.editedItem.WORKFLOW_LABEL,
             IS_TOOLBOX: this.editedItem.IS_TOOLBOX
           })
-          .then(function(response) {
+          .then(function (response) {
             if (response.status !== 200) {
               vm.showSnackbar(
                 'error',
@@ -339,7 +348,7 @@ export default {
               )
             }
           })
-          .catch(function(error) {
+          .catch(function (error) {
             vm.showSnackbar('error', `${error} !`)
           })
       }
@@ -381,10 +390,10 @@ export default {
                 `${process.env.WEB_SERVICE_WCF}/Workflow/` + item.WORKFLOW_ID,
                 oneProcessus
               )
-              .then(function(response) {
+              .then(function (response) {
                 item.NB_PROCESS = vm.selectedProcessus.length
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 vm.showSnackbar('error', `${error} !`)
               })
             item.processus.push(element)
