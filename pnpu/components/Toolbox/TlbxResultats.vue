@@ -8,7 +8,9 @@
         class="elevation-1 cursor mb-6"
         @click:row="getReport($event)"
         ><template v-slot:item.ID_STATUT="{ item }">
-          <v-chip :color="getColor(item.ID_STATUT)" dark>{{ item.ID_STATUT }}</v-chip>
+          <v-chip :color="getColor(item.ID_STATUT)" dark>{{
+            item.ID_STATUT
+          }}</v-chip>
         </template></v-data-table
       >
       <ReportLivraison
@@ -49,7 +51,7 @@
       <ReportPackagingDependances
         v-if="
           Object.entries(JSON_TEMPLATE).length > 0 &&
-          reportName === 'Packaging des dépendances'
+          reportName === 'Gestion des dépendances'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -60,7 +62,7 @@
       <ReportAnalyseData
         v-if="
           Object.entries(JSON_TEMPLATE).length > 0 &&
-          reportName === 'Analyse de données'
+          reportName === 'Analyse d\'impact sur les données'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -71,7 +73,7 @@
       <ReportAnalyseLogique
         v-if="
           Object.entries(JSON_TEMPLATE).length > 0 &&
-          reportName === 'Analyse logique'
+          reportName === 'Analyse d\'impact logique'
         "
         :idPROCESS="currentID_PROCESS"
         :reportJsonData="JSON_TEMPLATE"
@@ -188,9 +190,9 @@ export default {
     }
   },
   computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date)
-    },
+    /**
+     * Get habilitation from vuex
+     */
     ...mapGetters({
       user: 'modules/auth/user',
       profil: 'modules/auth/profil'
@@ -203,28 +205,31 @@ export default {
 
   methods: {
     /**
-     * Chargement des informations pour les cartes.
+     * Load informations for data table
      */
-    initialize() {
-      const vm = this
-      vm.loadingData = true
-      axios
-        .get(`${process.env.WEB_SERVICE_WCF}/toolbox/Dashboard/`, {
-          params: {
-            user: this.user,
-            habilitation: this.profil
+    async initialize() {
+      try {
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/toolbox/Dashboard/`,
+          {
+            params: {
+              user: this.user,
+              habilitation: this.profil
+            }
           }
-        })
-        .then(function (response) {
-          vm.items = response.data.GetInfoLaunchToolBoxResult
-        })
-        .catch(function (error) {
-          vm.showSnackbar(
-            'error',
-            `${error} ! Impossible de récupérer l'historique des steps`
-          )
-        })
+        )
+        if (response.status === 200) {
+          this.items = response.data.GetInfoLaunchToolBoxResult
+        }
+      } catch (error) {
+        this.showSnackbar('error', `${error} !`)
+      }
     },
+
+    /**
+     * Get color according to workflow statut
+     * @param {string} - workflow statut
+     */
     getColor(statut) {
       if (statut === 'IN PROGRESS') return 'grey lighten-1'
       else if (statut === 'ERROR') return 'error'
@@ -258,7 +263,7 @@ export default {
             this.workflowID = row.workflowID
             this.currentID_PROCESS = row.idPROCESS
             this.currentID_STATUT = this.JSON_TEMPLATE[0].result
-            if (this.result === '') {
+            if (this.reportName === 'Livraison') {
               this.GetNbAvailablePack()
               this.clientID = row.clientID
               this.clientName = row.clientName

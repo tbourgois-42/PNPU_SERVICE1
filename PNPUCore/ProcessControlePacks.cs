@@ -56,6 +56,8 @@ namespace PNPUCore.Process
             //On génère l'historic en In_PROGRESS
             GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, idInstanceWF, RapportProcess.Debut);
 
+            ParamToolbox paramToolbox = new ParamToolbox();
+
             PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
             gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
             foreach (String sFichier in tMDB)
@@ -170,6 +172,9 @@ namespace PNPUCore.Process
 
             //Si le contrôle est ok on update les lignes d'historique pour signifier que le workflow est lancé
             GenerateHistoricGlobal(listClientId, RapportProcess.Fin, GlobalResult, idInstanceWF, RapportProcess.Debut);
+
+            // Suppresion des paramètres toolbox temporaires
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             // TEST ajout MDB
             //gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { "D:\\PNPU\\Tests_RAMDL\\test.mdb" }, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, CLIENT_ID,1);

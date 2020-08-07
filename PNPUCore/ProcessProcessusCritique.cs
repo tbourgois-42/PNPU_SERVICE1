@@ -57,7 +57,7 @@ namespace PNPUCore.Process
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
-
+            ParamToolbox paramToolbox = new ParamToolbox();
 
             // MHUM POUR TESTS 
             ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
@@ -223,6 +223,9 @@ namespace PNPUCore.Process
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
+
+            // Suppresion des paramètres toolbox temporaires
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             if (GlobalResult == ParamAppli.StatutOk)
             {

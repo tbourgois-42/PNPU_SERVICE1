@@ -19,9 +19,9 @@ namespace PNPUTools
         private string ServerAfter { get; set; }
         private string DatabaseAfter { get; set; }
         private string PasswordAfter { get; set; }
-        private DateTime DtPaie { get; set; }
-        private int ClientId { get; set; }
-        private int WorkflowId { get; set; }
+        private string DtPaie { get; set; }
+        private string ClientId { get; set; }
+        private string WorkflowId { get; set; }
 
         /// <summary>
         /// Get connexion string for QA1 database.
@@ -174,26 +174,26 @@ namespace PNPUTools
         /// <param name="idInstanceWF"></param>
         public string SaveParamsToolbox(MultipartFormDataParser parser, int idInstanceWF)
         {
-            ServerBefore = parser.GetParameterValue("serverBefore");
-            DatabaseBefore = parser.GetParameterValue("databaseBefore");
-            PasswordBefore = parser.GetParameterValue("passwordBefore");
-            ServerAfter = parser.GetParameterValue("serverAfter");
-            DatabaseAfter = parser.GetParameterValue("databaseAfter");
-            PasswordAfter = parser.GetParameterValue("passwordAfter");
-            DtPaie = DateTime.Parse(parser.GetParameterValue("dtPaie"));
-            ClientId = int.Parse(parser.GetParameterValue("clientID"));
-            WorkflowId = int.Parse(parser.GetParameterValue("workflowID"));
+            ServerBefore = string.IsNullOrEmpty(parser.GetParameterValue("serverBefore")) ? "" : parser.GetParameterValue("serverBefore");
+            DatabaseBefore = string.IsNullOrEmpty(parser.GetParameterValue("databaseBefore")) ? "" : parser.GetParameterValue("databaseBefore");
+            PasswordBefore = string.IsNullOrEmpty(parser.GetParameterValue("passwordBefore")) ? "" : parser.GetParameterValue("passwordBefore");
+            ServerAfter = string.IsNullOrEmpty(parser.GetParameterValue("serverAfter")) ? "" : parser.GetParameterValue("serverAfter");
+            DatabaseAfter = string.IsNullOrEmpty(parser.GetParameterValue("databaseAfter")) ? "" : parser.GetParameterValue("databaseAfter");
+            PasswordAfter = string.IsNullOrEmpty(parser.GetParameterValue("passwordAfter")) ? "" : parser.GetParameterValue("passwordAfter");
+            DtPaie = string.IsNullOrEmpty(parser.GetParameterValue("dtPaie")) ? "" : parser.GetParameterValue("dtPaie");
+            ClientId = string.IsNullOrEmpty(parser.GetParameterValue("clientID")) ? "" : parser.GetParameterValue("clientID");
+            WorkflowId = string.IsNullOrEmpty(parser.GetParameterValue("workflowID")) ? "" : parser.GetParameterValue("workflowID");
 
             string[] sRequest = { "INSERT INTO PNPU_TMP_PARAM_TOOLBOX (SERVER_BEFORE, DATABASE_BEFORE, PASSWORD_BEFORE, SERVER_AFTER, DATABASE_AFTER, PASSWORD_AFTER, DT_PAIE, CLIENT_ID, WORKFLOW_ID, ID_H_WORKFLOW ) VALUES (@SERVER_BEFORE, @DATABASE_BEFORE, @PASSWORD_BEFORE, @SERVER_AFTER, @DATABASE_AFTER, @PASSWORD_AFTER, @DT_PAIE, @CLIENT_ID, @WORKFLOW_ID, @ID_H_WORKFLOW)" };
-            string[] parameters = new string[] { "@SERVER_BEFORE", ServerBefore, "@DATABASE_BEFORE", DatabaseBefore, "@PASSWORD_BEFORE", PasswordBefore, "@SERVER_AFTER", ServerAfter, "@DATABASE_AFTER", DatabaseAfter, "@PASSWORD_AFTER", PasswordAfter, "@DT_PAIE", DtPaie.ToString("MM/dd/yyyy HH:mm:ss"), "@CLIENT_ID", ClientId.ToString(), "@WORKFLOW_ID", WorkflowId.ToString(), "@ID_H_WORKFLOW", idInstanceWF.ToString() };
+            string[] parameters = new string[] { "@SERVER_BEFORE", ServerBefore, "@DATABASE_BEFORE", DatabaseBefore, "@PASSWORD_BEFORE", PasswordBefore, "@SERVER_AFTER", ServerAfter, "@DATABASE_AFTER", DatabaseAfter, "@PASSWORD_AFTER", PasswordAfter, "@DT_PAIE", DtPaie, "@CLIENT_ID", ClientId, "@WORKFLOW_ID", WorkflowId, "@ID_H_WORKFLOW", idInstanceWF.ToString() };
 
             try
             {
                 return DataManagerSQLServer.ExecuteSqlTransaction(sRequest, "PNPU_TMP_PARAM_TOOLBOX", parameters);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return ex.Message;
+                throw new Exception();
             }
         }
 

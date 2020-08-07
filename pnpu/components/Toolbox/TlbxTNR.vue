@@ -2,7 +2,7 @@
   <v-form ref="form" @submit.prevent="launch">
     <v-container class="fill-height" fluid>
       <v-row>
-        <v-col cols="12" sm="6" md="5">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -37,7 +37,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="5">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -72,7 +72,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Date de paiement<v-icon>mdi-calendar</v-icon></v-card-title
@@ -80,7 +80,7 @@
             <v-divider></v-divider>
             <v-card-text>
               <v-menu
-                v-model="menu2"
+                v-model="menu"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
@@ -103,7 +103,7 @@
                   color="primary"
                   v-model="date"
                   no-title
-                  @input="menu2 = false"
+                  @input="menu = false"
                 ></v-date-picker>
               </v-menu>
             </v-card-text>
@@ -157,8 +157,7 @@ export default {
       loading: false,
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
-      menu1: false,
-      menu2: false,
+      menu: false,
       form: {
         serverBefore: null,
         serverAfter: null,
@@ -208,18 +207,31 @@ export default {
     }
   },
   methods: {
+    /**
+     * Format date
+     * @param {string} - date
+     */
     formatDate(date) {
       if (!date) return null
 
       const [year, month, day] = date.split('-')
       return `${year}/${month}/${day}`
     },
+
+    /**
+     * Parse date
+     * @param {string} - date
+     */
     parseDate(date) {
       if (!date) return null
 
       const [month, day, year] = date.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
+
+    /**
+     * Launch toolbox process
+     */
     async launch() {
       const fd = new FormData()
       fd.append('serverBefore', this.form.serverBefore)

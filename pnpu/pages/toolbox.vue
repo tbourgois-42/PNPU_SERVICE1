@@ -85,49 +85,42 @@
                     </v-col>
                   </v-row>
                   <TlbxTNR
-                    v-if="
-                      toolboxName === 'TNR Toolbox' &&
-                      tab === 1
-                    "
+                    v-if="toolboxName === 'TNR Toolbox' && tab === 1"
                     :client="clientID"
                     :workflowID="workflowIdSelected"
                   />
                   <TlbxAnalyseData
                     v-if="toolboxName === 'Analyse de données' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxAnalyseLogique
                     v-if="toolboxName === 'Analyse logique' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxIntegration
                     v-if="toolboxName === 'Test d\'intégration' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxPackagingDependances
-                    v-if="
-                      toolboxName === 'Packaging des dépendances' && tab === 1
-                    "
+                    v-if="toolboxName === 'Packaging des dépendances' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxPreControl
                     v-if="toolboxName === 'Pré Controle mdb' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxTestsProcessusCritiques
                     v-if="
                       toolboxName === 'Tests des processus critiques' &&
-                      tab === 1
-                    "
+                      tab === 1"
+                      :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
-                  <v-alert
-                    v-if="toolboxName === ''"
-                    icon="mdi-information-outline"
-                    text
-                    type="warning"
-                    class="mx-4 mb-0"
-                    border="left"
-                    dark
-                    dismissible
-                  >
-                    Il n'est pas encore possible d'éxecuter ce processus en mode
-                    Toolbox
-                  </v-alert>
                   <TlbxResultats v-if="tab === 0" />
                 </v-tab-item>
               </v-tabs-items>
@@ -167,6 +160,7 @@ export default {
     TlbxTestsProcessusCritiques,
     TlbxResultats
   },
+
   data: () => ({
     title: 'Toolbox',
     subTitle: 'Executer un processus',
@@ -185,17 +179,25 @@ export default {
     snackbarMessage: '',
     workflowIdSelected: ''
   }),
+
   computed: {
+    /**
+     * Get clients from vuex
+     */
     ...mapGetters({
       clients: 'modules/auth/clients'
     })
   },
+
   created() {
-    this.toolboxName = 'Tests de Non Régressions (TNR)'
     this.createLstClient()
     this.getListWorkflow()
   },
+
   methods: {
+    /**
+     * Create client list
+     */
     createLstClient() {
       this.clients.forEach((client) => {
         this.lstClient.push({
@@ -204,6 +206,11 @@ export default {
         })
       })
     },
+
+    /**
+     * Show selected tabs
+     * @param {object} - event
+     */
     getTabs(e) {
       if (e === 0) {
         this.showResultats = !this.showResultats
@@ -211,6 +218,10 @@ export default {
         this.showExecution = !showExecution
       }
     },
+
+    /**
+     * Get list of toolbox workflow
+     */
     async getListWorkflow() {
       try {
         const response = await axios.get(
@@ -234,9 +245,12 @@ export default {
       }
     },
 
+    /**
+     * Get item selected in data table in order to get the workflowID
+     * @param {} - item selected
+     */
     getSelected(item) {
-      this.workflows.forEach(element => {
-        debugger
+      this.workflows.forEach((element) => {
         if (element.WORKFLOW_LABEL === item) {
           this.workflowIdSelected = element.WORKFLOW_ID
         }

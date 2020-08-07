@@ -389,7 +389,7 @@ namespace WcfService1
             var parser = MultipartFormDataParser.Parse(stream);
             string clientId = parser.GetParameterValue("clientID");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
-            int idInstanceWF;
+            
             string result = "";
             string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
             bool hadFile = parser.Files.Count > 0;
@@ -431,7 +431,7 @@ namespace WcfService1
                     INSTANCE_NAME = "Toolbox Workflow #" + workflowId
                 };
 
-                idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+                int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
                 if (hadFile)
                 {
@@ -440,16 +440,24 @@ namespace WcfService1
                     gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
                 }
 
-                ParamToolbox paramToolbox = new ParamToolbox();
-                result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
-
-                if (result != "Requête traité avec succès")
+                try
                 {
-                    //TODO Suppresion historic workflow
-                    //TODO LOG
-                    throw new WebFaultException(HttpStatusCode.BadRequest);
+                    ParamToolbox paramToolbox = new ParamToolbox();
+                    result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
+
+                    if (result != "Requête traité avec succès")
+                    {
+                        //TODO Suppresion historic workflow
+                        //TODO LOG
+                        throw new WebFaultException(HttpStatusCode.BadRequest);
+                    }
+
+                    LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
                 }
-                LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             return result;
