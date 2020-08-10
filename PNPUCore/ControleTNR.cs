@@ -275,7 +275,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 sValue = 0;
             }
 
@@ -348,7 +348,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
             }
             return dsDataSet;
         }
@@ -390,7 +390,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 result = null;
             }
 

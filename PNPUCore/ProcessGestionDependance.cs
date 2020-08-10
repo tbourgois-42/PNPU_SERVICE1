@@ -32,7 +32,7 @@ namespace PNPUCore.Process
             List<IControle> listControl = new List<IControle>();//ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
+            LoggerHelper.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
 
             GetListControle(ref listControl);
@@ -60,9 +60,9 @@ namespace PNPUCore.Process
                 RapportControle.Tooltip = controle.GetTooltipControle();
                 RapportControle.Message = new List<string>();
                 RapportControleCourant = RapportControle;
-                Logger.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
+                LoggerHelper.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
                 string statutControle = controle.MakeControl();
-                Logger.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
+                LoggerHelper.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
 
                 //ERROR > WARNING > OK
                 if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
@@ -83,7 +83,7 @@ namespace PNPUCore.Process
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
-            Logger.Log(this, GlobalResult, "Fin du process " + ToString());
+            LoggerHelper.Log(this, GlobalResult, "Fin du process " + ToString());
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);

@@ -118,7 +118,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 

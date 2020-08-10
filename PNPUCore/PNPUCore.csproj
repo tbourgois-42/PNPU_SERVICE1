@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="LoggerHelper.cs" />
     <Compile Include="ControleLivraisonTablecomplete.cs" />
     <Compile Include="ControleDataGeneric.cs" />
     <Compile Include="ControleDataTablesDSN.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="ControleDependanceN1.cs" />
     <Compile Include="ControleLivBulElec.cs" />
     <Compile Include="ControleTNR.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="ControleIDSynonymExistant.cs" />
     <Compile Include="ControleItemsTotaux.cs" />
     <Compile Include="ControleDependancesMDB.cs" />

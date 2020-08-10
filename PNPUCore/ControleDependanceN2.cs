@@ -195,7 +195,7 @@ namespace PNPUCore.Controle
                         else
                         {
                             Process.AjouteRapport("Erreur lors de l'ajout du fichier MDB en base de données.");
-                            Logger.Log(Process, this, ParamAppli.StatutError, "Erreur lors de l'ajout du fichier MDB en base de données.");
+                            LoggerHelper.Log(Process, this, ParamAppli.StatutError, "Erreur lors de l'ajout du fichier MDB en base de données.");
                             bResultat = ParamAppli.StatutError;
                         }
                     }
@@ -203,7 +203,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = ParamAppli.StatutError;
             }
 
@@ -412,7 +412,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception Ex)
             {
-                Logger.Log(Process, this, ParamAppli.StatutError, Ex.Message);
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, Ex.Message);
                 bResultat = false;
             }
             return bResultat;

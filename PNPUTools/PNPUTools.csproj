@@ -69,6 +69,7 @@
     <Compile Include="InfoClient.cs" />
     <Compile Include="LauncherTool.cs" />
     <Compile Include="GereMDBDansBDD.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MultipartParser.cs" />
     <Compile Include="ParamAppli.cs" />
     <Compile Include="ParamToolbox.cs" />

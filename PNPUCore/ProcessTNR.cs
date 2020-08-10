@@ -32,7 +32,7 @@ namespace PNPUCore.Process
             string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
             string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
 
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
+            LoggerHelper.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
 
@@ -85,7 +85,7 @@ namespace PNPUCore.Process
             foreach (DataRow drRow in ItemsNoeudReadTNR.Tables[0].Rows)
             {
                 Console.WriteLine("Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
-                Logger.Log(this, ParamAppli.StatutInfo, "Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
+                LoggerHelper.Log(this, ParamAppli.StatutInfo, "Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
 
                 index = CTNR.FindIndexOfBaseRef(drRow[1].ToString(), ItemsNoeudReadREF, ItemsNoeudReadTNR);
 

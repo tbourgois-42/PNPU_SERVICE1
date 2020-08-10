@@ -192,7 +192,7 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
-                //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+                //LoggerHelper.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
                 //TODO LOG
                 Console.WriteLine(ex.Message);
             }
@@ -313,7 +313,7 @@ namespace PNPUTools
                 for (int i = 0; i < listMDB.Count; i++)
                 {
                     sCheminMDB = listMDB[i];
-                    //Logger.Log(this, "INFO", "Analyse RAMDL du fichier " + sCheminMDB);
+                    //LoggerHelper.Log(this, "INFO", "Analyse RAMDL du fichier " + sCheminMDB);
 
                     MiseAJourMDB(sCheminMDB);
 
@@ -347,7 +347,7 @@ namespace PNPUTools
                     int iIndexErreur = sContenuFichierLog.IndexOf("[Error");
                     if ((iIndexErreur > -1) && (sContenuFichierLog.IndexOf("[Error 429] ActiveX component can't create object") != iIndexErreur))
                     {
-                        //Logger.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
+                        //LoggerHelper.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
                     }
                     else
                     {
@@ -357,7 +357,7 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
-                //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+                //LoggerHelper.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
                 //TODO LOG
                 Console.WriteLine(ex.Message);
                 return new List<String>();
@@ -464,12 +464,12 @@ namespace PNPUTools
                 int iIndexErreur = sContenuFichierLog.IndexOf("[Error");
                 if ((iIndexErreur > -1) && (sContenuFichierLog.IndexOf("[Error 429] ActiveX component can't create object") != iIndexErreur))
                 {
-                    //Logger.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
+                    //LoggerHelper.Log(this, "ERROR", "Erreur lors de l'analyse du mdb " + Path.GetFileNameWithoutExtension(sCheminMDB) + ". Voir le fichier de log " + sDossierFichiersRAMDL + "\\RAMDL_" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
                 }
             }
             catch (Exception ex)
             {
-                //Logger.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
+                //LoggerHelper.Log(this, "ERROR", "AnalyseUnMdbRAMDL - Erreur d'exécution (exception) : " + ex.Message);
                 //TODO LOG
                 Console.WriteLine(ex.Message);
                 return;
@@ -526,7 +526,7 @@ namespace PNPUTools
             catch (Exception ex)
             {
                 //lbErreurs.Items.Add("LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
-                //Logger.Log(this, "ERROR", "LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
+                //LoggerHelper.Log(this, "ERROR", "LitValeurParam - Erreur d'exécution (exception) : " + ex.Message);
                 //TODO LOG
                 Console.WriteLine(ex.Message);
             }

@@ -30,7 +30,7 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
+            LoggerHelper.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
             int idInstanceWF = ID_INSTANCEWF;
@@ -127,7 +127,7 @@ namespace PNPUCore.Process
             catch (Exception ex)
             {
                 RapportLivraison.Result = ParamAppli.TranscoSatut["ERROR"];
-                Logger.Log(this, ParamAppli.StatutError, "Une erreur s'est produite lors de la récupération des éléments à localiser depuis la table PNPU_H_LOCALISATION, " + ex.ToString());
+                LoggerHelper.Log(this, ParamAppli.StatutError, "Une erreur s'est produite lors de la récupération des éléments à localiser depuis la table PNPU_H_LOCALISATION, " + ex.ToString());
             }
 
             return result;
