@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
 {
     class ControleTNR : PControle, IControle
     {
-        private PNPUCore.Process.ProcessTNR Process;
+        readonly private PNPUCore.Process.ProcessTNR Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
 
             foreach (DataRow drRow in ItemsNoeudReadTNR.Tables[0].Rows)
             {
-                if (lstCumulativeTable.ContainsValue(drRow[2].ToString()) == false && drRow[2].ToString() != "M4SCO_VE_AC_HR_PERIOD")
+                if (!lstCumulativeTable.ContainsValue(drRow[2].ToString()) && drRow[2].ToString() != "M4SCO_VE_AC_HR_PERIOD")
                 {
                     lstCumulativeTable.Add(SetAlias(index), drRow[2].ToString());
                 }
@@ -93,7 +93,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the classification of the item</returns>
         internal Classification MoveToClassification(Classification rapportClassification, Dictionary<string, Classification> lstClassification, DataRow drRow)
         {
-            return rapportClassification = lstClassification[drRow[6].ToString()];
+            return  lstClassification[drRow[6].ToString()];
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace PNPUCore.Controle
         /// <param name="sDate"></param>
         internal void CheckDifference(Ecarts RapportEcarts, DataSet itemValuesBaseQA1, DataSet itemValuesBaseQA2, DataRow drRow, DateTime sDate)
         {
-            if (isEmptyDataSet(itemValuesBaseQA1) == false && isEmptyDataSet(itemValuesBaseQA2) == false)
+            if (!isEmptyDataSet(itemValuesBaseQA1) && !isEmptyDataSet(itemValuesBaseQA2))
             {
                 int indexTNR = 0;
 
@@ -168,7 +168,7 @@ namespace PNPUCore.Controle
         /// <returns>Return true if DataSet is Empty, false if not.</returns>
         private bool isEmptyDataSet(DataSet itemValues)
         {
-            return (itemValues == null) ? true : false;
+            return itemValues == null;
         }
 
         /// <summary>  

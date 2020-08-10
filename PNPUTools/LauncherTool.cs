@@ -24,8 +24,8 @@ namespace PNPUTools
 
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding streamEncoding;
+        readonly private Stream ioStream;
+        readonly private UnicodeEncoding streamEncoding;
 
         public StreamString(Stream ioStream)
         {

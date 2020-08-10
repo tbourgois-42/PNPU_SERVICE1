@@ -99,9 +99,9 @@ namespace PNPUTools
         public const string ConnectionStringAccess = "Driver={Microsoft Access Driver (*.mdb)};Dbq={0};Uid=Admin;Pwd=;";
 
 
-        public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact";
-        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";//"C:\\meta4\\M4DevClient\\Bin\\RamDL.exe";
-        public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation";
+        public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact"; //TODO à mettre en table
+        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation"; //TODO à mettre en table
 
         public const string StatutOk = "CORRECT";
         public const string StatutCompleted = "COMPLETED";
@@ -214,7 +214,7 @@ namespace PNPUTools
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                    ConnectionStringBaseAppli = "server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 

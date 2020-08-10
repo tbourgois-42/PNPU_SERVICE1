@@ -2,7 +2,7 @@
   <v-form ref="form" @submit.prevent="launch">
     <v-container class="fill-height" fluid>
       <v-row>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -37,42 +37,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
-          <v-card>
-            <v-card-title class="d-flex justify-space-between"
-              >Base de données
-              <v-chip text-color="white" color="Pantone171C" label
-                ><v-icon left>mdi-label</v-icon>
-                après
-              </v-chip></v-card-title
-            >
-            <v-divider></v-divider>
-            <v-card-text>
-              <v-col cols="12" sm="12" md="12">
-                <v-text-field
-                  v-model="form.serverAfter"
-                  label="Serveur"
-                  :rules="[rules.required]"
-                ></v-text-field>
-                <v-text-field
-                  v-model="form.databaseAfter"
-                  label="Database"
-                  :rules="[rules.required]"
-                ></v-text-field>
-                <v-text-field
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  v-model="form.passwordAfter"
-                  :rules="[rules.required]"
-                  :type="showPassword ? 'text' : 'password'"
-                  label="Mot de passe"
-                  name="password"
-                  @click:append="showPassword = !showPassword"
-                ></v-text-field>
-              </v-col>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Packages<v-icon>mdi-microsoft-access</v-icon></v-card-title
@@ -94,6 +59,7 @@
                     :show-size="1000"
                     accept=".zip, .7zip, .rar"
                     required
+                    @change="selectFile($event)"
                   >
                     <template v-slot:selection="{ index, text }">
                       <v-chip v-if="index < 2" color="primary" dark label small>
@@ -131,47 +97,55 @@
         </v-btn>
       </v-col>
     </v-container>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-form>
 </template>
 <script>
 import axios from 'axios'
-import aes from 'aes-js'
 export default {
+  props: {
+    client: {
+      type: Number,
+      default: null
+    },
+    workflowID: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
       loader: null,
       loading: false,
-      date: new Date().toISOString().substr(0, 10),
-      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
-      menu1: false,
-      menu2: false,
       form: {
         serverBefore: null,
-        serverAfter: null,
         databaseBefore: null,
-        databaseAfter: null,
-        passwordBefore: null,
-        passwordAfter: null
+        passwordBefore: null
       },
       showPassword: false,
       rules: {
         required: (value) => !!value || 'Champ obligatoire.'
-      }
+      },
+      selectedFile: null,
+      files: [],
+      snackbar: '',
+      colorsnackbar: '',
+      snackbarMessage: ''
     }
   },
   computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date)
-    },
     formIsValid() {
       return (
         this.form.serverBefore &&
-        this.form.serverAfter &&
         this.form.databaseBefore &&
-        this.form.databaseAfter &&
         this.form.passwordBefore &&
-        this.form.passwordAfter &&
-        this.computedDateFormatted
+        this.files.length > 0 &&
+        this.client !== ''
       )
     }
   },
@@ -184,44 +158,46 @@ export default {
       setTimeout(() => (this[l] = false), 3000)
 
       this.loader = null
-    },
-    date(val) {
-      this.dateFormatted = this.formatDate(this.date)
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null
 
-      const [year, month, day] = date.split('-')
-      return `${month}/${day}/${year}`
+    selectFile(event) {
+      if (event.length > 0) {
+        event.forEach((element) => {
+          this.selectedFile = element
+        })
+        if (this.selectedFile.type !== 'application/x-zip-compressed') {
+          this.files = []
+          this.showSnackbar('error', 'Veuillez sélectionner un fichier .zip')
+        }
+      }
     },
-    parseDate(date) {
-      if (!date) return null
 
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
     async launch() {
       const fd = new FormData()
       fd.append('serverBefore', this.form.serverBefore)
       fd.append('databaseBefore', this.form.databaseBefore)
-      fd.append(
-        'passwordBefore',
-        aes.utils.utf8.toBytes(this.form.passwordBefore)
-      )
-      fd.append('serverAfter', this.form.serverAfter)
-      fd.append('databaseAfter', this.form.databaseAfter)
-      fd.append(
-        'passwordAfter',
-        aes.utils.utf8.toBytes(this.form.passwordAfter)
-      )
-      fd.append('dtPaie', this.computedDateFormatted)
+      fd.append('passwordBefore',this.form.passwordBefore)
+      fd.append('mdbFile', this.selectedFile, this.selectedFile.name)
+      fd.append('clientID', this.client)
+      fd.append('workflowID', this.workflowID)
       try {
-        await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox/TNR`, fd)
+        await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox`, fd)
       } catch (error) {
-        console.log(error)
+        this.showSnackbar('error', `${error} !`)
       }
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

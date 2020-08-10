@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleDependancesMDB : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
         private RapportDependancesInterPack rapDependancesInterPack;
 
 
@@ -55,8 +55,6 @@ namespace PNPUCore.Controle
 
             DataSet dsDataSet;
 
-            string sNomMdb1;
-
             DataManagerAccess dmaManagerAccess1;
             DataManagerAccess dmaManagerAccess2;
 
@@ -67,7 +65,6 @@ namespace PNPUCore.Controle
 
                 foreach (string sPathMdb1 in Process.listMDB)
                 {
-                    sNomMdb1 = Path.GetFileName(sPathMdb1);
 
                     // Recherche des mêmes éléments livrés dans 2 packs d'un mdb
                     sRequete = "select A.ID_PACKAGE, A.ID_CLASS, A.ID_OBJECT, B.ID_PACKAGE FROM M4RDL_PACK_CMDS A, M4RDL_PACK_CMDS B WHERE (A.ID_PACKAGE LIKE '%_L' OR A.ID_PACKAGE LIKE '%_B') AND A.ID_CLASS = B.ID_CLASS AND A.ID_OBJECT = B.ID_OBJECT AND A.ID_PACKAGE <> B.ID_PACKAGE AND A.CMD_ACTIVE = -1 AND B.CMD_ACTIVE = -1";
@@ -213,7 +210,7 @@ namespace PNPUCore.Controle
             {
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                 {
-                    if (bGereInversion == true)
+                    if (bGereInversion)
                         AjouteDependance(ref bPremierElement, bGereInversion, sNomMdb, drRow[0].ToString(), sNomMdb, drRow[3].ToString(), drRow[1].ToString(), drRow[5].ToString(), drRow[2].ToString(), drRow[4].ToString());
                     else
                         AjouteDependance(ref bPremierElement, bGereInversion, sNomMdb, drRow[0].ToString(), sNomMdb, drRow[3].ToString(), drRow[1].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[2].ToString());
@@ -291,14 +288,14 @@ namespace PNPUCore.Controle
             RapportDependancesInterPackElt rapportDependancesInterPackElt;
 
             // Recherche si le niveau mdb existe
-            while ((bTrouve == false) && (iIndexMDB < rapDependancesInterPack.listRapportDependancesInterPackMDB.Count))
+            while (!bTrouve && (iIndexMDB < rapDependancesInterPack.listRapportDependancesInterPackMDB.Count))
             {
                 if (rapDependancesInterPack.listRapportDependancesInterPackMDB[iIndexMDB].Name == sNomMdb1)
                     bTrouve = true;
                 else
                     iIndexMDB++;
             }
-            if (bTrouve == false)
+            if (!bTrouve)
             {
                 rapportDependancesInterPackMDB = new RapportDependancesInterPackMDB();
                 rapportDependancesInterPackMDB.Name = sNomMdb1;
@@ -312,14 +309,14 @@ namespace PNPUCore.Controle
 
             // Recherche si le niveau pack existe
             bTrouve = false;
-            while ((bTrouve == false) && (indexPack < rapportDependancesInterPackMDB.listRapportDependancesInterPackPack.Count))
+            while (!bTrouve && (indexPack < rapportDependancesInterPackMDB.listRapportDependancesInterPackPack.Count))
             {
                 if (rapportDependancesInterPackMDB.listRapportDependancesInterPackPack[indexPack].Name == sNomPack1)
                     bTrouve = true;
                 else
                     indexPack++;
             }
-            if (bTrouve == false)
+            if (!bTrouve)
             {
                 rapportDependancesInterPackPack = new RapportDependancesInterPackPack();
                 rapportDependancesInterPackPack.Name = sNomPack1;
@@ -340,14 +337,14 @@ namespace PNPUCore.Controle
 
             // Recherche si le niveau mdbN2 existe
             bTrouve = false;
-            while ((bTrouve == false) && (iIndexMDBN2 < rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2.Count))
+            while (!bTrouve  && (iIndexMDBN2 < rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2.Count))
             {
                 if (rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2[iIndexMDBN2].Name == sMDBN2)
                     bTrouve = true;
                 else
                     iIndexMDBN2++;
             }
-            if (bTrouve == false)
+            if (!bTrouve)
             {
                 rapportDependancesInterPackMDBN2 = new RapportDependancesInterPackMDBN2();
                 rapportDependancesInterPackMDBN2.Name = sMDBN2;
@@ -361,20 +358,20 @@ namespace PNPUCore.Controle
 
             // Recherche si le niveau Pack2 existe
             bTrouve = false;
-            while ((bTrouve == false) && (indexPack2 < rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Count))
+            while (!bTrouve && (indexPack2 < rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Count))
             {
                 if (rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2].Name == sNomPack2)
                     bTrouve = true;
                 else
                     indexPack2++;
             }
-            if (bTrouve == false)
+            if (!bTrouve)
             {
                 rapportDependancesInterPack2 = new RapportDependancesInterPack2();
                 rapportDependancesInterPack2.Name = sNomPack2;
                 rapportDependancesInterPack2.listRapportDependancesInterPackElt = new List<RapportDependancesInterPackElt>();
                 rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Add(rapportDependancesInterPack2);
-                iIndexMDBN2 = 0;
+
                 while (rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2].Name != sNomPack2)
                     indexPack2++;
             }
@@ -395,7 +392,7 @@ namespace PNPUCore.Controle
 
             rapportDependancesInterPack2.listRapportDependancesInterPackElt.Add(rapportDependancesInterPackElt);
 
-            if (bGereInversion == true)
+            if (bGereInversion)
                 AjouteDependance(ref bPremierElement, false, sNomMdb2, sNomPack2, sNomMdb1, sNomPack1, sClasse2, sClasse1, sElt2, sElt1);
         }
     }

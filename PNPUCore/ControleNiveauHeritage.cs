@@ -12,8 +12,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleNiveauHeritage : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
         private List<string[]> lObjetsHeritesSTD = null;
         private List<string[]> lPresentsHeritesSTD = null;
         private string sListeID_T3 = string.Empty;

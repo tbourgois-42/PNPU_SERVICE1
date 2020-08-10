@@ -12,7 +12,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleDependanceN3 : PControle, IControle
     {
-        private PNPUCore.Process.IProcess Process;
+        readonly private PNPUCore.Process.IProcess Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -71,9 +71,9 @@ namespace PNPUCore.Controle
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         sCCT = drRow[0].ToString();
-                        if (lListeCCTManquants.Contains(sCCT) == false)
+                        if (!lListeCCTManquants.Contains(sCCT))
                             lListeCCTManquants.Add(sCCT);
-                        if (bPremier == true)
+                        if (bPremier)
                             bPremier = false;
                         else
                             sRequete += ",";
@@ -84,7 +84,7 @@ namespace PNPUCore.Controle
                 sRequete += ")";
 
                 // Recherche sur la base du client si les tâches ont été installées
-                if (bPremier == false)
+                if (!bPremier)
                 {
                     dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -92,7 +92,7 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             sCCT = drRow[0].ToString();
-                            if (lListeCCTManquants.Contains(sCCT) == true)
+                            if (lListeCCTManquants.Contains(sCCT))
                             {
                                 lListeCCTManquants.Remove(sCCT);
                                 for (int cpt = 0; cpt < lTacheCCT.Count; cpt++)
@@ -123,7 +123,7 @@ namespace PNPUCore.Controle
                     bPremier = true;
                     foreach (string sTacheCCT in lListeCCTManquants)
                     {
-                        if (bPremier == true)
+                        if (bPremier)
                             bPremier = false;
                         else
                             sRequete += ",";
@@ -139,7 +139,7 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
-                            if (bPremier == true)
+                            if (bPremier)
                                 bPremier = false;
                             else
                                 sRequete += ",";
@@ -152,7 +152,7 @@ namespace PNPUCore.Controle
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {
                                 sCCT = drRow[0].ToString();
-                                if (lListeCCTManquants.Contains(dCorrespondanceCCT[sCCT]) == true)
+                                if (lListeCCTManquants.Contains(dCorrespondanceCCT[sCCT]))
                                 {
                                     lListeCCTManquants.Remove(dCorrespondanceCCT[sCCT]);
                                     for (int cpt = 0; cpt < lTacheCCT.Count; cpt++)
@@ -181,7 +181,7 @@ namespace PNPUCore.Controle
                 if (lListeCCTManquants.Count > 0)
                 {
                     List<string> lListeTacheCrees = new List<string>();
-                    if (DupliqueTachesCCTN3(lListeCCTManquants, lTacheCCT, "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees) == false)
+                    if (!DupliqueTachesCCTN3(lListeCCTManquants, lTacheCCT, "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees))
                         bResultat = ResultatErreur;
                     else if (lListeTacheCrees.Count > 0)
                     {
@@ -248,7 +248,7 @@ namespace PNPUCore.Controle
                     {
                         if (cCT.CCT_TASK_ID == sTacheCCT)
                         {
-                            if (bPremier == true)
+                            if (bPremier)
                                 bPremier = false;
                             else
                                 sFiltre += ",";
@@ -266,13 +266,13 @@ namespace PNPUCore.Controle
                         sRequete = "DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                            int rowsAffected = cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
 
                         sRequete = "DELETE FROM M4RCT_OBJECTS WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                            int rowsAffected = cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
                         sRequete = "INSERT INTO M4RCT_TASK (";
                         sRequete += "CCT_TASK_ID";
@@ -329,7 +329,7 @@ namespace PNPUCore.Controle
                         sRequete += " FROM M4RCT_TASK WHERE CCT_TASK_ID='" + sTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                            int rowsAffected = cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
 
 
@@ -401,7 +401,7 @@ namespace PNPUCore.Controle
                         sRequete = "DELETE FROM PNPU_H_CCT WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                            int rowsAffected = cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
                         sRequete = "INSERT INTO PNPU_H_CCT (";
                         sRequete += "CCT_TASK_ID";
@@ -418,7 +418,7 @@ namespace PNPUCore.Controle
                         sRequete += ")";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                            int rowsAffected = cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
                     }
                 }
@@ -438,7 +438,6 @@ namespace PNPUCore.Controle
             DataSet dsDataSet;
             string sRegle;
             string sRequete;
-            string[] sValeurs = new string[6];
             try
             {
                 sRequete = "SELECT ID_TI, ID_ITEM, DT_START, ID_RULE, DT_START_CORR, ID_RULE_TI, SOURCE_CODE FROM M4RCH_RULES3";
@@ -471,7 +470,7 @@ namespace PNPUCore.Controle
 
                             odbcCommand.CommandText = sRequete;
                             odbcCommand.Parameters[0].Value = sRegle;
-                            rowsAffected = odbcCommand.ExecuteNonQuery();
+                            odbcCommand.ExecuteNonQuery();
 
                         }
                         odbcConnection.Close();

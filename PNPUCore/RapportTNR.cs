@@ -8,16 +8,9 @@ namespace PNPUCore.RapportTNR
 {
     class RTNR
     {
-        private string id;
-        private string name;
-        private DateTime debut;
-        private DateTime fin;
-        private string result;
-        private List<Domaine> domaine;
-
         public RTNR()
         {
-            domaine = new List<Domaine>();
+            Domaine = new List<Domaine>();
         }
 
         /// <summary>
@@ -178,9 +171,9 @@ namespace PNPUCore.RapportTNR
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue(rTNR.name);
+            jw.WriteValue(rTNR.Name);
             jw.WritePropertyName("result");
-            jw.WriteValue(rTNR.result);
+            jw.WriteValue(rTNR.Result);
             jw.WritePropertyName("debut");
             jw.WriteValue(rTNR.Debut.ToString("dd/MM/yy H:mm:ss"));
             jw.WritePropertyName("fin");
@@ -242,73 +235,34 @@ namespace PNPUCore.RapportTNR
             jw.WriteEndObject();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public DateTime Debut
-        {
-            set { debut = value; }
-            get { return debut; }
-        }
+        public DateTime Debut { set; get; }
 
-        public DateTime Fin
-        {
-            set { fin = value; }
-            get { return fin; }
-        }
+        public DateTime Fin { set; get; }
 
-        public String Result
-        {
-            set { result = value; }
-            get { return result; }
-        }
-        public List<Domaine> Domaine
-        {
-            set { domaine = value; }
-            get { return domaine; }
-        }
+        public String Result { set; get; }
+        public List<Domaine> Domaine { set; get; }
         public string IdClient { get; internal set; }
     }
 
     class Domaine
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        private List<SousDomaine> sousdomaine;
 
         public Domaine()
         {
-            sousdomaine = new List<SousDomaine>();
+            SousDomaine = new List<SousDomaine>();
         }
 
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public List<SousDomaine> SousDomaine
-        {
-            set { sousdomaine = value; }
-            get { return sousdomaine; }
-        }
+        public List<SousDomaine> SousDomaine { set; get; }
 
         public string Result
         {
@@ -320,33 +274,18 @@ namespace PNPUCore.RapportTNR
 
     class SousDomaine
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        private List<SousDomaineParts> sousdomaineparts;
 
         public SousDomaine()
         {
-            sousdomaineparts = new List<SousDomaineParts>();
+            SousDomaineParts = new List<SousDomaineParts>();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public List<SousDomaineParts> SousDomaineParts
-        {
-            set { sousdomaineparts = value; }
-            get { return sousdomaineparts; }
-        }
+        public List<SousDomaineParts> SousDomaineParts { set; get; }
 
         public string Result
         {
@@ -357,33 +296,18 @@ namespace PNPUCore.RapportTNR
 
     class SousDomaineParts
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        private List<Classification> classification;
 
         public SousDomaineParts()
         {
-            classification = new List<Classification>();
+            Classification = new List<Classification>();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public List<Classification> Classification
-        {
-            set { classification = value; }
-            get { return classification; }
-        }
+        public List<Classification> Classification { set; get; }
 
         public string Result
         {
@@ -394,33 +318,18 @@ namespace PNPUCore.RapportTNR
 
     class Classification
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        private List<Ecarts> ecarts;
 
         public Classification()
         {
-            ecarts = new List<Ecarts>();
+            Ecarts = new List<Ecarts>();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public List<Ecarts> Ecarts
-        {
-            set { ecarts = value; }
-            get { return ecarts; }
-        }
+        public List<Ecarts> Ecarts { set; get; }
 
         public string Result
         {
@@ -431,12 +340,6 @@ namespace PNPUCore.RapportTNR
 
     class Ecarts
     {
-        private string id;
-        private string name;
-        private decimal valueBefore;
-        private decimal valueAfter;
-        private decimal difference;
-        private string comment;
         private List<Matricules> matricules { get; set; }
 
         public Ecarts()
@@ -444,36 +347,12 @@ namespace PNPUCore.RapportTNR
             matricules = new List<Matricules>();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
-        public decimal ValueBefore
-        {
-            set { valueBefore = value; }
-            get { return valueBefore; }
-        }
-        public decimal ValueAfter
-        {
-            set { valueAfter = value; }
-            get { return valueAfter; }
-        }
-        public decimal Difference
-        {
-            set { difference = value; }
-            get { return difference; }
-        }
-        public string Comment
-        {
-            set { comment = value; }
-            get { return comment; }
-        }
+        public String Id { set; get; }
+        public String Name { set; get; }
+        public decimal ValueBefore { set; get; }
+        public decimal ValueAfter { set; get; }
+        public decimal Difference { set; get; }
+        public string Comment { set; get; }
         public List<Matricules> Matricules
         {
             set { matricules = value; }
@@ -482,73 +361,17 @@ namespace PNPUCore.RapportTNR
     }
     class Matricules
     {
-        private string id;
-        private DateTime dtpaie;
-        private DateTime dtalloc;
-        private string idorga;
-        private string societe;
-        private string etablissement;
-        private string matricule;
-        private decimal periode;
-        private decimal valueBefore;
-        private decimal valueAfter;
-        private decimal difference;
-
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
-        public DateTime Dtpaie
-        {
-            set { dtpaie = value; }
-            get { return dtpaie; }
-        }
-        public DateTime Dtalloc
-        {
-            set { dtalloc = value; }
-            get { return dtalloc; }
-        }
-        public string Idorga
-        {
-            set { idorga = value; }
-            get { return idorga; }
-        }
-        public string Societe
-        {
-            set { societe = value; }
-            get { return societe; }
-        }
-        public string Etablissement
-        {
-            set { etablissement = value; }
-            get { return etablissement; }
-        }
-        public string Matricule
-        {
-            set { matricule = value; }
-            get { return matricule; }
-        }
-        public decimal Periode
-        {
-            set { periode = value; }
-            get { return periode; }
-        }
-        public decimal ValueBefore
-        {
-            set { valueBefore = value; }
-            get { return valueBefore; }
-        }
-        public decimal ValueAfter
-        {
-            set { valueAfter = value; }
-            get { return valueAfter; }
-        }
-        public decimal Difference
-        {
-            set { difference = value; }
-            get { return difference; }
-        }
+        public String Id { set; get; }
+        public DateTime Dtpaie { set; get; }
+        public DateTime Dtalloc { set; get; }
+        public string Idorga { set; get; }
+        public string Societe { set; get; }
+        public string Etablissement { set; get; }
+        public string Matricule { set; get; }
+        public decimal Periode { set; get; }
+        public decimal ValueBefore { set; get; }
+        public decimal ValueAfter { set; get; }
+        public decimal Difference { set; get; }
     }
 
 }

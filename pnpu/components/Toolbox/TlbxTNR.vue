@@ -2,7 +2,7 @@
   <v-form ref="form" @submit.prevent="launch">
     <v-container class="fill-height" fluid>
       <v-row>
-        <v-col cols="12" sm="6" md="5">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -37,7 +37,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="5">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -72,7 +72,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Date de paiement<v-icon>mdi-calendar</v-icon></v-card-title
@@ -80,7 +80,7 @@
             <v-divider></v-divider>
             <v-card-text>
               <v-menu
-                v-model="menu2"
+                v-model="menu"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
@@ -103,7 +103,7 @@
                   color="primary"
                   v-model="date"
                   no-title
-                  @input="menu2 = false"
+                  @input="menu = false"
                 ></v-date-picker>
               </v-menu>
             </v-card-text>
@@ -129,6 +129,12 @@
         </v-btn>
       </v-col>
     </v-container>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-form>
 </template>
 <script>
@@ -139,6 +145,10 @@ export default {
     client: {
       type: Number,
       default: null
+    },
+    workflowID: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -147,8 +157,7 @@ export default {
       loading: false,
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
-      menu1: false,
-      menu2: false,
+      menu: false,
       form: {
         serverBefore: null,
         serverAfter: null,
@@ -160,7 +169,10 @@ export default {
       showPassword: false,
       rules: {
         required: (value) => !!value || 'Champ obligatoire.'
-      }
+      },
+      snackbar: '',
+      colorsnackbar: '',
+      snackbarMessage: ''
     }
   },
   computed: {
@@ -195,35 +207,58 @@ export default {
     }
   },
   methods: {
+    /**
+     * Format date
+     * @param {string} - date
+     */
     formatDate(date) {
       if (!date) return null
 
       const [year, month, day] = date.split('-')
       return `${year}/${month}/${day}`
     },
+
+    /**
+     * Parse date
+     * @param {string} - date
+     */
     parseDate(date) {
       if (!date) return null
 
       const [month, day, year] = date.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
+
+    /**
+     * Launch toolbox process
+     */
     async launch() {
-      console.log(this.client)
       const fd = new FormData()
       fd.append('serverBefore', this.form.serverBefore)
       fd.append('databaseBefore', this.form.databaseBefore)
-      fd.append('passwordBefore',this.form.passwordBefore)
+      fd.append('passwordBefore', this.form.passwordBefore)
       fd.append('serverAfter', this.form.serverAfter)
       fd.append('databaseAfter', this.form.databaseAfter)
-      fd.append('passwordAfter',this.form.passwordAfter)
+      fd.append('passwordAfter', this.form.passwordAfter)
       fd.append('dtPaie', this.computedDateFormatted)
       fd.append('clientID', this.client)
-      fd.append('workflowID', "30")
+      fd.append('workflowID', this.workflowID)
       try {
         await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox`, fd)
       } catch (error) {
-        console.log(error)
+        vm.showSnackbar('error', `${error} !`)
       }
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

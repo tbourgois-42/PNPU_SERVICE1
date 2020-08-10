@@ -12,8 +12,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleIDSynonymExistant : PControle, IControle
     {
-        private string sPathMdb = string.Empty;
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string sPathMdb = string.Empty;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -75,10 +75,10 @@ namespace PNPUCore.Controle
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         sID_SYNONYM = drRow[1].ToString();
-                        if (dicListItems.ContainsKey(sID_SYNONYM) == false)
+                        if (!dicListItems.ContainsKey(sID_SYNONYM))
                         {
                             dicListItems.Add(sID_SYNONYM, drRow[0].ToString());
-                            if (bItemAControler == false)
+                            if (!bItemAControler)
                                 bItemAControler = true;
                             else
                                 sRequeteSqlServer += "OR ";
@@ -87,13 +87,13 @@ namespace PNPUCore.Controle
                         }
                     }
 
-                    if (bItemAControler == true)
+                    if (bItemAControler)
                     {
                         sRequeteSqlServer += ")";
                         DataManagerSQLServer dmasqlManagerSQL = new DataManagerSQLServer();
 
                         // Contrôle sur la base de référence si pack standard, sinon sur base client
-                        if (Process.STANDARD == true)
+                        if (Process.STANDARD)
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                         else
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, sConnectionStringBaseQA1);

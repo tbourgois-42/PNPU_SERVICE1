@@ -31,19 +31,13 @@ namespace PNPUTools
 
             string sToken = string.Empty;
 
-            if (IsUserExist(user))
+            if (IsUserExist(user) && IsValidAuth(user, password) && IsExpiredToken(user))
             {
-                if (IsValidAuth(user, password))
-                {
-                    if (IsExpiredToken(user))
-                    {
-                        sToken = GenerateToken(user);
-                    }
-                    else
-                    {
-                        sToken = GetUserToken(user);
-                    }
-                }
+                sToken = GenerateToken(user);
+            }
+            else
+            {
+                sToken = GetUserToken(user);
             }
 
             return sToken;
@@ -87,7 +81,7 @@ namespace PNPUTools
                 string sRequest = "SELECT USER_ID FROM PNPU_USER WHERE USER_ID = '" + User + "'";
                 DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
 
-                return result.Tables.Count > 0 ? true : false;
+                return result.Tables.Count > 0;
             }
             catch (Exception)
             {
@@ -184,7 +178,6 @@ namespace PNPUTools
         {
             string sRequest = "SELECT USER_ID, PASSWORD FROM PNPU_USER WHERE USER_ID = '" + User + "'";
             bool value = false;
-            string passwordDecrypted = string.Empty;
 
             try
             {
@@ -196,20 +189,12 @@ namespace PNPUTools
                     {
                         byte[] encrypted = EncryptStringToBytes_Aes(Password, myAes.Key, myAes.IV);
 
-                        string decrypted = DecryptStringToBytes_Aes(encrypted, myAes.Key, myAes.IV);
-                    }
-                    /*string user = result.Tables[0].Rows[0].ItemArray[0].ToString();
-                    byte[] password = Encoding.ASCII.GetBytes(result.Tables[0].Rows[0].ItemArray[1].ToString());
-
-                    using (Aes myAes = Aes.Create())
-                    {
-                        passwordDecrypted = DecryptStringToBytes_Aes(password, myAes.Key, myAes.IV);
+                        DecryptStringToBytes_Aes(encrypted, myAes.Key, myAes.IV);
                     }
 
-                    return Password == passwordDecrypted ? true : false;*/
                     if (result.Tables[0].Rows.Count > 0)
                     {
-                        return result.Tables[0].Rows[0].ItemArray[1].ToString() == Password ? true : false;
+                        return result.Tables[0].Rows[0].ItemArray[1].ToString() == Password;
                     }
                 }
             }
@@ -322,12 +307,9 @@ namespace PNPUTools
             string sRequest = "SELECT PUSER.USER_ID FROM PNPU_USER PUSER, PNPU_USER_TOKEN PUTK WHERE PUSER.USER_ID = PUTK.USER_ID AND PUTK.TOKEN = '" + sToken + "'";
             DataSet result = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
 
-            if (result.Tables.Count > 0)
+            if (result.Tables.Count > 0 && result.Tables[0].Rows.Count > 0)
             {
-                if (result.Tables[0].Rows.Count > 0)
-                {
                     user = result.Tables[0].Rows[0].ItemArray[0].ToString();
-                }
             }
             return user;
         }
@@ -358,7 +340,7 @@ namespace PNPUTools
             string sRequest = "DELETE FROM PNPU_USER_TOKEN WHERE USER_ID = '" + User + "' AND TOKEN = '" + Token + "'";
             bool result = DataManagerSQLServer.DeleteDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
 
-            return result == true ? true : false;
+            return result;
         }
 
         /// <summary>
@@ -385,7 +367,7 @@ namespace PNPUTools
         {
             if (datas.Tables.Count > 0)
             {
-                return datas.Tables[0].Rows.Count > 0 ? true : false;
+                return datas.Tables[0].Rows.Count > 0;
             }
             else
             {
@@ -471,7 +453,7 @@ namespace PNPUTools
             string sSelect = "SELECT CLI.CLIENT_ID AS ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS AS TYPOLOGY_ID, COD.CODIFICATION_LIBELLE AS TYPOLOGY ";
             string sFrom = "FROM A_CLIENT CLI, A_CODIFICATION COD ";
             string sWhere = "WHERE COD.CODIFICATION_ID = CLI.SAAS ";
-            string sRequest = sSelect + sFrom;
+            string sRequest;
             string sAlias = "CLI";
 
             sWhere += BuildHabilitationWhereClause(lstClient, sHabilitation, sAlias);
@@ -498,7 +480,7 @@ namespace PNPUTools
             {
                 foreach (var clientID in lstClient)
                 {
-                    if (bPremier == true)
+                    if (bPremier)
                     {
                         bPremier = false;
                         sWhere += "AND " + sAlias + ".CLIENT_ID IN (";
@@ -531,7 +513,7 @@ namespace PNPUTools
 
             foreach (var clientID in lstClient)
             {
-                if (bPremier == true)
+                if (bPremier)
                 {
                     bPremier = false;
                     sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";

@@ -30,13 +30,11 @@ namespace PNPUCore.Process
             ParamToolbox paramToolbox = new ParamToolbox();
 
             string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
-            string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
-
+            string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
+
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
             string[] listClientId = CLIENT_ID.Split(',');
-
-            //int idInstanceWF = ID_INSTANCEWF;
 
             ControleTNR CTNR = new ControleTNR(this);
 
@@ -48,17 +46,23 @@ namespace PNPUCore.Process
             //On génère l'historic en In_PROGRESS
             GenerateHistoricGlobal(listClientId, new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, ID_INSTANCEWF, RapportTNR.Debut);
 
-            Domaine RapportDomaine = new RapportTNR.Domaine();
-            RapportDomaine.Name = "Paie";
-            RapportDomaine.Result = string.Empty;
+            Domaine RapportDomaine = new RapportTNR.Domaine
+            {
+                Name = "Paie",
+                Result = string.Empty
+            };
 
-            SousDomaine RapportSousDomaine = new SousDomaine();
-            RapportSousDomaine.Name = "Cumuls long de paie";
-            RapportSousDomaine.Result = string.Empty;
+            SousDomaine RapportSousDomaine = new SousDomaine
+            {
+                Name = "Cumuls long de paie",
+                Result = string.Empty
+            };
 
-            SousDomaineParts RapportSousDomaineParts = new SousDomaineParts();
-            RapportSousDomaineParts.Name = "Ecarts agrégés par classification";
-            RapportSousDomaineParts.Result = string.Empty;
+            SousDomaineParts RapportSousDomaineParts = new SousDomaineParts
+            {
+                Name = "Ecarts agrégés par classification",
+                Result = string.Empty
+            };
 
             // Client TNR database Read Node items
             DataSet ItemsNoeudReadTNR = CTNR.GetItemsNoeudRead(sConnectionStringBaseQA2);
@@ -67,26 +71,26 @@ namespace PNPUCore.Process
             DataSet ItemsNoeudReadREF = CTNR.GetItemsNoeudRead(sConnectionStringBaseQA1);
 
             // Payment date
-            DateTime sDate = paramToolbox.GetDtPaie(WORKFLOW_ID, ID_INSTANCEWF);
-
+            DateTime sDate = paramToolbox.GetDtPaie(WORKFLOW_ID, ID_INSTANCEWF);
+
             Dictionary<string, string> lstCumulativeTable = CTNR.GetListOfCumulativeTable(ItemsNoeudReadTNR);
 
             Dictionary<string, Classification> lstClassification = new Dictionary<string, Classification>();
             Classification RapportClassification = null;
 
-            int index = -1;
+            int index;
             decimal reg = 1;
 
             // Loop into TNR node.
             foreach (DataRow drRow in ItemsNoeudReadTNR.Tables[0].Rows)
             {
                 Console.WriteLine("Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
-                Logger.Log(this, ParamAppli.StatutInfo, "Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
-
+                Logger.Log(this, ParamAppli.StatutInfo, "Traitement de l'item " + drRow[1].ToString() + ", " + Decimal.Round((reg * 100) / ItemsNoeudReadTNR.Tables[0].Rows.Count, 2) + "%");
+
                 index = CTNR.FindIndexOfBaseRef(drRow[1].ToString(), ItemsNoeudReadREF, ItemsNoeudReadTNR);
 
                 if (!lstClassification.ContainsKey(drRow[6].ToString()))
-                {
+                {
                     RapportClassification = new Classification();
                     CTNR.CreateClassification(RapportClassification, drRow, lstClassification, RapportSousDomaineParts);
                 }
@@ -108,7 +112,7 @@ namespace PNPUCore.Process
                     DataSet itemValuesBaseQA1 = CTNR.GetItemValues(drRow, sDate, sConnectionStringBaseQA1, lstCumulativeTable);
                     CTNR.CheckDifference(RapportEcarts, itemValuesBaseQA1, itemValuesBaseQA2, drRow, sDate);
 
-                }
+                }
                 else
                 {
                     CTNR.SetStatusCorrect(RapportClassification);
@@ -154,7 +158,7 @@ namespace PNPUCore.Process
             historicWorkflow.LAUNCHING_DATE = RapportTNR.Debut;
             historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
             historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
-            InfoClient client = RequestTool.getClientsById(CLIENT_ID);
+            InfoClient client = RequestTool.GetClientsById(CLIENT_ID);
 
             historicStep.ID_PROCESS = PROCESS_ID;
             historicStep.ITERATION = 1;
@@ -170,13 +174,14 @@ namespace PNPUCore.Process
 
             GenerateHistoric(RapportTNR.Fin, RapportTNR.Result, RapportTNR.Debut);
 
+            // Suppresion des paramètres toolbox temporaires
             paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             if (RapportTNR.Result == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessTNR);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, ID_INSTANCEWF);
-            }
+            }
         }
 
         internal static new IProcess CreateProcess(int WORKFLOW_ID, string CLIENT_ID, int idInstanceWF)

@@ -11,29 +11,22 @@ namespace PNPUTools
 {
     public class RamdlTool
     {
-        InfoClient InfoClient;
-        int WORKFLOW_ID;
-        int ID_H_WORKFLOW;
+        readonly InfoClient InfoClient;
+        readonly int WORKFLOW_ID;
+        readonly int ID_H_WORKFLOW;
         private string pathLogFile;
         private string pathResult;
         private string pathIni;
         private string DirectoryResult;
 
-        /*
-         * Cela doit normalement être dans infoClient. Je laisse pour les tests
-         * string sChaineDeConnexion = "";
-        string sLogin = "";
-        string sMdp = "";
-        */
-
-        string sConnectionStringBaseQA1 = "XXXM4QA1";
-        string sConnectionStringBaseQA2 = "XXXM4QA2";
+        readonly string sConnectionStringBaseQA1;
+        readonly string sConnectionStringBaseQA2;
 
         private string iniFile;
 
         //TMP
-        string sLogin = "";
-        string sMdp = "";
+        readonly string sLogin = "";
+        readonly string sMdp = "";
 
         public RamdlTool(string id_client, int WORKFLOW_ID_, int ID_H_WORKFLOW_)
         {
@@ -41,13 +34,12 @@ namespace PNPUTools
             InfoClient = ParamAppli.ListeInfoClient[id_client];
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
-            //string sEnvironnement = InfoClient.;
             ParamToolbox paramToolbox = new ParamToolbox();
             sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, id_client);
             sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, id_client);
 
             sLogin = "M4ADM";
-            sMdp = "M4ADM";//"CapitalM4ADM";
+            sMdp = "M4ADM";
             ParamRamDlInit();
         }
 
@@ -62,7 +54,7 @@ namespace PNPUTools
             sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, infoClient_.ID_CLIENT);
 
             sLogin = "M4ADM";
-            sMdp = "M4ADM";// "CapitalM4ADM";
+            sMdp = "M4ADM";
             ParamRamDlInit();
         }
 
@@ -93,10 +85,10 @@ namespace PNPUTools
             try
             {
 
-                if (Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL") == false)
+                if (!Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL"))
                     Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
 
-                if (Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT) == false)
+                if (!Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT))
                     Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
 
                 string[] tMdb = null;
@@ -131,7 +123,7 @@ namespace PNPUTools
                         string pwdCVM = sMdp;
 
                         // Gestion des remove pack
-                        if (bRemovePack == true)
+                        if (bRemovePack)
                         {
                             iniFile = String.Format(ParamAppli.templateIniFileRemovePack, targetConn, targetConn, logFile, sCheminCommandFile);
                             swFichierIni = new StreamWriter(pathIni, false);
@@ -217,65 +209,55 @@ namespace PNPUTools
             StreamReader srFichierLog = new StreamReader(sCheminFichierLog);
             string sContenufichierLog;
             bool bResultat = true;
-            string sNomFichierRAMDLLOG = string.Empty;
             List<string> lListePacksErreur = new List<string>();
 
 
             try
             {
-                while (srFichierLog.EndOfStream == false)
+                while (!srFichierLog.EndOfStream)
                 {
                     sContenufichierLog = srFichierLog.ReadLine();
 
-                    if (Regex.IsMatch(sContenufichierLog, @"^\[[^\]]*\]\*(.*)$") == true)
+                    if (Regex.IsMatch(sContenufichierLog, @"^\[[^\]]*\]\*(.*)$"))
                     {
                         foreach (string sExpression in Regex.Split(sContenufichierLog, @"^\[[^\]]*\]\*(.*)$"))
                         {
-                            if (sExpression != string.Empty)
+                            if (sExpression != string.Empty && !Regex.IsMatch(sExpression, @"^\[Error 0\] Disconnect from") && Regex.IsMatch(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'"))
                             {
-
-                                if (Regex.IsMatch(sExpression, @"^\[Error 0\] Disconnect from") == false)
+                                foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'"))
                                 {
-                                    if (Regex.IsMatch(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'") == true)
+                                    if (sExpression2 != string.Empty)
                                     {
-                                        foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Failed to execute package '([^']+)'"))
-                                        {
-                                            if (sExpression2 != string.Empty)
-                                            {
-                                                lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
-                                                bResultat = false;
-                                            }
-                                        }
-                                    }
-
-                                    if (Regex.IsMatch(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors") == true)
-                                    {
-                                        foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors"))
-                                        {
-                                            if (sExpression2 != string.Empty)
-                                            {
-                                                // Vérifie si la deuxième exécution n'a pas abouti
-                                                if ((sContenufichierLog.IndexOf("'" + sExpression2 + "' executed successfully") == -1) && (lListePacksErreur.IndexOf(sExpression2) == -1))
-                                                {
-                                                    lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
-                                                    lListePacksErreur.Add(sExpression2);
-                                                    bResultat = false;
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if ((sExpression.IndexOf("[Error -1] The RAM-DL repository") > -1) && (sExpression.IndexOf(" is not compatible with the connected repository") > -1))
-                                    {
-                                        lErrorMessages.Add("MDB non compatible.");
+                                        lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
                                         bResultat = false;
-                                    }
-                                    if (sExpression.Contains("[Error 100] No packages found in origin source or already loaded at destination") == true)
-                                    {
-                                        lErrorMessages.Add("Aucun nouveau pack trouvé dans le mdb.");
                                     }
                                 }
                             }
+
+                            if (Regex.IsMatch(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors"))
+                            {
+                                foreach (string sExpression2 in Regex.Split(sExpression, @"^\[Error -1\] Package '([^']+)' executed with errors"))
+                                {
+                                    // Vérifie si la deuxième exécution n'a pas abouti
+                                    if (sExpression2 != string.Empty && (sContenufichierLog.IndexOf("'" + sExpression2 + "' executed successfully") == -1) && (lListePacksErreur.IndexOf(sExpression2) == -1))
+                                    {
+                                        lErrorMessages.Add("Erreur d'installation du pack " + sExpression2 + ".");
+                                        lListePacksErreur.Add(sExpression2);
+                                        bResultat = false;
+                                    }
+                                }
+                            }
+                            if ((sExpression.IndexOf("[Error -1] The RAM-DL repository") > -1) && (sExpression.IndexOf(" is not compatible with the connected repository") > -1))
+                            {
+                                lErrorMessages.Add("MDB non compatible.");
+                                bResultat = false;
+                            }
+                            if (sExpression.Contains("[Error 100] No packages found in origin source or already loaded at destination"))
+                            {
+                                lErrorMessages.Add("Aucun nouveau pack trouvé dans le mdb.");
+                            }
+                                
+                            
                         }
                     }
                 }
@@ -310,10 +292,10 @@ namespace PNPUTools
             try
             {
 
-                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL") == false)
+                if (!Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL"))
                     Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
 
-                if (Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT) == false)
+                if (!Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT))
                     Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
 
                 //TBO Download from DB MDB
@@ -354,7 +336,7 @@ namespace PNPUTools
                     pProcess.WaitForExit();
                     pProcess.Close();
 
-                    if (File.Exists(Path.GetDirectoryName(sCheminMDB) + "\\" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".ldb") == true)
+                    if (File.Exists(Path.GetDirectoryName(sCheminMDB) + "\\" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".ldb"))
                         File.Delete(Path.GetDirectoryName(sCheminMDB) + "\\" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".ldb");
 
                     // Contrôle du résultat
@@ -447,13 +429,11 @@ namespace PNPUTools
             DirectoryResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT;
             try
             {
-                if (Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL") == false) Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");
-                if (Directory.Exists(DirectoryResult) == false) Directory.CreateDirectory(DirectoryResult);
+                if (!Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL")) Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");
+                if (!Directory.Exists(DirectoryResult)) Directory.CreateDirectory(DirectoryResult);
 
                 if (File.Exists(pathResult))
                     File.Delete(pathResult);
-
-                string sDossierFichiersRAMDL = ParamAppli.GeneratePackPath;
 
                 GenerateIniForGeneratePack(namePack, listPack);
                 // Encodage du mot de passe
@@ -611,47 +591,31 @@ namespace PNPUTools
                 string sBuffer2 = string.Empty;
 
 
-                while (bContinue == true)
+                while (bContinue)
                 {
                     sBuffer = srRegMeta4.ReadLine();
                     if (sBuffer.IndexOf("<RAMDL ") > -1)
                     {
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Cache") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Cache");
                         sBuffer2 = LitValeurParam(sBuffer, "LastCacheDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Log") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Log");
                         sBuffer2 = LitValeurParam(sBuffer, "LastLogDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\CVS") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\CVS");
                         sBuffer2 = LitValeurParam(sBuffer, "LastCVSDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Client") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Client");
                         sBuffer2 = LitValeurParam(sBuffer, "LastClientDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Package") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Package");
                         sBuffer2 = LitValeurParam(sBuffer, "LastPackageDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Standard") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Standard");
                         sBuffer2 = LitValeurParam(sBuffer, "LastStandardDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
-
-                        //if (Directory.Exists("V:\\M4Temp\\PM\\Backup\\client") == false) Directory.CreateDirectory("V:\\M4Temp\\PM\\Backup\\client");
                         sBuffer2 = LitValeurParam(sBuffer, "LastBackupDirectory=");
-                        if (sBuffer2 != string.Empty)
-                            if (Directory.Exists(sBuffer2) == false) Directory.CreateDirectory(sBuffer2);
-
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
 
                         bContinue = false;
                     }

@@ -22,7 +22,7 @@ namespace PNPUTools
                     sNom += "_C" + CLIENT_ID + "_N" + iNiv.ToString();
                 sDossierTempo += "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
-                if (Directory.Exists(sDossierTempo) == false)
+                if (!Directory.Exists(sDossierTempo))
                     Directory.CreateDirectory(sDossierTempo);
 
                 if (ZIP.ManageZip.CompresseListeFichiers(sFichiers, sFichierZip) == -1)
@@ -111,7 +111,7 @@ namespace PNPUTools
                 sDossierTempo += "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
 
-                if (Directory.Exists(sDossierTempo) == false)
+                if (!Directory.Exists(sDossierTempo))
                     Directory.CreateDirectory(sDossierTempo);
                 else
                 {

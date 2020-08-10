@@ -11,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleCatalogueTable : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -80,7 +80,7 @@ namespace PNPUCore.Controle
                         if ((dsDataSet2 == null) || (dsDataSet2.Tables[0].Rows.Count == 0))
                         {
                             dListeAControler.Add(drRow[1].ToString(), drRow[0].ToString());
-                            if (bPremierElement == true)
+                            if (bPremierElement)
                                 bPremierElement = false;
                             else
                                 sRequeteControle += ",";
@@ -90,7 +90,7 @@ namespace PNPUCore.Controle
                     }
 
                     // Vérification dans la base de référence si les tables sont présentes.
-                    if ((bPremierElement == false) && (ConnectionStringBaseRef != string.Empty))
+                    if (!bPremierElement && (ConnectionStringBaseRef != string.Empty))
                     {
                         DataManagerSQLServer dmsManagerSQL = new DataManagerSQLServer();
                         sRequeteControle += ")";
@@ -100,7 +100,7 @@ namespace PNPUCore.Controle
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {
                                 // On supprime de la liste des tables à contrôler celles existantes sur la base de ref
-                                if (dListeAControler.ContainsKey(drRow[0].ToString()) == true)
+                                if (dListeAControler.ContainsKey(drRow[0].ToString()))
                                     dListeAControler.Remove(drRow[0].ToString());
                             }
                         }

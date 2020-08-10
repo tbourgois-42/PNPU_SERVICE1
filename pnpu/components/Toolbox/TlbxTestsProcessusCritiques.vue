@@ -2,7 +2,7 @@
   <v-form ref="form" @submit.prevent="launch">
     <v-container class="fill-height" fluid>
       <v-row>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -57,20 +57,31 @@
         </v-btn>
       </v-col>
     </v-container>
+    <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+      {{ snackbarMessage }}
+      <v-btn dark text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-form>
 </template>
 <script>
 import axios from 'axios'
-import aes from 'aes-js'
 export default {
+  props: {
+    client: {
+      type: Number,
+      default: null
+    },
+    workflowID: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
       loader: null,
       loading: false,
-      date: new Date().toISOString().substr(0, 10),
-      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
-      menu1: false,
-      menu2: false,
       form: {
         serverBefore: null,
         serverAfter: null,
@@ -86,9 +97,6 @@ export default {
     }
   },
   computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date)
-    },
     formIsValid() {
       return (
         this.form.serverBefore &&
@@ -96,8 +104,7 @@ export default {
         this.form.databaseBefore &&
         this.form.databaseAfter &&
         this.form.passwordBefore &&
-        this.form.passwordAfter &&
-        this.computedDateFormatted
+        this.form.passwordAfter
       )
     }
   },
@@ -110,44 +117,38 @@ export default {
       setTimeout(() => (this[l] = false), 3000)
 
       this.loader = null
-    },
-    date(val) {
-      this.dateFormatted = this.formatDate(this.date)
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${month}/${day}/${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
+    /**
+     * Launch toolbox process
+     */
     async launch() {
       const fd = new FormData()
       fd.append('serverBefore', this.form.serverBefore)
       fd.append('databaseBefore', this.form.databaseBefore)
-      fd.append(
-        'passwordBefore',
-        aes.utils.utf8.toBytes(this.form.passwordBefore)
-      )
+      fd.append('passwordBefore', this.form.passwordBefore)
       fd.append('serverAfter', this.form.serverAfter)
       fd.append('databaseAfter', this.form.databaseAfter)
-      fd.append(
-        'passwordAfter',
-        aes.utils.utf8.toBytes(this.form.passwordAfter)
-      )
-      fd.append('dtPaie', this.computedDateFormatted)
+      fd.append('passwordAfter', this.form.passwordAfter)
+      fd.append('clientID', this.client)
+      fd.append('workflowID', this.workflowID)
       try {
-        await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox/TNR`, fd)
+        await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox`, fd)
       } catch (error) {
-        console.log(error)
+        vm.showSnackbar('error', `${error} !`)
       }
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

@@ -17,31 +17,24 @@ namespace WcfService1
     // REMARQUE : pour lancer le client test WCF afin de tester ce service, sélectionnez Service1.svc ou Service1.svc.cs dans l'Explorateur de solutions et démarrez le débogage. 
     public class Service1 : IService1
     {
-        private static NamedPipeClientStream npcsPipeClient;
+        private static NamedPipeClientStream npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
         private static StreamString ssStreamString = null;
-        private static StreamWriter sw = null;
+        private static StreamWriter streamWriter = new StreamWriter(npcsPipeClient);
+
         public string LaunchProcess(int ProcId, int workflowId, String clientId, int idInstanceWF)
         {
-            if (npcsPipeClient == null)
+            if (!npcsPipeClient.IsConnected)
             {
-                npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
                 npcsPipeClient.Connect();
             }
 
-            /*if (ssStreamString == null)
-                ssStreamString = new StreamString(npcsPipeClient);
-            ssStreamString.WriteString(ProcId + "/" + workflowId + "/" + clientId);*/
-            if (sw == null)
-                sw = new StreamWriter(npcsPipeClient);
-
-
-            sw.AutoFlush = true;
+            streamWriter.AutoFlush = true;
             Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
-            sw.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
+            streamWriter.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
 
 
 
-            //string result = ssStreamString.ReadString();
+            //Old code string result = ssStreamString.ReadString();
             return "OK";
         }
 
@@ -76,7 +69,7 @@ namespace WcfService1
             return RequestTool.GetAllProcesses();
         }
 
-        public PNPU_PROCESS getProcess(string processId)
+        public PNPU_PROCESS GetProcess(string processId)
         {
             return RequestTool.GetProcess(processId);
         }
@@ -86,9 +79,9 @@ namespace WcfService1
             return RequestTool.GetAllWorkFLow(isToolBox);
         }
 
-        public PNPU_WORKFLOW getWorkflow(string workflowId)
+        public PNPU_WORKFLOW GetWorkflow(string workflowId)
         {
-            return RequestTool.getWorkflow(workflowId);
+            return RequestTool.GetWorkflow(workflowId);
         }
 
         public string GetProcessusCritiquesAllCLient()
@@ -148,7 +141,7 @@ namespace WcfService1
             return RequestTool.GetWorkflowProcesses(workflowId);
         }
 
-        public void preflightRequest()
+        public void PreflightRequest()
         {
             // Method intentionally left empty.
         }
@@ -168,7 +161,7 @@ namespace WcfService1
             string FileName = file.FileName;
 
             //EST CE QUE LE DOSSIER TEMP EXISTE
-            if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+            if (!Directory.Exists(ParamAppli.DossierTemporaire))
                 Directory.CreateDirectory(ParamAppli.DossierTemporaire);
 
             string FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
@@ -186,7 +179,7 @@ namespace WcfService1
             {
                 //REQUETE
                 int typologyId = Int32.Parse(typology);
-                IEnumerable<InfoClient> listClient = RequestTool.getClientsWithTypologies(typologyId);
+                IEnumerable<InfoClient> listClient = RequestTool.GetClientsWithTypologies(typologyId);
                 foreach (InfoClient client in listClient)
                 {
                     clientToLaunch = clientToLaunch + client.ID_CLIENT + ",";
@@ -206,13 +199,15 @@ namespace WcfService1
             }
 
             // We generate instance of workflow in PNPU_H_WORKFLOW
-            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            historicWorkflow.WORKFLOW_ID = workflowId;
-            historicWorkflow.CLIENT_ID = clientToLaunch;
-            historicWorkflow.LAUNCHING_DATE = DateTime.Now;
-            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-            historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
-            historicWorkflow.INSTANCE_NAME = instanceName;
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+            {
+                WORKFLOW_ID = workflowId,
+                CLIENT_ID = clientToLaunch,
+                LAUNCHING_DATE = DateTime.Now,
+                ENDING_DATE = new DateTime(1800, 1, 1),
+                STATUT_GLOBAL = ParamAppli.StatutInProgress,
+                INSTANCE_NAME = instanceName
+            };
 
             int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
@@ -261,36 +256,32 @@ namespace WcfService1
             return RequestTool.AffectWorkflowsProcesses(input, workflowID);
         }
 
-        public IEnumerable<PNPU_H_REPORT> getReport(string idProcess_, string workflowId_, string clientId, string idInstanceWF_)
+        public IEnumerable<PNPU_H_REPORT> GetReport(string idProcess, string workflowId, string clientId, string idInstanceWF)
         {
-            decimal workflowId = decimal.Parse(workflowId_);
-            decimal idProcess = decimal.Parse(idProcess_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            return RequestTool.getReport(idProcess, workflowId, clientId, idInstanceWF);
+            decimal workflowId_ = decimal.Parse(workflowId);
+            decimal idProcess_ = decimal.Parse(idProcess);
+            int idInstanceWF_ = int.Parse(idInstanceWF);
+            return RequestTool.GetReport(idProcess_, workflowId_, clientId, idInstanceWF_);
         }
 
-        public IEnumerable<InfoClient> getListClientsByTypo(string TypologyId)
+        public IEnumerable<InfoClient> GetListClientsByTypo(string TypologyId)
         {
-            return RequestTool.getClientsWithTypologies(Int32.Parse(TypologyId));
+            return RequestTool.GetClientsWithTypologies(Int32.Parse(TypologyId));
         }
 
-        public IEnumerable<InfoClient> getListClients()
+        public IEnumerable<InfoClient> GetListClients()
         {
-            return RequestTool.getClientsWithTypologies();
+            return RequestTool.GetClientsWithTypologies();
         }
 
-        public string GetMaxStep(string workflowID_)
+        public string GetMaxStep(string workflowID)
         {
-            int workflowId = int.Parse(workflowID_);
-            return RequestTool.GetMaxStep(workflowId);
+            return RequestTool.GetMaxStep(int.Parse(workflowID));
         }
 
-        public string GetNbLocalisation(string workflowId_, string idInstanceWF_, string clientId_)
+        public string GetNbLocalisation(string workflowId, string idInstanceWF, string clientId)
         {
-            int workflowId = int.Parse(workflowId_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            int clientId = int.Parse(clientId_);
-            return RequestTool.GetNbLocalisation(workflowId, idInstanceWF, clientId);
+            return RequestTool.GetNbLocalisation(int.Parse(workflowId), int.Parse(idInstanceWF), int.Parse(clientId));
         }
 
         /// <summary>
@@ -316,7 +307,7 @@ namespace WcfService1
                     sNom += "_C" + clientId + "_N0";
                 sDossierTempo = ParamAppli.DossierTemporaire + "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
-                if (Directory.Exists(sDossierTempo) == false)
+                if (!Directory.Exists(sDossierTempo))
                     Directory.CreateDirectory(sDossierTempo);
 
                 File.WriteAllBytes(sFichierZip, fichier);
@@ -379,16 +370,14 @@ namespace WcfService1
             return Authentification.GetHabilitation(user, token);
         }
 
-        public IEnumerable<InfoClient> GetListClients(string user, string habilitation)
+        public IEnumerable<InfoClient> GetListClientsHabilitation(string user, string habilitation)
         {
             return Authentification.GetListClient(habilitation, user);
         }
 
-        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string user, string habilitation, string workflowID_, string idInstanceWF_)
+        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string sHabilitation, string sUser, string workflowID, string idInstanceWF)
         {
-            decimal workflowID = decimal.Parse(workflowID_);
-            decimal idInstanceWF = decimal.Parse(idInstanceWF_);
-            return RequestTool.GetInfoDashboardCardByWorkflow(user, habilitation, workflowID, idInstanceWF);
+            return RequestTool.GetInfoDashboardCardByWorkflow(sHabilitation, sUser, decimal.Parse(workflowID), decimal.Parse(idInstanceWF));
         }
 
         public string LaunchToolBoxProcess(Stream stream)
@@ -410,7 +399,7 @@ namespace WcfService1
                 string FileName = file.FileName;
 
                 //EST CE QUE LE DOSSIER TEMP EXISTE
-                if (Directory.Exists(ParamAppli.DossierTemporaire) == false)
+                if (!Directory.Exists(ParamAppli.DossierTemporaire))
                     Directory.CreateDirectory(ParamAppli.DossierTemporaire);
 
                 FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
@@ -428,13 +417,15 @@ namespace WcfService1
             {
                 DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 // We generate instance of workflow in PNPU_H_WORKFLOW 
-                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-                historicWorkflow.WORKFLOW_ID = workflowId;
-                historicWorkflow.CLIENT_ID = clientId;
-                historicWorkflow.LAUNCHING_DATE = DateTime.Now;
-                historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-                historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
-                historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId;
+                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+                {
+                    WORKFLOW_ID = workflowId,
+                    CLIENT_ID = clientId,
+                    LAUNCHING_DATE = DateTime.Now,
+                    ENDING_DATE = new DateTime(1800, 1, 1),
+                    STATUT_GLOBAL = ParamAppli.StatutInProgress,
+                    INSTANCE_NAME = "Toolbox Workflow #" + workflowId
+                };
 
                 idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
@@ -445,16 +436,24 @@ namespace WcfService1
                     gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
                 }
 
-                ParamToolbox paramToolbox = new ParamToolbox();
-                result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
-
-                if (result != "Requête traité avec succès")
+                try
                 {
-                    //TODO Suppresion historic workflow
-                    //TODO LOG
-                    throw new WebFaultException(HttpStatusCode.BadRequest);
+                    ParamToolbox paramToolbox = new ParamToolbox();
+                    result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
+
+                    if (result != "Requête traité avec succès")
+                    {
+                        //TODO Suppresion historic workflow
+                        //TODO LOG
+                        throw new WebFaultException(HttpStatusCode.BadRequest);
+                    }
+
+                    LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
                 }
-                LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             return result;
@@ -474,8 +473,8 @@ namespace WcfService1
 
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding streamEncoding;
+        readonly private Stream ioStream;
+        readonly private UnicodeEncoding streamEncoding;
 
         public StreamString(Stream ioStream)
         {

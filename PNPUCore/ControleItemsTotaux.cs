@@ -11,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleItemsTotaux : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -100,7 +100,7 @@ namespace PNPUCore.Controle
 
                         lListeAControler.Add(new string[] { sItem, drRow[0].ToString() + "." + drRow[1].ToString() });
 
-                        if (bPremierElement == true)
+                        if (bPremierElement)
                             bPremierElement = false;
                         else
                             sRequete += ",";

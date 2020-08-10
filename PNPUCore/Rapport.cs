@@ -9,44 +9,17 @@ namespace PNPUCore.Rapport
 {
     class RTraitement
     {
-        private string id;
-        private List<RProcess> process;
-        private DateTime debut;
-        private DateTime fin;
+        public String Id { set; get; }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public List<RProcess> Process { set; get; }
 
-        public List<RProcess> Process
-        {
-            set { process = value; }
-            get { return process; }
-        }
+        public DateTime Debut { set; get; }
 
-        public DateTime Debut
-        {
-            set { debut = value; }
-            get { return debut; }
-        }
-
-        public DateTime Fin
-        {
-            set { fin = value; }
-            get { return fin; }
-        }
+        public DateTime Fin { set; get; }
     }
 
     class RProcess
     {
-        private string id;
-        private string name;
-        private List<Source> source;
-        private DateTime debut;
-        private DateTime fin;
-        private string result;
         public RapportDependancesInterPack rapportDependancesInterPack = new RapportDependancesInterPack();
 
         private string DetermineFormat(int iNombre)
@@ -73,11 +46,11 @@ namespace PNPUCore.Rapport
             jw.WritePropertyName("id");
             jw.WriteValue("1");
             jw.WritePropertyName("name");
-            jw.WriteValue(sCote + name + sCote);
+            jw.WriteValue(sCote + Name + sCote);
             /*jw.WritePropertyName("id-client"); 
             jw.WriteValue(this.IdClient);*/
             jw.WritePropertyName("result");
-            jw.WriteValue(sCote + result + sCote);
+            jw.WriteValue(sCote + Result + sCote);
             jw.WritePropertyName("debut");
             jw.WriteValue(sCote + Debut.ToString("dd/MM/yy H:mm:ss") + sCote);
             jw.WritePropertyName("fin");
@@ -162,40 +135,17 @@ namespace PNPUCore.Rapport
             return sb.ToString();
         }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
-        public List<Source> Source
-        {
-            set { source = value; }
-            get { return source; }
-        }
+        public String Name { set; get; }
 
-        public DateTime Debut
-        {
-            set { debut = value; }
-            get { return debut; }
-        }
+        public List<Source> Source { set; get; }
 
-        public DateTime Fin
-        {
-            set { fin = value; }
-            get { return fin; }
-        }
+        public DateTime Debut { set; get; }
 
-        public String Result
-        {
-            set { result = value; }
-            get { return result; }
-        }
+        public DateTime Fin { set; get; }
+
+        public String Result { set; get; }
 
         public string IdClient { get; internal set; }
 
@@ -203,28 +153,13 @@ namespace PNPUCore.Rapport
 
     class Source
     {
-        private string id;
-        private string name;
         private string result { get; set; }
-        private List<RControle> controle;
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
-        public List<RControle> Controle
-        {
-            set { controle = value; }
-            get { return controle; }
-        }
+        public List<RControle> Controle { set; get; }
 
         public string Result
         {
@@ -236,23 +171,13 @@ namespace PNPUCore.Rapport
 
     class RControle
     {
-        private string id;
-        private string name;
         private string tooltip { get; set; }
         private string result { get; set; }
         private List<string> message { get; set; }
 
-        public String Id
-        {
-            set { id = value; }
-            get { return id; }
-        }
+        public String Id { set; get; }
 
-        public String Name
-        {
-            set { name = value; }
-            get { return name; }
-        }
+        public String Name { set; get; }
 
         public String Tooltip
         {

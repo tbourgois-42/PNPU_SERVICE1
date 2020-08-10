@@ -39,9 +39,6 @@ namespace PNPUCore.Process
             //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
             //ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
 
-            ParamToolbox paramToolbox = new ParamToolbox();
-            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
-
             sRapport = string.Empty;
             RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
@@ -90,6 +87,9 @@ namespace PNPUCore.Process
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
+
+            // Suppresion des paramètres toolbox temporaires
+            //paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             if (GlobalResult == ParamAppli.StatutOk)
             {

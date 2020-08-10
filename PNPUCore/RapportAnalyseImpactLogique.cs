@@ -34,7 +34,6 @@ namespace PNPUCore
 
 
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = "1";
             jw.Formatting = Formatting.Indented;
@@ -78,7 +77,6 @@ namespace PNPUCore
         public void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
@@ -110,7 +108,6 @@ namespace PNPUCore
         internal void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + increment).ToString();
 
@@ -145,7 +142,6 @@ namespace PNPUCore
         internal void ToJSONRepresentation(JsonWriter jw, string id, int increment)
         {
             string sCote = string.Empty;
-            string sCote2 = string.Empty;
 
             Id = ((Int32.Parse(id) * 10) + increment).ToString();
 

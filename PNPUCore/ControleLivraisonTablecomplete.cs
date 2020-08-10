@@ -11,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleLivraisonTablecomplete : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
-        private string ConnectionStringBaseRef;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -75,19 +75,16 @@ namespace PNPUCore.Controle
                         string[] lListeCommandes = dmaManagerAccess.splitCmdCodeData(drRow[1].ToString());
                         foreach (string LigneCommande in lListeCommandes)
                         {
-                            if (LigneCommande.ToUpper().Contains("REPLACE") == true)
+                            if (LigneCommande.ToUpper().Contains("REPLACE"))
                             {
                                 dmaManagerAccess.ExtractTableFilter(LigneCommande, ref sTable, ref sFilter, ref lColumnsList);
                                 if (sFilter == "1=1")
                                 {
                                     DataSet dsDataSet2 = dmsManagerSQL.GetData("SELECT COUNT(*) FROM " + sTable, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
-                                    if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
+                                    if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0) && dsDataSet2.Tables[0].Rows[0].ToString() != "0")
                                     {
-                                        if (dsDataSet2.Tables[0].Rows[0].ToString() != "0")
-                                        {
-                                            Process.AjouteRapport("Presence d'un REPLACE sans filtre sur la table " + sTable + " dans le pack " + drRow[0].ToString());
-                                            bResultat = ResultatErreur;
-                                        }
+                                        Process.AjouteRapport("Presence d'un REPLACE sans filtre sur la table " + sTable + " dans le pack " + drRow[0].ToString());
+                                        bResultat = ResultatErreur;
                                     }
                                 }
                             }

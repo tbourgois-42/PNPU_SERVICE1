@@ -11,10 +11,10 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControleIDSynonym : PControle, IControle
     {
-        private string sPathMdb = string.Empty;
-        private List<int> lLIM_INF;
-        private List<int> lLIM_SUP;
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private string sPathMdb = string.Empty;
+        readonly private List<int> lLIM_INF;
+        readonly private List<int> lLIM_SUP;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -83,13 +83,13 @@ namespace PNPUCore.Controle
                         bool bPlageOK = true;
 
                         iID_SYNONYM = Int32.Parse(drRow[1].ToString());
-                        for (int j = 0; j < lLIM_INF.Count && bPlageOK == true; j++)
+                        for (int j = 0; j < lLIM_INF.Count && bPlageOK; j++)
                         {
                             if (iID_SYNONYM >= lLIM_INF[j] && iID_SYNONYM <= lLIM_SUP[j])
                                 bPlageOK = false;
 
                         }
-                        if (bPlageOK == false)
+                        if (!bPlageOK)
                         {
                             bResultat = ResultatErreur;
                             Process.AjouteRapport("L'ID_SYNONYM de l'item " + drRow[0].ToString() + "(" + drRow[1].ToString() + ") est dans les plages réservées client.");

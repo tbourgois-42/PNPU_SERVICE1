@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     class ControlePropagation : PControle, IControle
     {
-        private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -95,9 +95,7 @@ namespace PNPUCore.Controle
                                     {
 
                                         iIndex2 = stempo.IndexOf('\"', iIndex + 1);
-                                        if (iIndex2 < 0)
-                                            iIndex2 = stempo.Length - 1;
-                                        else
+                                        if (iIndex2 >= 0)
                                             sWhere = stempo.Substring(iIndex + 1, iIndex2 - iIndex - 1);
                                     }
                                     else
@@ -127,13 +125,13 @@ namespace PNPUCore.Controle
                                     }
                                 }
 
-                                if (bMultiOrga == true)
+                                if (bMultiOrga)
                                 {
                                     // Recherche de la commande de propagation SQL Server
                                     sRequete = "select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%EXEC%M4SFR_COPY_DATA_ORG%" + sTable + "%";
                                     if (sWhere != string.Empty)
                                     {
-                                        sWhere2 = sWhere.Trim();
+                                        sWhere = sWhere.Trim();
                                         sWhere2 = sWhere.ToUpper();
                                         sWhere2 = sWhere2.Trim();
                                         sWhere2 = sWhere2.Replace("'", "' + CHR(39) + CHR(39) + '");
@@ -164,7 +162,7 @@ namespace PNPUCore.Controle
                                         {
                                             sWhere2 = sWhere.ToUpper();
                                             sWhere2 = sWhere2.Replace("'", "' + CHR(39) + CHR(39) + '");
-                                            if (sWhere2.Contains("{D") == true)
+                                            if (sWhere2.Contains("{D"))
                                             {
                                                 sWhere2 = sWhere2.Replace("{D", "TO_DATE(");
                                                 sWhere2 = sWhere2.Replace("}", ",' + CHR(39) + CHR(39) + 'YYYY-MM-DD' + CHR(39) + CHR(39) +')");

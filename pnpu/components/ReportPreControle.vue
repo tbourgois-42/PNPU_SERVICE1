@@ -390,7 +390,7 @@ export default {
         }
       } else {
         // Deep Copy of this.items
-        this.treeviewFiltered = JSON.parse(JSON.stringify(this.items))
+        this.treeviewFiltered = JSON.parse(JSON.stringify(this.reportJsonData))
       }
     },
 

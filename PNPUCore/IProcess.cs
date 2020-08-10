@@ -185,7 +185,7 @@ namespace PNPUCore.Process
             historicWorkflow.LAUNCHING_DATE = debut;
             historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
             historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
-            InfoClient client = RequestTool.getClientsById(CLIENT_ID);
+            InfoClient client = RequestTool.GetClientsById(CLIENT_ID);
 
             historicStep.ID_H_WORKFLOW = ID_INSTANCEWF;
             historicStep.ID_PROCESS = PROCESS_ID;
@@ -239,7 +239,7 @@ namespace PNPUCore.Process
 
             foreach (string clientId in listClientId)
             {
-                InfoClient client = RequestTool.getClientsById(clientId);
+                InfoClient client = RequestTool.GetClientsById(clientId);
                 PNPU_H_STEP historicStep = new PNPU_H_STEP();
                 historicStep.ID_PROCESS = PROCESS_ID;
                 historicStep.ITERATION = 1;
@@ -290,7 +290,7 @@ namespace PNPUCore.Process
                 try
                 {
                     string sClient_ID;
-                    if (CLIENT_ID.Contains(",") == true)
+                    if (CLIENT_ID.Contains(","))
                         sClient_ID = CLIENT_ID.Split(',')[0];
                     else
                         sClient_ID = CLIENT_ID;
@@ -304,12 +304,8 @@ namespace PNPUCore.Process
                     Console.WriteLine(ex.Message);
                 }
             }
-            /*else if (this.TYPOLOGY != string.Empty)
-            {
-                sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY LIKE '%*" + this.TYPOLOGY + "*%'))";
-            }
-            */
-            if (STANDARD == false)
+
+            if (!STANDARD )
             {
                 sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
             }
