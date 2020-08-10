@@ -88,6 +88,9 @@ namespace PNPUCore.Process
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
 
+            // Suppresion des paramètres toolbox temporaires
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
+
             if (GlobalResult == ParamAppli.StatutOk)
             {
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessGestionDependance);

@@ -69,7 +69,7 @@ namespace WcfService1
             return RequestTool.GetAllProcesses();
         }
 
-        public PNPU_PROCESS getProcess(string processId)
+        public PNPU_PROCESS GetProcess(string processId)
         {
             return RequestTool.GetProcess(processId);
         }
@@ -79,9 +79,9 @@ namespace WcfService1
             return RequestTool.GetAllWorkFLow(isToolBox);
         }
 
-        public PNPU_WORKFLOW getWorkflow(string workflowId)
+        public PNPU_WORKFLOW GetWorkflow(string workflowId)
         {
-            return RequestTool.getWorkflow(workflowId);
+            return RequestTool.GetWorkflow(workflowId);
         }
 
         public string GetProcessusCritiquesAllCLient()
@@ -141,7 +141,7 @@ namespace WcfService1
             return RequestTool.GetWorkflowProcesses(workflowId);
         }
 
-        public void preflightRequest()
+        public void PreflightRequest()
         {
             // Method intentionally left empty.
         }
@@ -179,7 +179,7 @@ namespace WcfService1
             {
                 //REQUETE
                 int typologyId = Int32.Parse(typology);
-                IEnumerable<InfoClient> listClient = RequestTool.getClientsWithTypologies(typologyId);
+                IEnumerable<InfoClient> listClient = RequestTool.GetClientsWithTypologies(typologyId);
                 foreach (InfoClient client in listClient)
                 {
                     clientToLaunch = clientToLaunch + client.ID_CLIENT + ",";
@@ -199,13 +199,15 @@ namespace WcfService1
             }
 
             // We generate instance of workflow in PNPU_H_WORKFLOW
-            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            historicWorkflow.WORKFLOW_ID = workflowId;
-            historicWorkflow.CLIENT_ID = clientToLaunch;
-            historicWorkflow.LAUNCHING_DATE = DateTime.Now;
-            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-            historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
-            historicWorkflow.INSTANCE_NAME = instanceName;
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+            {
+                WORKFLOW_ID = workflowId,
+                CLIENT_ID = clientToLaunch,
+                LAUNCHING_DATE = DateTime.Now,
+                ENDING_DATE = new DateTime(1800, 1, 1),
+                STATUT_GLOBAL = ParamAppli.StatutInProgress,
+                INSTANCE_NAME = instanceName
+            };
 
             int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
@@ -254,36 +256,29 @@ namespace WcfService1
             return RequestTool.AffectWorkflowsProcesses(input, workflowID);
         }
 
-        public IEnumerable<PNPU_H_REPORT> getReport(string idProcess_, string workflowId_, string clientId, string idInstanceWF_)
+        public IEnumerable<PNPU_H_REPORT> GetReport(string idProcess, string workflowId, string clientId, string idInstanceWF)
         {
-            decimal workflowId = decimal.Parse(workflowId_);
-            decimal idProcess = decimal.Parse(idProcess_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            return RequestTool.getReport(idProcess, workflowId, clientId, idInstanceWF);
+            return RequestTool.GetReport(decimal.Parse(idProcess), decimal.Parse(workflowId), clientId, int.Parse(idInstanceWF));
         }
 
-        public IEnumerable<InfoClient> getListClientsByTypo(string TypologyId)
+        public IEnumerable<InfoClient> GetListClientsByTypo(string TypologyId)
         {
-            return RequestTool.getClientsWithTypologies(Int32.Parse(TypologyId));
+            return RequestTool.GetClientsWithTypologies(Int32.Parse(TypologyId));
         }
 
-        public IEnumerable<InfoClient> getListClients()
+        public IEnumerable<InfoClient> GetListClients()
         {
-            return RequestTool.getClientsWithTypologies();
+            return RequestTool.GetClientsWithTypologies();
         }
 
-        public string GetMaxStep(string workflowID_)
+        public string GetMaxStep(string workflowID)
         {
-            int workflowId = int.Parse(workflowID_);
-            return RequestTool.GetMaxStep(workflowId);
+            return RequestTool.GetMaxStep(int.Parse(workflowID));
         }
 
-        public string GetNbLocalisation(string workflowId_, string idInstanceWF_, string clientId_)
+        public string GetNbLocalisation(string workflowId, string idInstanceWF, string clientId)
         {
-            int workflowId = int.Parse(workflowId_);
-            int idInstanceWF = int.Parse(idInstanceWF_);
-            int clientId = int.Parse(clientId_);
-            return RequestTool.GetNbLocalisation(workflowId, idInstanceWF, clientId);
+            return RequestTool.GetNbLocalisation(int.Parse(workflowId), int.Parse(idInstanceWF), int.Parse(clientId));
         }
 
         /// <summary>
@@ -372,16 +367,14 @@ namespace WcfService1
             return Authentification.GetHabilitation(user, token);
         }
 
-        public IEnumerable<InfoClient> GetListClients(string user, string habilitation)
+        public IEnumerable<InfoClient> GetListClientsHabilitation(string user, string habilitation)
         {
             return Authentification.GetListClient(habilitation, user);
         }
 
-        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string user, string habilitation, string workflowID_, string idInstanceWF_)
+        public IEnumerable<InfoClientStep> GetInfoDashboardCardByWorkflow(string sHabilitation, string sUser, string workflowID, string idInstanceWF)
         {
-            decimal workflowID = decimal.Parse(workflowID_);
-            decimal idInstanceWF = decimal.Parse(idInstanceWF_);
-            return RequestTool.GetInfoDashboardCardByWorkflow(user, habilitation, workflowID, idInstanceWF);
+            return RequestTool.GetInfoDashboardCardByWorkflow(sHabilitation, sUser, decimal.Parse(workflowID), decimal.Parse(idInstanceWF));
         }
 
         public string LaunchToolBoxProcess(Stream stream)
@@ -421,15 +414,17 @@ namespace WcfService1
             {
                 DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 // We generate instance of workflow in PNPU_H_WORKFLOW 
-                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-                historicWorkflow.WORKFLOW_ID = workflowId;
-                historicWorkflow.CLIENT_ID = clientId;
-                historicWorkflow.LAUNCHING_DATE = DateTime.Now;
-                historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-                historicWorkflow.STATUT_GLOBAL = ParamAppli.StatutInProgress;
-                historicWorkflow.INSTANCE_NAME = "Toolbox Workflow #" + workflowId;
+                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+                {
+                    WORKFLOW_ID = workflowId,
+                    CLIENT_ID = clientId,
+                    LAUNCHING_DATE = DateTime.Now,
+                    ENDING_DATE = new DateTime(1800, 1, 1),
+                    STATUT_GLOBAL = ParamAppli.StatutInProgress,
+                    INSTANCE_NAME = "Toolbox Workflow #" + workflowId
+                };
 
-                idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+                int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
                 if (hadFile)
                 {
@@ -438,16 +433,24 @@ namespace WcfService1
                     gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
                 }
 
-                ParamToolbox paramToolbox = new ParamToolbox();
-                result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
-
-                if (result != "Requête traité avec succès")
+                try
                 {
-                    //TODO Suppresion historic workflow
-                    //TODO LOG
-                    throw new WebFaultException(HttpStatusCode.BadRequest);
+                    ParamToolbox paramToolbox = new ParamToolbox();
+                    result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
+
+                    if (result != "Requête traité avec succès")
+                    {
+                        //TODO Suppresion historic workflow
+                        //TODO LOG
+                        throw new WebFaultException(HttpStatusCode.BadRequest);
+                    }
+
+                    LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
                 }
-                LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             return result;

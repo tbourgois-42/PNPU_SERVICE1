@@ -2,7 +2,7 @@
   <v-form ref="form" @submit.prevent="launch">
     <v-container class="fill-height" fluid>
       <v-row>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Base de données
@@ -37,7 +37,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6" md="6">
           <v-card>
             <v-card-title class="d-flex justify-space-between"
               >Packages<v-icon>mdi-microsoft-access</v-icon></v-card-title
@@ -59,6 +59,7 @@
                     :show-size="1000"
                     accept=".zip, .7zip, .rar"
                     required
+                    @change="selectFile($event)"
                   >
                     <template v-slot:selection="{ index, text }">
                       <v-chip v-if="index < 2" color="primary" dark label small>
@@ -121,7 +122,12 @@ export default {
       showPassword: false,
       rules: {
         required: (value) => !!value || 'Champ obligatoire.'
-      }
+      },
+      selectedFile: null,
+      files: [],
+      snackbar: '',
+      colorsnackbar: '',
+      snackbarMessage: ''
     }
   },
   computed: {

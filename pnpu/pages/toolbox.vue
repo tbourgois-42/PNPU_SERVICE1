@@ -68,9 +68,10 @@
                       <v-col cols="6">
                         <v-select
                           v-model="toolboxName"
-                          :items="workflows"
+                          :items="lstNameWorkflow"
                           label="Sélectionner un processus"
                           solo
+                          @change="getSelected($event)"
                         ></v-select>
                       </v-col>
                       <v-col cols="6">
@@ -84,48 +85,42 @@
                     </v-col>
                   </v-row>
                   <TlbxTNR
-                    v-if="
-                      toolboxName === 'Tests de Non Régression (TNR)' &&
-                      tab === 1
-                    "
+                    v-if="toolboxName === 'TNR Toolbox' && tab === 1"
                     :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxAnalyseData
                     v-if="toolboxName === 'Analyse de données' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxAnalyseLogique
                     v-if="toolboxName === 'Analyse logique' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxIntegration
                     v-if="toolboxName === 'Test d\'intégration' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxPackagingDependances
-                    v-if="
-                      toolboxName === 'Packaging des dépendances' && tab === 1
-                    "
+                    v-if="toolboxName === 'Packaging des dépendances' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxPreControl
-                    v-if="toolboxName === 'Pré contrôle mdb' && tab === 1"
+                    v-if="toolboxName === 'Pré Controle mdb' && tab === 1"
+                    :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
                   <TlbxTestsProcessusCritiques
                     v-if="
                       toolboxName === 'Tests des processus critiques' &&
-                      tab === 1
-                    "
+                      tab === 1"
+                      :client="clientID"
+                    :workflowID="workflowIdSelected"
                   />
-                  <v-alert
-                    v-if="toolboxName === ''"
-                    icon="mdi-information-outline"
-                    text
-                    type="warning"
-                    class="mx-4 mb-0"
-                    border="left"
-                    dark
-                    dismissible
-                  >
-                    Il n'est pas encore possible d'éxecuter ce processus en mode
-                    Toolbox
-                  </v-alert>
                   <TlbxResultats v-if="tab === 0" />
                 </v-tab-item>
               </v-tabs-items>
@@ -133,6 +128,12 @@
           </v-col>
         </v-row>
       </v-flex>
+      <v-snackbar v-model="snackbar" :color="colorsnackbar" :timeout="6000" top>
+        {{ snackbarMessage }}
+        <v-btn dark text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-container>
   </v-layout>
 </template>
@@ -159,18 +160,10 @@ export default {
     TlbxTestsProcessusCritiques,
     TlbxResultats
   },
+
   data: () => ({
     title: 'Toolbox',
     subTitle: 'Executer un processus',
-    items: [
-      'Pré contrôle mdb',
-      'Packaging des dépendances',
-      "Test d'intégration",
-      'Tests de Non Régression (TNR)',
-      'Analyse de données',
-      'Analyse logique',
-      'Tests des processus critiques'
-    ],
     tabs: ['Résultats', 'Execution'],
     toolboxName: '',
     alert: true,
@@ -179,19 +172,32 @@ export default {
     showExecution: false,
     tab: null,
     clientID: '',
-    workflows: []
+    lstNameWorkflow: [],
+    workflows: [],
+    snackbar: '',
+    colorsnackbar: '',
+    snackbarMessage: '',
+    workflowIdSelected: ''
   }),
+
   computed: {
+    /**
+     * Get clients from vuex
+     */
     ...mapGetters({
       clients: 'modules/auth/clients'
     })
   },
+
   created() {
-    this.toolboxName = 'Tests de Non Régressions (TNR)'
     this.createLstClient()
     this.getListWorkflow()
   },
+
   methods: {
+    /**
+     * Create client list
+     */
     createLstClient() {
       this.clients.forEach((client) => {
         this.lstClient.push({
@@ -200,6 +206,11 @@ export default {
         })
       })
     },
+
+    /**
+     * Show selected tabs
+     * @param {object} - event
+     */
     getTabs(e) {
       if (e === 0) {
         this.showResultats = !this.showResultats
@@ -207,23 +218,54 @@ export default {
         this.showExecution = !showExecution
       }
     },
+
+    /**
+     * Get list of toolbox workflow
+     */
     async getListWorkflow() {
       try {
-        const response = await axios.get(`${process.env.WEB_SERVICE_WCF}/toolbox/workflow`, {
-          params: {
-            toolbox : true
+        const response = await axios.get(
+          `${process.env.WEB_SERVICE_WCF}/toolbox/workflow`,
+          {
+            params: {
+              isToolBox: '1'
+            }
           }
-        })
+        )
         if (response.status === 200) {
-          response.data.forEach(element => {
-            this.workflows.push(element.WORKFLOW_LABEL)
+          this.workflows = response.data
+          response.data.forEach((element) => {
+            this.lstNameWorkflow.push(element.WORKFLOW_LABEL)
           })
         } else {
-          console.log(response)
+          vm.showSnackbar('error', `${reponse} !`)
         }
       } catch (error) {
-        console.log(response)
+        vm.showSnackbar('error', `${error} !`)
       }
+    },
+
+    /**
+     * Get item selected in data table in order to get the workflowID
+     * @param {} - item selected
+     */
+    getSelected(item) {
+      this.workflows.forEach((element) => {
+        if (element.WORKFLOW_LABEL === item) {
+          this.workflowIdSelected = element.WORKFLOW_ID
+        }
+      })
+    },
+
+    /**
+     * Gére l'affichage du snackbar.
+     * @param {string} color - Couleur de la snackbar.
+     * @param {string} message - Message affiché dans la snackbar.
+     */
+    showSnackbar(color, message) {
+      this.snackbar = true
+      this.colorsnackbar = color
+      this.snackbarMessage = message
     }
   }
 }

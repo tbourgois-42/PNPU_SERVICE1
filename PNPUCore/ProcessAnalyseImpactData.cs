@@ -202,6 +202,7 @@ namespace PNPUCore.Process
 
             GenerateHistoric(rapportAnalyseImpactData.Fin, rapportAnalyseImpactData.Result, rapportAnalyseImpactData.Debut);
 
+            // Suppresion des paramètres toolbox temporaires
             paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             /*DEVif (GlobalResult == ParamAppli.StatutOk)

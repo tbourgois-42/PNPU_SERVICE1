@@ -91,6 +91,9 @@ namespace PNPUTools
         public static IEnumerable<ToolboxInfoLaunch> GetToolBoxInfoLaunch(string sHabilitation, string sUser)
         {
             // Load lastest workflow how has been lauched for client's user
+
+            List<string> lstWORKFLOW = new List<string>();
+
             string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
 
             string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE ";
@@ -154,7 +157,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="idClient"></param>
         /// <returns></returns>
-        public static InfoClient getClientsById(string idClient)
+        public static InfoClient GetClientsById(string idClient)
         {
 
             string finalRequest = string.Format(requestClientById, idClient);
@@ -172,7 +175,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="typology"></param>
         /// <returns></returns>
-        public static IEnumerable<InfoClient> getClientsWithTypologies(int typology)
+        public static IEnumerable<InfoClient> GetClientsWithTypologies(int typology)
         {
 
             string finalRequest = string.Format(requestListClient, typology);
@@ -189,7 +192,7 @@ namespace PNPUTools
         /// Get client typology from support database
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<InfoClient> getClientsWithTypologies()
+        public static IEnumerable<InfoClient> GetClientsWithTypologies()
         {
             string finalRequest = requestListClientAll;
             DataSet result = DataManagerSQLServer.GetDatas(finalRequest, ParamAppli.connectionStringSupport);
@@ -289,7 +292,7 @@ namespace PNPUTools
         /// <param name="clientId"></param>
         /// <param name="idInstanceWF"></param>
         /// <returns>Return report</returns>
-        public static IEnumerable<PNPU_H_REPORT> getReport(decimal idProcess, decimal workflowId, string clientId, int idInstanceWF)
+        public static IEnumerable<PNPU_H_REPORT> GetReport(decimal idProcess, decimal workflowId, string clientId, int idInstanceWF)
         {
             String sRequest = "SELECT PHR.ITERATION, PHR.WORKFLOW_ID, PHR.ID_PROCESS, PHR.CLIENT_ID, PHR.JSON_TEMPLATE, PHR.ID_H_WORKFLOW";
             sRequest += " FROM PNPU_H_REPORT PHR, PNPU_PROCESS PR ";
@@ -345,7 +348,7 @@ namespace PNPUTools
             int workFlowId = Decimal.ToInt32(input.WORKFLOW_ID);
             int idInstanceWF = Decimal.ToInt32(input.ID_H_WORKFLOW);
 
-            if (historicWorkflowExist(workFlowId, idInstanceWF))
+            if (HistoricWorkflowExist(workFlowId, idInstanceWF))
             {
                 //If exist return the id instance
                 return input.ID_H_WORKFLOW.ToString();
@@ -366,7 +369,7 @@ namespace PNPUTools
         /// <returns></returns>
         public static string CreateUpdateStepHistoric(PNPU_H_STEP input)
         {
-            if (historicStepExist(input))
+            if (HistoricStepExist(input))
             {
                 string[] requests = { "UPDATE PNPU_H_STEP SET ENDING_DATE = @ENDING_DATE, CLIENT_NAME = @CLIENT_NAME, ID_STATUT = @ID_STATUT WHERE ITERATION = @ITERATION AND WORKFLOW_ID = @WORKFLOW_ID AND ID_PROCESS = @ID_PROCESS AND CLIENT_ID = @CLIENT_ID AND ID_H_WORKFLOW = @ID_H_WORKFLOW" };
                 string[] parameters = new string[] { "@ITERATION", input.ITERATION.ToString(), "@WORKFLOW_ID", input.WORKFLOW_ID.ToString(), "@ID_PROCESS", input.ID_PROCESS.ToString(), "@CLIENT_ID", input.CLIENT_ID, "@CLIENT_NAME", input.CLIENT_NAME, "@ID_STATUT", input.ID_STATUT, "@ENDING_DATE", input.ENDING_DATE.ToString("MM/dd/yyyy HH:mm:ss"), "@ID_H_WORKFLOW", input.ID_H_WORKFLOW.ToString() };
@@ -387,7 +390,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="workflowId"></param>
         /// <returns>Return a workflow</returns>
-        public static PNPU_WORKFLOW getWorkflow(string workflowId)
+        public static PNPU_WORKFLOW GetWorkflow(string workflowId)
         {
             DataSet result = DataManagerSQLServer.GetDatas(requestOneWorkflow + "'" + workflowId + "'", ParamAppli.ConnectionStringBaseAppli);
             DataTable table = result.Tables[0];
@@ -403,8 +406,8 @@ namespace PNPUTools
         /// <param name="workflowId"></param>
         /// <param name="instanceId"></param>
         /// <returns></returns>
-        public static int getWorkflowHistoric(int workflowId, int instanceId)
-        {
+        public static int GetWorkflowHistoric(int workflowId, int instanceId)
+        {            
             string sRequest = string.Format(requestGetWorkflowHistoric, workflowId, instanceId);
 
             return int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));
@@ -416,10 +419,10 @@ namespace PNPUTools
         /// <param name="workflowId"></param>
         /// <param name="instanceId"></param>
         /// <returns>Return the id of workflow instance if exist, Return "0" if not</returns>
-        public static bool historicWorkflowExist(int workflowId, int instanceId)
+        public static bool HistoricWorkflowExist(int workflowId, int instanceId)
         {
             // return getWorkflowHistoric(workflowId) != null
-            return getWorkflowHistoric(workflowId, instanceId) != 0;
+            return GetWorkflowHistoric(workflowId, instanceId) != 0;
         }
 
         /// <summary>
@@ -427,7 +430,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="step"></param>
         /// <returns>Return 0 if not exist, 1 if exist</returns>
-        public static int getStepHistoric(PNPU_H_STEP step)
+        public static int GetStepHistoric(PNPU_H_STEP step)
         {
             string sRequest = string.Format(requestGetStepHistoric, step.WORKFLOW_ID, step.CLIENT_ID, step.ID_PROCESS, step.ITERATION, step.ID_H_WORKFLOW);
 
@@ -439,9 +442,9 @@ namespace PNPUTools
         /// </summary>
         /// <param name="step"></param>
         /// <returns>Return true if exist, false if not</returns>
-        public static bool historicStepExist(PNPU_H_STEP step)
+        public static bool HistoricStepExist(PNPU_H_STEP step)
         {
-            return getStepHistoric(step) != 0;
+            return GetStepHistoric(step) != 0;
         }
 
         /// <summary>
@@ -582,7 +585,7 @@ namespace PNPUTools
         }
 
 
-        public static string addLocalisationByALineAnalyseLogique(String clientId, int workflowId, string taskId, AnalyseResultLine analyseLine, int idWfInstance)
+        public static string AddLocalisationByALineAnalyseLogique(String clientId, int workflowId, string taskId, AnalyseResultLine analyseLine, int idWfInstance)
         {
             string cct_version = "PNPU" + DateTime.Now.ToString("d");
 
@@ -592,7 +595,7 @@ namespace PNPUTools
             return DataManagerSQLServer.ExecuteSqlTransaction(requests, "PNPU_PROCESS", parameters, false);
         }
 
-        public static string addLocalisationByALineAnalyseData(String clientId, int workflowId, string taskId, string cct_Object_ID, string commande, int idWfInstance)
+        public static string AddLocalisationByALineAnalyseData(String clientId, int workflowId, string taskId, string cct_Object_ID, string commande, int idWfInstance)
         {
             string cct_version = "PNPU" + DateTime.Now.ToString("d");
             string[] requests = { "INSERT INTO PNPU_H_LOCALISATION (CLIENT_ID, WORKFLOW_ID, CCT_TASK_ID, CCT_VERSION, CCT_OBJECT_ID, CCT_OBJECT_TYPE, CCT_PARENT_OBJ_ID, CCT_AUX_OBJECT_ID, CCT_RULE_START_DAT, CCT_ACTION_TYPE, CCT_PACK_TYPE, CCT_LAST_CHG_DATE, CCT_USER_ID, CCT_COMMAND_TYPE, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, CCT_RDL, CCT_AUX2_OBJECT_ID, CCT_AUX3_OBJECT_ID, ID_H_WORKFLOW) VALUES (@client_id, @workflow_id, @cct_task_id, @cct_version, @cct_object_id, @cct_object_type, @cct_parent_obj_id, @cct_aux_object_id, @cct_rule_start_dat, @cct_action_type, @cct_pack_type, @cct_last_chg_date, @cct_user_id, @cct_command_type, @id_approle, @id_secuser, @dt_last_update, @cct_rdl, @cct_aux2_object_id, @cct_aux3_object_id, @id_h_workflow)" };

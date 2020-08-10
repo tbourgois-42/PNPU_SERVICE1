@@ -214,7 +214,7 @@ namespace PNPUTools
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=M4FRDB22;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                    ConnectionStringBaseAppli = "server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 

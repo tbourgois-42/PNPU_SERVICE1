@@ -55,6 +55,8 @@ namespace PNPUCore.Process
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
+            ParamToolbox paramToolbox = new ParamToolbox();
+
             Logger.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
             RamdlTool ramdlTool = new RamdlTool(CLIENT_ID, Decimal.ToInt32(WORKFLOW_ID), ID_INSTANCEWF);
 
@@ -157,6 +159,11 @@ namespace PNPUCore.Process
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
+            Logger.Log(this, GlobalResult, "Fin du process " + ToString());
+
+            // Suppresion des paramètres toolbox temporaires
+            paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
+
             Logger.Log(this, GlobalResult, "Fin du process " + ToString());
 
             if (GlobalResult == ParamAppli.StatutOk)

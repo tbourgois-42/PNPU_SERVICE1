@@ -239,7 +239,7 @@ namespace PNPUCore.Process
 
             foreach (string clientId in listClientId)
             {
-                InfoClient client = RequestTool.getClientsById(clientId);
+                InfoClient client = RequestTool.GetClientsById(clientId);
                 PNPU_H_STEP historicStep = new PNPU_H_STEP();
                 historicStep.ID_PROCESS = PROCESS_ID;
                 historicStep.ITERATION = 1;

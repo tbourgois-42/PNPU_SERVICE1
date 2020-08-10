@@ -94,6 +94,7 @@ namespace PNPUCore.Rapport
         {
             string sCote = string.Empty;
 
+
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
             jw.WriteStartObject();
@@ -125,6 +126,7 @@ namespace PNPUCore.Rapport
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {
             string sCote = string.Empty;
+
 
             Id = ((Int32.Parse(id) * 10) + 1).ToString();
 
