@@ -76,6 +76,8 @@ namespace PNPUCore.Controle
                         sListeItemsLivres += "'" + drRow[0].ToString() + "'";
                     }
                 }
+                else // Si aucun item n'est livré pas besoin de faire le reste
+                    return bResultat;
 
 
                 sRequete = "select ID_TI, ID_ITEM, ID_ITEM_USED_TI, ID_ITEM_USED FROM M4RCH_TOTAL_REF A";
