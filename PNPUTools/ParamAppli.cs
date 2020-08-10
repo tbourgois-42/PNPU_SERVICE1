@@ -203,9 +203,12 @@ namespace PNPUTools
                 {
                     string sCheminINI = "C:\\PNPU\\PNPUTools.ini";
 
-                    iniParser = new FileIniDataParser();
-                    iniData = iniParser.ReadFile(sCheminINI);
-                    ConnectionStringBaseAppli = iniData["ConnectionStrings"]["BaseAppli"];
+                    if (System.IO.File.Exists(sCheminINI))
+                    {
+                        iniParser = new FileIniDataParser();
+                        iniData = iniParser.ReadFile(sCheminINI);
+                        ConnectionStringBaseAppli = iniData["ConnectionStrings"]["BaseAppli"];
+                    }
                 }
                 catch (Exception ex) {
                     //TODO LOG
@@ -306,10 +309,15 @@ namespace PNPUTools
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
+                        ParamToolbox paramToolbox = new ParamToolbox();
+                        string sClient_ID;
+
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             bool bOracle = drRow[4].ToString().ToUpper().Contains("ORACLE");
-                            ListeInfoClient.Add(drRow[0].ToString(), new InfoClient(drRow[0].ToString(), drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), string.Empty, string.Empty, bOracle));
+                            sClient_ID = drRow[0].ToString();
+                            InfoClient infoClient = new InfoClient(sClient_ID, drRow[1].ToString(), drRow[3].ToString(), drRow[2].ToString(), paramToolbox.GetConnexionStringFromInfoClient("QA1",sClient_ID), paramToolbox.GetConnexionStringFromInfoClient("QA2", sClient_ID), bOracle);
+                            ListeInfoClient.Add(sClient_ID, infoClient);
                         }
                     }
                 }
@@ -337,7 +345,7 @@ namespace PNPUTools
             {
                 switch (process.PROCESS_LABEL)
                 {
-                    case "Pré - Contrôle du HF":
+                    case "Pré-Contrôle du HF":
                         ProcessControlePacks = Decimal.ToInt32(process.ID_PROCESS);
                         break;
 
