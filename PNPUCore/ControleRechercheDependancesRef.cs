@@ -35,7 +35,6 @@ namespace PNPUCore.Controle
             bool bResultat;
             string sResultat = ParamAppli.StatutOk;
             string sRequete;
-            string sNomMdb;
             DataManagerAccess dmaManagerAccess;
             DataSet dsDataSet;
             string sTacheCCT;
@@ -54,7 +53,6 @@ namespace PNPUCore.Controle
                 sRequete = "SELECT DISTINCT(CCT_TASK_ID) FROM M4RDL_PACKAGES";
                 foreach (string sPathMdb in Process.listMDB)
                 {
-                    sNomMdb = Path.GetFileName(sPathMdb);
                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -273,7 +271,6 @@ namespace PNPUCore.Controle
             string sRequete;
             bool bPremierElement = true;
             DataSet dsDataSet;
-            string sNomMdb;
             string sTacheCCT;
             string sListeTacheCCT = string.Empty;
 
@@ -289,7 +286,6 @@ namespace PNPUCore.Controle
                 sRequete = "SELECT DISTINCT(CCT_TASK_ID) FROM M4RDL_PACKAGES";
                 foreach (string sPathMdb in Process.listMDB)
                 {
-                    sNomMdb = Path.GetFileName(sPathMdb);
                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

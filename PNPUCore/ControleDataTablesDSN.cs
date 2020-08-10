@@ -11,7 +11,6 @@ namespace PNPUCore.Controle
     {
         readonly ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
-        private string sConnectionString;
         private DataManagerSQLServer dmsDataManager;
         CommandData commandDataCour;
 
@@ -30,17 +29,18 @@ namespace PNPUCore.Controle
             DataSet dsDataSetRef;
             DataSet dsDataSetClient;
             string sFiltreRef;
-            string sFiltreClient;
+            // VARIABLE NOT USE string sFiltreClient;
             string sOrgaOrg;
             //ControleCommandData controleCommandData;
             List<string> lColumnsList = new List<string>();
-            string sFilterTraite;
+            // VARIABLE NOT USE string sFilterTraite;
             List<string> lPKFields = new List<string>();
             bool bSFR_CK_IS_ACTIF = false;
             string sFiltreSuite;
             string sOrgaOrgFiltre;
             string sCommandeGeneree;
             bool bFlagCommandAjoutee = false;
+            string sConnectionString;
 
             dmsDataManager = new DataManagerSQLServer();
             dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
@@ -54,8 +54,8 @@ namespace PNPUCore.Controle
             // On traite une commande de propagation
             if ((commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0) || (commandeLine.ToUpper().IndexOf("DELETE") >= 0) || (commandeLine.ToUpper().IndexOf("UPDATE") >= 0))
             {
-                sFilterTraite = SupprimerChampFiltre(sFilter, "SFR_ID_ORIG_PARAM");
-                sFilterTraite = SupprimerChampFiltre(sFilterTraite, "SFR_CK_IS_ACTIF");
+                // VARIABLE NOT USE sFilterTraite = SupprimerChampFiltre(sFilter, "SFR_ID_ORIG_PARAM");
+                // VARIABLE NOT USE sFilterTraite = SupprimerChampFiltre(sFilterTraite, "SFR_CK_IS_ACTIF");
 
 
                 if (processAnalyseImpactData.TYPOLOGY == "Dédié")
@@ -75,17 +75,17 @@ namespace PNPUCore.Controle
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
                     sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
-                    sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
+                    // VARIABLE NOT USE sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
                     if (sFilter != string.Empty)
                         sFilter = " AND ";
                     sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
-                    sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
+                    // VARIABLE NOT USE sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
 
-                sFiltreClient += " AND SFR_ID_ORIG_PARAM = 'CLI'";
+                // VARIABLE NOT USE sFiltreClient += " AND SFR_ID_ORIG_PARAM = 'CLI'";
 
 
                 sRequeteRef = "SELECT * FROM " + sTable + " WHERE " + sFiltreRef;

@@ -78,16 +78,16 @@ namespace WindowsFormsApp1
 
         private void button5_Click(object sender, EventArgs e)
         {
-            string[] sFichiers = null;
+            /* Code out of date string[] sFichiers = null;
             string sResultat = string.Empty;
 
             //PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
 
-            //gereMDBDansBDD.ExtraitFichiersMDBBDD(ref sFichiers, 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
+            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref sFichiers, 12345, "D:\\PNPU\\TEMPO", "server=M4FRSQL13;uid=SAASSN306;pwd=SAASSN306;database=SAASSN306;");
             foreach (string sNom in sFichiers)
                 sResultat += "\n" + sNom;
 
-            MessageBox.Show(sResultat);
+            MessageBox.Show(sResultat);*/
         }
     }
     public class StreamString

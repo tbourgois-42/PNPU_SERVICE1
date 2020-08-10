@@ -93,9 +93,7 @@ namespace PNPUCore.Controle
                                     {
 
                                         iIndex2 = stempo.IndexOf('\"', iIndex + 1);
-                                        if (iIndex2 < 0)
-                                            iIndex2 = stempo.Length - 1;
-                                        else
+                                        if (iIndex2 >= 0)
                                             sWhere = stempo.Substring(iIndex + 1, iIndex2 - iIndex - 1);
                                     }
                                     else

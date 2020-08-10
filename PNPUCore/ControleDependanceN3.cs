@@ -470,7 +470,7 @@ namespace PNPUCore.Controle
 
                             odbcCommand.CommandText = sRequete;
                             odbcCommand.Parameters[0].Value = sRegle;
-                            rowsAffected = odbcCommand.ExecuteNonQuery();
+                            odbcCommand.ExecuteNonQuery();
 
                         }
                         odbcConnection.Close();

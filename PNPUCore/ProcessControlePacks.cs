@@ -32,7 +32,7 @@ namespace PNPUCore.Process
         {
             List<IControle> listControl = new List<IControle>();
             string GlobalResult = ParamAppli.StatutOk;
-            string SourceResult = ParamAppli.StatutOk;
+            string SourceResult;
             string statutControle;
             listMDB = new List<string>();
             sRapport = string.Empty;

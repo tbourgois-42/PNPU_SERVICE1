@@ -453,7 +453,7 @@ namespace PNPUTools
             string sSelect = "SELECT CLI.CLIENT_ID AS ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS AS TYPOLOGY_ID, COD.CODIFICATION_LIBELLE AS TYPOLOGY ";
             string sFrom = "FROM A_CLIENT CLI, A_CODIFICATION COD ";
             string sWhere = "WHERE COD.CODIFICATION_ID = CLI.SAAS ";
-            string sRequest = sSelect + sFrom;
+            string sRequest;
             string sAlias = "CLI";
 
             sWhere += BuildHabilitationWhereClause(lstClient, sHabilitation, sAlias);

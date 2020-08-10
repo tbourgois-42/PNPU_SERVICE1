@@ -9,12 +9,6 @@ namespace PNPUTools.DataManager
 
         abstract public DataSet GetData(string sRequest, string sConnexion);
 
-
-        /*public DataSet GetData(string sRequest, string sMdbPath)
-        {
-            return null;
-        }*/
-
         /// <summary>
         /// Donne la valeur convertie en chaine de caractères du champ passé en paramètre.
         /// </summary>

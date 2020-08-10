@@ -129,7 +129,7 @@ namespace PNPUCore.Controle
                         // Je remplace les espaces et tabulation par un seul espace.
                         sCommandPack = System.Text.RegularExpressions.Regex.Replace(sCommandPack, "\\s+", " ");
 
-                        while ((iCpt < CMD.Count()) && !bTrouve)
+                        while ((iCpt < CMD.Count) && !bTrouve)
                         {
                             if (sCommandPack.IndexOf(CMD[iCpt++]) >= 0)
                                 bTrouve = true;

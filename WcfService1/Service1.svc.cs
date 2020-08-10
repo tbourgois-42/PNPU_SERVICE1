@@ -258,7 +258,10 @@ namespace WcfService1
 
         public IEnumerable<PNPU_H_REPORT> GetReport(string idProcess, string workflowId, string clientId, string idInstanceWF)
         {
-            return RequestTool.GetReport(decimal.Parse(idProcess), decimal.Parse(workflowId), clientId, int.Parse(idInstanceWF));
+            decimal workflowId_ = decimal.Parse(workflowId);
+            decimal idProcess_ = decimal.Parse(idProcess);
+            int idInstanceWF_ = int.Parse(idInstanceWF);
+            return RequestTool.GetReport(idProcess_, workflowId_, clientId, idInstanceWF_);
         }
 
         public IEnumerable<InfoClient> GetListClientsByTypo(string TypologyId)
@@ -424,7 +427,7 @@ namespace WcfService1
                     INSTANCE_NAME = "Toolbox Workflow #" + workflowId
                 };
 
-                int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+                idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
                 if (hadFile)
                 {

@@ -27,11 +27,11 @@ namespace PNPUCore.Controle
             string sTable = String.Empty;
             string sFilter = String.Empty;
             string sRequeteRef;
-            string sRequeteClient;
+            //Variable is not use string sRequeteClient;
             DataSet dsDataSetRef;
-            DataSet dsDataSetClient;
+            //Variable is not use DataSet dsDataSetClient;
             string sFiltreRef;
-            string sFiltreClient;
+            //Variable is not use string sFiltreClient;
             string sOrgaOrg;
             string sOrgaOrgFiltre;
             //ControleCommandData controleCommandData;
@@ -67,20 +67,20 @@ namespace PNPUCore.Controle
                 if (sFilter.IndexOf("ID_ORGA") >= 0)
                 {
                     sFiltreRef = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, "0001");
-                    sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
+                    //Variable is not use sFiltreClient = dmsDataManager.ReplaceID_ORGA(sFilter, sOrgaOrgFiltre, sOrgaCour);
                 }
                 else
                 {
                     if (sFilter != string.Empty)
                         sFilter = " AND ";
                     sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
-                    sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
+                    //Variable is not use sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
 
                 sRequeteRef = "SELECT * FROM " + sTable + " WHERE " + sFiltreRef;
-                sRequeteClient = "SELECT * FROM " + sTable + " WHERE " + sFiltreClient;
+                //Variable is not use sRequeteClient = "SELECT * FROM " + sTable + " WHERE " + sFiltreClient;
                 dsDataSetRef = dmsDataManager.GetData(sRequeteRef, sConnectionString);
-                dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
+                //Variable is not use dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
 
                 if ((dsDataSetRef != null) && (dsDataSetRef.Tables[0].Rows.Count > 0))
                 {

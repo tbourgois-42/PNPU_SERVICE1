@@ -93,7 +93,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the classification of the item</returns>
         internal Classification MoveToClassification(Classification rapportClassification, Dictionary<string, Classification> lstClassification, DataRow drRow)
         {
-            return rapportClassification = lstClassification[drRow[6].ToString()];
+            return  lstClassification[drRow[6].ToString()];
         }
 
         /// <summary>

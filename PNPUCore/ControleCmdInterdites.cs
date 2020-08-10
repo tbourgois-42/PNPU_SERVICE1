@@ -87,7 +87,7 @@ namespace PNPUCore.Controle
 
                         iCpt = 0;
                         bTrouve = false;
-                        while ((iCpt < lL_INTERDIT.Count()) && !bTrouve)
+                        while ((iCpt < lL_INTERDIT.Count) && !bTrouve)
                         {
                             if (sCommandPack.IndexOf(lL_INTERDIT[iCpt++]) >= 0)
                             {

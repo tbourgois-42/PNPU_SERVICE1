@@ -156,7 +156,7 @@ namespace PNPUCore.Process
                         if (line.CommandDetail == "Inherit")
                         {
                             typeHerited.listLineAnalyseLogique.Add(lineAnalyseLogique);
-                            RequestTool.addLocalisationByALineAnalyseLogique(CLIENT_ID, WORKFLOW_ID, line.Package, line, ID_INSTANCEWF);
+                            RequestTool.AddLocalisationByALineAnalyseLogique(CLIENT_ID, WORKFLOW_ID, line.Package, line, ID_INSTANCEWF);
                             //TODO ADD LOCALISATION ON THIS ELEMENT
                         }
                         else

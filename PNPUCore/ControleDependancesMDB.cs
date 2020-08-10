@@ -55,8 +55,6 @@ namespace PNPUCore.Controle
 
             DataSet dsDataSet;
 
-            string sNomMdb1;
-
             DataManagerAccess dmaManagerAccess1;
             DataManagerAccess dmaManagerAccess2;
 
@@ -67,7 +65,6 @@ namespace PNPUCore.Controle
 
                 foreach (string sPathMdb1 in Process.listMDB)
                 {
-                    sNomMdb1 = Path.GetFileName(sPathMdb1);
 
                     // Recherche des mêmes éléments livrés dans 2 packs d'un mdb
                     sRequete = "select A.ID_PACKAGE, A.ID_CLASS, A.ID_OBJECT, B.ID_PACKAGE FROM M4RDL_PACK_CMDS A, M4RDL_PACK_CMDS B WHERE (A.ID_PACKAGE LIKE '%_L' OR A.ID_PACKAGE LIKE '%_B') AND A.ID_CLASS = B.ID_CLASS AND A.ID_OBJECT = B.ID_OBJECT AND A.ID_PACKAGE <> B.ID_PACKAGE AND A.CMD_ACTIVE = -1 AND B.CMD_ACTIVE = -1";
@@ -374,7 +371,7 @@ namespace PNPUCore.Controle
                 rapportDependancesInterPack2.Name = sNomPack2;
                 rapportDependancesInterPack2.listRapportDependancesInterPackElt = new List<RapportDependancesInterPackElt>();
                 rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Add(rapportDependancesInterPack2);
-                iIndexMDBN2 = 0;
+
                 while (rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2].Name != sNomPack2)
                     indexPack2++;
             }

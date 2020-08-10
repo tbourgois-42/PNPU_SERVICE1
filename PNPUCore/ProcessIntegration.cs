@@ -39,7 +39,7 @@ namespace PNPUCore.Process
             int idInstanceWF = ID_INSTANCEWF;
             Dictionary<string, List<string>> dResultat = new Dictionary<string, List<string>>();
             Rapport.Source RapportSource;
-            string SourceResult = ParamAppli.StatutOk;
+            string SourceResult;
 
 
             // MHUM A terme devra être récupéré depuis l'écran de lancement des WF

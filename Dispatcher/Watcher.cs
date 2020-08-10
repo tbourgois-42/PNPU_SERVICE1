@@ -13,7 +13,7 @@ namespace PNUDispatcher
     /// </summary>  
     public class Watcher
     {
-        private static NamedPipeServerStream[] npssPipeClient = new NamedPipeServerStream[2];;
+        private static NamedPipeServerStream[] npssPipeClient = new NamedPipeServerStream[2];
         private static StreamString[] ssStreamString = new StreamString[2];
         private static Thread tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
         private static Thread tListen2 = null;
@@ -47,7 +47,6 @@ namespace PNUDispatcher
         private static void ListenRequest(string sNomPipe, int iNum)
         {
             string sMessage = string.Empty;
-            string sMessageResultat = string.Empty;
             npssPipeClient[iNum] = new NamedPipeServerStream(sNomPipe);
 
             ssStreamString[iNum] = new StreamString(npssPipeClient[iNum]);
@@ -64,10 +63,11 @@ namespace PNUDispatcher
                 Console.WriteLine("TEST LECTURE STRING : " + sMessage);
 
                 if (!IsValideJSON(sMessage))
-                    sMessageResultat = "KO";
+                {
+                    //TODO add exception
+                }
                 else
                 {
-                    sMessageResultat = "OK";
                     ParamAppli.qFIFO.Enqueue(sMessage);
                 }
                 /*string[] listParam = sMessage.Split('/');
