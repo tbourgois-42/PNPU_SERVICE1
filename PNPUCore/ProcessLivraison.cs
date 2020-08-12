@@ -127,7 +127,7 @@ namespace PNPUCore.Process
             catch (Exception ex)
             {
                 RapportLivraison.Result = ParamAppli.TranscoSatut["ERROR"];
-                Logger.Log(this, ParamAppli.StatutError, "Une erreur s'est produite lors de la récupération des éléments à localiser depuis la table PNPU_H_LOCALISATION, " + ex.ToString());
+                LoggerHelper.Log(this, ParamAppli.StatutError, "Une erreur s'est produite lors de la récupération des éléments à localiser depuis la table PNPU_H_LOCALISATION, " + ex.ToString());
             }
 
             return result;
