@@ -18,6 +18,7 @@ namespace PNPUTools
 
                     using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG, ID_H_WORKFLOW) VALUES (@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG, @ID_H_WORKFLOW)", conn))
                     {
+                        //TODO vérif if all element is not null
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 50).Value = id_process;
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = iteration;
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowId;
@@ -54,6 +55,7 @@ namespace PNPUTools
 
                     using (var cmd = new System.Data.SqlClient.SqlCommand("INSERT INTO PNPU_LOG (ID_PROCESS, ITERATION, WORKFLOW_ID, MESSAGE, STATUT_MESSAGE, ID_CONTROLE, IS_CONTROLE, DATE_LOG, SERVER, BASE, NIVEAU_LOG, ID_H_WORKFLOW) VALUES (@ID_PROCESS, @ITERATION, @WORKFLOW_ID, @MESSAGE, @STATUT_MESSAGE, @ID_CONTROLE, @IS_CONTROLE, @DATE_LOG, @SERVER, @BASE, @NIVEAU_LOG, @ID_H_WORKFLOW)", conn))
                     {
+                        //TODO vérif if all element is not null
                         cmd.Parameters.Add("@ID_PROCESS", SqlDbType.VarChar, 50).Value = id_process;
                         cmd.Parameters.Add("@ITERATION", SqlDbType.Int).Value = iteration;
                         cmd.Parameters.Add("@WORKFLOW_ID", SqlDbType.Int).Value = workflowId;
