@@ -54,7 +54,7 @@ namespace PNPUCore.Controle
         {
             int index = 2;
             Dictionary<string, string> lstCumulativeTable = new Dictionary<string, string>();
-
+            //TODO ItemsNoeudReadTNR.Tables[0] can be null
             foreach (DataRow drRow in ItemsNoeudReadTNR.Tables[0].Rows)
             {
                 if (!lstCumulativeTable.ContainsValue(drRow[2].ToString()) && drRow[2].ToString() != "M4SCO_VE_AC_HR_PERIOD")
