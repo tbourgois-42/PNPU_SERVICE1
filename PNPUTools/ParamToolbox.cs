@@ -136,15 +136,23 @@ namespace PNPUTools
         private string GenerateODBCConnexionString(DataTable dataTable)
         {
             StringBuilder sConnexionString = new StringBuilder();
+            string sServer = dataTable.Rows[0][1].ToString();
+            if (!sServer.Contains(".fr.meta4.com"))
+                sServer += ".fr.meta4.com";
+
+            string sEncryptedPWD = dataTable.Rows[0][3].ToString();
+            string sDecrypted;
+            byte[] data = System.Convert.FromBase64String(sEncryptedPWD);
+            sDecrypted = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
             sConnexionString.Append("server=");
-            sConnexionString.Append(dataTable.Rows[2].ToString());
+            sConnexionString.Append(sServer);
             sConnexionString.Append(";uid=");
-            sConnexionString.Append(dataTable.Rows[1].ToString());
+            sConnexionString.Append(dataTable.Rows[0][2].ToString());
             sConnexionString.Append(";pwd=");
-            sConnexionString.Append(dataTable.Rows[3].ToString());
+            sConnexionString.Append(sDecrypted);
             sConnexionString.Append(";database=");
-            sConnexionString.Append(dataTable.Rows[2].ToString());
+            sConnexionString.Append(dataTable.Rows[0][2].ToString());
             sConnexionString.Append(";");
 
             return sConnexionString.ToString();
@@ -244,7 +252,18 @@ namespace PNPUTools
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
-                return "MT4" + sTrigram + sDatabase;
+                // Verify with PNPU_TRANSCO_DATABASE table
+                string sResultValue = "MT4" + sTrigram + sDatabase;
+
+                sRequestSelect = "SELECT DATABASE_NAME_CLIENT FROM PNPU_TRANSCO_DATABASE WHERE CLIENT_ID = {0} AND DATABASE_NAME_TRANSCO = '{1}'";
+                sRequest = string.Format(sRequestSelect, sClientId, sResultValue);
+                dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+                {
+                    sResultValue = dsDataSet.Tables[0].Rows[0][0].ToString();
+                }
+
+                return sResultValue;
             }
             else
             {
