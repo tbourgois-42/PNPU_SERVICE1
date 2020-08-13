@@ -61,7 +61,7 @@ namespace PNPUCore.Process
 
 
             // MHUM POUR TESTS 
-            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
 
             RapportSource = new Rapport.Source();
             RapportSource.Name = "Planification des processus critiques";

@@ -217,7 +217,7 @@ namespace PNPUTools
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                    ConnectionStringBaseAppli = "server=vm-pn-rdsql-001;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";//"server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 
@@ -286,7 +286,7 @@ namespace PNPUTools
 
 
                 // N'existe que sur la base plateforme
-                if (ConnectionStringBaseRefPlateforme != string.Empty)
+                if ((ConnectionStringBaseRefPlateforme != string.Empty) && (ConnectionStringBaseRefPlateforme != null))
                 {
                     dsDataSet = dataManagerSQLServer.GetData("SELECT CFR_PLAGE_DEBUT, CFR_PLAGE_FIN  FROM  M4CFR_PLAGES_ID_SYNONYM WHERE ID_ORGANIZATION ='0000' and CFR_ID_TYPE = 'CLIENT'", ConnectionStringBaseRefPlateforme);
 
