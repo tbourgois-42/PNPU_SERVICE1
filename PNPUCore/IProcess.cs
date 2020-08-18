@@ -132,13 +132,13 @@ namespace PNPUCore.Process
             }
             else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
             {
-                RapportAnalyseImpactLogique.Fin = DateTime.Now;
-                return (RapportAnalyseImpactLogique.ToJSONRepresentation());
+                RapportLivraison.Fin = DateTime.Now;
+                return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));
             }
             else if (ParamAppli.ProcessAnalyseImpactLogique == process.PROCESS_ID)
             {
-                RapportLivraison.Fin = DateTime.Now;
-                return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));
+                RapportAnalyseImpactLogique.Fin = DateTime.Now;
+                return (RapportAnalyseImpactLogique.ToJSONRepresentation());
             }
             else
             {
