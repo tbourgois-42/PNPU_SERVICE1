@@ -1,17 +1,17 @@
-﻿using PNPUTools;
-using Xunit;
-using PNPUCore;
-using System.Data;
+﻿using PNPUCore;
+using PNPUTools;
 using PNPUTools.DataManager;
 using System;
+using System.Data;
+using Xunit;
 
 namespace XUnitTest
 {
 
     public class InitialisationProcessDependance : IDisposable
     {
-        string clientId { get; set; }
-        int workflowId { get; set; }
+        private string clientId { get; set; }
+        private int workflowId { get; set; }
 
 
         public InitialisationProcessDependance()
@@ -21,7 +21,6 @@ namespace XUnitTest
             int workflowId = 32; //TODO
             int process = ParamAppli.ProcessGestionDependance;
             int idInstanceWF = 0;
-            bool isReportIsPresent = false;
             clientId = "49";
 
             string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
@@ -64,7 +63,7 @@ namespace XUnitTest
     [Collection("Database collection")]
     public class ProcessDependanceTest
     {
-        InitialisationProcessDependance fixture;
+        private readonly InitialisationProcessDependance fixture;
 
         public ProcessDependanceTest(InitialisationProcessDependance fixture)
         {

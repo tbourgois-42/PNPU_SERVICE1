@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de détecter les tâches CCT dépendantes au niveau 1 des tâches du HF. 
     /// </summary>  
-    class ControleDependanceN1 : PControle, IControle
+    internal class ControleDependanceN1 : PControle, IControle
     {
         readonly private PNPUCore.Process.IProcess Process;
 
@@ -72,9 +72,14 @@ namespace PNPUCore.Controle
                         sCCT = drRow[0].ToString();
                         lListeCCTManquants.Add(sCCT);
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sCCT + "'";
                     }
                 }
@@ -90,7 +95,9 @@ namespace PNPUCore.Controle
                         {
                             sCCT = drRow[0].ToString();
                             if (lListeCCTManquants.Contains(sCCT))
+                            {
                                 lListeCCTManquants.Remove(sCCT);
+                            }
                         }
                     }
                 }
@@ -110,9 +117,14 @@ namespace PNPUCore.Controle
                     foreach (string sTacheCCT in lListeCCTManquants)
                     {
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sTacheCCT + "'";
                     }
                     sRequete += ")";
@@ -126,9 +138,14 @@ namespace PNPUCore.Controle
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
                             if (bPremier)
+                            {
                                 bPremier = false;
+                            }
                             else
+                            {
                                 sRequete += ",";
+                            }
+
                             sRequete += "'" + drRow[0].ToString() + "'";
                         }
                         sRequete += ")";
@@ -139,7 +156,9 @@ namespace PNPUCore.Controle
                             {
                                 sCCT = drRow[0].ToString();
                                 if (lListeCCTManquants.Contains(dCorrespondanceCCT[sCCT]))
+                                {
                                     lListeCCTManquants.Remove(dCorrespondanceCCT[sCCT]);
+                                }
                             }
                         }
                     }
@@ -155,7 +174,9 @@ namespace PNPUCore.Controle
                 {
                     List<string> lListeTacheCrees = new List<string>();
                     if (!DupliqueTachesCCT(lListeCCTManquants, "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees))
+                    {
                         bResultat = ResultatErreur;
+                    }
                     else if (lListeTacheCrees.Count > 0)
                     {
                         string sName = "PNPUN1_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
@@ -165,7 +186,9 @@ namespace PNPUCore.Controle
                         Process.AjouteRapport("Génération du fichier MDB.");
                         sName = ParamAppli.GeneratePackPath + "\\" + Process.WORKFLOW_ID + "_" + Process.CLIENT_ID + "\\" + sName + ".mdb";
                         if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.ID_INSTANCEWF, Process.CLIENT_ID, 1) == 0)
+                        {
                             Process.AjouteRapport("Ajout du fichier MDB en base de données.");
+                        }
                         else
                         {
                             Process.AjouteRapport("Erreur lors de l'ajout du fichier MDB en base de données.");
@@ -334,7 +357,9 @@ namespace PNPUCore.Controle
                         {
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
+                            {
                                 lListeTachesCrees.Add(sNouvTacheCCT);
+                            }
                         }
                     }
 

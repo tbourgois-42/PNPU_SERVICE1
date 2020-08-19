@@ -7,8 +7,7 @@ using System.Text;
 
 namespace PNPUCore.Rapport
 {
-
-    class TemplateReport
+    internal class TemplateReport
     {
         public String Id { set; get; }
 
@@ -18,7 +17,7 @@ namespace PNPUCore.Rapport
 
     }
 
-    class RapportProcessAnalyseImpact : TemplateReport
+    internal class RapportProcessAnalyseImpact : TemplateReport
     {
         public String Result { set; get; }
 
@@ -37,7 +36,9 @@ namespace PNPUCore.Rapport
         {
             string sFormat = "0";
             for (int i = 10; i <= iNombre; i *= 10)
+            {
                 sFormat += "0";
+            }
 
             return sFormat;
         }
@@ -84,9 +85,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-
-
-    class RapportAnalyseImpactMDBData : TemplateReport
+    internal class RapportAnalyseImpactMDBData : TemplateReport
     {
         public List<CommandData> listCommandData { set; get; }
 
@@ -117,9 +116,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-
-
-    class RapportAnalyseLogique : TemplateReport
+    internal class RapportAnalyseLogique : TemplateReport
     {
         public List<RapportAnalyseImpactMDBLogique> listRapportAnalyseImpactMDBLogique { set; get; }
 
@@ -150,7 +147,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class RapportAnalyseImpactMDBLogique : TemplateReport
+    internal class RapportAnalyseImpactMDBLogique : TemplateReport
     {
 
         public List<TypeAnalyseLogique> listTypeAnalyseLogique { set; get; }
@@ -180,7 +177,7 @@ namespace PNPUCore.Rapport
 
     }
 
-    class TypeAnalyseLogique : TemplateReport
+    internal class TypeAnalyseLogique : TemplateReport
     {
         public List<LineAnalyseLogique> listLineAnalyseLogique { set; get; }
 
@@ -210,7 +207,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class LineAnalyseLogique : TemplateReport
+    internal class LineAnalyseLogique : TemplateReport
     {
         public String currentCode { set; get; }
         public String newCode { set; get; }
@@ -232,8 +229,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-
-    class RapportAnalyseData : TemplateReport
+    internal class RapportAnalyseData : TemplateReport
     {
         public List<CommandData> listCommandData { set; get; }
 
@@ -265,7 +261,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class CommandData : TemplateReport
+    internal class CommandData : TemplateReport
     {
         public String Result { get; set; }
         public List<ControleCommandData> listControleCommandData;
@@ -295,7 +291,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class ControleCommandData : TemplateReport
+    internal class ControleCommandData : TemplateReport
     {
         public String Result { get; set; }
         public string Message { get; set; }
@@ -319,7 +315,7 @@ namespace PNPUCore.Rapport
         }
     }
 
-    class RapportElementLocaliser : TemplateReport
+    internal class RapportElementLocaliser : TemplateReport
     {
         public List<RapportAnalyseImpactMDBElementALocaliser> listRapportAnalyseImpactMDBElementALocaliser { set; get; }
         internal void ToJSONRepresentation(JsonWriter jw, string id)
@@ -352,7 +348,8 @@ namespace PNPUCore.Rapport
         }
 
     }
-    class RapportAnalyseImpactMDBElementALocaliser : TemplateReport
+
+    internal class RapportAnalyseImpactMDBElementALocaliser : TemplateReport
     {
         public List<ElementLocaliser> listElementLocaliser { set; get; }
 
@@ -380,7 +377,8 @@ namespace PNPUCore.Rapport
         }
 
     }
-    class ElementLocaliser : TemplateReport
+
+    internal class ElementLocaliser : TemplateReport
     {
         internal void ToJSONRepresentation(JsonWriter jw, string id)
         {

@@ -3,7 +3,7 @@ using System;
 
 namespace PNPUCore.Controle
 {
-    class ControleMock : PControle, IControle
+    internal class ControleMock : PControle, IControle
     {
 
         public ControleMock()
@@ -24,7 +24,9 @@ namespace PNPUCore.Controle
             System.Threading.Thread.Sleep(random);
             random = rnd.Next(1, 100);
             if (random < 99)
+            {
                 return ParamAppli.StatutOk;
+            }
             else if (random >= 99 && random < 99.5)
             {
                 GetProcessControle().AjouteRapport("Warning sur le controle MOCK");

@@ -1,9 +1,9 @@
-using PNPUTools;
-using Xunit;
 using PNPUCore;
-using System.Data;
+using PNPUTools;
 using PNPUTools.DataManager;
 using System;
+using System.Data;
+using Xunit;
 
 namespace XUnitTest
 {
@@ -35,7 +35,7 @@ namespace XUnitTest
     [Collection("Database collection")]
     public class ParamToolboxTest
     {
-        DatabaseFixture fixture;
+        private readonly DatabaseFixture fixture;
 
         public ParamToolboxTest(DatabaseFixture fixture)
         {
@@ -67,7 +67,7 @@ namespace XUnitTest
             Assert.Equal("Client trigram does not exist.", paramToolbox.GetClientTrigram("1234"));
         }
 
-        
+
 
         [Fact]
         public void ShouldGetReportWhenLaunchDependanceProcess()

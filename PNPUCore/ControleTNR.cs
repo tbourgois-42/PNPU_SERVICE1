@@ -7,7 +7,7 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleTNR : PControle, IControle
+    internal class ControleTNR : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessTNR Process;
 
@@ -93,7 +93,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the classification of the item</returns>
         internal Classification MoveToClassification(Classification rapportClassification, Dictionary<string, Classification> lstClassification, DataRow drRow)
         {
-            return  lstClassification[drRow[6].ToString()];
+            return lstClassification[drRow[6].ToString()];
         }
 
         /// <summary>

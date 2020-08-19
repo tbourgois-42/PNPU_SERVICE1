@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de controler les dépendances entre les packs des mdb. 
     /// </summary>  
-    class ControleDependancesMDB : PControle, IControle
+    internal class ControleDependancesMDB : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         private RapportDependancesInterPack rapDependancesInterPack;
@@ -163,9 +163,13 @@ namespace PNPUCore.Controle
                                             foreach (DataRow drRow2 in dsDataSet2.Tables[0].Rows)
                                             {
                                                 if (sListeComposant == string.Empty)
+                                                {
                                                     sListeComposant = "('" + drRow2[0].ToString() + "'";
+                                                }
                                                 else
+                                                {
                                                     sListeComposant += ",'" + drRow2[0].ToString() + "'";
+                                                }
                                             }
                                         }
                                         if (sListeComposant != string.Empty)
@@ -211,10 +215,13 @@ namespace PNPUCore.Controle
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                 {
                     if (bGereInversion)
+                    {
                         AjouteDependance(ref bPremierElement, bGereInversion, sNomMdb, drRow[0].ToString(), sNomMdb, drRow[3].ToString(), drRow[1].ToString(), drRow[5].ToString(), drRow[2].ToString(), drRow[4].ToString());
+                    }
                     else
+                    {
                         AjouteDependance(ref bPremierElement, bGereInversion, sNomMdb, drRow[0].ToString(), sNomMdb, drRow[3].ToString(), drRow[1].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[2].ToString());
-
+                    }
                 }
             }
 
@@ -261,20 +268,22 @@ namespace PNPUCore.Controle
         {
             // On ne prend pas en compte les dépendances sur le bulletin électronique
             if ((sClasse1 == "PRESENTATION") && (sElt1.IndexOf("DP_PAYROLL_CHANNEL") > -1))
-                return;
-            /*
-            // Si c'est le premier élément j'ajoute l'entête
-            if (bPremierElement == true)
             {
-                Process.AjouteRapport("Mdb;Pack;Mdb2;Pack2;Classe elt1 / Classe elt2;Elt1;Elt2");
-                bPremierElement = false;
+                return;
             }
+            /*
+// Si c'est le premier élément j'ajoute l'entête
+if (bPremierElement == true)
+{
+   Process.AjouteRapport("Mdb;Pack;Mdb2;Pack2;Classe elt1 / Classe elt2;Elt1;Elt2");
+   bPremierElement = false;
+}
 
-            Process.AjouteRapport(sNomMdb1 + ";" + sNomPack1 + ";" + sNomMdb2 + ";" + sNomPack2 + ";" + sClasse1 + " / " + sClasse2 + ";" + sElt1 + ";" + sElt2);
-            
-            if (bGereInversion == true)
-                Process.AjouteRapport(sNomMdb2 + ";" + sNomPack2 + ";" + sNomMdb1 + ";" + sNomPack1 + ";" + sClasse2 + " / " + sClasse1 + ";" + sElt2 + ";" + sElt1);
-            */
+Process.AjouteRapport(sNomMdb1 + ";" + sNomPack1 + ";" + sNomMdb2 + ";" + sNomPack2 + ";" + sClasse1 + " / " + sClasse2 + ";" + sElt1 + ";" + sElt2);
+
+if (bGereInversion == true)
+   Process.AjouteRapport(sNomMdb2 + ";" + sNomPack2 + ";" + sNomMdb1 + ";" + sNomPack1 + ";" + sClasse2 + " / " + sClasse1 + ";" + sElt2 + ";" + sElt1);
+*/
             bool bTrouve = false;
             int iIndexMDB = 0;
             int indexPack = 0;
@@ -291,19 +300,27 @@ namespace PNPUCore.Controle
             while (!bTrouve && (iIndexMDB < rapDependancesInterPack.listRapportDependancesInterPackMDB.Count))
             {
                 if (rapDependancesInterPack.listRapportDependancesInterPackMDB[iIndexMDB].Name == sNomMdb1)
+                {
                     bTrouve = true;
+                }
                 else
+                {
                     iIndexMDB++;
+                }
             }
             if (!bTrouve)
             {
-                rapportDependancesInterPackMDB = new RapportDependancesInterPackMDB();
-                rapportDependancesInterPackMDB.Name = sNomMdb1;
-                rapportDependancesInterPackMDB.listRapportDependancesInterPackPack = new List<RapportDependancesInterPackPack>();
+                rapportDependancesInterPackMDB = new RapportDependancesInterPackMDB
+                {
+                    Name = sNomMdb1,
+                    listRapportDependancesInterPackPack = new List<RapportDependancesInterPackPack>()
+                };
                 rapDependancesInterPack.listRapportDependancesInterPackMDB.Add(rapportDependancesInterPackMDB);
                 iIndexMDB = 0;
                 while (rapDependancesInterPack.listRapportDependancesInterPackMDB[iIndexMDB].Name != sNomMdb1)
+                {
                     iIndexMDB++;
+                }
             }
             rapportDependancesInterPackMDB = rapDependancesInterPack.listRapportDependancesInterPackMDB[iIndexMDB];
 
@@ -312,47 +329,67 @@ namespace PNPUCore.Controle
             while (!bTrouve && (indexPack < rapportDependancesInterPackMDB.listRapportDependancesInterPackPack.Count))
             {
                 if (rapportDependancesInterPackMDB.listRapportDependancesInterPackPack[indexPack].Name == sNomPack1)
+                {
                     bTrouve = true;
+                }
                 else
+                {
                     indexPack++;
+                }
             }
             if (!bTrouve)
             {
-                rapportDependancesInterPackPack = new RapportDependancesInterPackPack();
-                rapportDependancesInterPackPack.Name = sNomPack1;
-                rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2 = new List<RapportDependancesInterPackMDBN2>();
+                rapportDependancesInterPackPack = new RapportDependancesInterPackPack
+                {
+                    Name = sNomPack1,
+                    listRapportDependancesInterPackMDBN2 = new List<RapportDependancesInterPackMDBN2>()
+                };
                 rapportDependancesInterPackMDB.listRapportDependancesInterPackPack.Add(rapportDependancesInterPackPack);
                 indexPack = 0;
                 while (rapportDependancesInterPackMDB.listRapportDependancesInterPackPack[indexPack].Name != sNomPack1)
+                {
                     indexPack++;
+                }
             }
             rapportDependancesInterPackPack = rapportDependancesInterPackMDB.listRapportDependancesInterPackPack[indexPack];
 
 
             if (sNomMdb2 == sNomMdb1)
+            {
                 sMDBN2 = "Dépendances internes";
+            }
             else
+            {
                 sMDBN2 = sNomMdb2;
+            }
 
 
             // Recherche si le niveau mdbN2 existe
             bTrouve = false;
-            while (!bTrouve  && (iIndexMDBN2 < rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2.Count))
+            while (!bTrouve && (iIndexMDBN2 < rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2.Count))
             {
                 if (rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2[iIndexMDBN2].Name == sMDBN2)
+                {
                     bTrouve = true;
+                }
                 else
+                {
                     iIndexMDBN2++;
+                }
             }
             if (!bTrouve)
             {
-                rapportDependancesInterPackMDBN2 = new RapportDependancesInterPackMDBN2();
-                rapportDependancesInterPackMDBN2.Name = sMDBN2;
-                rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2 = new List<RapportDependancesInterPack2>();
+                rapportDependancesInterPackMDBN2 = new RapportDependancesInterPackMDBN2
+                {
+                    Name = sMDBN2,
+                    listRapportDependancesInterPack2 = new List<RapportDependancesInterPack2>()
+                };
                 rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2.Add(rapportDependancesInterPackMDBN2);
                 iIndexMDBN2 = 0;
                 while (rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2[iIndexMDBN2].Name != sMDBN2)
+                {
                     iIndexMDBN2++;
+                }
             }
             rapportDependancesInterPackMDBN2 = rapportDependancesInterPackPack.listRapportDependancesInterPackMDBN2[iIndexMDBN2];
 
@@ -361,19 +398,27 @@ namespace PNPUCore.Controle
             while (!bTrouve && (indexPack2 < rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Count))
             {
                 if (rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2].Name == sNomPack2)
+                {
                     bTrouve = true;
+                }
                 else
+                {
                     indexPack2++;
+                }
             }
             if (!bTrouve)
             {
-                rapportDependancesInterPack2 = new RapportDependancesInterPack2();
-                rapportDependancesInterPack2.Name = sNomPack2;
-                rapportDependancesInterPack2.listRapportDependancesInterPackElt = new List<RapportDependancesInterPackElt>();
+                rapportDependancesInterPack2 = new RapportDependancesInterPack2
+                {
+                    Name = sNomPack2,
+                    listRapportDependancesInterPackElt = new List<RapportDependancesInterPackElt>()
+                };
                 rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2.Add(rapportDependancesInterPack2);
 
                 while (rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2].Name != sNomPack2)
+                {
                     indexPack2++;
+                }
             }
             rapportDependancesInterPack2 = rapportDependancesInterPackMDBN2.listRapportDependancesInterPack2[indexPack2];
 
@@ -393,7 +438,9 @@ namespace PNPUCore.Controle
             rapportDependancesInterPack2.listRapportDependancesInterPackElt.Add(rapportDependancesInterPackElt);
 
             if (bGereInversion)
+            {
                 AjouteDependance(ref bPremierElement, false, sNomMdb2, sNomPack2, sNomMdb1, sNomPack1, sClasse2, sClasse1, sElt2, sElt1);
+            }
         }
     }
 }

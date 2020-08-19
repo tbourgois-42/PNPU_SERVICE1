@@ -3,19 +3,18 @@
 
 namespace PNUDispatcher
 {
-    static class Program
+    internal static class Program
     {
-
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Watcher wWatcher = new Watcher();
 
             // Wait for the user to quit the program.
             Console.WriteLine("Press 'q' to quit the sample.");
-            while (Console.Read() != 'q') ;
-
-
+            while (Console.Read() != 'q')
+            {
+                ;
+            }
         }
     }
 }

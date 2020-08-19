@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que des données sont présentes pour toutes les commandes REPLACE. 
     /// </summary>  
-    class ControleDonneesReplace : PControle, IControle
+    internal class ControleDonneesReplace : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 
@@ -94,19 +94,25 @@ namespace PNPUCore.Controle
 
                                         iIndex2 = stempo.IndexOf('\"', iIndex + 1);
                                         if (iIndex2 >= 0)
+                                        {
                                             sWhere = stempo.Substring(iIndex + 1, iIndex2 - iIndex - 1);
+                                        }
                                     }
                                     else
                                     {
                                         if ((iIndex3 >= 0) && (iIndex3 < iIndex))
+                                        {
                                             iIndex = iIndex3;
+                                        }
                                     }
                                 }
 
                                 sRequete = "SELECT COUNT(*) FROM " + sTable;
 
                                 if (sWhere != string.Empty)
+                                {
                                     sRequete += " WHERE " + sWhere;
+                                }
 
                                 dsDataSet2 = dmaManagerAccess2.GetData(sRequete, sPathMdb);
                                 if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
@@ -127,8 +133,9 @@ namespace PNPUCore.Controle
                                 }
                             }
                             if (iIndex >= 0)
+                            {
                                 iIndex = stempo.ToUpper().IndexOf("REPLACE ", iIndex);
-
+                            }
                         }
 
                     }

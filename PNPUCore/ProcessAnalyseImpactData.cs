@@ -1,5 +1,4 @@
 ﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
 using PNPUTools;
 using PNPUTools.DataManager;
 using System;
@@ -36,12 +35,14 @@ namespace PNPUCore.Process
         public new void ExecuteMainProcess()
         {
             sRapport = string.Empty;
-            rapportAnalyseImpactData = new RapportAnalyseData();
-            rapportAnalyseImpactData.Debut = DateTime.Now;
-            rapportAnalyseImpactData.Name = LibProcess;
-            rapportAnalyseImpactData.IdClient = CLIENT_ID;
-            rapportAnalyseImpactData.Result = ParamAppli.StatutInfo;
-            rapportAnalyseImpactData.listRapportAnalyseImpactMDBData = new List<RapportAnalyseImpactMDBData>();
+            rapportAnalyseImpactData = new RapportAnalyseData
+            {
+                Debut = DateTime.Now,
+                Name = LibProcess,
+                IdClient = CLIENT_ID,
+                Result = ParamAppli.StatutInfo,
+                listRapportAnalyseImpactMDBData = new List<RapportAnalyseImpactMDBData>()
+            };
             string[] tListeMDB = null;
             string sPackCourrant = string.Empty;
             string sSequenceCourrante = string.Empty;
@@ -77,7 +78,9 @@ namespace PNPUCore.Process
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+                {
                     lTablesDSN.Add(drRow[0].ToString());
+                }
             }
 
             //Création des contrôles
@@ -93,9 +96,11 @@ namespace PNPUCore.Process
             foreach (string sMDB in tListeMDB)
             {
                 sPackCourrant = string.Empty;
-                RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData();
-                rapportAnalyseImpactMDBData.Result = ParamAppli.StatutInfo;
-                rapportAnalyseImpactMDBData.Name = Path.GetFileName(sMDB);
+                RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData
+                {
+                    Result = ParamAppli.StatutInfo,
+                    Name = Path.GetFileName(sMDB)
+                };
                 rapportAnalyseImpactMDBData.Tooltip = "Analyse d'impact des données livrées dans le fichier " + rapportAnalyseImpactMDBData.Name;
                 rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData = new List<RapportAnalyseImpactPackData>();
                 rapportAnalyseImpactPackData = null;
@@ -126,13 +131,15 @@ namespace PNPUCore.Process
                             rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData.Add(rapportAnalyseImpactPackData);
 
                         }
-                        rapportAnalyseImpactPackData = new RapportAnalyseImpactPackData();
-                        rapportAnalyseImpactPackData.listCommandData = new List<CommandData>();
-                        rapportAnalyseImpactPackData.listEltsALocaliserData = new List<EltsALocaliserData>();
-                        //rapportAnalyseImpactPackData.Name = commandData.IdPackage;
-                        rapportAnalyseImpactPackData.CodePack = commandData.IdPackage;
-                        rapportAnalyseImpactPackData.NumCommande = commandData.CmdSequence;
-                        rapportAnalyseImpactPackData.Result = ParamAppli.StatutInfo;
+                        rapportAnalyseImpactPackData = new RapportAnalyseImpactPackData
+                        {
+                            listCommandData = new List<CommandData>(),
+                            listEltsALocaliserData = new List<EltsALocaliserData>(),
+                            //rapportAnalyseImpactPackData.Name = commandData.IdPackage;
+                            CodePack = commandData.IdPackage,
+                            NumCommande = commandData.CmdSequence,
+                            Result = ParamAppli.StatutInfo
+                        };
                         sPackCourrant = commandData.IdPackage;
                     }
 
@@ -140,10 +147,12 @@ namespace PNPUCore.Process
                     {
                         //if (listLineRequest[iIndex].IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                         {
-                            CommandData commandData1 = new CommandData();
-                            commandData1.Result = ParamAppli.StatutInfo;
-                            commandData1.Name = listLineRequest[iIndex];
-                            commandData1.Message = string.Empty;
+                            CommandData commandData1 = new CommandData
+                            {
+                                Result = ParamAppli.StatutInfo,
+                                Name = listLineRequest[iIndex],
+                                Message = string.Empty
+                            };
                             EltsALocaliserData eltsALocaliserData = new EltsALocaliserData();
 
                             if ((commandData.IdObject.Contains("0002")) || (commandData.IdObject.Contains("COPY_DATA_9999")))
@@ -151,7 +160,7 @@ namespace PNPUCore.Process
 
                                 dataManagerSQLServer.ExtractTableFilter(listLineRequest[iIndex], ref sTable, ref sFilter, ref lColumnsList);
                                 // Traitement des tables postpaie
-                                if (lTablesPostPaie.Contains(sTable) )
+                                if (lTablesPostPaie.Contains(sTable))
                                 {
                                     controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
@@ -161,7 +170,9 @@ namespace PNPUCore.Process
                                     controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
                                 }
                                 if (commandData1.Result == ParamAppli.StatutInfo)
+                                {
                                     controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
+                                }
                             }
                             else
                             {
@@ -173,8 +184,9 @@ namespace PNPUCore.Process
                             rapportAnalyseImpactPackData.listCommandData.Add(commandData1);
                             rapportAnalyseImpactPackData.Result = TestStatut(rapportAnalyseImpactPackData.Result, commandData1.Result);
                             if (eltsALocaliserData.Name != null)
+                            {
                                 rapportAnalyseImpactPackData.listEltsALocaliserData.Add(eltsALocaliserData);
-
+                            }
                         }
                     }
 
@@ -227,7 +239,11 @@ namespace PNPUCore.Process
         {
             DataManagerAccess dataManager = new DataManagerAccess();
             string requete = "select A.ID_PACKAGE, A.ID_CLASS, A.ID_OBJECT, A.CMD_CODE, A.CMD_SEQUENCE, B.CCT_TASK_ID from M4RDL_PACK_CMDS A, M4RDL_PACKAGES B where A.ID_PACKAGE like '%_D' AND A.ID_PACKAGE = B.ID_PACKAGE";
-            if (TYPOLOGY != "Dédié") requete += " AND  CMD_ACTIVE = -1 "; // Hors dédié on ne prend que les commandes actives
+            if (TYPOLOGY != "Dédié")
+            {
+                requete += " AND  CMD_ACTIVE = -1 "; // Hors dédié on ne prend que les commandes actives
+            }
+
             List<RmdCommandData> listDatacmd = new List<RmdCommandData>();
             DataSet result = dataManager.GetData(requete, sConnection);
             DataTable tableCmd = result.Tables[0];
@@ -237,7 +253,10 @@ namespace PNPUCore.Process
             {
                 sCommande = row[3].ToString();
                 if (sCommande.Contains("DBMS"))
+                {
                     sCommande = dataManager.GereOracle(sCommande, bOracle);
+                }
+
                 if (sCommande != string.Empty)
                 {
                     RmdCommandData commandData = new RmdCommandData(row[0].ToString(), row[1].ToString(), row[2].ToString(), sCommande, ((decimal)(row[4])).ToString("###0"), this, row[5].ToString());
@@ -255,15 +274,22 @@ namespace PNPUCore.Process
             if (sStatutParent == ParamAppli.StatutInfo)
             {
                 if (sStatutEnfant != ParamAppli.StatutInfo)
+                {
                     sResultat = sStatutEnfant;
+                }
             }
             else if (sStatutParent == ParamAppli.StatutOk)
             {
                 if ((sStatutEnfant != ParamAppli.StatutOk) && (sStatutEnfant != ParamAppli.StatutInfo))
+                {
                     sResultat = sStatutEnfant;
+                }
             }
             else if ((sStatutParent == ParamAppli.StatutWarning) && (sStatutEnfant != ParamAppli.StatutError))
+            {
                 sResultat = sStatutEnfant;
+            }
+
             return sResultat;
         }
     }

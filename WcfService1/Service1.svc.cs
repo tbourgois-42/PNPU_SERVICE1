@@ -19,7 +19,7 @@ namespace WcfService1
     {
         private static NamedPipeClientStream npcsPipeClient = new NamedPipeClientStream("PNPU_PIPE");
         private static StreamString ssStreamString = null;
-        private static StreamWriter streamWriter = new StreamWriter(npcsPipeClient);
+        private static readonly StreamWriter streamWriter = new StreamWriter(npcsPipeClient);
 
         public string LaunchProcess(int ProcId, int workflowId, String clientId, int idInstanceWF)
         {
@@ -123,7 +123,9 @@ namespace WcfService1
             }
 
             if (ssStreamString == null)
+            {
                 ssStreamString = new StreamString(npcsPipeClient);
+            }
 
             ssStreamString.WriteString(WorkflowName);
 
@@ -162,7 +164,9 @@ namespace WcfService1
 
             //EST CE QUE LE DOSSIER TEMP EXISTE
             if (!Directory.Exists(ParamAppli.DossierTemporaire))
+            {
                 Directory.CreateDirectory(ParamAppli.DossierTemporaire);
+            }
 
             string FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
 
@@ -304,11 +308,16 @@ namespace WcfService1
             {
                 string sNom = "0000000000" + workflowId;
                 if (clientId != "")
+                {
                     sNom += "_C" + clientId + "_N0";
+                }
+
                 sDossierTempo = ParamAppli.DossierTemporaire + "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
                 if (!Directory.Exists(sDossierTempo))
+                {
                     Directory.CreateDirectory(sDossierTempo);
+                }
 
                 File.WriteAllBytes(sFichierZip, fichier);
                 PNPUTools.ZIP.ManageZip.DecompresseDansDossier(sFichierZip, sDossierTempo);
@@ -400,7 +409,9 @@ namespace WcfService1
 
                 //EST CE QUE LE DOSSIER TEMP EXISTE
                 if (!Directory.Exists(ParamAppli.DossierTemporaire))
+                {
                     Directory.CreateDirectory(ParamAppli.DossierTemporaire);
+                }
 
                 FilePath = Path.Combine(ParamAppli.DossierTemporaire, FileName);
 

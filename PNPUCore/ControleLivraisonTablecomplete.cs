@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les tables livrées dans le packs sont bien présentes dans le catalogue des tables. 
     /// </summary>  
-    class ControleLivraisonTablecomplete : PControle, IControle
+    internal class ControleLivraisonTablecomplete : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;

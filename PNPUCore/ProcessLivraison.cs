@@ -48,10 +48,11 @@ namespace PNPUCore.Process
 
             foreach (DataRow drRow in workflowProcesses.Tables[0].Rows)
             {
-                Processus processus = new Processus();
-
-                processus.Name = drRow[0].ToString();
-                processus.Result = GetProcessStatut(WORKFLOW_ID, int.Parse(drRow[2].ToString()), CLIENT_ID, idInstanceWF, ParamAppli.ConnectionStringBaseAppli);
+                Processus processus = new Processus
+                {
+                    Name = drRow[0].ToString(),
+                    Result = GetProcessStatut(WORKFLOW_ID, int.Parse(drRow[2].ToString()), CLIENT_ID, idInstanceWF, ParamAppli.ConnectionStringBaseAppli)
+                };
                 GlobalResult = SetGlobalStatut(RapportLivraison);
                 RapportLivraison.Processus.Add(processus);
             }
@@ -75,14 +76,15 @@ namespace PNPUCore.Process
 
             foreach (DataRow drRow in elementsLocalisation.Tables[0].Rows)
             {
-                Elements elements = new Elements();
-
-                elements.ObjectID = drRow[3].ToString();
-                elements.ObjectType = drRow[2].ToString();
-                elements.ParentObj = drRow[4].ToString();
-                elements.AuxObj = drRow[5].ToString();
-                elements.Aux2Obj = drRow[6].ToString();
-                elements.Aux3Obj = drRow[7].ToString();
+                Elements elements = new Elements
+                {
+                    ObjectID = drRow[3].ToString(),
+                    ObjectType = drRow[2].ToString(),
+                    ParentObj = drRow[4].ToString(),
+                    AuxObj = drRow[5].ToString(),
+                    Aux2Obj = drRow[6].ToString(),
+                    Aux3Obj = drRow[7].ToString()
+                };
 
                 RapportLocalisation.Elements.Add(elements);
             }

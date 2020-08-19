@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les tables livrées dans le packs sont sécurisées. 
     /// </summary>  
-    class ControleTableSecu : PControle, IControle
+    internal class ControleTableSecu : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 

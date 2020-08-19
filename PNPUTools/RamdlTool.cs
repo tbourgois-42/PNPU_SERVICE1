@@ -11,22 +11,21 @@ namespace PNPUTools
 {
     public class RamdlTool
     {
-        readonly InfoClient InfoClient;
-        readonly int WORKFLOW_ID;
-        readonly int ID_H_WORKFLOW;
+        private readonly InfoClient InfoClient;
+        private readonly int WORKFLOW_ID;
+        private readonly int ID_H_WORKFLOW;
         private string pathLogFile;
         private string pathResult;
         private string pathIni;
         private string DirectoryResult;
-
-        readonly string sConnectionStringBaseQA1;
-        readonly string sConnectionStringBaseQA2;
+        private readonly string sConnectionStringBaseQA1;
+        private readonly string sConnectionStringBaseQA2;
 
         private string iniFile;
 
         //TMP
-        readonly string sLogin = "";
-        readonly string sMdp = "";
+        private readonly string sLogin = "";
+        private readonly string sMdp = "";
 
         public RamdlTool(string id_client, int WORKFLOW_ID_, int ID_H_WORKFLOW_)
         {
@@ -86,19 +85,27 @@ namespace PNPUTools
             {
 
                 if (!Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL"))
+                {
                     Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
+                }
 
                 if (!Directory.Exists(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT))
+                {
                     Directory.CreateDirectory(ParamAppli.PackInstallationPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
+                }
 
                 string[] tMdb = null;
                 List<string> listMDB = new List<string>();
 
                 PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
                 if (Niv > 0)
+                {
                     gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_H_WORKFLOW, InfoClient.ID_CLIENT, Niv);
+                }
                 else
+                {
                     gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMdb, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_H_WORKFLOW);
+                }
 
                 if ((tMdb != null) && (tMdb.Length > 0))
                 {
@@ -145,17 +152,21 @@ namespace PNPUTools
                             swFichierIni.Close();
 
                             // Encodage du mot de passe
-                            psiStartInfo = new ProcessStartInfo();
-                            psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                            psiStartInfo.Arguments = "ENC " + pathIni;
+                            psiStartInfo = new ProcessStartInfo
+                            {
+                                FileName = ParamAppli.RamdDlPAth,
+                                Arguments = "ENC " + pathIni
+                            };
                             pProcess = System.Diagnostics.Process.Start(psiStartInfo);
                             pProcess.WaitForExit();
                             pProcess.Close();
 
                             // Lancement des remove pack
-                            psiStartInfo = new ProcessStartInfo();
-                            psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                            psiStartInfo.Arguments = pathIni;
+                            psiStartInfo = new ProcessStartInfo
+                            {
+                                FileName = ParamAppli.RamdDlPAth,
+                                Arguments = pathIni
+                            };
                             pProcess = System.Diagnostics.Process.Start(psiStartInfo);
 
                             pProcess.WaitForExit();
@@ -168,17 +179,21 @@ namespace PNPUTools
                         swFichierIni.Close();
 
                         // Encodage du mot de passe
-                        psiStartInfo = new ProcessStartInfo();
-                        psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                        psiStartInfo.Arguments = "ENC " + pathIni;
+                        psiStartInfo = new ProcessStartInfo
+                        {
+                            FileName = ParamAppli.RamdDlPAth,
+                            Arguments = "ENC " + pathIni
+                        };
                         pProcess = System.Diagnostics.Process.Start(psiStartInfo);
                         pProcess.WaitForExit();
                         pProcess.Close();
 
                         // Lancement de l'installation
-                        psiStartInfo = new ProcessStartInfo();
-                        psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                        psiStartInfo.Arguments = pathIni;
+                        psiStartInfo = new ProcessStartInfo
+                        {
+                            FileName = ParamAppli.RamdDlPAth,
+                            Arguments = pathIni
+                        };
                         pProcess = System.Diagnostics.Process.Start(psiStartInfo);
 
                         pProcess.WaitForExit();
@@ -256,8 +271,8 @@ namespace PNPUTools
                             {
                                 lErrorMessages.Add("Aucun nouveau pack trouvé dans le mdb.");
                             }
-                                
-                            
+
+
                         }
                     }
                 }
@@ -293,10 +308,14 @@ namespace PNPUTools
             {
 
                 if (!Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL"))
+                {
                     Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT + "\\TempoRAMDL");
+                }
 
                 if (!Directory.Exists(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT))
+                {
                     Directory.CreateDirectory(ParamAppli.AnalyseImpactPathResult + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "\\" + InfoClient.ID_CLIENT);
+                }
 
                 //TBO Download from DB MDB
                 string[] tMdb = null;
@@ -320,24 +339,30 @@ namespace PNPUTools
                     GenerateIniForAnalyseImpact(sCheminMDB);
 
                     // Encodage du mot de passe
-                    psiStartInfo = new ProcessStartInfo();
-                    psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                    psiStartInfo.Arguments = "ENC " + pathIni;
+                    psiStartInfo = new ProcessStartInfo
+                    {
+                        FileName = ParamAppli.RamdDlPAth,
+                        Arguments = "ENC " + pathIni
+                    };
                     pProcess = System.Diagnostics.Process.Start(psiStartInfo);
                     pProcess.WaitForExit();
                     pProcess.Close();
 
                     // Lancement de l'analyse
-                    psiStartInfo = new ProcessStartInfo();
-                    psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                    psiStartInfo.Arguments = pathIni;
+                    psiStartInfo = new ProcessStartInfo
+                    {
+                        FileName = ParamAppli.RamdDlPAth,
+                        Arguments = pathIni
+                    };
                     pProcess = System.Diagnostics.Process.Start(psiStartInfo);
 
                     pProcess.WaitForExit();
                     pProcess.Close();
 
                     if (File.Exists(Path.GetDirectoryName(sCheminMDB) + "\\" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".ldb"))
+                    {
                         File.Delete(Path.GetDirectoryName(sCheminMDB) + "\\" + Path.GetFileNameWithoutExtension(sCheminMDB) + ".ldb");
+                    }
 
                     // Contrôle du résultat
                     srResultat = new StreamReader(pathLogFile + Path.GetFileNameWithoutExtension(sCheminMDB) + ".log");
@@ -429,11 +454,20 @@ namespace PNPUTools
             DirectoryResult = ParamAppli.GeneratePackPath + "\\" + WORKFLOW_ID + "\\" + ID_H_WORKFLOW + "_" + InfoClient.ID_CLIENT;
             try
             {
-                if (!Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL")) Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");
-                if (!Directory.Exists(DirectoryResult)) Directory.CreateDirectory(DirectoryResult);
+                if (!Directory.Exists(ParamAppli.GeneratePackPath + "\\TempoRAMDL"))
+                {
+                    Directory.CreateDirectory(ParamAppli.GeneratePackPath + "\\TempoRAMDL");
+                }
+
+                if (!Directory.Exists(DirectoryResult))
+                {
+                    Directory.CreateDirectory(DirectoryResult);
+                }
 
                 if (File.Exists(pathResult))
+                {
                     File.Delete(pathResult);
+                }
 
                 GenerateIniForGeneratePack(namePack, listPack);
                 // Encodage du mot de passe
@@ -448,9 +482,11 @@ namespace PNPUTools
                 //this.deleteTempFile();
 
                 // Lancement de l'analyse
-                psiStartInfo = new ProcessStartInfo();
-                psiStartInfo.FileName = ParamAppli.RamdDlPAth;
-                psiStartInfo.Arguments = pathIni;
+                psiStartInfo = new ProcessStartInfo
+                {
+                    FileName = ParamAppli.RamdDlPAth,
+                    Arguments = pathIni
+                };
                 pProcess = System.Diagnostics.Process.Start(psiStartInfo);
 
                 pProcess.WaitForExit();
@@ -497,10 +533,15 @@ namespace PNPUTools
         {
             string[] sListeFichier = Directory.GetFiles(DirectoryResult, "*.log");
             foreach (string sFichier in sListeFichier)
+            {
                 File.Delete(sFichier);
+            }
+
             sListeFichier = Directory.GetFiles(DirectoryResult, "*.TXT");
             foreach (string sFichier in sListeFichier)
+            {
                 File.Delete(sFichier);
+            }
         }
 
         //=> MHUM le 22/11/2019 - Gestion création des dossiers nécessaires à l'analyse RAMDL
@@ -538,15 +579,18 @@ namespace PNPUTools
         {
             try
             {
-                OdbcConnection dbConn = new OdbcConnection();
-                dbConn.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + sCheminMDB + ";Uid=Admin;Pwd=;";
+                OdbcConnection dbConn = new OdbcConnection
+                {
+                    ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + sCheminMDB + ";Uid=Admin;Pwd=;"
+                };
                 dbConn.Open();
 
-                OdbcCommand objCmd = new OdbcCommand();
-
-                objCmd.Connection = dbConn;
-                objCmd.CommandType = CommandType.Text;
-                objCmd.CommandText = "UPDATE M4RDL_PACK_CMDS SET CMD_COMMENTS = ' ' WHERE CMD_COMMENTS LIKE '%'+CHR(13)+CHR(10)+'%'";
+                OdbcCommand objCmd = new OdbcCommand
+                {
+                    Connection = dbConn,
+                    CommandType = CommandType.Text,
+                    CommandText = "UPDATE M4RDL_PACK_CMDS SET CMD_COMMENTS = ' ' WHERE CMD_COMMENTS LIKE '%'+CHR(13)+CHR(10)+'%'"
+                };
 
                 objCmd.ExecuteNonQuery();
                 dbConn.Close();
@@ -567,7 +611,9 @@ namespace PNPUTools
             {
                 iIndex = sChaineConnexion.IndexOf(";");
                 if (iIndex > -1)
+                {
                     sResultat = "DSN=" + sNomSourceODBC + sChaineConnexion.Substring(iIndex);
+                }
             }
             return (sResultat);
         }
@@ -597,30 +643,53 @@ namespace PNPUTools
                     if (sBuffer.IndexOf("<RAMDL ") > -1)
                     {
                         sBuffer2 = LitValeurParam(sBuffer, "LastCacheDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastLogDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastCVSDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastClientDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastPackageDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastStandardDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         sBuffer2 = LitValeurParam(sBuffer, "LastBackupDirectory=");
-                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2)) Directory.CreateDirectory(sBuffer2);
+                        if (sBuffer2 != string.Empty && !Directory.Exists(sBuffer2))
+                        {
+                            Directory.CreateDirectory(sBuffer2);
+                        }
 
                         bContinue = false;
                     }
                     else
+                    {
                         bContinue = !srRegMeta4.EndOfStream;
+                    }
                 }
 
             }

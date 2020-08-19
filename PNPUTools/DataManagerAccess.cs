@@ -32,9 +32,13 @@ namespace PNPUTools.DataManager
                     dataSet = new DataSet();
                     sTableName = GetTableName(sRequest);
                     if (sTableName == string.Empty)
+                    {
                         adapter.Fill(dataSet);
+                    }
                     else
+                    {
                         adapter.Fill(dataSet, sTableName);
+                    }
                 }
                 catch (Exception ex)
                 {

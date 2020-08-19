@@ -9,7 +9,7 @@ namespace PNPUTools
         public String pathFile { get; set; }
         public String fileName { get; set; }
 
-        readonly List<AnalyseResultLine> listLine;
+        private readonly List<AnalyseResultLine> listLine;
 
         public List<AnalyseResultLine> ListLine()
         {

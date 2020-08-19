@@ -19,17 +19,26 @@ namespace PNPUTools
             {
                 string sNom = WORKFLOW_ID.ToString("0000000000");
                 if (CLIENT_ID != "")
+                {
                     sNom += "_C" + CLIENT_ID + "_N" + iNiv.ToString();
+                }
+
                 sDossierTempo += "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
                 if (!Directory.Exists(sDossierTempo))
+                {
                     Directory.CreateDirectory(sDossierTempo);
+                }
 
                 if (ZIP.ManageZip.CompresseListeFichiers(sFichiers, sFichierZip) == -1)
+                {
                     return -1;
+                }
 
                 if (AjouteZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion, idInstanceWF, CLIENT_ID, iNiv) == -1)
+                {
                     return -1;
+                }
 
                 File.Delete(sFichierZip);
                 Directory.Delete(sDossierTempo);
@@ -80,7 +89,9 @@ namespace PNPUTools
                         int rowsAffected = cmd.ExecuteNonQuery();
 
                         if (rowsAffected < 1)
+                        {
                             return -1;
+                        }
                     }
                 }
                 return 0;
@@ -107,12 +118,17 @@ namespace PNPUTools
             {
                 string sNom = WORKFLOW_ID.ToString("0000000000");
                 if (CLIENT_ID != "")
+                {
                     sNom += "_C" + CLIENT_ID + "_N" + iNiv.ToString();
+                }
+
                 sDossierTempo += "\\" + sNom;
                 string sFichierZip = sDossierTempo + "\\" + sNom + ".ZIP";
 
                 if (!Directory.Exists(sDossierTempo))
+                {
                     Directory.CreateDirectory(sDossierTempo);
+                }
                 else
                 {
                     foreach (string sFichier in Directory.GetFiles(sDossierTempo))
@@ -122,10 +138,14 @@ namespace PNPUTools
                 }
 
                 if (ExtraitZipBDD(sFichierZip, WORKFLOW_ID, sChaineDeConnexion, idInstanceWF, CLIENT_ID, iNiv) == -1)
+                {
                     return -1;
+                }
 
                 if (PNPUTools.ZIP.ManageZip.DecompresseDansDossier(sFichierZip, sDossierTempo) == -1)
+                {
                     return -1;
+                }
 
                 File.Delete(sFichierZip);
 

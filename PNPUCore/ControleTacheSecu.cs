@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les tâches livrées dans le packs sont sécurisées. 
     /// </summary>  
-    class ControleTacheSecu : PControle, IControle
+    internal class ControleTacheSecu : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 

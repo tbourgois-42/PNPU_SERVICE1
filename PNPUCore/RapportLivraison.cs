@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PNPUCore.RapportLivraison
 {
-    class RLivraison
+    internal class RLivraison
     {
         public RLivraison()
         {
@@ -139,19 +139,19 @@ namespace PNPUCore.RapportLivraison
         }
     }
 
-    class Processus
+    internal class Processus
     {
         private string result { get; set; }
         public String Id { set; get; }
         public String Name { set; get; }
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
     }
 
-    class Localisation
+    internal class Localisation
     {
         public Localisation()
         {
@@ -168,7 +168,7 @@ namespace PNPUCore.RapportLivraison
         public List<Elements> Elements { set; get; }
     }
 
-    class Elements
+    internal class Elements
     {
         public String Id { set; get; }
         public String ObjectType { set; get; }

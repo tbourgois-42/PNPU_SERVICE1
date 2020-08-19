@@ -5,8 +5,7 @@ using System.Collections.Generic;
 
 namespace PNPUCore
 {
-
-    class RapportDependancesInterPack : TemplateReport
+    internal class RapportDependancesInterPack : TemplateReport
     {
         public String Result { set; get; }
 
@@ -17,7 +16,9 @@ namespace PNPUCore
         {
             string sFormat = "0";
             for (int i = 10; i <= iNombre; i *= 10)
+            {
                 sFormat += "0";
+            }
 
             return sFormat;
         }
@@ -63,7 +64,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportDependancesInterPackMDB : TemplateReport
+    internal class RapportDependancesInterPackMDB : TemplateReport
     {
         public List<RapportDependancesInterPackPack> listRapportDependancesInterPackPack { set; get; }
 
@@ -94,7 +95,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportDependancesInterPackPack : TemplateReport
+    internal class RapportDependancesInterPackPack : TemplateReport
     {
         public List<RapportDependancesInterPackMDBN2> listRapportDependancesInterPackMDBN2 { set; get; }
 
@@ -125,7 +126,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportDependancesInterPackMDBN2 : TemplateReport
+    internal class RapportDependancesInterPackMDBN2 : TemplateReport
     {
         public List<RapportDependancesInterPack2> listRapportDependancesInterPack2 { set; get; }
 
@@ -156,7 +157,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportDependancesInterPack2 : TemplateReport
+    internal class RapportDependancesInterPack2 : TemplateReport
     {
         public List<RapportDependancesInterPackElt> listRapportDependancesInterPackElt { set; get; }
 
@@ -187,7 +188,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportDependancesInterPackElt : TemplateReport
+    internal class RapportDependancesInterPackElt : TemplateReport
     {
         public String ObjectType { set; get; }
         public String ObjectID { set; get; }

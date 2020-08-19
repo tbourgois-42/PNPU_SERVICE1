@@ -3,7 +3,6 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 
 namespace PNPUCore.Controle
@@ -11,7 +10,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les commandes des packs sont bien dans le bon type de pack (L,B,D ou F). 
     /// </summary>  
-    class ControleTypePack : PControle, IControle
+    internal class ControleTypePack : PControle, IControle
     {
         readonly private List<string> lCMD_L;
         readonly private List<string> lCMD_D;
@@ -132,7 +131,9 @@ namespace PNPUCore.Controle
                         while ((iCpt < CMD.Count) && !bTrouve)
                         {
                             if (sCommandPack.IndexOf(CMD[iCpt++]) >= 0)
+                            {
                                 bTrouve = true;
+                            }
                         }
                         if (!bTrouve)
                         {

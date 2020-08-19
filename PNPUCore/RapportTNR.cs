@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PNPUCore.RapportTNR
 {
-    class RTNR
+    internal class RTNR
     {
         public RTNR()
         {
@@ -248,7 +248,7 @@ namespace PNPUCore.RapportTNR
         public string IdClient { get; internal set; }
     }
 
-    class Domaine
+    internal class Domaine
     {
         private string result { get; set; }
 
@@ -266,13 +266,13 @@ namespace PNPUCore.RapportTNR
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
 
     }
 
-    class SousDomaine
+    internal class SousDomaine
     {
         private string result { get; set; }
 
@@ -289,12 +289,12 @@ namespace PNPUCore.RapportTNR
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
     }
 
-    class SousDomaineParts
+    internal class SousDomaineParts
     {
         private string result { get; set; }
 
@@ -311,12 +311,12 @@ namespace PNPUCore.RapportTNR
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
     }
 
-    class Classification
+    internal class Classification
     {
         private string result { get; set; }
 
@@ -333,12 +333,12 @@ namespace PNPUCore.RapportTNR
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
     }
 
-    class Ecarts
+    internal class Ecarts
     {
         private List<Matricules> matricules { get; set; }
 
@@ -355,11 +355,12 @@ namespace PNPUCore.RapportTNR
         public string Comment { set; get; }
         public List<Matricules> Matricules
         {
-            set { matricules = value; }
-            get { return matricules; }
+            set => matricules = value;
+            get => matricules;
         }
     }
-    class Matricules
+
+    internal class Matricules
     {
         public String Id { set; get; }
         public DateTime Dtpaie { set; get; }

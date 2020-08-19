@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que si le bulletin électronique SCO_DP_PAYROLL_CHANNEL est livré. 
     /// </summary>  
-    class ControleLivBulElec : PControle, IControle
+    internal class ControleLivBulElec : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 

@@ -1,5 +1,4 @@
-﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
+﻿using PNPUCore.Rapport;
 using PNPUTools;
 
 using System;
@@ -67,16 +66,20 @@ namespace PNPUCore.Process
                 ramdlTool.InstallMdbRAMDL(iNiv, ref dResultat, bRemovePack);
                 if (dResultat.Count > 0)
                 {
-                    RapportSource = new Rapport.Source();
-                    RapportSource.Name = "Installation des packs de dépendance Niveau " + iNiv.ToString();
-                    RapportSource.Controle = new List<RControle>();
+                    RapportSource = new Rapport.Source
+                    {
+                        Name = "Installation des packs de dépendance Niveau " + iNiv.ToString(),
+                        Controle = new List<RControle>()
+                    };
                     SourceResult = ParamAppli.StatutOk;
 
                     foreach (string sMdb in dResultat.Keys)
                     {
-                        RControle RapportControle = new RControle();
-                        RapportControle.Message = new List<string>();
-                        RapportControle.Name = sMdb;
+                        RControle RapportControle = new RControle
+                        {
+                            Message = new List<string>(),
+                            Name = sMdb
+                        };
 
                         if (dResultat[sMdb].Count > 0)
                         {
@@ -84,7 +87,9 @@ namespace PNPUCore.Process
                             {
                                 RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning];
                                 if (SourceResult == ParamAppli.StatutOk)
+                                {
                                     SourceResult = ParamAppli.StatutWarning;
+                                }
                             }
                             else
                             {
@@ -94,15 +99,20 @@ namespace PNPUCore.Process
                             RapportControle.Message = dResultat[sMdb];
                         }
                         else
+                        {
                             RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+                        }
 
                         RapportSource.Controle.Add(RapportControle);
                         RapportSource.Result = ParamAppli.TranscoSatut[SourceResult];
                         if (GlobalResult == ParamAppli.StatutOk)
+                        {
                             GlobalResult = SourceResult;
+                        }
                         else if ((GlobalResult == ParamAppli.StatutWarning) && (SourceResult == ParamAppli.StatutError))
+                        {
                             GlobalResult = ParamAppli.StatutError;
-
+                        }
                     }
                     RapportProcess.Source.Add(RapportSource);
                     dResultat.Clear();
@@ -112,9 +122,11 @@ namespace PNPUCore.Process
 
             //Lancement installation mdb
 
-            RapportSource = new Rapport.Source();
-            RapportSource.Name = "Installation des packs du HF";
-            RapportSource.Controle = new List<RControle>();
+            RapportSource = new Rapport.Source
+            {
+                Name = "Installation des packs du HF",
+                Controle = new List<RControle>()
+            };
             SourceResult = ParamAppli.StatutOk;
 
             ramdlTool.InstallMdbRAMDL(0, ref dResultat, bRemovePack);
@@ -122,9 +134,11 @@ namespace PNPUCore.Process
 
             foreach (string sMdb in dResultat.Keys)
             {
-                RControle RapportControle = new RControle();
-                RapportControle.Message = new List<string>();
-                RapportControle.Name = sMdb;
+                RControle RapportControle = new RControle
+                {
+                    Message = new List<string>(),
+                    Name = sMdb
+                };
 
                 if (dResultat[sMdb].Count > 0)
                 {
@@ -132,7 +146,9 @@ namespace PNPUCore.Process
                     {
                         RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning];
                         if (SourceResult == ParamAppli.StatutOk)
+                        {
                             SourceResult = ParamAppli.StatutWarning;
+                        }
                     }
                     else
                     {
@@ -142,15 +158,20 @@ namespace PNPUCore.Process
                     RapportControle.Message = dResultat[sMdb];
                 }
                 else
+                {
                     RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+                }
 
                 RapportSource.Controle.Add(RapportControle);
                 RapportSource.Result = ParamAppli.TranscoSatut[SourceResult];
                 if (GlobalResult == ParamAppli.StatutOk)
+                {
                     GlobalResult = SourceResult;
+                }
                 else if ((GlobalResult == ParamAppli.StatutWarning) && (SourceResult == ParamAppli.StatutError))
+                {
                     GlobalResult = ParamAppli.StatutError;
-
+                }
             }
             RapportProcess.Source.Add(RapportSource);
 

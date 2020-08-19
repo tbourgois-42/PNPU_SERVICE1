@@ -6,9 +6,7 @@ using System.Text;
 
 namespace PNPUCore
 {
-
-
-    class RapportAnalyseLogique : TemplateReport
+    internal class RapportAnalyseLogique : TemplateReport
     {
         public List<RapportAnalyseImpactMDBLogique> listRapportAnalyseImpactMDBLogique { set; get; }
 
@@ -22,7 +20,9 @@ namespace PNPUCore
         {
             string sFormat = "0";
             for (int i = 10; i <= iNombre; i *= 10)
+            {
                 sFormat += "0";
+            }
 
             return sFormat;
         }
@@ -69,7 +69,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportAnalyseImpactMDBLogique : TemplateReport
+    internal class RapportAnalyseImpactMDBLogique : TemplateReport
     {
 
         public List<TypeAnalyseLogique> listTypeAnalyseLogique { set; get; }
@@ -101,7 +101,7 @@ namespace PNPUCore
 
     }
 
-    class TypeAnalyseLogique : TemplateReport
+    internal class TypeAnalyseLogique : TemplateReport
     {
         public List<LineAnalyseLogique> listLineAnalyseLogique { set; get; }
 
@@ -134,7 +134,7 @@ namespace PNPUCore
         }
     }
 
-    class LineAnalyseLogique : TemplateReport
+    internal class LineAnalyseLogique : TemplateReport
     {
         public String currentCode { set; get; }
         public String newCode { set; get; }

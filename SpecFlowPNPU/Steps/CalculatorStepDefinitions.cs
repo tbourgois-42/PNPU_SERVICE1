@@ -1,6 +1,4 @@
-﻿using TechTalk.SpecFlow;
-
-namespace SpecFlowPNPU.Steps
+﻿namespace SpecFlowPNPU.Steps
 {
     [Binding]
     public sealed class CalculatorStepDefinitions

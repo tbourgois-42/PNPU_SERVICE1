@@ -167,13 +167,15 @@ namespace PNPUTools
             DataSet dsDataSet;
             DataManagerSQLServer dataManagerSQLServer = new DataManagerSQLServer();
 
-            TranscoSatut = new Dictionary<string, string>();
-            TranscoSatut.Add(StatutOk, "mdi-check-circle");
-            TranscoSatut.Add(StatutCompleted, "mdi-check-circle");
-            TranscoSatut.Add(StatutError, "mdi-alert-circle");
-            TranscoSatut.Add(StatutWarning, "mdi-alert");
-            TranscoSatut.Add(StatutInProgress, "mdi-progress-circle");
-            TranscoSatut.Add(StatutInfo, "mdi-information-variant");
+            TranscoSatut = new Dictionary<string, string>
+            {
+                { StatutOk, "mdi-check-circle" },
+                { StatutCompleted, "mdi-check-circle" },
+                { StatutError, "mdi-alert-circle" },
+                { StatutWarning, "mdi-alert" },
+                { StatutInProgress, "mdi-progress-circle" },
+                { StatutInfo, "mdi-information-variant" }
+            };
 
             npcsPipeClient = null;
 
@@ -207,14 +209,17 @@ namespace PNPUTools
                     iniData = iniParser.ReadFile(sCheminINI);
                     ConnectionStringBaseAppli = iniData["ConnectionStrings"]["BaseAppli"];
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     //TODO LOG
                     Console.WriteLine(ex.Message);
                 }
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                {
+                    ConnectionStringBaseAppli = "server=vm-pn-pusql-001;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                }
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 
@@ -274,12 +279,14 @@ namespace PNPUTools
                 }
 
                 // On valorise en fonction de la typologie
-                ConnectionStringBaseRef = new Dictionary<string, string>();
-                ConnectionStringBaseRef.Add("257", ConnectionStringBaseRefPlateforme);
-                ConnectionStringBaseRef.Add("258", ConnectionStringBaseRefPlateforme);
-                ConnectionStringBaseRef.Add("Dédié", ConnectionStringBaseRefDedie);
-                ConnectionStringBaseRef.Add("Mutualisé", ConnectionStringBaseRefPlateforme);
-                ConnectionStringBaseRef.Add("Désynchronisé", ConnectionStringBaseRefPlateforme);
+                ConnectionStringBaseRef = new Dictionary<string, string>
+                {
+                    { "257", ConnectionStringBaseRefPlateforme },
+                    { "258", ConnectionStringBaseRefPlateforme },
+                    { "Dédié", ConnectionStringBaseRefDedie },
+                    { "Mutualisé", ConnectionStringBaseRefPlateforme },
+                    { "Désynchronisé", ConnectionStringBaseRefPlateforme }
+                };
 
 
                 // N'existe que sur la base plateforme

@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de détecter les tâches CCT dépendantes au niveau 3 des tâches du HF. 
     /// </summary>  
-    class ControleDependanceN3 : PControle, IControle
+    internal class ControleDependanceN3 : PControle, IControle
     {
         readonly private PNPUCore.Process.IProcess Process;
 
@@ -72,11 +72,19 @@ namespace PNPUCore.Controle
                     {
                         sCCT = drRow[0].ToString();
                         if (!lListeCCTManquants.Contains(sCCT))
+                        {
                             lListeCCTManquants.Add(sCCT);
+                        }
+
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sCCT + "'";
                         lTacheCCT.Add(new TacheCCT(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[3].ToString()));
                     }
@@ -124,9 +132,14 @@ namespace PNPUCore.Controle
                     foreach (string sTacheCCT in lListeCCTManquants)
                     {
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sTacheCCT + "'";
                     }
                     sRequete += ")";
@@ -140,9 +153,14 @@ namespace PNPUCore.Controle
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
                             if (bPremier)
+                            {
                                 bPremier = false;
+                            }
                             else
+                            {
                                 sRequete += ",";
+                            }
+
                             sRequete += "'" + drRow[0].ToString() + "'";
                         }
                         sRequete += ")";
@@ -182,7 +200,9 @@ namespace PNPUCore.Controle
                 {
                     List<string> lListeTacheCrees = new List<string>();
                     if (!DupliqueTachesCCTN3(lListeCCTManquants, lTacheCCT, "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees))
+                    {
                         bResultat = ResultatErreur;
+                    }
                     else if (lListeTacheCrees.Count > 0)
                     {
                         string sName = "PNPUN3_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
@@ -193,7 +213,9 @@ namespace PNPUCore.Controle
                         CommenteRegles(sName);
                         Process.AjouteRapport("Génération du fichier MDB.");
                         if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.ID_INSTANCEWF, Process.CLIENT_ID, 3) == 0)
+                        {
                             Process.AjouteRapport("Ajout du fichier MDB en base de données.");
+                        }
                         else
                         {
                             Process.AjouteRapport("Erreur lors de l'ajout du fichier MDB en base de données.");
@@ -249,9 +271,14 @@ namespace PNPUCore.Controle
                         if (cCT.CCT_TASK_ID == sTacheCCT)
                         {
                             if (bPremier)
+                            {
                                 bPremier = false;
+                            }
                             else
+                            {
                                 sFiltre += ",";
+                            }
+
                             sFiltre += "'" + cCT.CCT_TASK_ID + "*" + cCT.CCT_OBJECT_ID + "*" + cCT.CCT_OBJECT_TYPE + "*" + cCT.CCT_PARENT_OBJ_ID + "'";
                         }
                     }
@@ -391,7 +418,9 @@ namespace PNPUCore.Controle
                         {
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
+                            {
                                 lListeTachesCrees.Add(sNouvTacheCCT);
+                            }
                         }
                     }
 
@@ -447,11 +476,12 @@ namespace PNPUCore.Controle
                 {
                     using (OdbcConnection odbcConnection = new OdbcConnection(dmaManagerAccess.GetConnectionString(sCheminMdb)))
                     {
-                        int rowsAffected;
                         odbcConnection.Open();
                         OdbcParameter odbcParameter = new OdbcParameter("@VALEUR", OdbcType.Text);
-                        OdbcCommand odbcCommand = new OdbcCommand();
-                        odbcCommand.Connection = odbcConnection;
+                        OdbcCommand odbcCommand = new OdbcCommand
+                        {
+                            Connection = odbcConnection
+                        };
                         odbcCommand.Parameters.Add(odbcParameter);
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
