@@ -189,7 +189,7 @@ namespace PNPUCore.Controle
                         GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
                         PNPUTools.RamdlTool ramdlTool = new RamdlTool(Process.CLIENT_ID, Process.WORKFLOW_ID, Process.ID_INSTANCEWF);
                         ramdlTool.GeneratePackFromCCT(sName, lListeTacheCrees.ToArray());
-                        sName = ParamAppli.GeneratePackPath + "\\" + Process.WORKFLOW_ID + "_" + Process.CLIENT_ID + "\\" + sName + ".mdb";
+                        sName = ParamAppli.GeneratePackPath + "\\" + Process.WORKFLOW_ID + "\\" + Process.ID_INSTANCEWF + "_" + Process.CLIENT_ID + "\\" + sName + ".mdb";
                         CommenteRegles(sName);
                         Process.AjouteRapport("Génération du fichier MDB.");
                         if (gereMDBDansBDD.AjouteFichiersMDBBDD(new string[] { sName }, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.ID_INSTANCEWF, Process.CLIENT_ID, 3) == 0)
@@ -258,9 +258,7 @@ namespace PNPUCore.Controle
 
                     Process.AjouteRapport("Création de la tâche CCT " + sNouvTacheCCT + " pour livrer les éléments de la tâche " + sTacheCCT);
 
-                    // POUR TEST MHUM, je ne travaille que sur la base de ref plateforme en attendant des vraies bases de ref 
-                    using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRefPlateforme))
-                    //using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
+                    using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
                     {
                         conn.Open();
                         sRequete = "DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
@@ -299,7 +297,8 @@ namespace PNPUCore.Controle
                         sRequete += ",ID_APPROLE";
                         sRequete += ",ID_SECUSER";
                         sRequete += ",DT_LAST_UPDATE";
-                        sRequete += ",CCT_BUILD_LABEL";
+                        if (Process.TYPOLOGY != "Dédié") // Ce champ n'existe que sur la plateforme
+                            sRequete += ",CCT_BUILD_LABEL";
                         sRequete += ") SELECT ";
                         sRequete += "'" + sNouvTacheCCT + "'";
                         sRequete += ",CCT_VERSION";
@@ -325,7 +324,8 @@ namespace PNPUCore.Controle
                         sRequete += ",ID_APPROLE";
                         sRequete += ",'" + sUserPNPU + "'";
                         sRequete += ",GETDATE()";
-                        sRequete += ",CCT_BUILD_LABEL";
+                        if (Process.TYPOLOGY != "Dédié") // Ce champ n'existe que sur la plateforme
+                            sRequete += ",CCT_BUILD_LABEL";
                         sRequete += " FROM M4RCT_TASK WHERE CCT_TASK_ID='" + sTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {

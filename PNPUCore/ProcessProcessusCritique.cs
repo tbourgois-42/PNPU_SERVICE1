@@ -223,9 +223,12 @@ namespace PNPUCore.Process
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
 
             //On fait un update pour la date de fin du process et son statut
-            GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
-
-            // Suppresion des paramètres toolbox temporaires
+            GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
+
+
+
+            // Suppresion des paramètres toolbox temporaires
+
             paramToolbox.DeleteParamsToolbox(WORKFLOW_ID, ID_INSTANCEWF);
 
             if (GlobalResult == ParamAppli.StatutOk)

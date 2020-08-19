@@ -479,7 +479,8 @@ namespace PNPUTools
         private void GenerateIniForGeneratePack(string namePack, string[] listTask)
         {
             //<ORIGIN_CONN>
-            string originConn = sConnectionStringBaseQA1; //{0}
+            //string originConn = sConnectionStringBaseQA1; //{0}
+            string originConn  = MiseEnformeChaineConnexion(ParamAppli.ConnectionStringBaseRef[InfoClient.TYPOLOGY], "FRSTDPNPUREF");
             string slistTask = ""; //{ 2}
             foreach (String sTask in listTask)
             {

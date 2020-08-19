@@ -100,7 +100,7 @@ namespace PNPUTools
 
 
         public const string AnalyseImpactPathResult = "C:\\TEMPO\\AnalyseIpact"; //TODO à mettre en table
-        public const string RamdDlPAth = "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";
+        public const string RamdDlPAth = "E:\\Applis\\M4DevClient\\Bin\\RamDL.exe";// "C:\\Program Files (x86)\\meta4\\M4DevClient\\Bin\\RamDL.exe";
         public const string PackInstallationPathResult = "C:\\TEMPO\\PackInstallation"; //TODO à mettre en table
 
         public const string StatutOk = "CORRECT";
@@ -217,7 +217,7 @@ namespace PNPUTools
 
                 // Si pas trouvé je me mets sur la base de prod
                 if ((ConnectionStringBaseAppli == string.Empty) || (ConnectionStringBaseAppli == null))
-                    ConnectionStringBaseAppli = "server=10.113.24.81;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";//"server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
+                    ConnectionStringBaseAppli = "server=VM-PN-RDSQL-001;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";//"server =10.113.24.81;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";//"server=M4FRDB22.fr.meta4.com;uid=PNPU_DEV;pwd=PNPU_DEV;database=PNPU_DEV;";
 
                 dsDataSet = dataManagerSQLServer.GetData("SELECT PARAMETER_ID,PARAMETER_VALUE FROM PNPU_PARAMETERS ORDER BY PARAMETER_ID", ConnectionStringBaseAppli);
 
