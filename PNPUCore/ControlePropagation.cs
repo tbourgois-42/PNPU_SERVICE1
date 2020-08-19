@@ -45,12 +45,12 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
 
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerAccess dmaManagerAccess2 = null;
-            DataSet dsDataSet = null;
-            DataSet dsDataSet2 = null;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerAccess dmaManagerAccess2;
+            DataSet dsDataSet;
+            DataSet dsDataSet2;
 
             try
             {

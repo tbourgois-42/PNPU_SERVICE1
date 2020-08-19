@@ -154,7 +154,7 @@ namespace WcfService1
 
             string typology = parser.GetParameterValue("typology"); //separate by , 
             string clients = parser.GetParameterValue("clients"); // separate by ,
-            bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
+            //UNUSED CODE waiting evolution bool standard = bool.Parse(parser.GetParameterValue("packStandard")); //string "true" "false"
             string instanceName = parser.GetParameterValue("instanceName");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
 

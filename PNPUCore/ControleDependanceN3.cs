@@ -46,7 +46,7 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            string sRequete = string.Empty;
+            string sRequete;
             List<string> lListeCCTManquants = new List<string>();
             List<TacheCCT> lTacheCCT = new List<TacheCCT>();
 

@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
 
             DataManagerAccess dmaManagerAccess;
@@ -147,7 +147,7 @@ namespace PNPUCore.Controle
         /// </summary>  
         private void ChargeM4OPresHerites()
         {
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
             DataManagerSQLServer dmaManagersqlServer;
             lObjetsHeritesSTD = new List<string[]>();

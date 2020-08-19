@@ -169,7 +169,7 @@ namespace PNPUCore.Controle
             DataManagerAccess dmaManagerAccess;
             DataManagerSQLServer dmsManagerSQL;
             bool bPremier;
-            string sRequete = string.Empty;
+            string sRequete;
             string sPathMdb = Process.MDBCourant;
             DataSet dsDataSet;
             bool bResultat = true;

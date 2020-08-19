@@ -49,10 +49,10 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
             List<string[]> lListeITEMS = new List<string[]>();
-            string sRequeteControle = string.Empty;
+            string sRequeteControle;
             bool bPremierElement;
             bool bItemTrouve;
 
@@ -293,7 +293,7 @@ namespace PNPUCore.Controle
         {
             string sResultat = string.Empty;
             string sElement;
-            int iIndex = 1;
+            int iIndex;
             int iIndexPrec = 0;
 
             iIndex = sListeAvant.IndexOf("*", 1);

@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
 
             string sListeItemsLivres = string.Empty;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             try
             {

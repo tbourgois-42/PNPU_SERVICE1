@@ -29,7 +29,7 @@ namespace PNPUTools
             string user = parser.GetParameterValue("user");
             string password = parser.GetParameterValue("password");
 
-            string sToken = string.Empty;
+            string sToken;
 
             if (IsUserExist(user) && IsValidAuth(user, password) && IsExpiredToken(user))
             {
@@ -116,7 +116,7 @@ namespace PNPUTools
         internal static string BuildRequestWorkflowHistoricByProfil(string sHabilitation, string sUser, string requestHistoricWorkflow, int isToolBox)
         {
             string sWhere = string.Empty;
-            string sRequest = string.Empty;
+            string sRequest;
             string sOrderBy = "ORDER BY PHW.LAUNCHING_DATE";
 
             if (isToolBox >= 0)
@@ -404,7 +404,7 @@ namespace PNPUTools
             sUser = sUser.Contains('\\') ? sUser.Replace(@"\", @"%") : sUser;
             List<string> lstClient = new List<string>();
 
-            string sRequest = string.Empty;
+            string sRequest;
 
             if (sHabilitation == "ADMIN")
             {
@@ -559,7 +559,7 @@ namespace PNPUTools
         public static string GetHabilitationWhereClause(string sHabilitation, string sUser, string sAlias)
         {
 
-            List<string> lstClient = null;
+            List<string> lstClient;
 
             lstClient = BuildListStringClient(sHabilitation, sUser);
 
@@ -577,7 +577,7 @@ namespace PNPUTools
         private static List<string> BuildListStringClient(string sHabilitation, string sUser)
         {
             string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
-            List<string> lstClient = null;
+            List<string> lstClient;
 
             if (sHabilitation == "ADMIN")
             {

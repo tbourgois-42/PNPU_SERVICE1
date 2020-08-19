@@ -20,10 +20,10 @@ namespace XUnitTest
             string listClientId = "49"; //
             int workflowId = 32; //TODO
             int process = ParamAppli.ProcessGestionDependance;
-            int idInstanceWF = 0;
+            int idInstanceWF;
             clientId = "49";
 
-            string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
+            //OLD CODE string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
 
             // We generate instance of workflow in PNPU_H_WORKFLOW 
             PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
@@ -98,7 +98,7 @@ namespace XUnitTest
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
-                DataRow drRow = dsDataSet.Tables[0].Rows[0];
+                //UNUSED CODE Removed? DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 isMDBIsPresent = dsDataSet.Tables[0].Rows.Count >= 1;
             }
 

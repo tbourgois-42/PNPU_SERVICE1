@@ -125,8 +125,8 @@ namespace PNPUCore.Controle
         private bool ControleAutreLigne(string sSCO_ID_REPORT, string sSCO_ID_BODY, string sSCO_ID_ROW)
         {
             bool bResultat = true;
-            string sSCO_ID_PRT_ITEM = String.Empty;
-            string sSFR_ID_SOURCE_ITEM = String.Empty;
+            string sSCO_ID_PRT_ITEM;
+            string sSFR_ID_SOURCE_ITEM;
 
             string sSCO_ID_BODY_CLIENT;
             string sSCO_ID_ROW_CLIENT;

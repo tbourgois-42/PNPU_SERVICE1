@@ -51,7 +51,7 @@ namespace PNPUCore.Controle
             string sID_SYNONYM;
             Dictionary<string, string> dicListItems = new Dictionary<string, string>();
             bool bItemAControler = false;
-            string sRequeteSqlServer = string.Empty;
+            string sRequeteSqlServer;
 
             DataManagerAccess dmaManagerAccess;
 

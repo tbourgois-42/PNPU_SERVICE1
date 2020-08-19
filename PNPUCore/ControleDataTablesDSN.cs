@@ -35,7 +35,7 @@ namespace PNPUCore.Controle
             List<string> lColumnsList = new List<string>();
             // VARIABLE NOT USE string sFilterTraite;
             List<string> lPKFields = new List<string>();
-            bool bSFR_CK_IS_ACTIF = false;
+            bool bSFR_CK_IS_ACTIF;
             string sFiltreSuite;
             string sOrgaOrgFiltre;
             string sCommandeGeneree;

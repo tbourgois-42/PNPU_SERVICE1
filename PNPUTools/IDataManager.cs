@@ -260,7 +260,7 @@ namespace PNPUTools.DataManager
 
         public string GenerateReplace(string sTable, string sFilter, string sOrgaOrg, string sOrgaDest)
         {
-            string sResultat = string.Empty;
+            string sResultat;
 
             if (!sFilter.Contains("ID_ORGANIZATION"))
             {
@@ -641,7 +641,7 @@ namespace PNPUTools.DataManager
         /// <param name="iParameterPos">Position du paramètre à extraire</param>
         public string ExtractParameterCOPY_DATA(string sCommand, int iParameterPos)
         {
-            int iIndex1 = 0;
+            int iIndex1;
             int iIndex2 = 0;
             string sResultat = String.Empty;
             bool bContinue = true;

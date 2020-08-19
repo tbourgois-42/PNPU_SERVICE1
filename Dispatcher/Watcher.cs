@@ -20,13 +20,12 @@ namespace PNUDispatcher
         private static readonly Thread tLaunchQueue = new Thread(() => LaunchQueue());
 
         /// <summary>  
-        /// Constructeur de la classe. Lance juste la fonction ListenRequest dans un thread.  
+        /// Lance juste la fonction ListenRequest dans un thread.  
         /// </summary>  
-        public Watcher()
+        public void launchWatcher()
         {
             tLaunchQueue.Start();
             tListen.Start();
-
         }
 
         /// <summary>  
@@ -50,7 +49,7 @@ namespace PNUDispatcher
         /// </summary> 
         private static void ListenRequest(string sNomPipe, int iNum)
         {
-            string sMessage = string.Empty;
+            string sMessage;
             npssPipeClient[iNum] = new NamedPipeServerStream(sNomPipe);
 
             ssStreamString[iNum] = new StreamString(npssPipeClient[iNum]);

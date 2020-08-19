@@ -59,7 +59,7 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
 
             try

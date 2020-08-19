@@ -17,7 +17,7 @@ namespace PNPUTools.DataManager
         public override DataSet GetData(string sRequest, string sConnectionString)
         {
             DataSet dataSet = null;
-            string sTableName = string.Empty;
+            string sTableName;
 
 
             try

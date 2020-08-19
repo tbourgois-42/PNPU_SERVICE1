@@ -70,7 +70,7 @@ namespace PNPUCore.Controle
             int iID_SYNONYM;
             string sPathMdb = Process.MDBCourant;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 dmaManagerAccess = new DataManagerAccess();

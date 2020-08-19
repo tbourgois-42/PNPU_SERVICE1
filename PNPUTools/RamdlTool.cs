@@ -551,8 +551,8 @@ namespace PNPUTools
         private string LitValeurParam(string pChaineEntiere, string pParam)
         {
             string sResultat = string.Empty;
-            int iIndexDeb = 0;
-            int iIndexFin = 0;
+            int iIndexDeb;
+            int iIndexFin;
 
             try
             {
@@ -633,8 +633,8 @@ namespace PNPUTools
             {
                 StreamReader srRegMeta4 = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\META4\\regmeta4.xml");
                 bool bContinue = !srRegMeta4.EndOfStream;
-                string sBuffer = string.Empty;
-                string sBuffer2 = string.Empty;
+                string sBuffer;
+                string sBuffer2;
 
 
                 while (bContinue)

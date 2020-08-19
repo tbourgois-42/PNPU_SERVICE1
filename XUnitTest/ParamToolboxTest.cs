@@ -111,7 +111,7 @@ namespace XUnitTest
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
-                DataRow drRow = dsDataSet.Tables[0].Rows[0];
+                //UNUSED CODE Removed? DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 isMDBIsPresent = dsDataSet.Tables[0].Rows.Count >= 1;
             }
 
@@ -136,7 +136,7 @@ namespace XUnitTest
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
-                DataRow drRow = dsDataSet.Tables[0].Rows[0];
+                //UNUSED CODE Removed? DataRow drRow = dsDataSet.Tables[0].Rows[0];
                 // We generate instance of workflow in PNPU_H_WORKFLOW 
                 PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
                 {
@@ -148,7 +148,7 @@ namespace XUnitTest
                     INSTANCE_NAME = "Toolbox Workflow #" + workflowId
                 };
 
-                int idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+                RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow);
 
             }
 

@@ -108,7 +108,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
 
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 if (sCLE != string.Empty)

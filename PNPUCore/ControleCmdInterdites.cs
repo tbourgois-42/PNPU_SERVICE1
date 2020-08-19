@@ -63,13 +63,13 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            string sCommandPack = string.Empty;
-            int iCpt = 0;
+            string sCommandPack;
+            int iCpt;
             bool bTrouve;
             string sPathMdb = Process.MDBCourant;
 
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 dmaManagerAccess = new DataManagerAccess();

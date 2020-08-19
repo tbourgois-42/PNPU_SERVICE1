@@ -44,9 +44,9 @@ namespace PNPUCore.Process
                 listRapportAnalyseImpactMDBData = new List<RapportAnalyseImpactMDBData>()
             };
             string[] tListeMDB = null;
-            string sPackCourrant = string.Empty;
+            string sPackCourrant;
             string sSequenceCourrante = string.Empty;
-            RapportAnalyseImpactPackData rapportAnalyseImpactPackData = null;
+            RapportAnalyseImpactPackData rapportAnalyseImpactPackData;
             List<string> lColumnsList = new List<string>();
             List<string> lTablesPostPaie = new List<string> { "M4SCO_ROWS", "M4SCO_ROW_COL_DEF" };
             List<string> lTablesDSN = new List<string>();// { "M4SFR_DSN_CTP_PARAM","M4SFR_DSN_PARAM_RUB_NAT08","M4SFR_DSN_PARAM_RUB_NAT05"};

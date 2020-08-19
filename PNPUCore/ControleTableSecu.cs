@@ -46,7 +46,7 @@ namespace PNPUCore.Controle
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 dmaManagerAccess = new DataManagerAccess();

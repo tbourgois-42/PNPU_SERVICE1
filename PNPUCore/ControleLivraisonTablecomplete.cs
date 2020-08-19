@@ -55,8 +55,8 @@ namespace PNPUCore.Controle
             List<string> lColumnsList = new List<string>(); ;
 
 
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerSQLServer dmsManagerSQL = null;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerSQLServer dmsManagerSQL;
 
             try
             {

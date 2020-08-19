@@ -51,7 +51,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
-            string sRequeteControle = string.Empty;
+            string sRequeteControle;
             bool bPremierElement = true;
 
 

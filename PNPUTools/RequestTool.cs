@@ -56,7 +56,7 @@ namespace PNPUTools
         {
             // Load lastest workflow how has been lauched for client's user
 
-            List<string> lstWORKFLOW = new List<string>();
+            List<string> lstWORKFLOW;
 
             lstWORKFLOW = Authentification.GetLastWorkflowLaunchForProfil(sHabilitation, sUser, ParamAppli.ConnectionStringBaseAppli);
 
@@ -86,7 +86,7 @@ namespace PNPUTools
         {
             // Load lastest workflow how has been lauched for client's user
 
-            List<string> lstWORKFLOW = new List<string>();
+            List<string> lstWORKFLOW;
 
             string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
 
