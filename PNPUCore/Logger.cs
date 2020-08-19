@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace PNPUCore
 {
-    static class Logger
+    internal static class Logger
     {
 
         public static void Log(IProcess process, IControle controle, string statutMessage, string message)

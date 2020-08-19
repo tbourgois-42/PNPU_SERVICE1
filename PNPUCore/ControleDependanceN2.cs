@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de détecter les tâches CCT dépendantes au niveau 2 des tâches du HF. 
     /// </summary>  
-    class ControleDependanceN2 : PControle, IControle
+    internal class ControleDependanceN2 : PControle, IControle
     {
         readonly private PNPUCore.Process.IProcess Process;
 
@@ -45,7 +45,7 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            string sRequete = string.Empty;
+            string sRequete;
             List<string> lListeCCTManquants = new List<string>();
             List<TacheCCT> lTacheCCT = new List<TacheCCT>();
 
@@ -71,11 +71,19 @@ namespace PNPUCore.Controle
                     {
                         sCCT = drRow[0].ToString();
                         if (!lListeCCTManquants.Contains(sCCT))
+                        {
                             lListeCCTManquants.Add(sCCT);
+                        }
+
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sCCT + "'";
                         lTacheCCT.Add(new TacheCCT(drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString(), drRow[3].ToString()));
                     }
@@ -123,9 +131,14 @@ namespace PNPUCore.Controle
                     foreach (string sTacheCCT in lListeCCTManquants)
                     {
                         if (bPremier)
+                        {
                             bPremier = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
+
                         sRequete += "'" + sTacheCCT + "'";
                     }
                     sRequete += ")";
@@ -139,9 +152,14 @@ namespace PNPUCore.Controle
                         {
                             dCorrespondanceCCT.Add(drRow[0].ToString(), drRow[1].ToString());
                             if (bPremier)
+                            {
                                 bPremier = false;
+                            }
                             else
+                            {
                                 sRequete += ",";
+                            }
+
                             sRequete += "'" + drRow[0].ToString() + "'";
                         }
                         sRequete += ")";
@@ -181,7 +199,9 @@ namespace PNPUCore.Controle
                 {
                     List<string> lListeTacheCrees = new List<string>();
                     if (!DupliqueTachesCCTN2(lListeCCTManquants, lTacheCCT, "PNPUN2_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID, ref lListeTacheCrees))
+                    {
                         bResultat = ResultatErreur;
+                    }
                     else if (lListeTacheCrees.Count > 0)
                     {
                         string sName = "PNPUN2_" + Process.WORKFLOW_ID.ToString("########0") + "_" + Process.CLIENT_ID;
@@ -236,9 +256,14 @@ namespace PNPUCore.Controle
                         if (cCT.CCT_TASK_ID == sTacheCCT)
                         {
                             if (bPremier)
+                            {
                                 bPremier = false;
+                            }
                             else
+                            {
                                 sFiltre += ",";
+                            }
+
                             sFiltre += "'" + cCT.CCT_TASK_ID + "*" + cCT.CCT_OBJECT_ID + "*" + cCT.CCT_OBJECT_TYPE + "*" + cCT.CCT_PARENT_OBJ_ID + "'";
                         }
                     }
@@ -257,7 +282,7 @@ namespace PNPUCore.Controle
                         sRequete = "DELETE FROM M4RCT_OBJECTS WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
                         using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
                         {
-                           cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
                         }
                         sRequete = "INSERT INTO M4RCT_TASK (";
                         sRequete += "CCT_TASK_ID";
@@ -378,7 +403,9 @@ namespace PNPUCore.Controle
                         {
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
+                            {
                                 lListeTachesCrees.Add(sNouvTacheCCT);
+                            }
                         }
                     }
 
@@ -421,7 +448,7 @@ namespace PNPUCore.Controle
 
     }
 
-    class TacheCCT
+    internal class TacheCCT
     {
         public string CCT_TASK_ID { get; set; }
         public string CCT_OBJECT_TYPE { get; set; }

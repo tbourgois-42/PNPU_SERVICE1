@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PNPUCore
 {
-    class TemplateReport
+    internal class TemplateReport
     {
         public String Id { set; get; }
 
@@ -17,8 +17,7 @@ namespace PNPUCore
 
     }
 
-
-    class RapportAnalyseData : TemplateReport
+    internal class RapportAnalyseData : TemplateReport
     {
         public String Result { set; get; }
 
@@ -32,7 +31,9 @@ namespace PNPUCore
         {
             string sFormat = "0";
             for (int i = 10; i <= iNombre; i *= 10)
+            {
                 sFormat += "0";
+            }
 
             return sFormat;
         }
@@ -78,7 +79,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportAnalyseImpactMDBData : TemplateReport
+    internal class RapportAnalyseImpactMDBData : TemplateReport
     {
         public String Result { set; get; }
         public List<RapportAnalyseImpactPackData> listRapportAnalyseImpactPackData { set; get; }
@@ -113,7 +114,7 @@ namespace PNPUCore
         }
     }
 
-    class RapportAnalyseImpactPackData : TemplateReport
+    internal class RapportAnalyseImpactPackData : TemplateReport
     {
         public String Result { set; get; }
         public String CodePack { set; get; }
@@ -169,7 +170,7 @@ namespace PNPUCore
         }
     }
 
-    class CommandData : TemplateReport
+    internal class CommandData : TemplateReport
     {
         public String Result { get; set; }
         public String Message { get; set; }
@@ -207,7 +208,7 @@ namespace PNPUCore
         }
     }
 
-    class ControleCommandData : TemplateReport
+    internal class ControleCommandData : TemplateReport
     {
         public String Result { get; set; }
         public string Message { get; set; }
@@ -233,8 +234,7 @@ namespace PNPUCore
         }
     }
 
-
-    class EltsALocaliserData : TemplateReport
+    internal class EltsALocaliserData : TemplateReport
     {
         public String Result { get; set; }
         public string Message { get; set; }

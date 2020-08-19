@@ -17,7 +17,7 @@ namespace PNPUTools.DataManager
         public override DataSet GetData(string sRequest, string sMdbPath)
         {
             DataSet dataSet = null;
-            string sTableName = string.Empty;
+            string sTableName;
 
             using (OdbcConnection connection =
              new OdbcConnection(GetConnectionString(sMdbPath)))
@@ -32,9 +32,13 @@ namespace PNPUTools.DataManager
                     dataSet = new DataSet();
                     sTableName = GetTableName(sRequest);
                     if (sTableName == string.Empty)
+                    {
                         adapter.Fill(dataSet);
+                    }
                     else
+                    {
                         adapter.Fill(dataSet, sTableName);
+                    }
                 }
                 catch (Exception ex)
                 {

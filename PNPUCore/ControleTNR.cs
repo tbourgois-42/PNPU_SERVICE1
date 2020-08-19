@@ -7,7 +7,7 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleTNR : PControle, IControle
+    internal class ControleTNR : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessTNR Process;
 
@@ -93,7 +93,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the classification of the item</returns>
         internal Classification MoveToClassification(Classification rapportClassification, Dictionary<string, Classification> lstClassification, DataRow drRow)
         {
-            return  lstClassification[drRow[6].ToString()];
+            return lstClassification[drRow[6].ToString()];
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the index of the item or -1 if not exist.</returns>
         internal int FindIndexOfBaseRef(string item, DataSet ItemsNoeudReadREF, DataSet ItemsNoeudReadTNR)
         {
-            int index = -1;
+            int index;
 
             DataTable dataTableREF = ItemsNoeudReadREF.Tables[0];
             DataTable dataTableTNR = ItemsNoeudReadTNR.Tables[0];
@@ -202,7 +202,7 @@ namespace PNPUCore.Controle
         /// <returns>Return the index of the item or -1 if not exist.</returns>
         internal int FindIndexOfBaseTnr(string item, DataSet ItemsNoeudReadREF, DataSet ItemsNoeudReadTNR)
         {
-            int index = -1;
+            int index;
 
             DataTable dataTableREF = ItemsNoeudReadREF.Tables[0];
             DataTable dataTableTNR = ItemsNoeudReadTNR.Tables[0];
@@ -259,8 +259,8 @@ namespace PNPUCore.Controle
         /// <returns>Return item's agregate value</returns>
         public decimal GetAgregateItemValue(string sItem, string sTable, DateTime sDate, string sConnexionString)
         {
-            decimal sValue = 0;
-            string sRequest = string.Empty;
+            decimal sValue;
+            string sRequest;
 
             DataManagerSQLServer dataManagerSQLServer;
 
@@ -304,7 +304,7 @@ namespace PNPUCore.Controle
         /// <returns>Return DataSet which contains all items from AUX_AC_HRPERIOD Node</returns>
         public DataSet GetItemsNoeudRead(string sConnectionString)
         {
-            string sRequest = string.Empty;
+            string sRequest;
             DataSet dsDataSet = null;
 
             DataManagerSQLServer dataManagerSQLServer;
@@ -363,8 +363,8 @@ namespace PNPUCore.Controle
         /// <returns></returns>
         public DataSet GetItemValues(DataRow drRow, DateTime sDate, string sConnexionString, Dictionary<string, string> lstCumulativeTable)
         {
-            string sRequest = string.Empty;
-            DataSet result = null;
+            string sRequest;
+            DataSet result;
             string sTable = drRow[2].ToString();
             string sAlias = GetAlias(sTable, lstCumulativeTable);
             string sItem = drRow[1].ToString();
@@ -399,7 +399,7 @@ namespace PNPUCore.Controle
 
         private string BuildInnerJoinRequest(string sAlias, string sTable)
         {
-            string sRequest = string.Empty;
+            string sRequest;
 
             sRequest = "INNER JOIN " + sTable + " " + sAlias + " ON CO1.ID_ORGANIZATION = " + sAlias + ".ID_ORGANIZATION ";
             sRequest += "AND CO1.SCO_ID_HR = " + sAlias + ".SCO_ID_HR ";

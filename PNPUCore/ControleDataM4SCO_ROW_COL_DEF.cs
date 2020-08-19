@@ -7,14 +7,14 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleDataM4SCO_ROW_COL_DEF
+    internal class ControleDataM4SCO_ROW_COL_DEF
     {
         readonly private List<string> TableTraitee = new List<string>() { "M4SCO_ROW_COL_DEF", "M4SCO_ROWS" };
-        readonly ProcessAnalyseImpactData processAnalyseImpactData;
+        private readonly ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
         private string sConnectionString;
         private DataManagerSQLServer dmsDataManager;
-        CommandData commandDataCour;
+        private CommandData commandDataCour;
 
 
         public ControleDataM4SCO_ROW_COL_DEF(ProcessAnalyseImpactData processAnalyseImpact)
@@ -41,7 +41,11 @@ namespace PNPUCore.Controle
             dmsDataManager = new DataManagerSQLServer();
             dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
-            if (!TableTraitee.Contains(sTable)) return;
+            if (!TableTraitee.Contains(sTable))
+            {
+                return;
+            }
+
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
             sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
             commandDataCour = commandData;
@@ -51,9 +55,13 @@ namespace PNPUCore.Controle
             if ((commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0) || (commandeLine.ToUpper().IndexOf("DELETE") >= 0) || (commandeLine.ToUpper().IndexOf("UPDATE") >= 0))
             {
                 if (processAnalyseImpactData.TYPOLOGY == "Dédié")
+                {
                     sOrgaOrg = "0002";
+                }
                 else
+                {
                     sOrgaOrg = "9999";
+                }
 
                 if (commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                 {
@@ -72,7 +80,10 @@ namespace PNPUCore.Controle
                 else
                 {
                     if (sFilter != string.Empty)
+                    {
                         sFilter = " AND ";
+                    }
+
                     sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
                     //Variable is not use sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
@@ -114,8 +125,8 @@ namespace PNPUCore.Controle
         private bool ControleAutreLigne(string sSCO_ID_REPORT, string sSCO_ID_BODY, string sSCO_ID_ROW)
         {
             bool bResultat = true;
-            string sSCO_ID_PRT_ITEM = String.Empty;
-            string sSFR_ID_SOURCE_ITEM = String.Empty;
+            string sSCO_ID_PRT_ITEM;
+            string sSFR_ID_SOURCE_ITEM;
 
             string sSCO_ID_BODY_CLIENT;
             string sSCO_ID_ROW_CLIENT;
@@ -131,17 +142,23 @@ namespace PNPUCore.Controle
 
                 sRequete = "SELECT * FROM M4SCO_ROW_COL_DEF WHERE ID_ORGANIZATION = '" + sOrgaCour + "' AND SCO_ID_REPORT = '" + sSCO_ID_REPORT + "' AND (SCO_ID_BODY <> '" + sSCO_ID_BODY + "' OR SCO_ID_ROW<>'" + sSCO_ID_ROW + "') ";
                 if (sSCO_ID_PRT_ITEM != string.Empty)
+                {
                     sRequete += "AND SCO_ID_PRT_ITEM = '" + sSCO_ID_PRT_ITEM + "'";
+                }
                 else
+                {
                     sRequete += "AND SFR_ID_SOURCE_ITEM = '" + sSFR_ID_SOURCE_ITEM + "'";
+                }
 
                 dsDataset = dmsDataManager.GetData(sRequete, sConnectionString);
-                if ((dsDataset != null) && (dsDataset.Tables[0].Rows.Count > 0) )
+                if ((dsDataset != null) && (dsDataset.Tables[0].Rows.Count > 0))
                 {
                     commandDataCour.Result = ParamAppli.StatutError;
                     bResultat = false;
                     if (commandDataCour.Message != String.Empty)
+                    {
                         commandDataCour.Message += " - ";
+                    }
 
                     sSCO_ID_BODY_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_BODY");
                     sSCO_ID_ROW_CLIENT = dmsDataManager.GetFieldValue(dsDataset.Tables[0].Rows[0], dsDataset.Tables[0], "SCO_ID_ROW");
@@ -150,10 +167,14 @@ namespace PNPUCore.Controle
                     {
                         commandDataCour.Message += "SCO_ID_BODY = " + sSCO_ID_BODY_CLIENT;
                         if (sSCO_ID_ROW_CLIENT != sSCO_ID_ROW)
+                        {
                             commandDataCour.Message += " / SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
+                        }
                     }
                     else
+                    {
                         commandDataCour.Message += "SCO_ID_ROW = " + sSCO_ID_ROW_CLIENT;
+                    }
 
                     commandDataCour.Message += ").";
                 }

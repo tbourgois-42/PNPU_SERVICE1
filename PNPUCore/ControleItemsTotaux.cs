@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que tous les items présent dans les totaux livrés existent. 
     /// </summary>  
-    class ControleItemsTotaux : PControle, IControle
+    internal class ControleItemsTotaux : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;
@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
 
             string sListeItemsLivres = string.Empty;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
 
             try
             {
@@ -72,7 +72,10 @@ namespace PNPUCore.Controle
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
                         if (sListeItemsLivres != string.Empty)
+                        {
                             sListeItemsLivres += ",";
+                        }
+
                         sListeItemsLivres += "'" + drRow[0].ToString() + "'";
                     }
                 }
@@ -103,9 +106,13 @@ namespace PNPUCore.Controle
                         lListeAControler.Add(new string[] { sItem, drRow[0].ToString() + "." + drRow[1].ToString() });
 
                         if (bPremierElement)
+                        {
                             bPremierElement = false;
+                        }
                         else
+                        {
                             sRequete += ",";
+                        }
 
                         sRequete += "'" + sItem + "'";
 
@@ -138,7 +145,9 @@ namespace PNPUCore.Controle
                     {
                         bResultat = ResultatErreur;
                         foreach (string[] sElements in lListeAControler)
+                        {
                             Process.AjouteRapport("Le total " + sElements[1] + " utilise un item inexistant (" + sElements[0] + ").");
+                        }
                     }
                 }
 

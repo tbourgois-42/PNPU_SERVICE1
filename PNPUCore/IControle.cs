@@ -3,9 +3,7 @@ using System;
 
 namespace PNPUCore.Controle
 {
-
-
-    interface IControle
+    internal interface IControle
     {
         string MakeControl();
         IProcess GetProcessControle();

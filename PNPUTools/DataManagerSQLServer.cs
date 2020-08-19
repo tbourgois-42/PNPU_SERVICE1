@@ -9,7 +9,7 @@ namespace PNPUTools.DataManager
     public class DataManagerSQLServer : IDataManager
     {
         // Voir comment on gère la chaine de connexion. Normalement dans les infos clients
-        string GetConnectionString()
+        private string GetConnectionString()
         {
             return String.Empty;
         }
@@ -17,7 +17,7 @@ namespace PNPUTools.DataManager
         public override DataSet GetData(string sRequest, string sConnectionString)
         {
             DataSet dataSet = null;
-            string sTableName = string.Empty;
+            string sTableName;
 
 
             try
@@ -35,9 +35,13 @@ namespace PNPUTools.DataManager
                     dataSet = new DataSet();
                     sTableName = GetTableName(sRequest);
                     if (sTableName == string.Empty)
+                    {
                         adapter.Fill(dataSet);
+                    }
                     else
+                    {
                         adapter.Fill(dataSet, sTableName);
+                    }
                 }
             }
             catch (Exception ex)
@@ -313,8 +317,10 @@ namespace PNPUTools.DataManager
                     using (var cmd = new SqlCommand(sRequest, conn))
                     {
                         conn.Open();
-                        SqlDataAdapter adapter = new SqlDataAdapter();
-                        adapter.SelectCommand = cmd;
+                        SqlDataAdapter adapter = new SqlDataAdapter
+                        {
+                            SelectCommand = cmd
+                        };
 
                         dataSet = new DataSet();
                         adapter.Fill(dataSet);

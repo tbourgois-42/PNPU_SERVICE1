@@ -15,7 +15,9 @@ namespace PNPUTools
         public static void LaunchProcess(int ProcFile, int workflowId, String clientId, int idInstanceWF)
         {
             if (ProcFile == ParamAppli.ProcessFinished)
+            {
                 return;
+            }
 
             ParamAppli.qFIFO.Enqueue(ProcFile + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
         }

@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// Cette classe permet de controler qu'il n'y a pas livraison d'un héritage d'un M4O ou d'une présentation alors qu'elle est déja héritée en standard. 
     /// Cela permet de vérifier que c'est bien le niveau standard le plus bas qui est hérité dans le pack.
     /// </summary>  
-    class ControleNiveauHeritage : PControle, IControle
+    internal class ControleNiveauHeritage : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;
@@ -57,7 +57,7 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
 
             DataManagerAccess dmaManagerAccess;
@@ -83,11 +83,19 @@ namespace PNPUCore.Controle
                             int j = 0;
 
                             bResultat = ResultatErreur;
-                            while (j < (lObjetsHeritesSTD.Count - 1) && (lObjetsHeritesSTD[j][0] != drRow[0].ToString())) j++;
+                            while (j < (lObjetsHeritesSTD.Count - 1) && (lObjetsHeritesSTD[j][0] != drRow[0].ToString()))
+                            {
+                                j++;
+                            }
+
                             if (lObjetsHeritesSTD[j][0] != drRow[0].ToString())
+                            {
                                 Process.AjouteRapport("Héritage de l'objet " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'il est hérité au niveau standard.");
+                            }
                             else
+                            {
                                 Process.AjouteRapport("Héritage de l'objet " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'il est hérité au niveau " + lObjetsHeritesSTD[j][1] + " (" + lObjetsHeritesSTD[j][2] + ").");
+                            }
                         }
                         dsDataSet.Clear();
                     }
@@ -106,11 +114,19 @@ namespace PNPUCore.Controle
                             int j = 0;
 
                             bResultat = ResultatErreur;
-                            while (j < (lPresentsHeritesSTD.Count - 1) && (lPresentsHeritesSTD[j][0] != drRow[0].ToString())) j++;
+                            while (j < (lPresentsHeritesSTD.Count - 1) && (lPresentsHeritesSTD[j][0] != drRow[0].ToString()))
+                            {
+                                j++;
+                            }
+
                             if (lPresentsHeritesSTD[j][0] != drRow[0].ToString())
+                            {
                                 Process.AjouteRapport("Héritage de la présentation " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'elle est héritée au niveau standard.");
+                            }
                             else
+                            {
                                 Process.AjouteRapport("Héritage de la présentation " + drRow[0].ToString() + " au niveau " + drRow[1].ToString() + " (" + drRow[2].ToString() + ") alors qu'elle est héritée au niveau " + lPresentsHeritesSTD[j][1] + " (" + lPresentsHeritesSTD[j][2] + ").");
+                            }
                         }
                         dsDataSet.Clear();
                     }
@@ -131,7 +147,7 @@ namespace PNPUCore.Controle
         /// </summary>  
         private void ChargeM4OPresHerites()
         {
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
             DataManagerSQLServer dmaManagersqlServer;
             lObjetsHeritesSTD = new List<string[]>();
@@ -153,7 +169,10 @@ namespace PNPUCore.Controle
                         {
                             lObjetsHeritesSTD.Add(new string[] { drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString() });
                             if (sListeID_T3 != string.Empty)
+                            {
                                 sListeID_T3 += ",";
+                            }
+
                             sListeID_T3 += "'" + drRow[0].ToString() + "'";
                         }
                         dsDataSet.Clear();
@@ -170,7 +189,10 @@ namespace PNPUCore.Controle
                         {
                             lPresentsHeritesSTD.Add(new string[] { drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString() });
                             if (sListeID_PRES != string.Empty)
+                            {
                                 sListeID_PRES += ",";
+                            }
+
                             sListeID_PRES += "'" + drRow[0].ToString() + "'";
                         }
                         dsDataSet.Clear();

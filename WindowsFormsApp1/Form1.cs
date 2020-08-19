@@ -9,8 +9,8 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        NamedPipeClientStream npcsPipeClient = null;
-        StreamString ssStreamString = null;
+        private readonly NamedPipeClientStream npcsPipeClient = null;
+        private readonly StreamString ssStreamString = null;
 
 
         public Form1()

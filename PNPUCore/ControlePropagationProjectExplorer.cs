@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les données livrées dans des tables multi orga sont propagées. 
     /// </summary>  
-    class ControlePropaProjectExplorer : PControle, IControle
+    internal class ControlePropaProjectExplorer : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 
@@ -45,10 +45,10 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
 
-            DataManagerAccess dmaManagerAccess = null;
-            DataSet dsDataSet = null;
+            DataManagerAccess dmaManagerAccess;
+            DataSet dsDataSet;
 
             try
             {

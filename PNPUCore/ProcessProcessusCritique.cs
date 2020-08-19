@@ -10,7 +10,7 @@ namespace PNPUCore.Process
 {
     internal class ProcessProcessusCritique : ProcessCore, IProcess
     {
-        List<string> lStatusContinue;
+        private readonly List<string> lStatusContinue;
 
 
         /// <summary>  
@@ -63,10 +63,12 @@ namespace PNPUCore.Process
             // MHUM POUR TESTS 
             ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
 
-            RapportSource = new Rapport.Source();
-            RapportSource.Name = "Planification des processus critiques";
-            RapportSource.Controle = new List<RControle>();
-            RapportSource.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+            RapportSource = new Rapport.Source
+            {
+                Name = "Planification des processus critiques",
+                Controle = new List<RControle>(),
+                Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk]
+            };
 
 
             List<string> lParameters = new List<string>();
@@ -79,16 +81,21 @@ namespace PNPUCore.Process
             if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
             {
                 if (Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASK))
+                {
                     iID_SCHED_TASK++;
+                }
                 else
+                {
                     iID_SCHED_TASK = 1;
-
+                }
             }
 
-            RapportControle = new RControle();
-            RapportControle.Name = "Planification (" + iID_SCHED_TASK.ToString("########0") + ")";
-            RapportControle.Tooltip = "Génération de la planification des processus critiques";
-            RapportControle.Message = new List<string>();
+            RapportControle = new RControle
+            {
+                Name = "Planification (" + iID_SCHED_TASK.ToString("########0") + ")",
+                Tooltip = "Génération de la planification des processus critiques",
+                Message = new List<string>()
+            };
 
             lParameters.Add("@ID_SCHED_TASK");
             lParameters.Add(iID_SCHED_TASK.ToString());
@@ -167,17 +174,21 @@ namespace PNPUCore.Process
 
                     if (sNumTraitement != "NA")
                     {
-                        RapportSource = new Rapport.Source();
-                        RapportSource.Name = "Processus critiques";
-                        RapportSource.Controle = new List<RControle>();
-                        RapportSource.Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk];
+                        RapportSource = new Rapport.Source
+                        {
+                            Name = "Processus critiques",
+                            Controle = new List<RControle>(),
+                            Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk]
+                        };
 
                         // Boucle sur les traitements
                         foreach (string sTraitement in lTraitements)
                         {
-                            RapportControle = new RControle();
-                            RapportControle.Name = sTraitement;
-                            RapportControle.Message = new List<string>();
+                            RapportControle = new RControle
+                            {
+                                Name = sTraitement,
+                                Message = new List<string>()
+                            };
 
                             sRequete = "select ID_SCHED_TASK from M4RJS_SCHED_TASKS where SCHED_TASK_NAME like 'Traitement " + sNumTraitement + " : " + sTraitement + "' and ID_SCHED_TASK> " + iID_SCHED_TASK.ToString("########0");
                             bBoucle = true;
@@ -189,10 +200,14 @@ namespace PNPUCore.Process
                                 {
                                     bBoucle = false;
                                     if (!Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASKTrt))
+                                    {
                                         iID_SCHED_TASKTrt = -1;
+                                    }
                                 }
                                 else
+                                {
                                     System.Threading.Thread.Sleep(500);
+                                }
                             }
 
                             // Attente de l'exécution du traitement
@@ -244,7 +259,9 @@ namespace PNPUCore.Process
             if (sTaskStatus == ParamAppli.statusScheduleTaskTermine)
             {
                 if (sResultTask == ParamAppli.StatutOk)
+                {
                     rapportControle.Result = ParamAppli.StatutOk;
+                }
                 else
                 {
                     rapportControle.Result = ParamAppli.StatutError;
@@ -291,7 +308,9 @@ namespace PNPUCore.Process
                     sStatus = dataSet.Tables[0].Rows[0][0].ToString();
 
                     if ((sStatus != ParamAppli.statusScheduleTaskAttente) && (sStatus != ParamAppli.statusScheduleTaskEnCours))
+                    {
                         bBoucle = false;
+                    }
 
                     if (bBoucle)
                     {
@@ -307,9 +326,13 @@ namespace PNPUCore.Process
                 if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
                 {
                     if (dataSet.Tables[0].Rows[0][0].ToString() == "0")
+                    {
                         sResultTask = ParamAppli.StatutOk;
+                    }
                     else
+                    {
                         sResultTask = ParamAppli.StatutError;
+                    }
                 }
 
             }

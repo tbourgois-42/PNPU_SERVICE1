@@ -7,12 +7,12 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleDataTablesDSN
+    internal class ControleDataTablesDSN
     {
-        readonly ProcessAnalyseImpactData processAnalyseImpactData;
+        private readonly ProcessAnalyseImpactData processAnalyseImpactData;
         private string sOrgaCour;
         private DataManagerSQLServer dmsDataManager;
-        CommandData commandDataCour;
+        private CommandData commandDataCour;
 
 
         public ControleDataTablesDSN(ProcessAnalyseImpactData processAnalyseImpact)
@@ -35,7 +35,7 @@ namespace PNPUCore.Controle
             List<string> lColumnsList = new List<string>();
             // VARIABLE NOT USE string sFilterTraite;
             List<string> lPKFields = new List<string>();
-            bool bSFR_CK_IS_ACTIF = false;
+            bool bSFR_CK_IS_ACTIF;
             string sFiltreSuite;
             string sOrgaOrgFiltre;
             string sCommandeGeneree;
@@ -59,9 +59,13 @@ namespace PNPUCore.Controle
 
 
                 if (processAnalyseImpactData.TYPOLOGY == "Dédié")
+                {
                     sOrgaOrg = "0002";
+                }
                 else
+                {
                     sOrgaOrg = "9999";
+                }
 
                 if (commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                 {
@@ -80,7 +84,10 @@ namespace PNPUCore.Controle
                 else
                 {
                     if (sFilter != string.Empty)
+                    {
                         sFilter = " AND ";
+                    }
+
                     sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
                     // VARIABLE NOT USE sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
@@ -101,9 +108,13 @@ namespace PNPUCore.Controle
                         string sSFR_CK_IS_ACTIF_REF;
                         sSFR_ID_ORIG_PARAM_REF = dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], "SFR_ID_ORIG_PARAM");
                         if (bSFR_CK_IS_ACTIF)
+                        {
                             sSFR_CK_IS_ACTIF_REF = dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], "SFR_CK_IS_ACTIF");
+                        }
                         else
+                        {
                             sSFR_CK_IS_ACTIF_REF = "1";
+                        }
 
                         if ((sSFR_CK_IS_ACTIF_REF == "1") && (sSFR_ID_ORIG_PARAM_REF == "STD"))
                         {
@@ -167,29 +178,48 @@ namespace PNPUCore.Controle
                     iIndex--;
 
                     while (Char.IsWhiteSpace(sFilter[iIndex]))
+                    {
                         iIndex--;
+                    }
+
                     while (Char.IsLetter(sFilter[iIndex]))
+                    {
                         iIndex--;
+                    }
+
                     sResultat = sFilter.Substring(0, iIndex);
                     bPremier = false;
                     iIndex = iIndex2;
                 }
                 else
+                {
                     sResultat = string.Empty;
+                }
 
                 iIndex = iIndex + sChampASupprimer.Length;
-                while ((Char.IsWhiteSpace(sFilter[iIndex])) || (sFilter[iIndex] == '=')) iIndex++;
+                while ((Char.IsWhiteSpace(sFilter[iIndex])) || (sFilter[iIndex] == '='))
+                {
+                    iIndex++;
+                }
 
-                while (((Char.IsLetter(sFilter[iIndex])) || (sFilter[iIndex] == '\'')) && (iIndex < sFilter.Length - 1)) iIndex++;
+                while (((Char.IsLetter(sFilter[iIndex])) || (sFilter[iIndex] == '\'')) && (iIndex < sFilter.Length - 1))
+                {
+                    iIndex++;
+                }
 
                 if (iIndex < sFilter.Length - 1)
                 {
                     if (bPremier)
                     {
                         while (Char.IsWhiteSpace(sFilter[iIndex]))
+                        {
                             iIndex++;
+                        }
+
                         while (Char.IsLetter(sFilter[iIndex]))
+                        {
                             iIndex++;
+                        }
                     }
 
                     sResultat += sFilter.Substring(iIndex);

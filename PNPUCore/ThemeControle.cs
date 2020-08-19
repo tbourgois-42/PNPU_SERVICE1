@@ -1,6 +1,6 @@
 ﻿namespace PNPUCore.Controle
 {
-    class ThemeControle
+    internal class ThemeControle
     {
     }
 }

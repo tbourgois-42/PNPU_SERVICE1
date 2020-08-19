@@ -45,7 +45,9 @@ namespace PNPUTools.ZIP
             try
             {
                 if (File.Exists(pNomFichierZip))
+                {
                     File.Delete(pNomFichierZip);
+                }
 
                 using (ZipOutputStream ZipStream = new ZipOutputStream(File.Create(pNomFichierZip)))
                 {
@@ -100,7 +102,9 @@ namespace PNPUTools.ZIP
             try
             {
                 if (!Directory.Exists(pDossierDestination))
+                {
                     Directory.CreateDirectory(pDossierDestination);
+                }
 
                 using (ZipInputStream ZipStream = new ZipInputStream(File.OpenRead(pNomFichierZip)))
                 {

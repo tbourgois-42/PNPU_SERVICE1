@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les ID_SYNONYME des items livrés ne sont pas dans les plages réservées aux clients. 
     /// </summary>  
-    class ControleIDSynonym : PControle, IControle
+    internal class ControleIDSynonym : PControle, IControle
     {
         readonly private string sPathMdb = string.Empty;
         readonly private List<int> lLIM_INF;
@@ -70,7 +70,7 @@ namespace PNPUCore.Controle
             int iID_SYNONYM;
             string sPathMdb = Process.MDBCourant;
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 dmaManagerAccess = new DataManagerAccess();
@@ -86,8 +86,9 @@ namespace PNPUCore.Controle
                         for (int j = 0; j < lLIM_INF.Count && bPlageOK; j++)
                         {
                             if (iID_SYNONYM >= lLIM_INF[j] && iID_SYNONYM <= lLIM_SUP[j])
+                            {
                                 bPlageOK = false;
-
+                            }
                         }
                         if (!bPlageOK)
                         {

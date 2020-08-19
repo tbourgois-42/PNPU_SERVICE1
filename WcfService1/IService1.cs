@@ -221,8 +221,8 @@ namespace WcfService1
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "clientsByTypo/{TypologyId}")]
-        IEnumerable<InfoClient> GetListClientsByTypo( string TypologyId);
-        
+        IEnumerable<InfoClient> GetListClientsByTypo(string TypologyId);
+
         [OperationContract]
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,

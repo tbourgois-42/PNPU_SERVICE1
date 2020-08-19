@@ -10,7 +10,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les ID_SYNONYME des items livrés n'existent pas déja pour d'autres items. 
     /// </summary>  
-    class ControleIDSynonymExistant : PControle, IControle
+    internal class ControleIDSynonymExistant : PControle, IControle
     {
         readonly private string sPathMdb = string.Empty;
         readonly private PNPUCore.Process.ProcessControlePacks Process;
@@ -51,7 +51,7 @@ namespace PNPUCore.Controle
             string sID_SYNONYM;
             Dictionary<string, string> dicListItems = new Dictionary<string, string>();
             bool bItemAControler = false;
-            string sRequeteSqlServer = string.Empty;
+            string sRequeteSqlServer;
 
             DataManagerAccess dmaManagerAccess;
 
@@ -79,9 +79,13 @@ namespace PNPUCore.Controle
                         {
                             dicListItems.Add(sID_SYNONYM, drRow[0].ToString());
                             if (!bItemAControler)
+                            {
                                 bItemAControler = true;
+                            }
                             else
+                            {
                                 sRequeteSqlServer += "OR ";
+                            }
 
                             sRequeteSqlServer += " (ID_SYNONYM = " + drRow[1].ToString() + " AND ID_ITEM <> '" + drRow[0].ToString() + "') ";
                         }
@@ -94,9 +98,13 @@ namespace PNPUCore.Controle
 
                         // Contrôle sur la base de référence si pack standard, sinon sur base client
                         if (Process.STANDARD)
+                        {
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
+                        }
                         else
+                        {
                             dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, sConnectionStringBaseQA1);
+                        }
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {

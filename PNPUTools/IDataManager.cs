@@ -24,7 +24,9 @@ namespace PNPUTools.DataManager
             {
                 int iIndex = pDataTable.Columns.IndexOf(pFieldName);
                 if (iIndex >= 0)
+                {
                     sResultat = pDataRow[iIndex].ToString();
+                }
             }
             catch (Exception)
             {
@@ -48,15 +50,21 @@ namespace PNPUTools.DataManager
             try
             {
                 if (Table1.Columns.Count != Table2.Columns.Count)
+                {
                     bResulat = false;
+                }
                 else
                 {
                     while ((iCpt < Table1.Columns.Count) && bResulat)
                     {
                         if (Table1.Columns[iCpt].ColumnName != Table2.Columns[iCpt].ColumnName)
+                        {
                             bResulat = false;
+                        }
                         else
+                        {
                             iCpt++;
+                        }
                     }
                 }
             }
@@ -98,13 +106,17 @@ namespace PNPUTools.DataManager
                             sValeur1 = pDataRow1[iCpt].ToString();
                             sValeur2 = pDataRow2[iCpt].ToString();
                             if (sValeur1 != sValeur2)
+                            {
                                 bResulat = false;
+                            }
                         }
                         iCpt++;
                     }
                 }
                 else
+                {
                     bResulat = false;
+                }
             }
             catch (Exception)
             {
@@ -154,7 +166,9 @@ namespace PNPUTools.DataManager
                     }
                 }
                 else
+                {
                     bResulat = false;
+                }
             }
             catch (Exception)
             {
@@ -222,9 +236,17 @@ namespace PNPUTools.DataManager
                 if (iIndex1 >= 0)
                 {
                     iIndex1 += "FROM".Length;
-                    while (char.IsWhiteSpace(sRequest[iIndex1])) iIndex1++;
+                    while (char.IsWhiteSpace(sRequest[iIndex1]))
+                    {
+                        iIndex1++;
+                    }
+
                     iIndex2 = iIndex1 + 1;
-                    while ((char.IsLetterOrDigit(sRequest[iIndex2])) || (sRequest[iIndex2] == '_')) iIndex2++;
+                    while ((char.IsLetterOrDigit(sRequest[iIndex2])) || (sRequest[iIndex2] == '_'))
+                    {
+                        iIndex2++;
+                    }
+
                     sResultat = sRequest.Substring(iIndex1, iIndex2 - iIndex1);
                 }
             }
@@ -238,10 +260,13 @@ namespace PNPUTools.DataManager
 
         public string GenerateReplace(string sTable, string sFilter, string sOrgaOrg, string sOrgaDest)
         {
-            string sResultat = string.Empty;
+            string sResultat;
 
             if (!sFilter.Contains("ID_ORGANIZATION"))
+            {
                 sFilter = " AND ID_ORGANIZATION='" + sOrgaDest + "'";
+            }
+
             sResultat = "Replace " + sTable + "  from origin to destination where \"" + sFilter + "\"";
             sResultat = ReplaceID_ORGA(sResultat, sOrgaOrg, sOrgaDest);
 
@@ -338,11 +363,15 @@ namespace PNPUTools.DataManager
 
                 // Récupération du nom de la table
                 while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
+                {
                     iIndex1++;
+                }
 
                 iIndex2 = iIndex1;
                 while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
+                {
                     iIndex2++;
+                }
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
 
@@ -382,11 +411,15 @@ namespace PNPUTools.DataManager
                 iIndex1 += "UPDATE".Length;
                 // Récupération du nom de la table
                 while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
+                {
                     iIndex1++;
+                }
 
                 iIndex2 = iIndex1;
                 while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
+                {
                     iIndex2++;
+                }
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
 
@@ -396,11 +429,16 @@ namespace PNPUTools.DataManager
                 {
                     iIndex1 += "SET".Length;
                     while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
+                    {
                         iIndex1++;
+                    }
 
                     iIndex2 = iIndex1;
                     while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
+                    {
                         iIndex2++;
+                    }
+
                     sColumn = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
                     lColumnsList.Add(sColumn);
                     iIndex1 = sCommandMAJ.IndexOf("SET", iIndex2);
@@ -419,10 +457,15 @@ namespace PNPUTools.DataManager
                         int iIndex3;
                         iIndex2 += "FROM".Length;
                         while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]))
+                        {
                             iIndex2++;
+                        }
+
                         iIndex3 = iIndex2;
                         while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3])) || (sCommandMAJ[iIndex3] == '_'))
+                        {
                             iIndex3++;
+                        }
 
                         sTable = sCommand.Substring(iIndex2, iIndex3 - iIndex2);
                     }
@@ -438,10 +481,15 @@ namespace PNPUTools.DataManager
                         int iIndex3;
                         iIndex2 += "FROM".Length;
                         while (Char.IsWhiteSpace(sCommandMAJ[iIndex2]))
+                        {
                             iIndex2++;
+                        }
+
                         iIndex3 = iIndex2;
                         while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex3])) || (sCommandMAJ[iIndex3] == '_'))
+                        {
                             iIndex3++;
+                        }
 
                         sTable = sCommand.Substring(iIndex2, iIndex3 - iIndex2);
                     }
@@ -472,17 +520,25 @@ namespace PNPUTools.DataManager
                 // Gestion de la présence de FROM
                 iIndex2 = sCommandMAJ.IndexOf("FROM", iIndex1);
                 if (iIndex2 >= 0)
+                {
                     iIndex1 = iIndex2 + "FROM".Length;
+                }
                 else
+                {
                     iIndex1 += "DELETE".Length;
+                }
 
                 // Récupération du nom de la table
                 while (Char.IsWhiteSpace(sCommandMAJ[iIndex1]))
+                {
                     iIndex1++;
+                }
 
                 iIndex2 = iIndex1;
                 while ((Char.IsLetterOrDigit(sCommandMAJ[iIndex2])) || (sCommandMAJ[iIndex2] == '_'))
+                {
                     iIndex2++;
+                }
 
                 sTable = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
 
@@ -536,23 +592,35 @@ namespace PNPUTools.DataManager
                 if (iIndex1 >= 0)
                 {
                     iIndex1 += sParameterName.Length;
-                    while (sCommand[iIndex1] != '\'') iIndex1++;
+                    while (sCommand[iIndex1] != '\'')
+                    {
+                        iIndex1++;
+                    }
+
                     iIndex1++;
                     iIndex2 = iIndex1;
                     while (bContinue)
                     {
                         if (iIndex2 >= sCommand.Length)
+                        {
                             return (String.Empty);
+                        }
 
                         if (sCommand[iIndex2] == '\'')
                         {
                             if (sCommand.Substring(iIndex2, 2) == "''")
+                            {
                                 iIndex2 += 2;
+                            }
                             else
+                            {
                                 bContinue = false;
+                            }
                         }
                         else
+                        {
                             iIndex2++;
+                        }
                     }
 
                     sResultat = sCommand.Substring(iIndex1, iIndex2 - iIndex1);
@@ -573,7 +641,7 @@ namespace PNPUTools.DataManager
         /// <param name="iParameterPos">Position du paramètre à extraire</param>
         public string ExtractParameterCOPY_DATA(string sCommand, int iParameterPos)
         {
-            int iIndex1 = 0;
+            int iIndex1;
             int iIndex2 = 0;
             string sResultat = String.Empty;
             bool bContinue = true;
@@ -585,20 +653,32 @@ namespace PNPUTools.DataManager
                 if (iIndex1 >= 0)
                 {
                     iIndex1 += "M4SFR_COPY_DATA_ORG".Length;
-                    while (sCommand[iIndex1] != '\'') iIndex1++;
+                    while (sCommand[iIndex1] != '\'')
+                    {
+                        iIndex1++;
+                    }
+
                     iIndex1++;
                     while (iNumeroParam < iParameterPos)
                     {
                         iIndex1 = sCommand.IndexOf(',', iIndex1);
                         if (iIndex1 == -1)
+                        {
                             return String.Empty;
+                        }
 
-                        while (sCommand[iIndex1] != '\'') iIndex1++;
+                        while (sCommand[iIndex1] != '\'')
+                        {
+                            iIndex1++;
+                        }
+
                         iIndex1++;
 
                         // Test si on est sur '', dans le filtre par exemple
                         if (sCommand[iIndex1] != '\'')
+                        {
                             iNumeroParam++;
+                        }
                     }
 
                     if (iNumeroParam == iParameterPos)
@@ -607,17 +687,25 @@ namespace PNPUTools.DataManager
                         while (bContinue)
                         {
                             if (iIndex2 >= sCommand.Length)
+                            {
                                 return (String.Empty);
+                            }
 
                             if (sCommand[iIndex2] == '\'')
                             {
                                 if (sCommand.Substring(iIndex2, 2) == "''")
+                                {
                                     iIndex2 += 2;
+                                }
                                 else
+                                {
                                     bContinue = false;
+                                }
                             }
                             else
+                            {
                                 iIndex2++;
+                            }
                         }
                     }
 
@@ -659,22 +747,36 @@ namespace PNPUTools.DataManager
                 if (iIndex1 >= 0)
                 {
                     while ((sCommandeMaj[iIndex1] != '=') && (iIndex1 < sCommandeMaj.Length) && ((sCommandeMaj[iIndex1] != '<') || (sCommandeMaj[iIndex1 + 1] != '>')))
+                    {
                         iIndex1++;
+                    }
 
                     if (iIndex1 < sCommandeMaj.Length)
                     {
                         if (sCommandeMaj[iIndex1] == '=')
+                        {
                             bScriptOracle = false;
+                        }
                         else
+                        {
                             bScriptOracle = true;
+                        }
 
                         iIndex1 = sCommandeMaj.IndexOf("GOTO", iIndex1);
                         if (iIndex1 >= 0)
                         {
                             iIndex1 += "GOTO".Length;
-                            while (Char.IsWhiteSpace(sCommandeMaj[iIndex1])) iIndex1++;
+                            while (Char.IsWhiteSpace(sCommandeMaj[iIndex1]))
+                            {
+                                iIndex1++;
+                            }
+
                             iIndex2 = iIndex1;
-                            while ((char.IsLetterOrDigit(sCommandeMaj[iIndex2])) || (sCommandeMaj[iIndex2] == '_')) iIndex2++;
+                            while ((char.IsLetterOrDigit(sCommandeMaj[iIndex2])) || (sCommandeMaj[iIndex2] == '_'))
+                            {
+                                iIndex2++;
+                            }
+
                             sEtiquette = sCommandeMaj.Substring(iIndex1, iIndex2 - iIndex1);
 
                             iIndex2 = sCommandeMaj.IndexOf("->" + sEtiquette, iIndex2);
@@ -689,14 +791,20 @@ namespace PNPUTools.DataManager
                             }
                             iIndex1 = iIndex2;
                             if (iIndex1 == sCommandeMaj.Length)
+                            {
                                 bContinue = false;
+                            }
                         }
                     }
                     else
+                    {
                         bContinue = false;
+                    }
                 }
                 else
+                {
                     bContinue = false;
+                }
             }
 
             return sResultat;
@@ -711,8 +819,10 @@ namespace PNPUTools.DataManager
         /// <returns>Retourne le script modifié</returns>
         public string ReplaceID_ORGA(string sCommand, string sID_OrgaOrg, string sID_OrgaDest)
         {
-            List<string> lID_Orga = new List<string>();
-            lID_Orga.Add(sID_OrgaDest);
+            List<string> lID_Orga = new List<string>
+            {
+                sID_OrgaDest
+            };
             return (ReplaceID_ORGA(sCommand, sID_OrgaOrg, lID_Orga));
         }
 
@@ -747,7 +857,9 @@ namespace PNPUTools.DataManager
                 sORGA_SCRIPT += orga + "'";
             }
             if (sORGA_COPY.Length > 0)
+            {
                 sORGA_COPY += "'";
+            }
 
             sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "(|\\s+),(|\\s+)'" + sID_OrgaOrg + "'", "," + sORGA_COPY, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "@id_orgas_dest(|\\s+)=(|\\s+)'" + sID_OrgaOrg + "'", "@id_orgas_dest = " + sORGA_COPY, System.Text.RegularExpressions.RegexOptions.IgnoreCase);

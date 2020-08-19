@@ -8,7 +8,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les données livrées dans des tables multi orga sont propagées. 
     /// </summary>  
-    class ControlePropagation : PControle, IControle
+    internal class ControlePropagation : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 
@@ -45,12 +45,12 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
 
-            DataManagerAccess dmaManagerAccess = null;
-            DataManagerAccess dmaManagerAccess2 = null;
-            DataSet dsDataSet = null;
-            DataSet dsDataSet2 = null;
+            DataManagerAccess dmaManagerAccess;
+            DataManagerAccess dmaManagerAccess2;
+            DataSet dsDataSet;
+            DataSet dsDataSet2;
 
             try
             {
@@ -96,12 +96,16 @@ namespace PNPUCore.Controle
 
                                         iIndex2 = stempo.IndexOf('\"', iIndex + 1);
                                         if (iIndex2 >= 0)
+                                        {
                                             sWhere = stempo.Substring(iIndex + 1, iIndex2 - iIndex - 1);
+                                        }
                                     }
                                     else
                                     {
                                         if ((iIndex3 >= 0) && (iIndex3 < iIndex))
+                                        {
                                             iIndex = iIndex3;
+                                        }
                                     }
                                 }
 
@@ -112,7 +116,9 @@ namespace PNPUCore.Controle
                                 if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                 {
                                     if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
+                                    {
                                         bMultiOrga = true;
+                                    }
                                 }
                                 else
                                 {
@@ -121,7 +127,9 @@ namespace PNPUCore.Controle
                                     if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                     {
                                         if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
+                                        {
                                             bMultiOrga = true;
+                                        }
                                     }
                                 }
 
@@ -144,14 +152,20 @@ namespace PNPUCore.Controle
                                     {
                                         string sTypeBase = string.Empty;
 
-                                        if (Process.TYPOLOGY == "Dédié") sTypeBase = " SQL Server ";
+                                        if (Process.TYPOLOGY == "Dédié")
+                                        {
+                                            sTypeBase = " SQL Server ";
+                                        }
 
                                         bResultat = ParamAppli.StatutError;
                                         if (sWhere != string.Empty)
+                                        {
                                             Process.AjouteRapport("Propagation " + sTypeBase + "manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + " (filtre " + sWhere + ").");
+                                        }
                                         else
+                                        {
                                             Process.AjouteRapport("Propagation " + sTypeBase + "manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + ".");
-
+                                        }
                                     }
 
                                     // Si on est en dédié on vérifie la propagation Oracle
@@ -176,10 +190,13 @@ namespace PNPUCore.Controle
                                         {
                                             bResultat = ParamAppli.StatutError;
                                             if (sWhere != string.Empty)
+                                            {
                                                 Process.AjouteRapport("Propagation Oracle manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + " (filtre " + sWhere + ").");
+                                            }
                                             else
+                                            {
                                                 Process.AjouteRapport("Propagation Oracle manquante dans le pack " + drRow[0].ToString() + " pour la table " + sTable + ".");
-
+                                            }
                                         }
 
 
@@ -189,8 +206,9 @@ namespace PNPUCore.Controle
 
                             }
                             if (iIndex >= 0)
+                            {
                                 iIndex = stempo.ToUpper().IndexOf("REPLACE ", iIndex);
-
+                            }
                         }
 
                     }

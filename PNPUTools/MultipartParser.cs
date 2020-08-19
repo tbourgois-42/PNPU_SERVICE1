@@ -114,7 +114,10 @@ namespace AntsCode.Util
                 {
                     int read = stream.Read(buffer, 0, buffer.Length);
                     if (read <= 0)
+                    {
                         return ms.ToArray();
+                    }
+
                     ms.Write(buffer, 0, read);
                 }
             }

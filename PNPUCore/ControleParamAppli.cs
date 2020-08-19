@@ -8,10 +8,10 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de controler que des clés et des sections dans les paramètres applicatifs ne sont pas livrés dans un pack. 
     /// </summary>  
-    class ControleParamAppli : PControle, IControle
+    internal class ControleParamAppli : PControle, IControle
     {
-        readonly string sCLE = string.Empty;
-        readonly string sSECTION = string.Empty;
+        private readonly string sCLE = string.Empty;
+        private readonly string sSECTION = string.Empty;
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
@@ -25,14 +25,20 @@ namespace PNPUCore.Controle
             foreach (string cle in ParamAppli.ListeCleInterdite)
             {
                 if (sCLE != string.Empty)
+                {
                     sCLE += ",";
+                }
+
                 sCLE += "'" + cle + "'";
             }
 
             foreach (string section in ParamAppli.ListeSectionInterdite)
             {
                 if (sSECTION != string.Empty)
+                {
                     sSECTION += ",";
+                }
+
                 sSECTION += "'" + section + "'";
             }
 
@@ -51,14 +57,20 @@ namespace PNPUCore.Controle
             foreach (string cle in ParamAppli.ListeCleInterdite)
             {
                 if (sCLE != string.Empty)
+                {
                     sCLE += ",";
+                }
+
                 sCLE += "'" + cle + "'";
             }
 
             foreach (string section in ParamAppli.ListeSectionInterdite)
             {
                 if (sSECTION != string.Empty)
+                {
                     sSECTION += ",";
+                }
+
                 sSECTION += "'" + section + "'";
             }
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
@@ -96,7 +108,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
 
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 if (sCLE != string.Empty)
@@ -107,7 +119,10 @@ namespace PNPUCore.Controle
                 if (sSECTION != string.Empty)
                 {
                     if (sCommandPack != string.Empty)
+                    {
                         sCommandPack += " OR ";
+                    }
+
                     sCommandPack += "ID_SECTION IN(" + sSECTION + ")";
                 }
 

@@ -77,7 +77,9 @@ namespace PNPUCore.Process
                 TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID].TYPOLOGY;
             }
             else
+            {
                 TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID.Split(',')[0]].TYPOLOGY;
+            }
         }
 
         private void GenerateHistoric()
@@ -132,13 +134,13 @@ namespace PNPUCore.Process
             }
             else if (ParamAppli.ProcessLivraison == process.PROCESS_ID)
             {
-                RapportAnalyseImpactLogique.Fin = DateTime.Now;
-                return (RapportAnalyseImpactLogique.ToJSONRepresentation());
+                RapportLivraison.Fin = DateTime.Now;
+                return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));
             }
             else if (ParamAppli.ProcessAnalyseImpactLogique == process.PROCESS_ID)
             {
-                RapportLivraison.Fin = DateTime.Now;
-                return (RapportLivraison.ToJSONRepresentation(RapportLocalisation));
+                RapportAnalyseImpactLogique.Fin = DateTime.Now;
+                return (RapportAnalyseImpactLogique.ToJSONRepresentation());
             }
             else
             {
@@ -227,29 +229,33 @@ namespace PNPUCore.Process
         /// <param name="globalResult"></param>
         public void GenerateHistoricGlobal(string[] listClientId, DateTime fin, string globalResult, int idInstanceWF, DateTime debut)
         {
-            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW();
-            historicWorkflow.CLIENT_ID = CLIENT_ID;
-            historicWorkflow.LAUNCHING_DATE = debut;
-            historicWorkflow.ENDING_DATE = new DateTime(1800, 1, 1);
-            historicWorkflow.STATUT_GLOBAL = "IN PROGRESS";
-            historicWorkflow.WORKFLOW_ID = WORKFLOW_ID;
-            historicWorkflow.ID_H_WORKFLOW = ID_INSTANCEWF;
+            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+            {
+                CLIENT_ID = CLIENT_ID,
+                LAUNCHING_DATE = debut,
+                ENDING_DATE = new DateTime(1800, 1, 1),
+                STATUT_GLOBAL = "IN PROGRESS",
+                WORKFLOW_ID = WORKFLOW_ID,
+                ID_H_WORKFLOW = ID_INSTANCEWF
+            };
 
             idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
             foreach (string clientId in listClientId)
             {
                 InfoClient client = RequestTool.GetClientsById(clientId);
-                PNPU_H_STEP historicStep = new PNPU_H_STEP();
-                historicStep.ID_PROCESS = PROCESS_ID;
-                historicStep.ITERATION = 1;
-                historicStep.WORKFLOW_ID = WORKFLOW_ID;
-                historicStep.CLIENT_ID = clientId;
-                historicStep.CLIENT_NAME = client.CLIENT_NAME;
-                historicStep.USER_ID = "PNPUADM";
-                historicStep.LAUNCHING_DATE = debut;
-                historicStep.ENDING_DATE = fin;
-                historicStep.ID_H_WORKFLOW = idInstanceWF;
+                PNPU_H_STEP historicStep = new PNPU_H_STEP
+                {
+                    ID_PROCESS = PROCESS_ID,
+                    ITERATION = 1,
+                    WORKFLOW_ID = WORKFLOW_ID,
+                    CLIENT_ID = clientId,
+                    CLIENT_NAME = client.CLIENT_NAME,
+                    USER_ID = "PNPUADM",
+                    LAUNCHING_DATE = debut,
+                    ENDING_DATE = fin,
+                    ID_H_WORKFLOW = idInstanceWF
+                };
 
                 if (client.TYPOLOGY == "Dédié")
                 {
@@ -291,12 +297,19 @@ namespace PNPUCore.Process
                 {
                     string sClient_ID;
                     if (CLIENT_ID.Contains(","))
+                    {
                         sClient_ID = CLIENT_ID.Split(',')[0];
+                    }
                     else
+                    {
                         sClient_ID = CLIENT_ID;
+                    }
+
                     sTypo = ParamAppli.ListeInfoClient[sClient_ID].TYPOLOGY_ID;
                     if (sTypo != string.Empty)
+                    {
                         sRequete += " AND ((TYPOLOGY IS NULL) OR (TYPOLOGY = '') OR (TYPOLOGY LIKE '%*" + sTypo + "*%'))";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -305,7 +318,7 @@ namespace PNPUCore.Process
                 }
             }
 
-            if (!STANDARD )
+            if (!STANDARD)
             {
                 sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
             }

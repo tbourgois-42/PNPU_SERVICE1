@@ -3,14 +3,13 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 
 namespace PNPUCore.Controle
 {
     /// <summary>  
     /// Cette classe permet de controler les dépendances entre les tâches CCT livrées dans le HF et tâches existantes sur la base de référence. 
     /// </summary>  
-    class ControleRechercheDependancesRef : PControle, IControle
+    internal class ControleRechercheDependancesRef : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;
@@ -64,9 +63,13 @@ namespace PNPUCore.Controle
                             {
                                 lTacheCCTHF.Add(sTacheCCT);
                                 if (bPremierElement)
+                                {
                                     bPremierElement = false;
+                                }
                                 else
+                                {
                                     sFiltreNiveauN += ",";
+                                }
 
                                 sFiltreNiveauN += "'" + sTacheCCT + "'";
                             }
@@ -91,14 +94,19 @@ namespace PNPUCore.Controle
                 if (bResultat)
                 {
                     if (sFiltreNiveauPrec != string.Empty)
+                    {
                         sFiltreNiveauPrec += ",";
+                    }
+
                     sFiltreNiveauPrec += sFiltreNiveauN;
                     sFiltreNiveauN = sFiltreNiveauN1;
                     sFiltreNiveauN1 = string.Empty;
                     bResultat = RechercheDependances(3, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
                 }
                 if (!bResultat)
+                {
                     sResultat = ParamAppli.StatutError;
+                }
             }
             catch (Exception ex)
             {
@@ -147,9 +155,15 @@ namespace PNPUCore.Controle
                     sRequete += "WHERE A.CCT_TASK_ID IN (" + sFiltreNiveauN + ") ";
                     sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauN + ") ";
                     if (sFiltreNiveauxPrec != string.Empty)
+                    {
                         sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauxPrec + ") ";
+                    }
+
                     if (CCT_OBJECT_TYPE_INT != String.Empty)
+                    {
                         sRequete += "AND A.CCT_OBJECT_TYPE NOT IN (" + CCT_OBJECT_TYPE_INT + ") ";
+                    }
+
                     sRequete += "AND A.DEP_CCT_TASK_ID not like '%DEF%' ";
                     sRequete += "AND A.CCT_OBJECT_TYPE+A.CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL') ";
 
@@ -225,9 +239,13 @@ namespace PNPUCore.Controle
                                     {
                                         lTacheCCT.Add(sTacheCCT);
                                         if (bPremierElement)
+                                        {
                                             bPremierElement = false;
+                                        }
                                         else
+                                        {
                                             sFiltreNiveauN1 += ",";
+                                        }
 
                                         sFiltreNiveauN1 += "'" + sTacheCCT + "'";
                                     }
@@ -236,7 +254,9 @@ namespace PNPUCore.Controle
                                     cmd.Parameters[1].Value = iNiveau;
                                     cmd.Parameters[13].Value = Process.ID_INSTANCEWF;
                                     for (int iCpt = 0; iCpt < 11; iCpt++)
+                                    {
                                         cmd.Parameters[iCpt + 2].Value = drRow[iCpt];
+                                    }
 
                                     cmd.ExecuteNonQuery();
                                 }
@@ -297,9 +317,13 @@ namespace PNPUCore.Controle
                             {
                                 lTacheCCTHF.Add(sTacheCCT);
                                 if (bPremierElement)
+                                {
                                     bPremierElement = false;
+                                }
                                 else
+                                {
                                     sListeTacheCCT += ",";
+                                }
 
                                 sListeTacheCCT += "'" + sTacheCCT + "'";
                             }
@@ -337,7 +361,10 @@ namespace PNPUCore.Controle
                                     {
                                         lTacheDepN1.Add(sTacheCCT);
                                         if (!lTacheDepN2.Contains(drRow[1].ToString()))
+                                        {
                                             lTacheDepN2.Add(drRow[1].ToString());
+                                        }
+
                                         cmd.Parameters[0].Value = Process.WORKFLOW_ID;
                                         cmd.Parameters[1].Value = drRow[0].ToString();
                                         cmd.Parameters[2].Value = drRow[1].ToString();

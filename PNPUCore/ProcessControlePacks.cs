@@ -9,7 +9,7 @@ namespace PNPUCore.Process
     /// <summary>  
     /// Cette classe correspond au process de contrôle des mdb. 
     /// </summary>  
-    class ProcessControlePacks : ProcessCore, IProcess
+    internal class ProcessControlePacks : ProcessCore, IProcess
     {
         public List<string> listMDB { get; set; }
         public string MDBCourant { get; set; }
@@ -70,16 +70,20 @@ namespace PNPUCore.Process
             foreach (string sMDB in listMDB)
             {
                 MDBCourant = sMDB;
-                RapportSource = new Rapport.Source();
-                RapportSource.Name = System.IO.Path.GetFileName(sMDB);
-                RapportSource.Controle = new List<RControle>();
+                RapportSource = new Rapport.Source
+                {
+                    Name = System.IO.Path.GetFileName(sMDB),
+                    Controle = new List<RControle>()
+                };
                 SourceResult = ParamAppli.StatutOk;
                 foreach (IControle controle in listControl)
                 {
-                    RapportControle = new RControle();
-                    RapportControle.Name = controle.GetLibControle();
-                    RapportControle.Tooltip = controle.GetTooltipControle();
-                    RapportControle.Message = new List<string>();
+                    RapportControle = new RControle
+                    {
+                        Name = controle.GetLibControle(),
+                        Tooltip = controle.GetTooltipControle(),
+                        Message = new List<string>()
+                    };
                     RapportControleCourant = RapportControle;
                     LoggerHelper.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
                     statutControle = controle.MakeControl();
@@ -115,8 +119,10 @@ namespace PNPUCore.Process
 
             // Le controle des dépendance est à part puisqu'il traite tous les mdb en une fois
             ControleDependancesMDB cdmControleDependancesMDB = new ControleDependancesMDB(this);
-            RapportSource = new Rapport.Source();
-            RapportSource.Name = "Contrôle des dépendances du livrable";
+            RapportSource = new Rapport.Source
+            {
+                Name = "Contrôle des dépendances du livrable"
+            };
 
             RapportProcess.rapportDependancesInterPack.Id = "3";
             RapportProcess.rapportDependancesInterPack.Name = "Contrôle des dépendances du livrable";
@@ -124,9 +130,11 @@ namespace PNPUCore.Process
             RapportProcess.rapportDependancesInterPack.listRapportDependancesInterPackMDB = new List<RapportDependancesInterPackMDB>();
 
             RapportSource.Controle = new List<RControle>();
-            RapportControle = new RControle();
-            RapportControle.Name = cdmControleDependancesMDB.ToString();
-            RapportControle.Message = new List<string>();
+            RapportControle = new RControle
+            {
+                Name = cdmControleDependancesMDB.ToString(),
+                Message = new List<string>()
+            };
             RapportControleCourant = RapportControle;
             LoggerHelper.Log(this, cdmControleDependancesMDB, ParamAppli.StatutInfo, "Début du contrôle " + cdmControleDependancesMDB.ToString());
             statutControle = cdmControleDependancesMDB.MakeControl();
@@ -146,12 +154,16 @@ namespace PNPUCore.Process
 
             // Recherche des dépendances avec les tâches CCT sur la base de référence
             ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
-            RapportSource = new Rapport.Source();
-            RapportSource.Name = "Recherche des dépendances avec les tâches CCT sur la base de référence";
-            RapportSource.Controle = new List<RControle>();
-            RapportControle = new RControle();
-            RapportControle.Name = cdmControleDependancesMDB.ToString();
-            RapportControle.Message = new List<string>();
+            RapportSource = new Rapport.Source
+            {
+                Name = "Recherche des dépendances avec les tâches CCT sur la base de référence",
+                Controle = new List<RControle>()
+            };
+            RapportControle = new RControle
+            {
+                Name = cdmControleDependancesMDB.ToString(),
+                Message = new List<string>()
+            };
             RapportControleCourant = RapportControle;
             LoggerHelper.Log(this, crdrControleRechercheDependancesRef, ParamAppli.StatutInfo, "Début du contrôle " + crdrControleRechercheDependancesRef.ToString());
             statutControle = crdrControleRechercheDependancesRef.MakeControl();

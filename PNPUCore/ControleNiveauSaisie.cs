@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler si les niveaux de saisie d'un item existant n'ont pas été supprimés.
     /// </summary>  
-    class ControleNiveauSaisie : PControle, IControle
+    internal class ControleNiveauSaisie : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;
@@ -49,10 +49,10 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete = string.Empty;
+            string sRequete;
             DataSet dsDataSet;
             List<string[]> lListeITEMS = new List<string[]>();
-            string sRequeteControle = string.Empty;
+            string sRequeteControle;
             bool bPremierElement;
             bool bItemTrouve;
 
@@ -84,14 +84,22 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             if (bPremierElement)
+                            {
                                 bPremierElement = false;
+                            }
                             else
+                            {
                                 sRequeteControle += ",";
+                            }
 
                             if (drRow[2].ToString() != string.Empty)
+                            {
                                 sRequeteControle += "'" + drRow[2].ToString() + "'";
+                            }
                             else
+                            {
                                 sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
+                            }
 
                             bItemTrouve = false;
                             for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
@@ -109,9 +117,13 @@ namespace PNPUCore.Controle
 
 
                                 if (drRow[2].ToString() != string.Empty)
+                                {
                                     sDMD_COMPONENT = drRow[2].ToString();
+                                }
                                 else
+                                {
                                     sDMD_COMPONENT = drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1);
+                                }
 
                                 lListeITEMS.Add(new string[] { drRow[1].ToString(), drRow[0].ToString(), sDMD_COMPONENT, string.Empty, string.Empty });
                             }
@@ -130,14 +142,22 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             if (bPremierElement)
+                            {
                                 bPremierElement = false;
+                            }
                             else
+                            {
                                 sRequeteControle += ",";
+                            }
 
                             if (drRow[2].ToString() != string.Empty)
+                            {
                                 sRequeteControle += "'" + drRow[2].ToString() + "'";
+                            }
                             else
+                            {
                                 sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
+                            }
 
                             bItemTrouve = false;
                             for (int elt = 0; elt < lListeITEMS.Count && !bItemTrouve; elt++)
@@ -155,9 +175,13 @@ namespace PNPUCore.Controle
 
 
                                 if (drRow[2].ToString() != string.Empty)
+                                {
                                     sDMD_COMPONENT = drRow[2].ToString();
+                                }
                                 else
+                                {
                                     sDMD_COMPONENT = drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1);
+                                }
 
                                 lListeITEMS.Add(new string[] { drRow[1].ToString(), drRow[0].ToString(), sDMD_COMPONENT, string.Empty, string.Empty });
 
@@ -183,7 +207,10 @@ namespace PNPUCore.Controle
                                     if (lListeITEMS[elt][2] == drRow[0].ToString())
                                     {
                                         if (lListeITEMS[elt][3] == string.Empty)
+                                        {
                                             lListeITEMS[elt][3] = "*";
+                                        }
+
                                         lListeITEMS[elt][3] += drRow[1].ToString() + "*";
                                         bItemTrouve = true;
                                     }
@@ -194,9 +221,13 @@ namespace PNPUCore.Controle
                         // Recherche des niveaux de saisie dans la base de référence ou la base client
                         dmsManagerSQL = new DataManagerSQLServer();
                         if (Process.PROCESS_ID == ParamAppli.ProcessControlePacks)
+                        {
                             dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ConnectionStringBaseRef);
+                        }
                         else
+                        {
                             dsDataSet = dmsManagerSQL.GetData(sRequeteControle, sConnectionStringBaseQA1);
+                        }
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
@@ -208,7 +239,10 @@ namespace PNPUCore.Controle
                                     if (lListeITEMS[elt][2] == drRow[0].ToString())
                                     {
                                         if (lListeITEMS[elt][4] == string.Empty)
+                                        {
                                             lListeITEMS[elt][4] = "*";
+                                        }
+
                                         lListeITEMS[elt][4] += drRow[1].ToString() + "*";
                                         bItemTrouve = true;
                                     }
@@ -225,9 +259,14 @@ namespace PNPUCore.Controle
                                 if (sListeElement != string.Empty)
                                 {
                                     if (sListeElement.IndexOf(",") > -1)
+                                    {
                                         Process.AjouteRapport("Perte des niveaux de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
+                                    }
                                     else
+                                    {
                                         Process.AjouteRapport("Perte du niveau de saisie " + sListeElement + " pour l'item " + lListeITEMS[elt][0] + " (DMD_COMPONENT " + lListeITEMS[elt][2] + ") livré dans le(s) pack(s) " + lListeITEMS[elt][1]);
+                                    }
+
                                     bResultat = ResultatErreur;
                                 }
                             }
@@ -254,7 +293,7 @@ namespace PNPUCore.Controle
         {
             string sResultat = string.Empty;
             string sElement;
-            int iIndex = 1;
+            int iIndex;
             int iIndexPrec = 0;
 
             iIndex = sListeAvant.IndexOf("*", 1);
@@ -264,7 +303,10 @@ namespace PNPUCore.Controle
                 if (sListeApres.IndexOf(sElement) == -1)
                 {
                     if (sResultat != string.Empty)
+                    {
                         sResultat += ", ";
+                    }
+
                     sResultat += sElement.Substring(1, sElement.Length - 2);
                 }
                 iIndexPrec = iIndex;

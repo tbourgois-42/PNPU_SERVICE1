@@ -49,16 +49,20 @@ namespace PNPUCore.Process
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, RapportProcess.Debut);
 
-            Rapport.Source RapportSource = new Rapport.Source();
-            RapportSource.Name = "IdRapport - ProcessGestionDependance";
-            RapportSource.Controle = new List<RControle>();
+            Rapport.Source RapportSource = new Rapport.Source
+            {
+                Name = "IdRapport - ProcessGestionDependance",
+                Controle = new List<RControle>()
+            };
             foreach (IControle controle in listControl)
             {
                 controle.SetProcessControle(this);
-                RControle RapportControle = new RControle();
-                RapportControle.Name = controle.GetLibControle();
-                RapportControle.Tooltip = controle.GetTooltipControle();
-                RapportControle.Message = new List<string>();
+                RControle RapportControle = new RControle
+                {
+                    Name = controle.GetLibControle(),
+                    Tooltip = controle.GetTooltipControle(),
+                    Message = new List<string>()
+                };
                 RapportControleCourant = RapportControle;
                 LoggerHelper.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
                 string statutControle = controle.MakeControl();

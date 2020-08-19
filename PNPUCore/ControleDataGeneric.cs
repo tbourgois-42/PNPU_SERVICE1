@@ -7,9 +7,9 @@ using System.Data;
 
 namespace PNPUCore.Controle
 {
-    class ControleDataGeneric
+    internal class ControleDataGeneric
     {
-        readonly ProcessAnalyseImpactData processAnalyseImpactData;
+        private readonly ProcessAnalyseImpactData processAnalyseImpactData;
 
         public ControleDataGeneric(ProcessAnalyseImpactData pProcessAnalyseImpact)
         {
@@ -45,9 +45,13 @@ namespace PNPUCore.Controle
             if ((sTable != String.Empty) && !(processAnalyseImpactData.lListPersonnalTables.Contains(sTable)))
             {
                 if (processAnalyseImpactData.TYPOLOGY == "Dédié")
+                {
                     sOrgaOrg = "0002";
+                }
                 else
+                {
                     sOrgaOrg = "9999";
+                }
 
                 if (commandeLine.IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                 {
@@ -65,7 +69,10 @@ namespace PNPUCore.Controle
                 else
                 {
                     if (sFilter != string.Empty)
+                    {
                         sFilter = " AND ";
+                    }
+
                     sFiltreRef = sFilter + " ID_ORGANIZATION='0001'";
                     sFiltreClient = sFilter + " ID_ORGANIZATION='" + sOrgaCour + "'";
                 }
@@ -130,19 +137,28 @@ namespace PNPUCore.Controle
                                         {
                                             // Vérifie si les champs en écarts sont dans 
                                             if (lColumnsList.Contains(sChamp))
+                                            {
                                                 bIdentique = false;
+                                            }
                                         }
                                     }
                                     else
+                                    {
                                         bIdentique = false;
+                                    }
                                 }
                             }
                             if (bIdentique)
                             {
                                 if (bFlagUpdate)
+                                {
                                     commandData.Message = "Les champs mis à jour dans le script ont la valeur standard. La commande peut être exécutée.";
+                                }
                                 else
+                                {
                                     commandData.Message = "Les données du client sont standards. La commande peut être exécutée.";
+                                }
+
                                 commandData.Result = ParamAppli.StatutOk;
                                 sCommandeGeneree = dmsDataManager.ReplaceID_ORGA(commandeLine, sOrgaOrg, sOrgaCour);
                                 RequestTool.AddLocalisationByALineAnalyseData(processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.WORKFLOW_ID, rmdCommandData.IdCCTTask, rmdCommandData.IdObject, sCommandeGeneree, processAnalyseImpactData.ID_INSTANCEWF);

@@ -9,7 +9,7 @@ namespace PNPUCore.Controle
     /// <summary>  
     /// Cette classe permet de contrôler que les tables livrées dans le packs sont bien présentes dans le catalogue des tables. 
     /// </summary>  
-    class ControleCatalogueTable : PControle, IControle
+    internal class ControleCatalogueTable : PControle, IControle
     {
         readonly private PNPUCore.Process.ProcessControlePacks Process;
         readonly private string ConnectionStringBaseRef;
@@ -51,7 +51,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
-            string sRequeteControle = string.Empty;
+            string sRequeteControle;
             bool bPremierElement = true;
 
 
@@ -81,9 +81,14 @@ namespace PNPUCore.Controle
                         {
                             dListeAControler.Add(drRow[1].ToString(), drRow[0].ToString());
                             if (bPremierElement)
+                            {
                                 bPremierElement = false;
+                            }
                             else
+                            {
                                 sRequeteControle += ",";
+                            }
+
                             sRequeteControle += "'" + drRow[1].ToString() + "'";
                         }
 
@@ -101,7 +106,9 @@ namespace PNPUCore.Controle
                             {
                                 // On supprime de la liste des tables à contrôler celles existantes sur la base de ref
                                 if (dListeAControler.ContainsKey(drRow[0].ToString()))
+                                {
                                     dListeAControler.Remove(drRow[0].ToString());
+                                }
                             }
                         }
                     }

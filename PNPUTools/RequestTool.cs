@@ -10,30 +10,24 @@ namespace PNPUTools
 {
     static public class RequestTool
     {
+        private static readonly string requestAllClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID";
+        private static readonly string requestOneClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID AND TRIGRAMME = ";
+        private static readonly string requestAllStep = "select * from PNPU_STEP";
+        private static readonly string requestAllProcess = "select * from PNPU_PROCESS";
+        private static readonly string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
+        private static readonly string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID {0} GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
+        private static readonly string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
+        private static readonly string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
+        private static readonly string requestHistoricWorkflow = "SELECT PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL, PHW.INSTANCE_NAME FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ";
+        private static readonly string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
+        private static readonly string requestListClient = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.SAAS = '{0}'";
+        private static readonly string requestListClientAll = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS";
+        private static readonly string requestClientById = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.CLIENT_ID = '{0}'";
 
-        static string requestAllClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID";
-        static string requestOneClient = "select CLI.CLIENT_ID, DATABASE_ID, CLIENT_NAME, TRIGRAMME, HOST, USER_ACCOUNT, USER_PASSWORD from DBS DATA, A_CLIENT CLI where CLI.CLIENT_ID = DATA.CLIENT_ID AND TRIGRAMME = ";
+        private static readonly string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
 
-        static string requestAllStep = "select * from PNPU_STEP";
-
-        static string requestAllProcess = "select * from PNPU_PROCESS";
-        static string requestOneProcess = "select * from PNPU_PROCESS where ID_PROCESS = ";
-
-        static string requestAllWorkflow = "SELECT PW.WORKFLOW_ID, PW.WORKFLOW_LABEL , COUNT(PS.ID_PROCESS) AS NB_PROCESS, PW.IS_TOOLBOX FROM PNPU_WORKFLOW PW LEFT JOIN PNPU_STEP PS ON PS.WORKFLOW_ID = PW.WORKFLOW_ID {0} GROUP BY  PW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PW.IS_TOOLBOX";
-        static string requestOneWorkflow = "select * from PNPU_WORKFLOW where WORKFLOW_ID = ";
-
-        static string requestGetWorkflowProcesses = "SELECT PP.PROCESS_LABEL, PS.ORDER_ID, PS.ID_PROCESS FROM PNPU_STEP PS, PNPU_PROCESS PP, PNPU_WORKFLOW PW WHERE PS.ID_PROCESS = PP.ID_PROCESS AND PS.WORKFLOW_ID = PW.WORKFLOW_ID AND PS.WORKFLOW_ID = ";
-        static string requestHistoricWorkflow = "SELECT PHW.ID_H_WORKFLOW, PHW.WORKFLOW_ID, PW.WORKFLOW_LABEL, PHW.LAUNCHING_DATE, PHW.ENDING_DATE, PHW.STATUT_GLOBAL, PHW.INSTANCE_NAME FROM PNPU_H_WORKFLOW PHW INNER JOIN PNPU_WORKFLOW PW ON PHW.WORKFLOW_ID = PW.WORKFLOW_ID ";
-        static string requestGetNextProcess = "select * from PNPU_STEP STP, PNPU_PROCESS PRO, (select ORDER_ID + 1 AS NEXT_ORDER from PNPU_STEP STEP2, PNPU_PROCESS PRO2 where STEP2.ID_PROCESS = PRO2.ID_PROCESS AND STEP2.WORKFLOW_ID = {0} AND PRO2.ID_PROCESS = '{1}') AS STEPN where STP.ORDER_ID = STEPN.NEXT_ORDER AND STP.WORKFLOW_ID = {0} AND STP.ID_PROCESS = PRO.ID_PROCESS";
-
-        static string requestListClient = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.SAAS = '{0}'";
-        static string requestListClientAll = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS";
-        static string requestClientById = "select CLI.CLIENT_ID as ID_CLIENT, CLI.CLIENT_NAME, CLI.SAAS as TYPOLOGY_ID, COD.CODIFICATION_LIBELLE as TYPOLOGY from A_CLIENT CLI, A_CODIFICATION COD  where COD.CODIFICATION_ID = CLI.SAAS AND CLI.CLIENT_ID = '{0}'";
-
-        private static string requestOneWorkflowHistoric = "select * from PNPU_H_WORKFLOW where WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
-
-        private static string requestGetStepHistoric = "SELECT COUNT(*) FROM PNPU_H_STEP WHERE WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3} AND ID_H_WORKFLOW = {4}";
-        private static string requestGetWorkflowHistoric = "SELECT COUNT(*) FROM PNPU_H_WORKFLOW WHERE WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
+        private static readonly string requestGetStepHistoric = "SELECT COUNT(*) FROM PNPU_H_STEP WHERE WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_PROCESS = '{2}' AND ITERATION = {3} AND ID_H_WORKFLOW = {4}";
+        private static readonly string requestGetWorkflowHistoric = "SELECT COUNT(*) FROM PNPU_H_WORKFLOW WHERE WORKFLOW_ID = {0} AND ID_H_WORKFLOW = {1}";
 
         /// <summary>
         /// Get workflow hitoric
@@ -62,7 +56,7 @@ namespace PNPUTools
         {
             // Load lastest workflow how has been lauched for client's user
 
-            List<string> lstWORKFLOW = new List<string>();
+            List<string> lstWORKFLOW;
 
             lstWORKFLOW = Authentification.GetLastWorkflowLaunchForProfil(sHabilitation, sUser, ParamAppli.ConnectionStringBaseAppli);
 
@@ -92,15 +86,21 @@ namespace PNPUTools
         {
             // Load lastest workflow how has been lauched for client's user
 
-            List<string> lstWORKFLOW = new List<string>();
+            List<string> lstWORKFLOW;
 
             string whereClauseHabilitation = Authentification.BuildHabilitationLikeClause(sHabilitation, sUser, "CLIENT_ID", "PHS");
 
-            string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE ";
-            string sFrom = "from PNPU_H_WORKFLOW PHW, PNPU_H_STEP PHS, PNPU_PROCESS PS, PNPU_WORKFLOW PW ";
-            string sWhere = "where PHS.ID_H_WORKFLOW = PHW.ID_H_WORKFLOW AND PS.ID_PROCESS = PHS.ID_PROCESS AND PW.WORKFLOW_ID = PHW.WORKFLOW_ID AND PW.IS_TOOLBOX = 1 AND (";
-            sWhere += whereClauseHabilitation + ")";
-            string sOrderBy = " ORDER BY PHW.LAUNCHING_DATE";
+            string sSelect = "select PHW.WORKFLOW_ID, PHW.ID_H_WORKFLOW, PHS.CLIENT_NAME, PHS.CLIENT_ID, PHW.INSTANCE_NAME, PS.PROCESS_LABEL, PS.ID_PROCESS, PHS.ID_STATUT, PHW.LAUNCHING_DATE, PST.ORDER_ID AS CURRENT_ORDER_ID_PROCESS ";
+            string sFrom = "from PNPU_H_WORKFLOW PHW, PNPU_H_STEP PHS, PNPU_PROCESS PS, PNPU_WORKFLOW PW, PNPU_STEP PST ";
+            string sWhere = "where PHS.ID_H_WORKFLOW = PHW.ID_H_WORKFLOW AND PS.ID_PROCESS = PHS.ID_PROCESS AND PW.WORKFLOW_ID = PHW.WORKFLOW_ID AND PW.IS_TOOLBOX = 1 AND PST.WORKFLOW_ID = PHS.WORKFLOW_ID AND PST.ID_PROCESS = PHS.ID_PROCESS ";
+            sWhere += "AND PST.ORDER_ID = ";
+            sWhere += "(select MAX(PST2.ORDER_ID) ";
+            sWhere += "from PNPU_STEP PST2 join PNPU_H_STEP PHS2 on (PST2.ID_PROCESS = PHS2.ID_PROCESS AND PST2.WORKFLOW_ID = PHS2.WORKFLOW_ID) ";
+            sWhere += "where PHS.ID_H_WORKFLOW = PHS2.ID_H_WORKFLOW ";
+            sWhere += "GROUP BY PHS2.ID_H_WORKFLOW) AND ( ";
+            sWhere += whereClauseHabilitation + ") ";
+            string sOrderBy = " ORDER BY PHW.LAUNCHING_DATE ";
+
 
             string sRequest = sSelect + sFrom + sWhere + sOrderBy;
 
@@ -407,7 +407,7 @@ namespace PNPUTools
         /// <param name="instanceId"></param>
         /// <returns></returns>
         public static int GetWorkflowHistoric(int workflowId, int instanceId)
-        {            
+        {
             string sRequest = string.Format(requestGetWorkflowHistoric, workflowId, instanceId);
 
             return int.Parse(DataManagerSQLServer.SelectCount(sRequest, ParamAppli.ConnectionStringBaseAppli));

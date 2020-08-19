@@ -3,14 +3,13 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace PNPUCore.Controle
 {
     /// <summary>  
     /// Cette classe permet de controler que les commandes des packs ne font pas partie de la liste des commandes interdites. 
     /// </summary>  
-    class ControleCmdInterdites : PControle, IControle
+    internal class ControleCmdInterdites : PControle, IControle
     {
         readonly private List<string> lL_INTERDIT;
         readonly private PNPUCore.Process.ProcessControlePacks Process;
@@ -64,13 +63,13 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            string sCommandPack = string.Empty;
-            int iCpt = 0;
+            string sCommandPack;
+            int iCpt;
             bool bTrouve;
             string sPathMdb = Process.MDBCourant;
 
 
-            DataManagerAccess dmaManagerAccess = null;
+            DataManagerAccess dmaManagerAccess;
             try
             {
                 dmaManagerAccess = new DataManagerAccess();

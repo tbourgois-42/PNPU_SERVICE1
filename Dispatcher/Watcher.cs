@@ -13,20 +13,19 @@ namespace PNUDispatcher
     /// </summary>  
     public class Watcher
     {
-        private static NamedPipeServerStream[] npssPipeClient = new NamedPipeServerStream[2];
-        private static StreamString[] ssStreamString = new StreamString[2];
-        private static Thread tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
-        private static Thread tListen2 = null;
-        private static Thread tLaunchQueue = new Thread(() => LaunchQueue());
+        private static readonly NamedPipeServerStream[] npssPipeClient = new NamedPipeServerStream[2];
+        private static readonly StreamString[] ssStreamString = new StreamString[2];
+        private static readonly Thread tListen = new Thread(() => ListenRequest("PNPU_PIPE", 0));
+        private static readonly Thread tListen2 = null;
+        private static readonly Thread tLaunchQueue = new Thread(() => LaunchQueue());
 
         /// <summary>  
-        /// Constructeur de la classe. Lance juste la fonction ListenRequest dans un thread.  
+        /// Lance juste la fonction ListenRequest dans un thread.  
         /// </summary>  
-        public Watcher()
+        public void launchWatcher()
         {
             tLaunchQueue.Start();
             tListen.Start();
-
         }
 
         /// <summary>  
@@ -35,10 +34,14 @@ namespace PNUDispatcher
         ~Watcher()
         {
             if (npssPipeClient[0] != null)
+            {
                 npssPipeClient[0].Close();
-            if (npssPipeClient[1] != null)
-                npssPipeClient[1].Close();
+            }
 
+            if (npssPipeClient[1] != null)
+            {
+                npssPipeClient[1].Close();
+            }
         }
 
         /// <summary>  
@@ -46,7 +49,7 @@ namespace PNUDispatcher
         /// </summary> 
         private static void ListenRequest(string sNomPipe, int iNum)
         {
-            string sMessage = string.Empty;
+            string sMessage;
             npssPipeClient[iNum] = new NamedPipeServerStream(sNomPipe);
 
             ssStreamString[iNum] = new StreamString(npssPipeClient[iNum]);
@@ -120,7 +123,9 @@ namespace PNUDispatcher
                     }
 
                     if (ParamAppli.qFIFO.Count == 0)
+                    {
                         System.Threading.Thread.Sleep(200);
+                    }
                 }
             }
         }
@@ -132,7 +137,9 @@ namespace PNUDispatcher
         private static bool IsValideJSON(string sJSON)
         {
             if (sJSON == string.Empty)
+            {
                 return false;
+            }
 
             return true;
         }

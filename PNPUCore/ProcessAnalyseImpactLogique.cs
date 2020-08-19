@@ -1,5 +1,4 @@
-﻿using PNPUCore.Controle;
-using PNPUCore.Rapport;
+﻿using PNPUCore.Rapport;
 using PNPUTools;
 using System;
 using System.Collections.Generic;
@@ -36,10 +35,12 @@ namespace PNPUCore.Process
         {
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
-            RapportAnalyseImpactLogique = new RapportAnalyseLogique();
-            RapportAnalyseImpactLogique.Name = LibProcess;
-            RapportAnalyseImpactLogique.Debut = DateTime.Now;
-            RapportAnalyseImpactLogique.IdClient = CLIENT_ID;
+            RapportAnalyseImpactLogique = new RapportAnalyseLogique
+            {
+                Name = LibProcess,
+                Debut = DateTime.Now,
+                IdClient = CLIENT_ID
+            };
 
             //On génère les historic au début pour mettre en inprogress
             GenerateHistoric(new DateTime(1800, 1, 1), ParamAppli.StatutInProgress, DateTime.Now);
@@ -102,56 +103,70 @@ namespace PNPUCore.Process
             foreach (AnalyseResultFile file in resultFile)
             {
 
-                analyseMdbLogique = new RapportAnalyseImpactMDBLogique();
-                analyseMdbLogique.Name = file.fileName;
-                analyseMdbLogique.Tooltip = "";
-                analyseMdbLogique.listTypeAnalyseLogique = new List<TypeAnalyseLogique>();
+                analyseMdbLogique = new RapportAnalyseImpactMDBLogique
+                {
+                    Name = file.fileName,
+                    Tooltip = "",
+                    listTypeAnalyseLogique = new List<TypeAnalyseLogique>()
+                };
 
-                TypeAnalyseLogique typeNew = new TypeAnalyseLogique();
-                typeNew.Name = "New";
-                typeNew.Tooltip = "Ceci contient la liste des élements nouveaux du pack";
-                typeNew.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+                TypeAnalyseLogique typeNew = new TypeAnalyseLogique
+                {
+                    Name = "New",
+                    Tooltip = "Ceci contient la liste des élements nouveaux du pack",
+                    listLineAnalyseLogique = new List<LineAnalyseLogique>()
+                };
 
-                TypeAnalyseLogique typeModified = new TypeAnalyseLogique();
-                typeModified.Name = "Modified";
-                typeModified.Tooltip = "Ceci contient la liste des élements modifiés du pack";
-                typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+                TypeAnalyseLogique typeModified = new TypeAnalyseLogique
+                {
+                    Name = "Modified",
+                    Tooltip = "Ceci contient la liste des élements modifiés du pack",
+                    listLineAnalyseLogique = new List<LineAnalyseLogique>()
+                };
 
                 TypeAnalyseLogique typeHerited = new TypeAnalyseLogique();
                 typeModified.Name = "Herited";
                 typeModified.Tooltip = "Ceci contient la liste des élements modifiés sur un élément hérités du pack";
                 typeModified.listLineAnalyseLogique = new List<LineAnalyseLogique>();
 
-                TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique();
-                typeDeleted.Name = "Deleted";
-                typeDeleted.Tooltip = "Ceci contient la liste des élements supprimés du pack";
-                typeDeleted.listLineAnalyseLogique = new List<LineAnalyseLogique>();
+                TypeAnalyseLogique typeDeleted = new TypeAnalyseLogique
+                {
+                    Name = "Deleted",
+                    Tooltip = "Ceci contient la liste des élements supprimés du pack",
+                    listLineAnalyseLogique = new List<LineAnalyseLogique>()
+                };
 
                 foreach (AnalyseResultLine line in file.ListLine())
                 {
                     //TODO METTRE ELEMENT DANS PARAM APPLI
                     if (line.OriginDestination == "New")
                     {
-                        lineAnalyseLogique = new LineAnalyseLogique();
-                        lineAnalyseLogique.Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
-                        lineAnalyseLogique.Tooltip = "";
+                        lineAnalyseLogique = new LineAnalyseLogique
+                        {
+                            Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4,
+                            Tooltip = ""
+                        };
 
                         typeNew.listLineAnalyseLogique.Add(lineAnalyseLogique);
                     }
                     else if (line.OriginDestination == "Equal")
                     {
-                        lineAnalyseLogique = new LineAnalyseLogique();
-                        lineAnalyseLogique.Name = "EQUAL  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
-                        lineAnalyseLogique.Tooltip = "";
+                        lineAnalyseLogique = new LineAnalyseLogique
+                        {
+                            Name = "EQUAL  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4,
+                            Tooltip = ""
+                        };
 
                         typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
                     }
                     else if (line.OriginDestination == "Modified")
                     {
 
-                        lineAnalyseLogique = new LineAnalyseLogique();
-                        lineAnalyseLogique.Name = "MODIFIED  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
-                        lineAnalyseLogique.Tooltip = "";
+                        lineAnalyseLogique = new LineAnalyseLogique
+                        {
+                            Name = "MODIFIED  :  " + line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4,
+                            Tooltip = ""
+                        };
 
                         if (line.CommandDetail == "Inherit")
                         {
@@ -166,9 +181,11 @@ namespace PNPUCore.Process
                     }
                     else if (line.OriginDestination == "Delete")
                     {
-                        lineAnalyseLogique = new LineAnalyseLogique();
-                        lineAnalyseLogique.Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4;
-                        lineAnalyseLogique.Tooltip = "";
+                        lineAnalyseLogique = new LineAnalyseLogique
+                        {
+                            Name = line.ObjectType + " : " + line.IdObject + ", " + line.IdObject2 + ", " + line.IdObject3 + ", " + line.IdObject4,
+                            Tooltip = ""
+                        };
 
                         typeModified.listLineAnalyseLogique.Add(lineAnalyseLogique);
                     }

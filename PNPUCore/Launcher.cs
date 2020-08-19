@@ -10,8 +10,7 @@ namespace PNPUCore
     /// </summary>  
     public class Launcher
     {
-
-        void LaunchProcess(IProcess process)
+        private void LaunchProcess(IProcess process)
         {
             process.ExecuteMainProcess();
             String json = process.FormatReport(process);
@@ -31,36 +30,53 @@ namespace PNPUCore
             LaunchProcess(process);
         }
 
-
-        IProcess CreateProcess(int process, int workflowId, String client, int idInstanceWF)
+        private IProcess CreateProcess(int process, int workflowId, String client, int idInstanceWF)
         {
 
             if (process == ParamAppli.ProcessControlePacks)
+            {
                 return ProcessControlePacks.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessInit)
+            {
                 return ProcessInit.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessGestionDependance)
+            {
                 return ProcessGestionDependance.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessIntegration)
+            {
                 return ProcessIntegration.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessProcessusCritique)
+            {
                 return ProcessProcessusCritique.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessTNR)
+            {
                 return ProcessTNR.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessLivraison)
+            {
                 return ProcessLivraison.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessAnalyseImpactLogique)
+            {
                 return ProcessAnalyseImpactLogique.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             if (process == ParamAppli.ProcessAnalyseImpactData)
+            {
                 return ProcessAnalyseImpactData.CreateProcess(workflowId, client, idInstanceWF);
+            }
 
             return ProcessMock.CreateProcess(workflowId, client, idInstanceWF);
 

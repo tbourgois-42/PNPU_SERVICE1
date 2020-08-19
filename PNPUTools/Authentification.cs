@@ -29,7 +29,7 @@ namespace PNPUTools
             string user = parser.GetParameterValue("user");
             string password = parser.GetParameterValue("password");
 
-            string sToken = string.Empty;
+            string sToken;
 
             if (IsUserExist(user) && IsValidAuth(user, password) && IsExpiredToken(user))
             {
@@ -48,7 +48,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="User"></param>
         /// <returns>Return token string</returns>
-        static string GetUserToken(string User)
+        private static string GetUserToken(string User)
         {
             string sToken = string.Empty;
 
@@ -74,7 +74,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="User"></param>
         /// <returns>Return true if exist, false if not</returns>
-        static bool IsUserExist(string User)
+        private static bool IsUserExist(string User)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="User"></param>
         /// <returns>Return string token</returns>
-        static string GenerateToken(string User)
+        private static string GenerateToken(string User)
         {
             string sToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
@@ -116,7 +116,7 @@ namespace PNPUTools
         internal static string BuildRequestWorkflowHistoricByProfil(string sHabilitation, string sUser, string requestHistoricWorkflow, int isToolBox)
         {
             string sWhere = string.Empty;
-            string sRequest = string.Empty;
+            string sRequest;
             string sOrderBy = "ORDER BY PHW.LAUNCHING_DATE";
 
             if (isToolBox >= 0)
@@ -142,7 +142,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="User"></param>
         /// <returns>Return true if expired, false if not</returns>
-        static bool IsExpiredToken(string User)
+        private static bool IsExpiredToken(string User)
         {
             DateTime expiredTime;
             bool value = false;
@@ -174,7 +174,7 @@ namespace PNPUTools
         /// <param name="User"></param>
         /// <param name="Password"></param>
         /// <returns>Return true if password is correct, false if not</returns>
-        static bool IsValidAuth(string User, string Password)
+        private static bool IsValidAuth(string User, string Password)
         {
             string sRequest = "SELECT USER_ID, PASSWORD FROM PNPU_USER WHERE USER_ID = '" + User + "'";
             bool value = false;
@@ -213,14 +213,22 @@ namespace PNPUTools
         /// <param name="Key"></param>
         /// <param name="IV"></param>
         /// <returns></returns>
-        static string DecryptStringToBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
+        private static string DecryptStringToBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             if (cipherText == null || cipherText.Length <= 0)
+            {
                 throw new ArgumentNullException("plainText");
+            }
+
             if (Key == null || Key.Length <= 0)
+            {
                 throw new ArgumentNullException("Key");
+            }
+
             if (IV == null || IV.Length <= 0)
+            {
                 throw new ArgumentNullException("IV");
+            }
 
             string plaintext = null;
 
@@ -246,15 +254,24 @@ namespace PNPUTools
             return plaintext;
         }
 
-        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        private static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
+            {
                 throw new ArgumentNullException("plainText");
+            }
+
             if (Key == null || Key.Length <= 0)
+            {
                 throw new ArgumentNullException("Key");
+            }
+
             if (IV == null || IV.Length <= 0)
+            {
                 throw new ArgumentNullException("IV");
+            }
+
             byte[] encrypted;
 
             // Create an Aes object
@@ -301,7 +318,7 @@ namespace PNPUTools
         /// </summary>
         /// <param name="sToken"></param>
         /// <returns></returns>
-        static string GetUserName(string sToken)
+        private static string GetUserName(string sToken)
         {
             string user = null;
             string sRequest = "SELECT PUSER.USER_ID FROM PNPU_USER PUSER, PNPU_USER_TOKEN PUTK WHERE PUSER.USER_ID = PUTK.USER_ID AND PUTK.TOKEN = '" + sToken + "'";
@@ -309,7 +326,7 @@ namespace PNPUTools
 
             if (result.Tables.Count > 0 && result.Tables[0].Rows.Count > 0)
             {
-                    user = result.Tables[0].Rows[0].ItemArray[0].ToString();
+                user = result.Tables[0].Rows[0].ItemArray[0].ToString();
             }
             return user;
         }
@@ -335,7 +352,7 @@ namespace PNPUTools
         /// <param name="User"></param>
         /// <param name="Token"></param>
         /// <returns></returns>
-        static bool DisconnectUser(string User, string Token)
+        private static bool DisconnectUser(string User, string Token)
         {
             string sRequest = "DELETE FROM PNPU_USER_TOKEN WHERE USER_ID = '" + User + "' AND TOKEN = '" + Token + "'";
             bool result = DataManagerSQLServer.DeleteDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
@@ -387,7 +404,7 @@ namespace PNPUTools
             sUser = sUser.Contains('\\') ? sUser.Replace(@"\", @"%") : sUser;
             List<string> lstClient = new List<string>();
 
-            string sRequest = string.Empty;
+            string sRequest;
 
             if (sHabilitation == "ADMIN")
             {
@@ -542,7 +559,7 @@ namespace PNPUTools
         public static string GetHabilitationWhereClause(string sHabilitation, string sUser, string sAlias)
         {
 
-            List<string> lstClient = null;
+            List<string> lstClient;
 
             lstClient = BuildListStringClient(sHabilitation, sUser);
 
@@ -560,7 +577,7 @@ namespace PNPUTools
         private static List<string> BuildListStringClient(string sHabilitation, string sUser)
         {
             string[] lstClientKeys = ParamAppli.ListeInfoClient.Keys.ToArray<String>();
-            List<string> lstClient = null;
+            List<string> lstClient;
 
             if (sHabilitation == "ADMIN")
             {

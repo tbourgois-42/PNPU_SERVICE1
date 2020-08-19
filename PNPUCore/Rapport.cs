@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PNPUCore.Rapport
 {
-    class RTraitement
+    internal class RTraitement
     {
         public String Id { set; get; }
 
@@ -18,7 +18,7 @@ namespace PNPUCore.Rapport
         public DateTime Fin { set; get; }
     }
 
-    class RProcess
+    internal class RProcess
     {
         public RapportDependancesInterPack rapportDependancesInterPack = new RapportDependancesInterPack();
 
@@ -26,7 +26,9 @@ namespace PNPUCore.Rapport
         {
             string sFormat = "0";
             for (int i = 10; i <= iNombre; i *= 10)
+            {
                 sFormat += "0";
+            }
 
             return sFormat;
         }
@@ -151,7 +153,7 @@ namespace PNPUCore.Rapport
 
     }
 
-    class Source
+    internal class Source
     {
         private string result { get; set; }
 
@@ -163,13 +165,13 @@ namespace PNPUCore.Rapport
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
 
     }
 
-    class RControle
+    internal class RControle
     {
         private string tooltip { get; set; }
         private string result { get; set; }
@@ -181,20 +183,20 @@ namespace PNPUCore.Rapport
 
         public String Tooltip
         {
-            set { tooltip = value; }
-            get { return tooltip; }
+            set => tooltip = value;
+            get => tooltip;
         }
 
         public string Result
         {
-            set { result = value; }
-            get { return result; }
+            set => result = value;
+            get => result;
         }
 
         public List<string> Message
         {
-            set { message = value; }
-            get { return message; }
+            set => message = value;
+            get => message;
         }
     }
 

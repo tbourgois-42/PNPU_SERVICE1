@@ -1,18 +1,16 @@
-﻿using System;
-
-namespace PNPUCore.Process
+﻿namespace PNPUCore.Process
 {
-    class RmdCommandData
+    internal class RmdCommandData
     {
         public RmdCommandData(string idPackage, string idClass, string idObject, string cmdCode, string cmdSequence, IProcess process, string idCCTTask)
         {
-            this.IdPackage = idPackage;
-            this.IdClass = idClass;
-            this.CmdCode = cmdCode;
-            this.IdObject = idObject;
-            this.CmdSequence = cmdSequence;
-            this.Process = process;
-            this.IdCCTTask = idCCTTask;
+            IdPackage = idPackage;
+            IdClass = idClass;
+            CmdCode = cmdCode;
+            IdObject = idObject;
+            CmdSequence = cmdSequence;
+            Process = process;
+            IdCCTTask = idCCTTask;
         }
 
         public string IdPackage { get; set; }

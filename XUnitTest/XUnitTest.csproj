@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dispatcher\Dispatcher.csproj" />
     <ProjectReference Include="..\PNPUTools\PNPUTools.csproj" />
   </ItemGroup>
 
