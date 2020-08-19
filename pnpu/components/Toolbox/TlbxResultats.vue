@@ -167,7 +167,7 @@
           { text: 'Lancé le', value: 'LAUNCHING_DATE' },
           { text: 'Statut', value: 'ID_STATUT' }
         ],
-        e1: 0,
+        e1: 1,
         steps: [],
         items: [],
         JSON_TEMPLATE: {},
@@ -246,7 +246,7 @@
             this.items = response.data.GetInfoLaunchToolBoxResult
           }
         } catch (error) {
-          this.showSnackbar('error', `${error} !`)
+          this.showSnackbar('error', `${error} !`) 
         }
       },
 
@@ -270,8 +270,8 @@
         // Récupération des informations du client sélectionné au niveau du Dashboard
         this.idInstanceWF = row.ID_H_WORKFLOW
         this.workflowID = row.WORKFLOW_ID
-        this.etape = 1
-        this.e1 = 1
+        this.etape = row.CURRENT_ORDER_ID_PROCESS + 1
+        this.e1 = row.CURRENT_ORDER_ID_PROCESS + 1
         this.workflowDate = ''
         this.textStatus = ''
         this.clientID = row.CLIENT_ID
@@ -293,10 +293,11 @@
           )
           
           vm.steps = res.data.GetWorkflowProcessesResult
-          debugger
           //TBO Je veux systématiquement le dernier
-          vm.e1 = vm.steps.length
-          for (let i = 0; i < vm.steps.length; i++) {
+          //vm.e1 = vm.steps.length
+          //vm.currentID_PROCESS = vm.steps[vm.steps.length - 1].ID_PROCESS
+
+          for (let i = 0; i < vm.e1; i++) {
             vm.steps[i].ID_STATUT = true
             vm.steps[i].ICON = 'mdi-check'
             vm.steps[i].COLOR = 'light green'
@@ -314,7 +315,7 @@
             vm.steps[vm.e1 - 1].ICON = 'mdi-pencil'
             vm.steps[vm.e1 - 1].ID_STATUT = true
           }
-          vm.getReportFromDB()
+          //vm.getReportFromDB()
         } catch (e) {
           return e
         }
@@ -394,7 +395,7 @@
        */
       getSelectedStep(val) {
         const vm = this
-        vm.e1 = val + 1
+        vm.e1 = val
         vm.steps.forEach((element, idx) => {
           if (idx === val) {
             vm.currentID_STATUT = element.ICON
@@ -526,6 +527,11 @@
 
   .v-treeview-node__root {
     cursor: pointer !important;
+  }
+
+  .v-stepper {
+      width : 1000px;
+      height : 1000px;
   }
 
   .fade-enter-active,
