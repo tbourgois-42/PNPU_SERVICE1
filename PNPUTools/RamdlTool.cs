@@ -116,7 +116,7 @@ namespace PNPUTools
                         //<ORIGIN_CONN>
                         string originConn = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + sCheminMDB;
                         //<TARGET_CONN>
-                        string targetConn = sConnectionStringBaseQA2;
+                        string targetConn = MiseEnformeChaineConnexion(sConnectionStringBaseQA2);
                         //<USER_CVM>
                         string userCVM = sLogin;
                         //<PWD_CVM>
@@ -374,7 +374,7 @@ namespace PNPUTools
             //<ORIGIN_CONN>
             string originConn = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + sCheminMDB;
             //<TARGET_CONN>
-            string targetConn = sConnectionStringBaseQA1;
+            string targetConn = MiseEnformeChaineConnexion(sConnectionStringBaseQA1);
             //<USER_CVM>
             string userCVM = sLogin;
             //<PWD_CVM>
@@ -479,8 +479,7 @@ namespace PNPUTools
         private void GenerateIniForGeneratePack(string namePack, string[] listTask)
         {
             //<ORIGIN_CONN>
-            //string originConn = sConnectionStringBaseQA1; //{0}
-            string originConn  = MiseEnformeChaineConnexion(ParamAppli.ConnectionStringBaseRef[InfoClient.TYPOLOGY], "FRSTDPNPUREF");
+            string originConn  = MiseEnformeChaineConnexion(ParamAppli.ConnectionStringBaseRef[InfoClient.TYPOLOGY]);
             string slistTask = ""; //{ 2}
             foreach (String sTask in listTask)
             {
@@ -559,6 +558,38 @@ namespace PNPUTools
 
         }
 
+        /// <summary>
+        /// Met en forme une chaine de connexion en mettant la source ODBC et en enlevant le server. Prend le même code que la database pour la source ODBC.
+        /// </summary>
+        /// <param name="sChaineConnexion">Chaine de connexion à mettre en forme.</param>
+        /// <returns>Chaine de connexion modifiée.</returns>
+        private string MiseEnformeChaineConnexion(string sChaineConnexion)
+        {
+            string sResultat = string.Empty;
+            int iIndex;
+            int iIndex2;
+
+            string sNomSourceODBC;
+
+            iIndex = sChaineConnexion.ToUpper().IndexOf("DATABASE");
+            if (iIndex > -1)
+            {
+                iIndex += "DATABASE".Length;
+                while ((char.IsWhiteSpace(sChaineConnexion[iIndex])) || (sChaineConnexion[iIndex] == '=')) iIndex++;
+                iIndex2 = iIndex;
+                while (char.IsLetterOrDigit(sChaineConnexion[iIndex2])) iIndex2++;
+                sNomSourceODBC = sChaineConnexion.Substring(iIndex, iIndex2 - iIndex);
+                sResultat = MiseEnformeChaineConnexion(sChaineConnexion, sNomSourceODBC);
+            }
+            return (sResultat);
+        }
+
+        /// <summary>
+        /// Met en forme une chaine de connexion en mettant la source ODBC et en enlevant le server.
+        /// </summary>
+        /// <param name="sChaineConnexion">Chaine de connexion à mettre en forme.</param>
+        /// <param name="sNomSourceODBC">Code de la source ODBC à mettre dans la chaine de connexion.</param>
+        /// <returns>Chaine de connexion modifiée.</returns>
         private string MiseEnformeChaineConnexion(string sChaineConnexion, string sNomSourceODBC)
         {
             string sResultat = string.Empty;
