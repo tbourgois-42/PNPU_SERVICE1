@@ -45,7 +45,7 @@
               :workflowID="workflowID"
               :nbAvailablePack="nbAvailablePack"
               :currentID_STATUT="currentID_STATUT"
-              :clientID="clientId"
+              :clientID="clientID"
               :clientName="clientName"
               />
               <ReportPreControle v-if="Object.entries(JSON_TEMPLATE).length > 0 && reportPreControle === true"
@@ -277,6 +277,7 @@
         this.clientID = row.CLIENT_ID
         this.clientName = row.CLIENT_NAME
         this.getWorkflowProcesses()
+        this.GetNbAvailablePack()
         
       },
 
@@ -376,9 +377,10 @@
             `/` +
             vm.idInstanceWF +
             `/` +
-            vm.clientId
+            vm.clientID
           )
           .then(function (response) {
+            debugger
             if (response.status === 200) {
               vm.nbAvailablePack = response.data
             }
@@ -440,7 +442,7 @@
           case 'Initialisation':
             this.reportInitialisation = true
             break
-          case 'Packaging des dépendances':
+          case 'Gestion des dépendances':
             this.reportPackagingDependances = true
             break
           case 'Intégration':
@@ -530,8 +532,8 @@
   }
 
   .v-stepper {
-      width : 1000px;
-      height : 1000px;
+      width : 100%;
+      height : 100%;
   }
 
   .fade-enter-active,

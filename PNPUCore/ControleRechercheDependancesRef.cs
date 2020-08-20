@@ -267,6 +267,7 @@ namespace PNPUCore.Controle
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex.Message);
                 LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
                 bResultat = false;
             }
