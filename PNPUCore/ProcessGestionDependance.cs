@@ -35,9 +35,17 @@ namespace PNPUCore.Process
             LoggerHelper.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
 
+            // Lancer la recherche des dépendances que si le process de précontrole n'est pas dans le worklow
+            PNPUTools.DataManager.DataManagerSQLServer dataManagerSQLServer = new PNPUTools.DataManager.DataManagerSQLServer();
+            System.Data.DataSet dataSet = dataManagerSQLServer.GetData("select * from PNPU_STEP where WORKFLOW_ID=" + WORKFLOW_ID.ToString("########0") + " AND ID_PROCESS=1", ParamAppli.ConnectionStringBaseAppli);
+            if ((dataSet != null) && (dataSet.Tables[0].Rows.Count == 0))
+            {
+                IControle iControle = (IControle) new ControleRechercheDependancesRef(this);
+                listControl.Add(iControle);
+            }
+
             GetListControle(ref listControl);
-            //!!!!!!!!!!!!!!!!!!!! Pour test !!!!!!!!!!!!!!!!!!!!!!!
-            //ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = ParamAppli.ConnectionStringBaseRefPlateforme;
+            
 
             sRapport = string.Empty;
             RapportProcess.Name = LibProcess;

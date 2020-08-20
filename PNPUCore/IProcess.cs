@@ -323,7 +323,6 @@ namespace PNPUCore.Process
                 sRequete += " AND ((RUN_STANDARD IS NULL) OR (RUN_STANDARD <> 'YES'))";
             }
 
-            listControl.Clear();
             dsDataSet = dmsDataManager.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

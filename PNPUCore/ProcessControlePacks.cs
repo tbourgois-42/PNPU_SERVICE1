@@ -3,6 +3,7 @@ using PNPUCore.Rapport;
 using PNPUTools;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PNPUCore.Process
 {
@@ -152,29 +153,28 @@ namespace PNPUCore.Process
              RapportControle.Message.Clear();
              RapportSource.Result = RapportControle.Result;*/
 
-            // Recherche des dépendances avec les tâches CCT sur la base de référence
-            ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
-            RapportSource = new Rapport.Source
+            // Ne lancer la recherche des dépendances que si le process de gestion des dépendances est dans le worklow
+            PNPUTools.DataManager.DataManagerSQLServer dataManagerSQLServer = new PNPUTools.DataManager.DataManagerSQLServer();
+            DataSet dataSet = dataManagerSQLServer.GetData("select * from PNPU_STEP where WORKFLOW_ID=" + WORKFLOW_ID.ToString("########0") + " AND ID_PROCESS=3", ParamAppli.ConnectionStringBaseAppli);
+            if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
             {
-                Name = "Recherche des dépendances avec les tâches CCT sur la base de référence",
-                Controle = new List<RControle>()
-            };
-            RapportControle = new RControle
-            {
-                Name = cdmControleDependancesMDB.ToString(),
-                Message = new List<string>()
-            };
-            RapportControleCourant = RapportControle;
-            LoggerHelper.Log(this, crdrControleRechercheDependancesRef, ParamAppli.StatutInfo, "Début du contrôle " + crdrControleRechercheDependancesRef.ToString());
-            statutControle = crdrControleRechercheDependancesRef.MakeControl();
-            LoggerHelper.Log(this, crdrControleRechercheDependancesRef, statutControle, "Fin du contrôle " + crdrControleRechercheDependancesRef.ToString());
-            RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
-            //RapportSource2.Controle.Add(RapportControle2);
-            RapportProcess.Source.Add(RapportSource);
 
-            // Je supprime les messages pour qu'ils ne sortent pas dans le report JSON
-            RapportControle.Message.Clear();
-            RapportSource.Result = RapportControle.Result;
+                // Recherche des dépendances avec les tâches CCT sur la base de référence
+                ControleRechercheDependancesRef crdrControleRechercheDependancesRef = new ControleRechercheDependancesRef(this);
+                RapportSource = new Rapport.Source();
+                RapportSource.Name = "Recherche des dépendances avec les tâches CCT sur la base de référence";
+                RapportSource.Controle = new List<RControle>();
+                RapportControle = new RControle();
+                RapportControle.Name = cdmControleDependancesMDB.ToString();
+                RapportControle.Message = new List<string>();
+                RapportControleCourant = RapportControle;
+                LoggerHelper.Log(this, crdrControleRechercheDependancesRef, ParamAppli.StatutInfo, "Début du contrôle " + crdrControleRechercheDependancesRef.ToString());
+                statutControle = crdrControleRechercheDependancesRef.MakeControl();
+                LoggerHelper.Log(this, crdrControleRechercheDependancesRef, statutControle, "Fin du contrôle " + crdrControleRechercheDependancesRef.ToString());
+                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+                RapportSource.Result = RapportControle.Result;
+                RapportProcess.Source.Add(RapportSource);
+            }
 
 
             RapportProcess.Fin = DateTime.Now;

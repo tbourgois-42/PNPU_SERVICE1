@@ -31,7 +31,7 @@ namespace PNPUTools.DataManager
 
                     // Open the connection and fill the DataSet.
 
-
+                    adapter.SelectCommand.CommandTimeout = 300;
                     dataSet = new DataSet();
                     sTableName = GetTableName(sRequest);
                     if (sTableName == string.Empty)
