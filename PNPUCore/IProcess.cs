@@ -32,6 +32,7 @@ namespace PNPUCore.Process
 
         bool STANDARD { get; set; }
         int ID_INSTANCEWF { get; set; }
+        List<string> listMDB { get; set; }
     }
 
     internal class ProcessCore : IProcess
@@ -46,6 +47,7 @@ namespace PNPUCore.Process
         public string TYPOLOGY { get; set; }
         public bool STANDARD { get; set; }
         public int ID_INSTANCEWF { get; set; }
+        public List<string> listMDB { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;

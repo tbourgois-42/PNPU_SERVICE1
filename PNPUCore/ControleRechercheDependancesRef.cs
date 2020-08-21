@@ -11,7 +11,7 @@ namespace PNPUCore.Controle
     /// </summary>  
     internal class ControleRechercheDependancesRef : PControle, IControle
     {
-        readonly private PNPUCore.Process.ProcessControlePacks Process;
+        readonly private PNPUCore.Process.IProcess Process;
         readonly private string ConnectionStringBaseRef;
 
         /// <summary>  
@@ -20,7 +20,7 @@ namespace PNPUCore.Controle
         /// <param name="pProcess">Process qui a lancé le contrôle. Permet d'accéder aux méthodes et attributs publics de l'objet lançant le contrôle.</param>
         public ControleRechercheDependancesRef(PNPUCore.Process.IProcess pProcess)
         {
-            Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
+            Process = pProcess;
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
 
         }

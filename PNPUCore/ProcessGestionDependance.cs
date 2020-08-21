@@ -8,7 +8,8 @@ namespace PNPUCore.Process
 {
     internal class ProcessGestionDependance : ProcessCore, IProcess
     {
-
+        public List<string> listMDB { get; set; }
+        
         /// <summary>  
         /// Constructeur de la classe. 
         /// </summary>  
@@ -40,6 +41,14 @@ namespace PNPUCore.Process
             System.Data.DataSet dataSet = dataManagerSQLServer.GetData("select * from PNPU_STEP where WORKFLOW_ID=" + WORKFLOW_ID.ToString("########0") + " AND ID_PROCESS=1", ParamAppli.ConnectionStringBaseAppli);
             if ((dataSet != null) && (dataSet.Tables[0].Rows.Count == 0))
             {
+                string[] tMDB = null;
+                listMDB = new List<string>();
+                PNPUTools.GereMDBDansBDD gereMDBDansBDD = new PNPUTools.GereMDBDansBDD();
+                gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, ID_INSTANCEWF);
+                foreach (String sFichier in tMDB)
+                {
+                    listMDB.Add(sFichier);
+                }
                 IControle iControle = (IControle) new ControleRechercheDependancesRef(this);
                 listControl.Add(iControle);
             }
