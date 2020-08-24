@@ -63,9 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentification.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
     <Compile Include="AnalyseResult.cs" />
+    <Compile Include="DataClass.cs" />
     <Compile Include="InfoClient.cs" />
     <Compile Include="LauncherTool.cs" />
     <Compile Include="GereMDBDansBDD.cs" />
