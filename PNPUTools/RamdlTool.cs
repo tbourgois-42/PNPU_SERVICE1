@@ -34,8 +34,8 @@ namespace PNPUTools
             WORKFLOW_ID = WORKFLOW_ID_;
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
             ParamToolbox paramToolbox = new ParamToolbox();
-            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, id_client);
-            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, id_client);
+            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, id_client, ID_H_WORKFLOW_);
+            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, id_client, ID_H_WORKFLOW_);
 
             sLogin = "M4ADM";
             sMdp = "M4ADM";
@@ -49,8 +49,8 @@ namespace PNPUTools
             ID_H_WORKFLOW = ID_H_WORKFLOW_;
 
             ParamToolbox paramToolbox = new ParamToolbox();
-            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, infoClient_.ID_CLIENT);
-            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, infoClient_.ID_CLIENT);
+            sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID_, infoClient_.ID_CLIENT, ID_H_WORKFLOW_);
+            sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID_, infoClient_.ID_CLIENT, ID_H_WORKFLOW_);
 
             sLogin = "M4ADM";
             sMdp = "M4ADM";

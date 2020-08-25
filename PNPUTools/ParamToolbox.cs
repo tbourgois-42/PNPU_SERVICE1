@@ -28,13 +28,13 @@ namespace PNPUTools
         /// </summary>
         /// <param name="workflowId"></param>
         /// <returns>Return connexion string.</returns>
-        private string GetConnexionStringQA1(int workflowId, string sClientId)
+        private string GetConnexionStringQA1(int workflowId, string sClientId, int iD_INSTANCEW)
         {
             if (IsWorkflowToolbox(workflowId))
             {
-                string sRequestSelect = "SELECT * FROM PNPU_TMP_PARAM_TOOLBOX WHERE WORKFLOW_ID = {0}";
+                string sRequestSelect = "SELECT * FROM PNPU_TMP_PARAM_TOOLBOX WHERE WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_H_WORKFLOW = {2}";
 
-                string sRequest = string.Format(sRequestSelect, workflowId);
+                string sRequest = string.Format(sRequestSelect, workflowId, sClientId, iD_INSTANCEW);
 
                 DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
 
@@ -54,13 +54,13 @@ namespace PNPUTools
         /// </summary>
         /// <param name="workflowId"></param>
         /// <returns>Return connexion string.</returns>
-        private string GetConnexionStringQA2(int workflowId, string sClientId)
+        private string GetConnexionStringQA2(int workflowId, string sClientId, int iD_INSTANCEW)
         {
             if (IsWorkflowToolbox(workflowId))
             {
-                string sRequestSelect = "SELECT * FROM PNPU_TMP_PARAM_TOOLBOX WHERE WORKFLOW_ID = {0}";
+                string sRequestSelect = "SELECT * FROM PNPU_TMP_PARAM_TOOLBOX WHERE WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_H_WORKFLOW = {2}";
 
-                string sRequest = string.Format(sRequestSelect, workflowId);
+                string sRequest = string.Format(sRequestSelect, workflowId, sClientId, iD_INSTANCEW);
 
                 DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
 
@@ -80,14 +80,14 @@ namespace PNPUTools
         /// <param name="sDatabase"></param>
         /// <param name="workflowId"></param>
         /// <returns>Return connexion string.</returns>
-        public string GetConnexionString(string sDatabase, int workflowId, string sClientId)
+        public string GetConnexionString(string sDatabase, int workflowId, string sClientId, int iD_INSTANCEWF)
         {
             switch (sDatabase)
             {
                 case "Before":
-                    return GetConnexionStringQA1(workflowId, sClientId);
+                    return GetConnexionStringQA1(workflowId, sClientId, iD_INSTANCEWF);
                 case "After":
-                    return GetConnexionStringQA2(workflowId, sClientId);
+                    return GetConnexionStringQA2(workflowId, sClientId, iD_INSTANCEWF);
                 default:
                     return null;
             }

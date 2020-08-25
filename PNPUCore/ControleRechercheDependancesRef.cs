@@ -3,6 +3,8 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
+using System.Data.SqlClient;
 
 namespace PNPUCore.Controle
 {
@@ -22,6 +24,8 @@ namespace PNPUCore.Controle
         {
             Process = pProcess;
             ConnectionStringBaseRef = ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY];
+            ToolTipControle = "Détection des tâches dépendantes";
+            LibControle = "Détection des tâches CCT dépendantes sur la base de référence";
 
         }
 
@@ -39,6 +43,8 @@ namespace PNPUCore.Controle
             string sTacheCCT;
             List<string> lTacheCCTHF;
             bool bPremierElement = true;
+            bool bPremierElementMDB;
+            StringBuilder sbFiltreMdb = new StringBuilder();
             string sFiltreNiveauPrec = string.Empty;
             string sFiltreNiveauN = string.Empty;
             string sFiltreNiveauN1 = string.Empty;
@@ -48,10 +54,13 @@ namespace PNPUCore.Controle
                 dmaManagerAccess = new DataManagerAccess();
                 lTacheCCTHF = new List<string>();
 
+                
                 // Récupération de toutes les tâches CCT livrées dans le HF
                 sRequete = "SELECT DISTINCT(CCT_TASK_ID) FROM M4RDL_PACKAGES";
                 foreach (string sPathMdb in Process.listMDB)
                 {
+                    bPremierElementMDB = true;
+                    sbFiltreMdb.Clear();
                     dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
 
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -72,11 +81,22 @@ namespace PNPUCore.Controle
                                 }
 
                                 sFiltreNiveauN += "'" + sTacheCCT + "'";
+
+                                if (bPremierElementMDB)
+                                    bPremierElementMDB = false;
+                                else
+                                    sbFiltreMdb.Append(",");
+                                sbFiltreMdb.Append("'");
+                                sbFiltreMdb.Append(sTacheCCT);
+                                sbFiltreMdb.Append("'");
                             }
 
                         }
                     }
+                    AjouteCCT(sbFiltreMdb.ToString(), sPathMdb);
                 }
+
+                
 
                 // Recherche des dépendances de Niveau 1
                 bResultat = RechercheDependances(1, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
@@ -115,6 +135,129 @@ namespace PNPUCore.Controle
             }
 
             return sResultat;
+
+        }
+
+        /// <summary>
+        /// Ajout des tâches CCT livrées dans le MDB dans les tables M4RCT_TASK et M4RCT_OBJECTS
+        /// </summary>
+        /// <param name="sFiltreCCT">Liste des tâches CCT du mdb au format d'un IN dans un filtre SQL</param>
+        /// <param name="sPathMDB">Chemin complet du fichier MDB</param>
+        private void AjouteCCT(string sFiltreCCT, string sPathMDB)
+        {
+            DataManagerAccess dmaManagerAccess = new DataManagerAccess();
+            DataSet dsDataSetMDB;
+            DataManagerSQLServer dmsqlManagerSQL = new DataManagerSQLServer();
+            DataSet dsDataSetSQL;
+            string sRequete ;
+            DataRow drNouvelleLigne;
+            StringBuilder sB = new StringBuilder();
+
+            try
+            {
+                // Suppression des tâcheq CCT de la table M4RCT_TASK de la base de référence
+                sB.AppendFormat("DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID IN ({0})", sFiltreCCT);
+                sRequete = sB.ToString();
+                using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+
+                // Recopies des données des tâcheq CCT de la table M4RCT_TASK du MDB à la base de référence
+                sB.Clear();
+                sB.AppendFormat("SELECT * FROM M4RCT_TASK WHERE CCT_TASK_ID IN ({0})", sFiltreCCT);
+                sRequete = sB.ToString();
+
+                dsDataSetMDB = dmaManagerAccess.GetData(sRequete, sPathMDB);
+
+                if ((dsDataSetMDB != null) && (dsDataSetMDB.Tables[0].Rows.Count > 0))
+                {
+
+                    using (SqlConnection connection = new SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
+                    {
+                        connection.Open();
+                        SqlDataAdapter adapter = new SqlDataAdapter(sRequete, connection);
+                        SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
+
+                        builder.GetInsertCommand();
+
+                        adapter.SelectCommand.CommandTimeout = 300;
+                        dsDataSetSQL = new DataSet();
+                        adapter.Fill(dsDataSetSQL/*, "M4RCT_TASK"*/);
+                        
+                        foreach (DataRow drRow in dsDataSetMDB.Tables[0].Rows)
+                        {
+                            drNouvelleLigne = dsDataSetSQL.Tables[0].NewRow();
+                            for (int iIndex = 0; iIndex < dsDataSetMDB.Tables[0].Columns.Count - 1; iIndex++)
+                            {
+                                drNouvelleLigne[dsDataSetMDB.Tables[0].Columns[iIndex].ColumnName] = drRow[dsDataSetMDB.Tables[0].Columns[iIndex].ColumnName];
+                            }
+                            dsDataSetSQL.Tables[0].Rows.Add(drNouvelleLigne);
+                        }
+                        adapter.Update(dsDataSetSQL);
+                    }
+                   
+                }
+
+                // Suppression des tâcheq CCT de la table M4RCT_OBJECTS de la base de référence
+                sB.AppendFormat("DELETE FROM M4RCT_OBJECTS WHERE CCT_TASK_ID IN ({0})", sFiltreCCT);
+                sRequete = sB.ToString();
+                using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+
+
+                // Recopies des données des tâcheq CCT de la table M4RCT_OBJECTS du MDB à la base de référence
+                sB.Clear();
+                sB.AppendFormat("SELECT * FROM M4RCT_OBJECTS WHERE CCT_TASK_ID IN ({0})", sFiltreCCT);
+                sRequete = sB.ToString();
+
+                dsDataSetMDB = dmaManagerAccess.GetData(sRequete, sPathMDB);
+
+                if ((dsDataSetMDB != null) && (dsDataSetMDB.Tables[0].Rows.Count > 0))
+                {
+
+                    using (SqlConnection connection = new SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
+                    {
+                        connection.Open();
+                        SqlDataAdapter adapter = new SqlDataAdapter(sRequete, connection);
+                        SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
+
+                        builder.GetInsertCommand();
+
+                        adapter.SelectCommand.CommandTimeout = 300;
+                        dsDataSetSQL = new DataSet();
+                        adapter.Fill(dsDataSetSQL/*, "M4RCT_OBJECTS"*/);
+
+                        foreach (DataRow drRow in dsDataSetMDB.Tables[0].Rows)
+                        {
+                            drNouvelleLigne = dsDataSetSQL.Tables[0].NewRow();
+                            for (int iIndex = 0; iIndex < dsDataSetMDB.Tables[0].Columns.Count - 1; iIndex++)
+                            {
+                                drNouvelleLigne[dsDataSetMDB.Tables[0].Columns[iIndex].ColumnName] = drRow[dsDataSetMDB.Tables[0].Columns[iIndex].ColumnName];
+                            }
+                            dsDataSetSQL.Tables[0].Rows.Add(drNouvelleLigne);
+                        }
+                        adapter.Update(dsDataSetSQL);
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                LoggerHelper.Log(Process, this, ParamAppli.StatutError, ex.Message);
+            }
 
         }
 

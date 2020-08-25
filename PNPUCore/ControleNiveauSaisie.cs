@@ -61,7 +61,7 @@ namespace PNPUCore.Controle
 
             ParamToolbox paramToolbox = new ParamToolbox();
 
-            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID);
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID, Process.ID_INSTANCEWF);
 
             try
             {

@@ -53,7 +53,7 @@ namespace PNPUCore.Controle
             DataManagerSQLServer dataManagerSQLServer;
             ParamToolbox paramToolbox = new ParamToolbox();
 
-            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID);
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", Process.WORKFLOW_ID, Process.CLIENT_ID, Process.ID_INSTANCEWF);
 
             try
             {
@@ -95,6 +95,15 @@ namespace PNPUCore.Controle
                 if (!bPremier)
                 {
                     dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
+
+                    // Si le dataset est à null il y a un problème de connexion à la base client
+                    if (dsDataSet == null)
+                    {
+                        lListeCCTManquants.Clear();
+                        bResultat = ResultatErreur;
+                        Process.AjouteRapport("Erreur de connexion sur la base client.");
+                    }
+
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
