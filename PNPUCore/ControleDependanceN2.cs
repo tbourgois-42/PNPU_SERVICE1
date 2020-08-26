@@ -229,6 +229,11 @@ namespace PNPUCore.Controle
                         }
                     }
                 }
+                else // Tous les packs de niveau 1 sont installé chez le client. On ne traite pas le niveau suivant
+                {
+                    Process.StopLoop();
+                    Process.AjouteRapport("Toutes les tâches dépendantes de niveau 2 sont installées chez le client.");
+                }
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ namespace PNPUCore.Process
     internal class ProcessGestionDependance : ProcessCore, IProcess
     {
         public List<string> listMDB { get; set; }
+
         
         /// <summary>  
         /// Constructeur de la classe. 
@@ -78,6 +79,7 @@ namespace PNPUCore.Process
             bool bCSIsValide = dataManagerSQLServer.CheckConnectionString(paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF));
             if (bCSIsValide)
             {
+                bStopLoop = false;
                 foreach (IControle controle in listControl)
                 {
                     controle.SetProcessControle(this);
@@ -106,6 +108,10 @@ namespace PNPUCore.Process
                     RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
                     RapportSource.Result = RapportControle.Result;
                     RapportSource.Controle.Add(RapportControle);
+                    
+                    // Si un controle positionne le flag on sort de la boucle
+                    if (bStopLoop)
+                        break;
                 }
             }
             else

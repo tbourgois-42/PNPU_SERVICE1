@@ -17,6 +17,7 @@ namespace PNPUCore.Process
         String FormatReport(IProcess process);
         void AjouteRapport(string v);
         string SaveReportInBDD(string json, IProcess process);
+        void StopLoop();
         int WORKFLOW_ID { get; set; }
         string CLIENT_ID { get; set; }
 
@@ -48,6 +49,7 @@ namespace PNPUCore.Process
         public bool STANDARD { get; set; }
         public int ID_INSTANCEWF { get; set; }
         public List<string> listMDB { get; set; }
+        protected bool bStopLoop { get; set; }
 
         public string sRapport;
         public RProcess RapportProcess;
@@ -83,6 +85,9 @@ namespace PNPUCore.Process
                 TYPOLOGY = ParamAppli.ListeInfoClient[CLIENT_ID.Split(',')[0]].TYPOLOGY;
             }
         }
+
+        public void StopLoop()
+        { bStopLoop = true; }
 
         private void GenerateHistoric()
         {
