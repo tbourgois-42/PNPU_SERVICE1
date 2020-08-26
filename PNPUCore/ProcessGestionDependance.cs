@@ -38,6 +38,7 @@ namespace PNPUCore.Process
 
             // Lancer la recherche des dépendances que si le process de précontrole n'est pas dans le worklow
             PNPUTools.DataManager.DataManagerSQLServer dataManagerSQLServer = new PNPUTools.DataManager.DataManagerSQLServer();
+
             System.Data.DataSet dataSet = dataManagerSQLServer.GetData("select * from PNPU_STEP where WORKFLOW_ID=" + WORKFLOW_ID.ToString("########0") + " AND ID_PROCESS=1", ParamAppli.ConnectionStringBaseAppli);
             if ((dataSet != null) && (dataSet.Tables[0].Rows.Count == 0))
             {
@@ -71,35 +72,57 @@ namespace PNPUCore.Process
                 Name = "IdRapport - ProcessGestionDependance",
                 Controle = new List<RControle>()
             };
-            foreach (IControle controle in listControl)
+
+            // Teste la validité de la chaine de connexion
+            ParamToolbox paramToolbox = new ParamToolbox();
+            bool bCSIsValide = dataManagerSQLServer.CheckConnectionString(paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF));
+            if (bCSIsValide)
             {
-                controle.SetProcessControle(this);
+                foreach (IControle controle in listControl)
+                {
+                    controle.SetProcessControle(this);
+                    RControle RapportControle = new RControle
+                    {
+                        Name = controle.GetLibControle(),
+                        Tooltip = controle.GetTooltipControle(),
+                        Message = new List<string>()
+                    };
+                    RapportControleCourant = RapportControle;
+                    LoggerHelper.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
+                    string statutControle = controle.MakeControl();
+                    LoggerHelper.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
+
+                    //ERROR > WARNING > OK
+                    if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
+                    {
+                        GlobalResult = statutControle;
+
+                    }
+                    else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
+                    {
+                        GlobalResult = statutControle;
+                    }
+
+                    RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+                    RapportSource.Result = RapportControle.Result;
+                    RapportSource.Controle.Add(RapportControle);
+                }
+            }
+            else
+            {
                 RControle RapportControle = new RControle
                 {
-                    Name = controle.GetLibControle(),
-                    Tooltip = controle.GetTooltipControle(),
+                    Name = "ERREUR DECONNEXION",
+                    Tooltip = "Erreur de connexion sur le serveur client",
                     Message = new List<string>()
                 };
-                RapportControleCourant = RapportControle;
-                LoggerHelper.Log(this, controle, ParamAppli.StatutInfo, "Début du contrôle " + controle.ToString());
-                string statutControle = controle.MakeControl();
-                LoggerHelper.Log(this, controle, statutControle, "Fin du contrôle " + controle.ToString());
-
-                //ERROR > WARNING > OK
-                if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutError)
-                {
-                    GlobalResult = statutControle;
-
-                }
-                else if (GlobalResult != ParamAppli.StatutError && statutControle == ParamAppli.StatutWarning)
-                {
-                    GlobalResult = statutControle;
-                }
-
-                RapportControle.Result = ParamAppli.TranscoSatut[statutControle];
+                RapportControle.Message.Add("Erreur de connexion sur le serveur client");
+                GlobalResult = ParamAppli.StatutError;
+                RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
                 RapportSource.Result = RapportControle.Result;
                 RapportSource.Controle.Add(RapportControle);
             }
+
             RapportProcess.Source.Add(RapportSource);
             RapportProcess.Fin = DateTime.Now;
             RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];

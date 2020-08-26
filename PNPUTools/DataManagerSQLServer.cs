@@ -14,6 +14,30 @@ namespace PNPUTools.DataManager
             return String.Empty;
         }
 
+
+        /// <summary>
+        /// Cette méthode test qu'une connexion peut-être ouverte avec la chaine de connexion passée en paramètre
+        /// </summary>
+        /// <param name="sConnectionString">Chaîne de connexion à tester</param>
+        /// <returns>Retourne true si la connection a pu être ouverte, false sinon.</returns>
+        public bool CheckConnectionString(string sConnectionString)
+        {
+            bool bResultat = true;
+
+            try
+            {
+                SqlConnection connection = new SqlConnection(sConnectionString);
+                connection.Open();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                bResultat = false;
+            }
+
+            return bResultat;
+        }
+
         public override DataSet GetData(string sRequest, string sConnectionString)
         {
             DataSet dataSet = null;
