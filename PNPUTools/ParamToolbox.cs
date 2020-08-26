@@ -136,6 +136,8 @@ namespace PNPUTools
         private string GenerateODBCConnexionString(DataTable dataTable)
         {
             StringBuilder sConnexionString = new StringBuilder();
+            string sDataBase = dataTable.Rows[0][2].ToString();
+            string sUser = sDataBase;
             string sServer = dataTable.Rows[0][1].ToString();
             if (!sServer.Contains(".fr.meta4.com"))
                 sServer += ".fr.meta4.com";
@@ -148,11 +150,11 @@ namespace PNPUTools
             sConnexionString.Append("server=");
             sConnexionString.Append(sServer);
             sConnexionString.Append(";uid=");
-            sConnexionString.Append(dataTable.Rows[0][2].ToString());
+            sConnexionString.Append(sUser);
             sConnexionString.Append(";pwd=");
             sConnexionString.Append(sDecrypted);
             sConnexionString.Append(";database=");
-            sConnexionString.Append(dataTable.Rows[0][2].ToString());
+            sConnexionString.Append(sDataBase);
             sConnexionString.Append(";");
 
             return sConnexionString.ToString();
