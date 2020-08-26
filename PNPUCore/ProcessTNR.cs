@@ -29,8 +29,8 @@ namespace PNPUCore.Process
         {
             ParamToolbox paramToolbox = new ParamToolbox();
 
-            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID);
-            string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID);
+            string sConnectionStringBaseQA1 = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
+            string sConnectionStringBaseQA2 = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
 
             LoggerHelper.Log(this, ParamAppli.StatutInfo, " Debut du process " + ToString());
 
