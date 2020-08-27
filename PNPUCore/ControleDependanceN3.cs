@@ -232,17 +232,11 @@ namespace PNPUCore.Controle
                             bResultat = ParamAppli.StatutError;
                         }
 
-                        // test MHUM
-                        /*string[] ListeFichier = null;
-                        gereMDBDansBDD.ExtraitFichiersMDBBDD(ref ListeFichier, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire,ParamAppli.ConnectionStringBaseAppli);
-                        ListeFichier = null;
-                        gereMDBDansBDD.ExtraitFichiersMDBBDD(ref ListeFichier, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli,Process.CLIENT_ID,1);
-                        ListeFichier = null;
-                        gereMDBDansBDD.ExtraitFichiersMDBBDD(ref ListeFichier, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.CLIENT_ID, 2);
-                        ListeFichier = null;
-                        gereMDBDansBDD.ExtraitFichiersMDBBDD(ref ListeFichier, Process.WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, Process.CLIENT_ID, 3);
-                        */
                     }
+                }
+                else // Tous les packs de niveau 3 sont installés chez le client.
+                {
+                    Process.AjouteRapport("Toutes les tâches dépendantes de niveau 3 sont déjà installées chez le client.");
                 }
             }
             catch (Exception ex)

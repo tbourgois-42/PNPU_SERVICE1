@@ -15,6 +15,8 @@ namespace PNPUCore.Controle
     {
         readonly private PNPUCore.Process.IProcess Process;
         readonly private string ConnectionStringBaseRef;
+        private string sCCTIgnore = string.Empty;
+
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -48,13 +50,32 @@ namespace PNPUCore.Controle
             string sFiltreNiveauPrec = string.Empty;
             string sFiltreNiveauN = string.Empty;
             string sFiltreNiveauN1 = string.Empty;
+            List<string> lListCCTIgnore;
+            StringBuilder sbCCTIgnore = new StringBuilder();
 
             try
             {
                 dmaManagerAccess = new DataManagerAccess();
                 lTacheCCTHF = new List<string>();
 
-                
+                // Récupération de la liste des tâches CCT à ignorer en focntion de la typologie du client
+                if (Process.TYPOLOGY == "Dédié")
+                    lListCCTIgnore = ParamAppli.ListeCCTIgD;
+                else
+                    lListCCTIgnore = ParamAppli.ListeCCTIgP;
+                foreach (string sCCT in lListCCTIgnore)
+                {
+                    if (bPremierElement)
+                        bPremierElement = false;
+                    else
+                        sbCCTIgnore.Append(",");
+                    sbCCTIgnore.Append("'");
+                    sbCCTIgnore.Append(sCCT);
+                    sbCCTIgnore.Append("'");
+                }
+                sCCTIgnore = sbCCTIgnore.ToString();
+                bPremierElement = true;
+
                 // Récupération de toutes les tâches CCT livrées dans le HF
                 sRequete = "SELECT DISTINCT(CCT_TASK_ID) FROM M4RDL_PACKAGES";
                 foreach (string sPathMdb in Process.listMDB)
@@ -293,8 +314,8 @@ namespace PNPUCore.Controle
                 {
                     sRequete = "SELECT A.CCT_TASK_ID,A.CCT_OBJECT_TYPE,A.CCT_OBJECT_ID,A.CCT_PARENT_OBJ_ID,A.DEP_CCT_TASK_ID,A.DEP_CCT_OBJECT_TYPE,A.DEP_CCT_OBJECT_ID,A.DEP_CCT_PARENT_OBJ_ID,A.DEP_CCT_ACTION_TYPE,A.DEP_CCT_PACK_TYPE,A.DEP_CCT_COMMAND_TYPE ";
                     sRequete += "FROM M4CFR_VW_CCT_DEPENDANCES A ";
-                    sRequete += "INNER JOIN M4RDL_PACKAGES B ON (A.DEP_CCT_TASK_ID = B.CCT_TASK_ID) ";
-                    sRequete += "INNER JOIN M4RDL_RAM_PACKS C ON (C.ID_PACKAGE = B.ID_PACKAGE) ";
+                    /*sRequete += "INNER JOIN M4RDL_PACKAGES B ON (A.DEP_CCT_TASK_ID = B.CCT_TASK_ID) ";
+                    sRequete += "INNER JOIN M4RDL_RAM_PACKS C ON (C.ID_PACKAGE = B.ID_PACKAGE) ";*/
                     sRequete += "WHERE A.CCT_TASK_ID IN (" + sFiltreNiveauN + ") ";
                     sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sFiltreNiveauN + ") ";
                     if (sFiltreNiveauxPrec != string.Empty)
@@ -309,7 +330,9 @@ namespace PNPUCore.Controle
 
                     sRequete += "AND A.DEP_CCT_TASK_ID not like '%DEF%' ";
                     sRequete += "AND A.CCT_OBJECT_TYPE+A.CCT_OBJECT_ID NOT IN ('PRESENTATIONSFR_DP_PAYROLL_CHANNEL','PRESENTATIONSCO_DP_PAYROLL_CHANNEL') ";
-
+                    sRequete += "AND EXISTS (SELECT TOP 1 B.CCT_TASK_ID FROM M4RDL_PACKAGES B,M4RDL_RAM_PACKS C WHERE  A.DEP_CCT_TASK_ID = B.CCT_TASK_ID AND C.ID_PACKAGE = B.ID_PACKAGE) ";
+                    if ((sCCTIgnore != null) && (sCCTIgnore != string.Empty))
+                        sRequete += "AND A.DEP_CCT_TASK_ID NOT IN (" + sCCTIgnore + ") ";
 
                     dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

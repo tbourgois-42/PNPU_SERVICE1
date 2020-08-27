@@ -90,6 +90,16 @@ namespace PNPUTools
         /// </summary>
         public static string DossierTemporaire { get; }
 
+        /// <summary>  
+        /// Liste des tâches CCT à ignorer dans la détection des dépendances sur Dédié.
+        /// </summary> 
+        public static List<string> ListeCCTIgD { get; }
+
+        /// <summary>  
+        /// Liste des tâches CCT à ignorer dans la détection des dépendances sur Plateform.
+        /// </summary> 
+        public static List<string> ListeCCTIgP { get; }
+
         public static Dictionary<string, InfoClient> ListeInfoClient { get; }
         public static string GeneratePackPath { get; internal set; }
         readonly public static DateTime DateNullPPN = new DateTime(1800, 1, 1);
@@ -192,7 +202,8 @@ namespace PNPUTools
             ListeCmdB = new List<string>();
             ListeLimInf = new List<int>();
             ListeLimSup = new List<int>();
-
+            ListeCCTIgD = new List<string>();
+            ListeCCTIgP = new List<string>();
 
             try
             {
@@ -274,6 +285,14 @@ namespace PNPUTools
 
                             case "DOSTEMP":
                                 DossierTemporaire = drRow[1].ToString();
+                                break;
+
+                            case "CCTIGD_":
+                                ListeCCTIgD.Add(drRow[1].ToString());
+                                break;
+
+                            case "CCTIGP_":
+                                ListeCCTIgP.Add(drRow[1].ToString());
                                 break;
 
                         }

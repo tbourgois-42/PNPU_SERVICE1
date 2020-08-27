@@ -204,10 +204,10 @@ namespace PNPUCore.Controle
                         }
                     }
                 }
-                else // Tous les packs de niveau 1 sont installé chez le client. On ne traite pas les niveaux suivants
+                else // Tous les packs de niveau 1 sont installés chez le client. On ne traite pas les niveaux suivants
                 {
                     Process.StopLoop();
-                    Process.AjouteRapport("Toutes les tâches dépendantes de niveau 1 sont installées chez le client.");
+                    Process.AjouteRapport("Toutes les tâches dépendantes de niveau 1 sont déjà installées chez le client.");
                 }
             }
             catch (Exception ex)
