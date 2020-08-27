@@ -39,7 +39,10 @@ namespace PNPUCore.Controle
             dmsDataManager.ExtractTableFilter(commandeLine, ref sTable, ref sFilter, ref lColumnsList);
 
             sOrgaCour = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ID_ORGA;
-            sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
+            //sConnectionString = ParamAppli.ListeInfoClient[processAnalyseImpactData.CLIENT_ID].ConnectionStringQA1;
+            ParamToolbox paramToolbox = new ParamToolbox();
+
+            sConnectionString = paramToolbox.GetConnexionString("Before", processAnalyseImpactData.WORKFLOW_ID, processAnalyseImpactData.CLIENT_ID, processAnalyseImpactData.ID_INSTANCEWF);
 
             // On traite les commandes pour lesquelles on peut extraire la table
             if ((sTable != String.Empty) && !(processAnalyseImpactData.lListPersonnalTables.Contains(sTable)))

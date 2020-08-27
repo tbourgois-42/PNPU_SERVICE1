@@ -66,147 +66,165 @@ namespace PNPUCore.Process
             // TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = "server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseQA1;//"server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";
             //TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "1600";//"0002";//
 
-            // Récupération de la liste des champs à ignorer
+            rapportAnalyseImpactData.Debut = DateTime.Now;
+
             DataManagerSQLServer dmsDataManager = new DataManagerSQLServer();
-            dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(sConnectionStringBaseQA1);
-
-            //Recupération des tables liées à une personne
-            lListPersonnalTables = dmsDataManager.GetPersonnalTables(sConnectionStringBaseQA1);
-
-            // Recupération de la liste des tables DSN avec un champ SFR_ID_ORIG_PARAM
-            dsDataSet = dmsDataManager.GetData("select ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD = 'SFR_ID_ORIG_PARAM' AND ID_REAL_OBJECT LIKE '%DSN%'", sConnectionStringBaseQA1);
-            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            // Teste la validité de la chaine de connexion
+            bool bCSIsValide = dataManagerSQLServer.CheckConnectionString(sConnectionStringBaseQA1);
+            if (bCSIsValide)
             {
-                foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
+
+                // Récupération de la liste des champs à ignorer
+                dListeTablesFieldsIgnore = dmsDataManager.GetIgnoredFields(sConnectionStringBaseQA1);
+
+                //Recupération des tables liées à une personne
+                lListPersonnalTables = dmsDataManager.GetPersonnalTables(sConnectionStringBaseQA1);
+
+                // Recupération de la liste des tables DSN avec un champ SFR_ID_ORIG_PARAM
+                dsDataSet = dmsDataManager.GetData("select ID_REAL_OBJECT from M4RDC_REAL_FIELDS where ID_REAL_FIELD = 'SFR_ID_ORIG_PARAM' AND ID_REAL_OBJECT LIKE '%DSN%'", sConnectionStringBaseQA1);
+                if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    lTablesDSN.Add(drRow[0].ToString());
-                }
-            }
-
-            //Création des contrôles
-            ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
-            ControleDataM4SCO_ROW_COL_DEF controleDataM4SCO_ROW_COL_DEF = new ControleDataM4SCO_ROW_COL_DEF(this);
-            ControleDataTablesDSN controleDataTablesDSN = new ControleDataTablesDSN(this);
-
-
-            // Récupération des mdb
-            GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
-            gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tListeMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
-
-            foreach (string sMDB in tListeMDB)
-            {
-                sPackCourrant = string.Empty;
-                RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData
-                {
-                    Result = ParamAppli.StatutInfo,
-                    Name = Path.GetFileName(sMDB)
-                };
-                rapportAnalyseImpactMDBData.Tooltip = "Analyse d'impact des données livrées dans le fichier " + rapportAnalyseImpactMDBData.Name;
-                rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData = new List<RapportAnalyseImpactPackData>();
-                rapportAnalyseImpactPackData = null;
-
-                //Récupération de toutes les commandes data
-                List<RmdCommandData> listCommandData = getAllDataCmd(sMDB, ParamAppli.ListeInfoClient[CLIENT_ID].bORACLE);
-
-                foreach (RmdCommandData commandData in listCommandData)
-                {
-                    commandData.CmdCode = dataManagerSQLServer.removeCommentOnCommand(commandData.CmdCode);
-                    string[] listLineRequest = dataManagerSQLServer.splitCmdCodeData(commandData.CmdCode);
-                    string sTable = String.Empty;
-                    string sFilter = String.Empty;
-
-                    if ((sPackCourrant != commandData.IdPackage) || (sSequenceCourrante != commandData.CmdSequence))
+                    foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
-                        if (rapportAnalyseImpactPackData != null)
-                        {
-                            if (rapportAnalyseImpactPackData.listCommandData.Count > 0)
-                            {
-
-                                for (int iIndex2 = 0; (iIndex2 < rapportAnalyseImpactPackData.listCommandData.Count); iIndex2++)
-                                {
-                                    rapportAnalyseImpactMDBData.Result = TestStatut(rapportAnalyseImpactMDBData.Result, rapportAnalyseImpactPackData.listCommandData[iIndex2].Result);
-
-                                }
-                            }
-                            rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData.Add(rapportAnalyseImpactPackData);
-
-                        }
-                        rapportAnalyseImpactPackData = new RapportAnalyseImpactPackData
-                        {
-                            listCommandData = new List<CommandData>(),
-                            listEltsALocaliserData = new List<EltsALocaliserData>(),
-                            //rapportAnalyseImpactPackData.Name = commandData.IdPackage;
-                            CodePack = commandData.IdPackage,
-                            NumCommande = commandData.CmdSequence,
-                            Result = ParamAppli.StatutInfo
-                        };
-                        sPackCourrant = commandData.IdPackage;
+                        lTablesDSN.Add(drRow[0].ToString());
                     }
+                }
 
-                    for (int iIndex = 0; iIndex < listLineRequest.Length; iIndex++)
+                //Création des contrôles
+                ControleDataGeneric controleDataGeneric = new ControleDataGeneric(this);
+                ControleDataM4SCO_ROW_COL_DEF controleDataM4SCO_ROW_COL_DEF = new ControleDataM4SCO_ROW_COL_DEF(this);
+                ControleDataTablesDSN controleDataTablesDSN = new ControleDataTablesDSN(this);
+
+
+                // Récupération des mdb
+                GereMDBDansBDD gereMDBDansBDD = new GereMDBDansBDD();
+                gereMDBDansBDD.ExtraitFichiersMDBBDD(ref tListeMDB, WORKFLOW_ID, ParamAppli.DossierTemporaire, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
+
+                foreach (string sMDB in tListeMDB)
+                {
+                    sPackCourrant = string.Empty;
+                    RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData
                     {
-                        //if (listLineRequest[iIndex].IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
+                        Result = ParamAppli.StatutInfo,
+                        Name = Path.GetFileName(sMDB)
+                    };
+                    rapportAnalyseImpactMDBData.Tooltip = "Analyse d'impact des données livrées dans le fichier " + rapportAnalyseImpactMDBData.Name;
+                    rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData = new List<RapportAnalyseImpactPackData>();
+                    rapportAnalyseImpactPackData = null;
+
+                    //Récupération de toutes les commandes data
+                    List<RmdCommandData> listCommandData = getAllDataCmd(sMDB, ParamAppli.ListeInfoClient[CLIENT_ID].bORACLE);
+
+                    foreach (RmdCommandData commandData in listCommandData)
+                    {
+                        commandData.CmdCode = dataManagerSQLServer.removeCommentOnCommand(commandData.CmdCode);
+                        string[] listLineRequest = dataManagerSQLServer.splitCmdCodeData(commandData.CmdCode);
+                        string sTable = String.Empty;
+                        string sFilter = String.Empty;
+
+                        if ((sPackCourrant != commandData.IdPackage) || (sSequenceCourrante != commandData.CmdSequence))
                         {
-                            CommandData commandData1 = new CommandData
+                            if (rapportAnalyseImpactPackData != null)
                             {
-                                Result = ParamAppli.StatutInfo,
-                                Name = listLineRequest[iIndex],
-                                Message = string.Empty
+                                if (rapportAnalyseImpactPackData.listCommandData.Count > 0)
+                                {
+
+                                    for (int iIndex2 = 0; (iIndex2 < rapportAnalyseImpactPackData.listCommandData.Count); iIndex2++)
+                                    {
+                                        rapportAnalyseImpactMDBData.Result = TestStatut(rapportAnalyseImpactMDBData.Result, rapportAnalyseImpactPackData.listCommandData[iIndex2].Result);
+
+                                    }
+                                }
+                                rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData.Add(rapportAnalyseImpactPackData);
+
+                            }
+                            rapportAnalyseImpactPackData = new RapportAnalyseImpactPackData
+                            {
+                                listCommandData = new List<CommandData>(),
+                                listEltsALocaliserData = new List<EltsALocaliserData>(),
+                                //rapportAnalyseImpactPackData.Name = commandData.IdPackage;
+                                CodePack = commandData.IdPackage,
+                                NumCommande = commandData.CmdSequence,
+                                Result = ParamAppli.StatutInfo
                             };
-                            EltsALocaliserData eltsALocaliserData = new EltsALocaliserData();
+                            sPackCourrant = commandData.IdPackage;
+                        }
 
-                            if ((commandData.IdObject.Contains("0002")) || (commandData.IdObject.Contains("COPY_DATA_9999")))
+                        for (int iIndex = 0; iIndex < listLineRequest.Length; iIndex++)
+                        {
+                            //if (listLineRequest[iIndex].IndexOf("M4SFR_COPY_DATA_ORG") >= 0)
                             {
-
-                                dataManagerSQLServer.ExtractTableFilter(listLineRequest[iIndex], ref sTable, ref sFilter, ref lColumnsList);
-                                // Traitement des tables postpaie
-                                if (lTablesPostPaie.Contains(sTable))
+                                CommandData commandData1 = new CommandData
                                 {
-                                    controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
-                                }
-                                // Traitement des tables DSN
-                                else if (lTablesDSN.Contains(sTable))
-                                {
-                                    controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
-                                }
-                                if (commandData1.Result == ParamAppli.StatutInfo)
-                                {
-                                    controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
-                                }
-                            }
-                            else
-                            {
-                                commandData1.Message = "Pas de contrôle automatique sur cette commande.";
-                                commandData1.Result = ParamAppli.StatutInfo;
+                                    Result = ParamAppli.StatutInfo,
+                                    Name = listLineRequest[iIndex],
+                                    Message = string.Empty
+                                };
+                                EltsALocaliserData eltsALocaliserData = new EltsALocaliserData();
 
-                            }
+                                if ((commandData.IdObject.Contains("0002")) || (commandData.IdObject.Contains("COPY_DATA_9999")))
+                                {
 
-                            rapportAnalyseImpactPackData.listCommandData.Add(commandData1);
-                            rapportAnalyseImpactPackData.Result = TestStatut(rapportAnalyseImpactPackData.Result, commandData1.Result);
-                            if (eltsALocaliserData.Name != null)
-                            {
-                                rapportAnalyseImpactPackData.listEltsALocaliserData.Add(eltsALocaliserData);
+                                    dataManagerSQLServer.ExtractTableFilter(listLineRequest[iIndex], ref sTable, ref sFilter, ref lColumnsList);
+                                    // Traitement des tables postpaie
+                                    if (lTablesPostPaie.Contains(sTable))
+                                    {
+                                        controleDataM4SCO_ROW_COL_DEF.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
+                                    }
+                                    // Traitement des tables DSN
+                                    else if (lTablesDSN.Contains(sTable))
+                                    {
+                                        controleDataTablesDSN.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
+                                    }
+                                    if (commandData1.Result == ParamAppli.StatutInfo)
+                                    {
+                                        controleDataGeneric.AnalyzeCommand(listLineRequest[iIndex], ref commandData1, ref eltsALocaliserData, commandData);
+                                    }
+                                }
+                                else
+                                {
+                                    commandData1.Message = "Pas de contrôle automatique sur cette commande.";
+                                    commandData1.Result = ParamAppli.StatutInfo;
+
+                                }
+
+                                rapportAnalyseImpactPackData.listCommandData.Add(commandData1);
+                                rapportAnalyseImpactPackData.Result = TestStatut(rapportAnalyseImpactPackData.Result, commandData1.Result);
+                                if (eltsALocaliserData.Name != null)
+                                {
+                                    rapportAnalyseImpactPackData.listEltsALocaliserData.Add(eltsALocaliserData);
+                                }
                             }
                         }
+
                     }
 
-                }
 
-
-                if (rapportAnalyseImpactPackData.listCommandData.Count > 0)
-                {
-                    for (int iIndex2 = 0; (iIndex2 < rapportAnalyseImpactPackData.listCommandData.Count); iIndex2++)
+                    if (rapportAnalyseImpactPackData.listCommandData.Count > 0)
                     {
-                        rapportAnalyseImpactMDBData.Result = TestStatut(rapportAnalyseImpactMDBData.Result, rapportAnalyseImpactPackData.listCommandData[iIndex2].Result);
+                        for (int iIndex2 = 0; (iIndex2 < rapportAnalyseImpactPackData.listCommandData.Count); iIndex2++)
+                        {
+                            rapportAnalyseImpactMDBData.Result = TestStatut(rapportAnalyseImpactMDBData.Result, rapportAnalyseImpactPackData.listCommandData[iIndex2].Result);
+                        }
                     }
-                }
-                rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData.Add(rapportAnalyseImpactPackData);
+                    rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData.Add(rapportAnalyseImpactPackData);
 
+                    rapportAnalyseImpactData.listRapportAnalyseImpactMDBData.Add(rapportAnalyseImpactMDBData);
+                    rapportAnalyseImpactData.Result = TestStatut(rapportAnalyseImpactData.Result, rapportAnalyseImpactMDBData.Result);
+
+                }
+            }
+            else
+            {
+                rapportAnalyseImpactData.Result = ParamAppli.StatutError;
+                RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData();
+                rapportAnalyseImpactMDBData.Name = "Erreur de connexion sur le serveur client";
+                rapportAnalyseImpactMDBData.Tooltip = "Erreur de connexion sur le serveur client";
+                rapportAnalyseImpactMDBData.Result = ParamAppli.StatutError;
+                rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData = new List<RapportAnalyseImpactPackData>();
                 rapportAnalyseImpactData.listRapportAnalyseImpactMDBData.Add(rapportAnalyseImpactMDBData);
-                rapportAnalyseImpactData.Result = TestStatut(rapportAnalyseImpactData.Result, rapportAnalyseImpactMDBData.Result);
 
             }
-
             rapportAnalyseImpactData.Fin = DateTime.Now;
 
             //On fait un update pour la date de fin du process et son statut

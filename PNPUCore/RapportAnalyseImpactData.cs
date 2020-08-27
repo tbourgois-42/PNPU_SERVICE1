@@ -63,15 +63,18 @@ namespace PNPUCore
             jw.WritePropertyName("fin");
             jw.WriteValue(sCote + Fin.ToString("dd/MM/yy H:mm:ss") + sCote);
 
-            jw.WritePropertyName("children");
-            jw.WriteStartArray();
-            foreach (RapportAnalyseImpactMDBData type in listRapportAnalyseImpactMDBData)
+            if (listRapportAnalyseImpactMDBData.Count > 0)
             {
-                iIndex++;
-                type.ToJSONRepresentation(jw, Id, iIndex);
-            }
+                jw.WritePropertyName("children");
+                jw.WriteStartArray();
+                foreach (RapportAnalyseImpactMDBData type in listRapportAnalyseImpactMDBData)
+                {
+                    iIndex++;
+                    type.ToJSONRepresentation(jw, Id, iIndex);
+                }
 
-            jw.WriteEndArray();
+                jw.WriteEndArray();
+            }
             jw.WriteEndObject();
             jw.WriteEndArray();
 
@@ -101,15 +104,18 @@ namespace PNPUCore
             jw.WritePropertyName("tooltip");
             jw.WriteValue(sCote + Tooltip + sCote);
 
-            jw.WritePropertyName("children");
-            jw.WriteStartArray();
-            foreach (RapportAnalyseImpactPackData type in listRapportAnalyseImpactPackData)
+            if (listRapportAnalyseImpactPackData.Count > 0)
             {
-                iIndex++;
-                type.ToJSONRepresentation(jw, Id, iIndex);
-            }
+                jw.WritePropertyName("children");
+                jw.WriteStartArray();
+                foreach (RapportAnalyseImpactPackData type in listRapportAnalyseImpactPackData)
+                {
+                    iIndex++;
+                    type.ToJSONRepresentation(jw, Id, iIndex);
+                }
 
-            jw.WriteEndArray();
+                jw.WriteEndArray();
+            }
             jw.WriteEndObject();
         }
     }
