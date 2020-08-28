@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUTools.DataManager
 {
@@ -734,7 +735,7 @@ namespace PNPUTools.DataManager
         {
             int iIndex1 = 0;
             int iIndex2;
-            string sResultat = string.Empty;
+            StringBuilder sResultat = new StringBuilder();
             bool bScriptOracle;
             bool bContinue = true;
             string sCommandeMaj = sCommande.ToUpper();
@@ -787,7 +788,7 @@ namespace PNPUTools.DataManager
                             {
                                 iIndex1 = sCommandeMaj.IndexOf("\\", iIndex1);
                                 iIndex1++;
-                                sResultat += sCommande.Substring(iIndex1, iIndex2 - iIndex1);
+                                sResultat.Append(sCommande.Substring(iIndex1, iIndex2 - iIndex1));
                             }
                             iIndex1 = iIndex2;
                             if (iIndex1 == sCommandeMaj.Length)
@@ -807,7 +808,7 @@ namespace PNPUTools.DataManager
                 }
             }
 
-            return sResultat;
+            return sResultat.ToString();
         }
 
         /// <summary>
@@ -835,8 +836,8 @@ namespace PNPUTools.DataManager
         /// <returns>Retourne le script modifié</returns>
         public string ReplaceID_ORGA(string sCommand, string sID_OrgaOrg, List<string> sID_OrgaDest)
         {
-            string sORGA_COPY = string.Empty;
-            string sORGA_SCRIPT = string.Empty;
+            StringBuilder sORGA_COPY = new StringBuilder();
+            StringBuilder sORGA_SCRIPT = new StringBuilder();
             bool bPremierElement = true;
             string sResultat = sCommand;
 
@@ -845,20 +846,20 @@ namespace PNPUTools.DataManager
                 if (bPremierElement)
                 {
                     bPremierElement = false;
-                    sORGA_COPY = "'";
-                    sORGA_SCRIPT = "'";
+                    sORGA_COPY.Append("'");
+                    sORGA_SCRIPT.Append("'");
                 }
                 else
                 {
-                    sORGA_COPY += ",";
-                    sORGA_SCRIPT += ",'";
+                    sORGA_COPY.Append(",");
+                    sORGA_SCRIPT.Append(",'");
                 }
-                sORGA_COPY += orga;
-                sORGA_SCRIPT += orga + "'";
+                sORGA_COPY.Append(orga);
+                sORGA_SCRIPT.Append(orga + "'");
             }
             if (sORGA_COPY.Length > 0)
             {
-                sORGA_COPY += "'";
+                sORGA_COPY.Append("'");
             }
 
             sResultat = System.Text.RegularExpressions.Regex.Replace(sResultat, "(|\\s+),(|\\s+)'" + sID_OrgaOrg + "'", "," + sORGA_COPY, System.Text.RegularExpressions.RegexOptions.IgnoreCase);

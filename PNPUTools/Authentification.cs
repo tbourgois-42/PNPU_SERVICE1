@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace PNPUTools
 {
@@ -489,7 +490,7 @@ namespace PNPUTools
         /// <returns></returns>
         private static string BuildHabilitationWhereClause(List<string> lstClient, string sHabilitation, string sAlias)
         {
-            string sWhere = string.Empty;
+            StringBuilder sWhere = new StringBuilder();
             bool bPremier = true;
 
             // If is'nt admin profil we generate where clause with list of client visible for the user
@@ -500,18 +501,18 @@ namespace PNPUTools
                     if (bPremier)
                     {
                         bPremier = false;
-                        sWhere += "AND " + sAlias + ".CLIENT_ID IN (";
+                        sWhere.AppendFormat("AND {0}.CLIENT_ID IN (", sAlias) ;
                     }
                     else
                     {
-                        sWhere += ",";
+                        sWhere.Append(",");
                     }
 
-                    sWhere += "'" + clientID + "'";
+                    sWhere.AppendFormat("'{0}'", clientID);
                 }
-                sWhere += ")";
+                sWhere.Append(")");
             }
-            return sWhere;
+            return sWhere.ToString();
         }
 
         /// <summary>
@@ -524,7 +525,7 @@ namespace PNPUTools
         /// <returns></returns>
         public static string BuildHabilitationLikeClause(string sHabilitation, string sUser, string sColumn, string sAlias)
         {
-            string sLike = string.Empty;
+            StringBuilder sLike = new StringBuilder();
             List<string> lstClient = BuildListStringClient(sHabilitation, sUser); ;
             bool bPremier = true;
 
@@ -533,20 +534,20 @@ namespace PNPUTools
                 if (bPremier)
                 {
                     bPremier = false;
-                    sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";
+                    sLike.AppendFormat("{0}.{1} LIKE '%{2}%'", sAlias, sColumn, clientID);
                 }
                 else
                 {
                     if (lstClient.Count > 1)
                     {
-                        sLike += " OR ";
+                        sLike.Append(" OR ");
                     }
-                    sLike += sAlias + "." + sColumn + " LIKE '%" + clientID + "%'";
+                    sLike.AppendFormat("{0}.{1} LIKE '%{2}%'", sAlias, sColumn, clientID);
                 }
 
             }
-            sLike += " ";
-            return sLike;
+            sLike.Append(" ");
+            return sLike.ToString();
         }
 
         /// <summary>

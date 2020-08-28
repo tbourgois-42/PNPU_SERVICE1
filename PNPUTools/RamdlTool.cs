@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Odbc;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PNPUTools
@@ -516,13 +517,13 @@ namespace PNPUTools
         {
             //<ORIGIN_CONN>
             string originConn  = MiseEnformeChaineConnexion(ParamAppli.ConnectionStringBaseRef[InfoClient.TYPOLOGY]);
-            string slistTask = ""; //{ 2}
+            StringBuilder slistTask = new StringBuilder(); //{ 2}
             foreach (String sTask in listTask)
             {
-                slistTask = slistTask + sTask + Environment.NewLine;
+                slistTask.Append(sTask + Environment.NewLine);
             }
             //TBO CREATION DU FICHIER INI
-            iniFile = String.Format(ParamAppli.templateIniFileGeneratePack, originConn, pathLogFile, slistTask, pathResult);
+            iniFile = String.Format(ParamAppli.templateIniFileGeneratePack, originConn, pathLogFile, slistTask.toString(), pathResult);
 
             StreamWriter swFichierIni = new StreamWriter(pathIni, false);
             swFichierIni.WriteLine(iniFile);

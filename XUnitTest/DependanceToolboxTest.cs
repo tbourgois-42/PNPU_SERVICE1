@@ -16,7 +16,7 @@ namespace XUnitTest
 
         public InitialisationProcessDependance()
         {
-            // ... initialize data in the test database ...
+            /* ... initialize data in the test database ...
             string listClientId = "49"; //
             int workflowId = 32; //TODO
             int process = ParamAppli.ProcessGestionDependance;
@@ -39,7 +39,7 @@ namespace XUnitTest
             idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
             var launcher = new Launcher();
-            launcher.Launch(listClientId, workflowId, process, idInstanceWF);
+            launcher.Launch(listClientId, workflowId, process, idInstanceWF);*/
 
         }
 
@@ -75,7 +75,7 @@ namespace XUnitTest
         [Fact]
         public void ShouldGetReportWhenLaunchDependanceProcess()
         {
-            string requestCheckIfAReportIsPresent = "select JSON_TEMPLATE from PNPU_H_REPORT where WORKFLOW_ID = " + workflowId + " AND ID_PROCESS = " + process + " AND CLIENT_ID = " + listClientId + "";
+            string requestCheckIfAReportIsPresent = "select JSON_TEMPLATE from PNPU_H_REPORT where WORKFLOW_ID = 32 AND ID_PROCESS = 1 AND CLIENT_ID = '12' ";
             DataSet dsDataSet = DataManagerSQLServer.GetDatas(requestCheckIfAReportIsPresent, ParamAppli.ConnectionStringBaseAppli);
             bool isReportIsPresent = false;
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

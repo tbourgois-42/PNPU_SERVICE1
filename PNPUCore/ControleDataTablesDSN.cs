@@ -4,6 +4,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -25,7 +26,7 @@ namespace PNPUCore.Controle
             string sTable = String.Empty;
             string sFilter = String.Empty;
             string sRequeteRef;
-            string sRequeteClient;
+            StringBuilder sRequeteClient = new StringBuilder();
             DataSet dsDataSetRef;
             DataSet dsDataSetClient;
             string sFiltreRef;
@@ -121,27 +122,27 @@ namespace PNPUCore.Controle
 
                         if ((sSFR_CK_IS_ACTIF_REF == "1") && (sSFR_ID_ORIG_PARAM_REF == "STD"))
                         {
-                            sRequeteClient = "SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='" + sOrgaCour + "' ";
+                            sRequeteClient.Append("SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='" + sOrgaCour + "' ");
                             sFiltreSuite = " AND NOT EXISTS (SELECT * FROM " + sTable + " WHERE ID_ORGANIZATION ='0001' ";
                             foreach (string sField in lPKFields)
                             {
                                 if (!processAnalyseImpactData.dListeTablesFieldsIgnore[sTable].Contains(sField) && (sField != "SFR_ID_ORIG_PARAM") && (sField != "SFR_CK_IS_ACTIF"))
                                 {
-                                    sRequeteClient += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
+                                    sRequeteClient.Append(" AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'");
                                     sFiltreSuite += " AND " + sField + "='" + dmsDataManager.GetFieldValue(drRowRef, dsDataSetRef.Tables[0], sField) + "'";
                                 }
                             }
-                            sRequeteClient += " AND SFR_ID_ORIG_PARAM = 'CLI'";
+                            sRequeteClient.Append(" AND SFR_ID_ORIG_PARAM = 'CLI'");
                             sFiltreSuite += " AND SFR_ID_ORIG_PARAM = 'CLI'";
                             if (bSFR_CK_IS_ACTIF)
                             {
-                                sRequeteClient += " AND SFR_CK_IS_ACTIF='1'";
+                                sRequeteClient.Append(" AND SFR_CK_IS_ACTIF='1'");
                                 sFiltreSuite += " AND SFR_CK_IS_ACTIF='1'";
                             }
 
                             sFiltreSuite += ")";
-                            sRequeteClient += sFiltreSuite;
-                            dsDataSetClient = dmsDataManager.GetData(sRequeteClient, sConnectionString);
+                            sRequeteClient.Append(sFiltreSuite);
+                            dsDataSetClient = dmsDataManager.GetData(sRequeteClient.ToString(), sConnectionString);
                             if ((dsDataSetClient != null) && (dsDataSetClient.Tables[0].Rows.Count > 0))
                             {
                                 commandDataCour.Name = commandeLine;
