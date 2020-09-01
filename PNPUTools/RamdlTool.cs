@@ -523,7 +523,7 @@ namespace PNPUTools
                 slistTask.Append(sTask + Environment.NewLine);
             }
             //TBO CREATION DU FICHIER INI
-            iniFile = String.Format(ParamAppli.templateIniFileGeneratePack, originConn, pathLogFile, slistTask.toString(), pathResult);
+            iniFile = String.Format(ParamAppli.templateIniFileGeneratePack, originConn, pathLogFile, slistTask.ToString(), pathResult);
 
             StreamWriter swFichierIni = new StreamWriter(pathIni, false);
             swFichierIni.WriteLine(iniFile);
