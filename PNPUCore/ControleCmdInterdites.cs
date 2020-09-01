@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -48,11 +49,13 @@ namespace PNPUCore.Controle
         /// </summary>
         private void CompleteToolTip()
         {
-            ToolTipControle += ". Liste des commandes interdites :";
+            StringBuilder SbToolTipControle = new StringBuilder(ToolTipControle);
+            SbToolTipControle.Append(". Liste des commandes interdites :");
             foreach (string sElt in lL_INTERDIT)
             {
-                ToolTipControle += " - " + sElt;
+                SbToolTipControle.AppendFormat(" - {0}",sElt);
             }
+            ToolTipControle = SbToolTipControle.ToString();
         }
 
 
