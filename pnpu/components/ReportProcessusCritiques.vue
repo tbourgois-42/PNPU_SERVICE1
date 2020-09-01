@@ -82,6 +82,10 @@
                   v-if="item.result === iconAlert"
                   color="error"
                   >{{ item.result }}</v-icon
+                ><v-icon
+                  v-if="item.result === iconInformation"
+                  color="grey lighteen-1"
+                  >{{ item.result }}</v-icon
                 >
               </template>
             </v-treeview>
@@ -169,6 +173,10 @@
                         v-if="item.result === iconAlert"
                         color="error"
                         >{{ item.result }}</v-icon
+                      ><v-icon
+                        v-if="item.result === iconInformation"
+                        color="grey lighteen-1"
+                        >{{ item.result }}</v-icon
                       >
                     </td>
                   </tr>
@@ -235,6 +243,7 @@ export default {
     iconValid: 'mdi-check-circle',
     iconAlert: 'mdi-alert-circle',
     iconWarning: 'mdi-alert',
+    iconInformation: 'mdi-information-outline',
     showAlertMessage: false
   }),
 
