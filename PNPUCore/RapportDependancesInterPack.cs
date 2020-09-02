@@ -33,7 +33,7 @@ namespace PNPUCore
 
             Id = id;
             jw.Formatting = Formatting.Indented;
-            jw.WriteStartArray();
+            //jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue(Id);
@@ -52,7 +52,7 @@ namespace PNPUCore
 
             jw.WriteEndArray();
             jw.WriteEndObject();
-            jw.WriteEndArray();
+            //jw.WriteEndArray();
 
             /*if (PNPUTools.ParamAppli.SimpleCotesReport == false)
             {
