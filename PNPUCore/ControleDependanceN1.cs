@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -45,7 +46,7 @@ namespace PNPUCore.Controle
         new public string MakeControl()
         {
             string bResultat = ParamAppli.StatutOk;
-            string sRequete;
+            StringBuilder sRequete = new StringBuilder();
             List<string> lListeCCTManquants = new List<string>();
 
             DataManagerSQLServer dataManagerSQLServer;
@@ -58,10 +59,11 @@ namespace PNPUCore.Controle
             {
                 // Chargement de la liste des tâche CCT de niveau 1 depuis la base de référence
                 dataManagerSQLServer = new DataManagerSQLServer();
-                sRequete = "SELECT DISTINCT(DEP_CCT_TASK_ID) from PNPU_DEP_REF where NIV_DEP = '1' AND WORKFLOW_ID = " + Process.WORKFLOW_ID + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF;
-                DataSet dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
+                sRequete.Append("SELECT DISTINCT(DEP_CCT_TASK_ID) from PNPU_DEP_REF where NIV_DEP = '1' AND WORKFLOW_ID = " + Process.WORKFLOW_ID + " AND ID_H_WORKFLOW = " + Process.ID_INSTANCEWF);
+                DataSet dsDataSet = dataManagerSQLServer.GetData(sRequete.ToString(), ParamAppli.ConnectionStringBaseAppli);
 
-                sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
+                sRequete.Clear();
+                sRequete.Append("SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (");
                 bool bPremier = true;
                 string sCCT;
 
@@ -77,18 +79,18 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + sCCT + "'";
+                        sRequete.Append("'" + sCCT + "'");
                     }
                 }
-                sRequete += ")";
+                sRequete.Append(")");
 
                 // Recherche sur la base du client si les tâches ont été installées
                 if (!bPremier)
                 {
-                    dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
+                    dsDataSet = dataManagerSQLServer.GetData(sRequete.ToString(), sConnectionStringBaseQA1);
 
                     // Si le dataset est à null il y a un problème de connexion à la base client
                     if (dsDataSet == null)
@@ -121,7 +123,8 @@ namespace PNPUCore.Controle
                 if (lListeCCTManquants.Count > 0)
                 {
                     Dictionary<string, string> dCorrespondanceCCT = new Dictionary<string, string>();
-                    sRequete = "SELECT CCT_TASK_ID,CCT_TASK_ID_ORG FROM PNPU_H_CCT WHERE CLIENT_ID='" + Process.CLIENT_ID + "' AND LEVEL_DEPENDANCE = 1 AND CCT_TASK_ID_ORG IN (";
+                    sRequete.Clear();
+                    sRequete.Append("SELECT CCT_TASK_ID,CCT_TASK_ID_ORG FROM PNPU_H_CCT WHERE CLIENT_ID='" + Process.CLIENT_ID + "' AND LEVEL_DEPENDANCE = 1 AND CCT_TASK_ID_ORG IN (");
                     bPremier = true;
                     foreach (string sTacheCCT in lListeCCTManquants)
                     {
@@ -131,17 +134,18 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + sTacheCCT + "'";
+                        sRequete.Append("'" + sTacheCCT + "'");
                     }
-                    sRequete += ")";
+                    sRequete.Append(")");
 
-                    dsDataSet = dataManagerSQLServer.GetData(sRequete, ParamAppli.ConnectionStringBaseAppli);
+                    dsDataSet = dataManagerSQLServer.GetData(sRequete.ToString(), ParamAppli.ConnectionStringBaseAppli);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
-                        sRequete = "SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (";
+                        sRequete.Clear();
+                        sRequete.Append("SELECT B.CCT_TASK_ID,A.ID_PACKAGE,A.DT_LAUNCHED from M4RDL_RAM_PACKS A,M4RDL_PACKAGES B where A.ID_PACKAGE = B.ID_PACKAGE AND B.CCT_TASK_ID IN (");
                         bPremier = true;
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
@@ -152,14 +156,14 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequete += ",";
+                                sRequete.Append(",");
                             }
 
-                            sRequete += "'" + drRow[0].ToString() + "'";
+                            sRequete.Append("'" + drRow[0].ToString() + "'");
                         }
-                        sRequete += ")";
+                        sRequete.Append(")");
 
-                        dsDataSet = dataManagerSQLServer.GetData(sRequete, sConnectionStringBaseQA1);
+                        dsDataSet = dataManagerSQLServer.GetData(sRequete.ToString(), sConnectionStringBaseQA1);
                         {
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                             {
@@ -222,7 +226,7 @@ namespace PNPUCore.Controle
 
         public bool DupliqueTachesCCT(List<string> lListeTachesCCT, string sPrefixe, ref List<string> lListeTachesCrees)
         {
-            string sRequete;
+            StringBuilder sRequete = new StringBuilder();
             string sNouvTacheCCT;
             string sUserPNPU = "MT4PNPU";
             int iCptPack = 0;
@@ -240,132 +244,134 @@ namespace PNPUCore.Controle
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]))
                     {
                         conn.Open();
-                        sRequete = "DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                        sRequete.Append("DELETE FROM M4RCT_TASK WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             cmd.ExecuteNonQuery();
                         }
 
-                        sRequete = "DELETE FROM M4RCT_OBJECTS WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                        sRequete.Clear();
+                        sRequete.Append("DELETE FROM M4RCT_OBJECTS WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             cmd.ExecuteNonQuery();
                         }
-                        sRequete = "INSERT INTO M4RCT_TASK (";
-                        sRequete += "CCT_TASK_ID";
-                        sRequete += ",CCT_VERSION";
-                        sRequete += ",CCT_TASK_NAMEENG";
-                        sRequete += ",CCT_TASK_NAMEFRA";
-                        sRequete += ",CCT_START_DATE";
-                        sRequete += ",CCT_DESC_ENG";
-                        sRequete += ",CCT_DESC_FRA";
-                        sRequete += ",CCT_STATUS";
-                        sRequete += ",CCT_RESPONSIBLE";
-                        sRequete += ",CCT_DOC_TEC";
-                        sRequete += ",CCT_USE_TYPE";
-                        sRequete += ",CCT_ID_FUN_MODULE";
-                        sRequete += ",CCT_DOC_HELP";
-                        sRequete += ",CCT_ID_FUN_AREA";
-                        sRequete += ",CCT_DOC_TASK";
-                        sRequete += ",CCT_PATH_RESULT";
-                        sRequete += ",CCT_OTHER_COMMENT";
-                        sRequete += ",CCT_TRANSFERRED";
-                        sRequete += ",CCT_TYPE_TASK";
-                        sRequete += ",CCT_SERVICK_PACK";
-                        sRequete += ",CCT_REVIEW_DOC";
-                        sRequete += ",ID_APPROLE";
-                        sRequete += ",ID_SECUSER";
-                        sRequete += ",DT_LAST_UPDATE";
+                        sRequete.Clear();
+                        sRequete.Append("INSERT INTO M4RCT_TASK (");
+                        sRequete.Append("CCT_TASK_ID");
+                        sRequete.Append(",CCT_VERSION");
+                        sRequete.Append(",CCT_TASK_NAMEENG");
+                        sRequete.Append(",CCT_TASK_NAMEFRA");
+                        sRequete.Append(",CCT_START_DATE");
+                        sRequete.Append(",CCT_DESC_ENG");
+                        sRequete.Append(",CCT_DESC_FRA");
+                        sRequete.Append(",CCT_STATUS");
+                        sRequete.Append(",CCT_RESPONSIBLE");
+                        sRequete.Append(",CCT_DOC_TEC");
+                        sRequete.Append(",CCT_USE_TYPE");
+                        sRequete.Append(",CCT_ID_FUN_MODULE");
+                        sRequete.Append(",CCT_DOC_HELP");
+                        sRequete.Append(",CCT_ID_FUN_AREA");
+                        sRequete.Append(",CCT_DOC_TASK");
+                        sRequete.Append(",CCT_PATH_RESULT");
+                        sRequete.Append(",CCT_OTHER_COMMENT");
+                        sRequete.Append(",CCT_TRANSFERRED");
+                        sRequete.Append(",CCT_TYPE_TASK");
+                        sRequete.Append(",CCT_SERVICK_PACK");
+                        sRequete.Append(",CCT_REVIEW_DOC");
+                        sRequete.Append(",ID_APPROLE");
+                        sRequete.Append(",ID_SECUSER");
+                        sRequete.Append(",DT_LAST_UPDATE");
                         if (Process.TYPOLOGY != "Dédié") // Ce champ n'existe que sur la plateforme
-                            sRequete += ",CCT_BUILD_LABEL";
-                        sRequete += ") SELECT ";
-                        sRequete += "'" + sNouvTacheCCT + "'";
-                        sRequete += ",CCT_VERSION";
-                        sRequete += ",'Génération auto'";
-                        sRequete += ",'Génération auto'";
-                        sRequete += ",GETDATE()";
-                        sRequete += ", 'Copie de la tache " + sTacheCCT + "'";
-                        sRequete += ", 'Copie de la tache " + sTacheCCT + "'";
-                        sRequete += ",'3'";
-                        sRequete += ",'" + sUserPNPU + "'";
-                        sRequete += ",CCT_DOC_TEC";
-                        sRequete += ",CCT_USE_TYPE";
-                        sRequete += ",CCT_ID_FUN_MODULE";
-                        sRequete += ",CCT_DOC_HELP";
-                        sRequete += ",CCT_ID_FUN_AREA";
-                        sRequete += ",CCT_DOC_TASK";
-                        sRequete += ",CCT_PATH_RESULT";
-                        sRequete += ",CCT_OTHER_COMMENT";
-                        sRequete += ",CCT_TRANSFERRED";
-                        sRequete += ",CCT_TYPE_TASK";
-                        sRequete += ",'" + sPrefixe + "'";
-                        sRequete += ",CCT_REVIEW_DOC";
-                        sRequete += ",ID_APPROLE";
-                        sRequete += ",'" + sUserPNPU + "'";
-                        sRequete += ",GETDATE()";
+                            sRequete.Append(",CCT_BUILD_LABEL");
+                        sRequete.Append(") SELECT ");
+                        sRequete.Append("'" + sNouvTacheCCT + "'");
+                        sRequete.Append(",CCT_VERSION");
+                        sRequete.Append(",'Génération auto'");
+                        sRequete.Append(",'Génération auto'");
+                        sRequete.Append(",GETDATE()");
+                        sRequete.Append(", 'Copie de la tache " + sTacheCCT + "'");
+                        sRequete.Append(", 'Copie de la tache " + sTacheCCT + "'");
+                        sRequete.Append(",'3'");
+                        sRequete.Append(",'" + sUserPNPU + "'");
+                        sRequete.Append(",CCT_DOC_TEC");
+                        sRequete.Append(",CCT_USE_TYPE");
+                        sRequete.Append(",CCT_ID_FUN_MODULE");
+                        sRequete.Append(",CCT_DOC_HELP");
+                        sRequete.Append(",CCT_ID_FUN_AREA");
+                        sRequete.Append(",CCT_DOC_TASK");
+                        sRequete.Append(",CCT_PATH_RESULT");
+                        sRequete.Append(",CCT_OTHER_COMMENT");
+                        sRequete.Append(",CCT_TRANSFERRED");
+                        sRequete.Append(",CCT_TYPE_TASK");
+                        sRequete.Append(",'" + sPrefixe + "'");
+                        sRequete.Append(",CCT_REVIEW_DOC");
+                        sRequete.Append(",ID_APPROLE");
+                        sRequete.Append(",'" + sUserPNPU + "'");
+                        sRequete.Append(",GETDATE()");
                         if (Process.TYPOLOGY != "Dédié") // Ce champ n'existe que sur la plateforme
-                            sRequete += ",CCT_BUILD_LABEL";
-                        sRequete += " FROM M4RCT_TASK WHERE CCT_TASK_ID='" + sTacheCCT + "'";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                            sRequete.Append(",CCT_BUILD_LABEL");
+                        sRequete.Append(" FROM M4RCT_TASK WHERE CCT_TASK_ID='" + sTacheCCT + "'");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             cmd.ExecuteNonQuery();
                         }
 
-
-                        sRequete = "INSERT INTO M4RCT_OBJECTS(";
-                        sRequete += "CCT_TASK_ID";
-                        sRequete += ", CCT_VERSION";
-                        sRequete += ", CCT_OBJECT_ID";
-                        sRequete += ", CCT_OBJECT_TYPE";
-                        sRequete += ", CCT_PARENT_OBJ_ID";
-                        sRequete += ", CCT_AUX_OBJECT_ID";
-                        sRequete += ", CCT_RULE_START_DAT";
-                        sRequete += ", CCT_OBJ_TYPE_AUX";
-                        sRequete += ", CCT_ACTION_TYPE";
-                        sRequete += ", CCT_PACK_TYPE";
-                        sRequete += ", CCT_DESCRIPTION";
-                        sRequete += ", CCT_LAST_CHG_DATE";
-                        sRequete += ", CCT_ORDER";
-                        sRequete += ", CCT_USER_ID";
-                        sRequete += ", CCT_FROM";
-                        sRequete += ", CCT_COMMENT";
-                        sRequete += ", CCT_COMMAND_TYPE";
-                        sRequete += ", CCT_TRANSFER_OBJEC";
-                        sRequete += ", CCT_BUG_ID";
-                        sRequete += ", ID_APPROLE";
-                        sRequete += ", ID_SECUSER";
-                        sRequete += ", DT_LAST_UPDATE";
-                        sRequete += ", CCT_RDL";
-                        sRequete += ", CCT_AUX2_OBJECT_ID";
-                        sRequete += ", CCT_AUX3_OBJECT_ID";
-                        sRequete += ") SELECT ";
-                        sRequete += "'" + sNouvTacheCCT + "'";
-                        sRequete += ", CCT_VERSION";
-                        sRequete += ", CCT_OBJECT_ID";
-                        sRequete += ", CCT_OBJECT_TYPE";
-                        sRequete += ", CCT_PARENT_OBJ_ID";
-                        sRequete += ", CCT_AUX_OBJECT_ID";
-                        sRequete += ", CCT_RULE_START_DAT";
-                        sRequete += ", CCT_OBJ_TYPE_AUX";
-                        sRequete += ", CCT_ACTION_TYPE";
-                        sRequete += ", CCT_PACK_TYPE";
-                        sRequete += ", CCT_DESCRIPTION";
-                        sRequete += ", GETDATE()";
-                        sRequete += ", CCT_ORDER";
-                        sRequete += ", CCT_USER_ID";
-                        sRequete += ", CCT_FROM";
-                        sRequete += ", CCT_COMMENT";
-                        sRequete += ", CCT_COMMAND_TYPE";
-                        sRequete += ", CCT_TRANSFER_OBJEC";
-                        sRequete += ", CCT_BUG_ID";
-                        sRequete += ", ID_APPROLE";
-                        sRequete += ",'" + sUserPNPU + "'";
-                        sRequete += ", GETDATE()";
-                        sRequete += ", CCT_RDL";
-                        sRequete += ", CCT_AUX2_OBJECT_ID";
-                        sRequete += ", CCT_AUX3_OBJECT_ID";
-                        sRequete += " FROM M4RCT_OBJECTS WHERE CCT_TASK_ID='" + sTacheCCT + "'";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                        sRequete.Clear();
+                        sRequete.Append("INSERT INTO M4RCT_OBJECTS(");
+                        sRequete.Append("CCT_TASK_ID");
+                        sRequete.Append(", CCT_VERSION");
+                        sRequete.Append(", CCT_OBJECT_ID");
+                        sRequete.Append(", CCT_OBJECT_TYPE");
+                        sRequete.Append(", CCT_PARENT_OBJ_ID");
+                        sRequete.Append(", CCT_AUX_OBJECT_ID");
+                        sRequete.Append(", CCT_RULE_START_DAT");
+                        sRequete.Append(", CCT_OBJ_TYPE_AUX");
+                        sRequete.Append(", CCT_ACTION_TYPE");
+                        sRequete.Append(", CCT_PACK_TYPE");
+                        sRequete.Append(", CCT_DESCRIPTION");
+                        sRequete.Append(", CCT_LAST_CHG_DATE");
+                        sRequete.Append(", CCT_ORDER");
+                        sRequete.Append(", CCT_USER_ID");
+                        sRequete.Append(", CCT_FROM");
+                        sRequete.Append(", CCT_COMMENT");
+                        sRequete.Append(", CCT_COMMAND_TYPE");
+                        sRequete.Append(", CCT_TRANSFER_OBJEC");
+                        sRequete.Append(", CCT_BUG_ID");
+                        sRequete.Append(", ID_APPROLE");
+                        sRequete.Append(", ID_SECUSER");
+                        sRequete.Append(", DT_LAST_UPDATE");
+                        sRequete.Append(", CCT_RDL");
+                        sRequete.Append(", CCT_AUX2_OBJECT_ID");
+                        sRequete.Append(", CCT_AUX3_OBJECT_ID");
+                        sRequete.Append(") SELECT ");
+                        sRequete.Append("'" + sNouvTacheCCT + "'");
+                        sRequete.Append(", CCT_VERSION");
+                        sRequete.Append(", CCT_OBJECT_ID");
+                        sRequete.Append(", CCT_OBJECT_TYPE");
+                        sRequete.Append(", CCT_PARENT_OBJ_ID");
+                        sRequete.Append(", CCT_AUX_OBJECT_ID");
+                        sRequete.Append(", CCT_RULE_START_DAT");
+                        sRequete.Append(", CCT_OBJ_TYPE_AUX");
+                        sRequete.Append(", CCT_ACTION_TYPE");
+                        sRequete.Append(", CCT_PACK_TYPE");
+                        sRequete.Append(", CCT_DESCRIPTION");
+                        sRequete.Append(", GETDATE()");
+                        sRequete.Append(", CCT_ORDER");
+                        sRequete.Append(", CCT_USER_ID");
+                        sRequete.Append(", CCT_FROM");
+                        sRequete.Append(", CCT_COMMENT");
+                        sRequete.Append(", CCT_COMMAND_TYPE");
+                        sRequete.Append(", CCT_TRANSFER_OBJEC");
+                        sRequete.Append(", CCT_BUG_ID");
+                        sRequete.Append(", ID_APPROLE");
+                        sRequete.Append(",'" + sUserPNPU + "'");
+                        sRequete.Append(", GETDATE()");
+                        sRequete.Append(", CCT_RDL");
+                        sRequete.Append(", CCT_AUX2_OBJECT_ID");
+                        sRequete.Append(", CCT_AUX3_OBJECT_ID");
+                        sRequete.Append(" FROM M4RCT_OBJECTS WHERE CCT_TASK_ID='" + sTacheCCT + "'");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
@@ -378,27 +384,30 @@ namespace PNPUCore.Controle
                     using (var conn = new System.Data.SqlClient.SqlConnection(ParamAppli.ConnectionStringBaseAppli))
                     {
                         conn.Open();
-                        sRequete = "DELETE FROM PNPU_H_CCT WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+                        sRequete.Clear();
+                        sRequete.Append("DELETE FROM PNPU_H_CCT WHERE CCT_TASK_ID = '" + sNouvTacheCCT + "'");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             cmd.ExecuteNonQuery();
                         }
-                        sRequete = "INSERT INTO PNPU_H_CCT (";
-                        sRequete += "CCT_TASK_ID";
-                        sRequete += ",CCT_TASK_ID_ORG";
-                        sRequete += ",WORKFLOW_ID";
-                        sRequete += ",CLIENT_ID";
-                        sRequete += ",LEVEL_DEPENDANCE";
-                        sRequete += ",ID_H_WORKFLOW";
-                        sRequete += ") VALUES ( ";
-                        sRequete += "'" + sNouvTacheCCT + "'";
-                        sRequete += ",'" + sTacheCCT + "'";
-                        sRequete += "," + Process.WORKFLOW_ID;
-                        sRequete += ",'" + Process.CLIENT_ID + "'";
-                        sRequete += ",'1'";
-                        sRequete += "," + Process.ID_INSTANCEWF;
-                        sRequete += ")";
-                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete, conn))
+
+                        sRequete.Clear();
+                        sRequete.Append("INSERT INTO PNPU_H_CCT (");
+                        sRequete.Append("CCT_TASK_ID");
+                        sRequete.Append(",CCT_TASK_ID_ORG");
+                        sRequete.Append(",WORKFLOW_ID");
+                        sRequete.Append(",CLIENT_ID");
+                        sRequete.Append(",LEVEL_DEPENDANCE");
+                        sRequete.Append(",ID_H_WORKFLOW");
+                        sRequete.Append(") VALUES ( ");
+                        sRequete.Append("'" + sNouvTacheCCT + "'");
+                        sRequete.Append(",'" + sTacheCCT + "'");
+                        sRequete.Append("," + Process.WORKFLOW_ID);
+                        sRequete.Append(",'" + Process.CLIENT_ID + "'");
+                        sRequete.Append(",'1'");
+                        sRequete.Append("," + Process.ID_INSTANCEWF);
+                        sRequete.Append(")");
+                        using (var cmd = new System.Data.SqlClient.SqlCommand(sRequete.ToString(), conn))
                         {
                             cmd.ExecuteNonQuery();
                         }

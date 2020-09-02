@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -51,7 +52,7 @@ namespace PNPUCore.Controle
             string sPathMdb = Process.MDBCourant;
             string sRequete;
             Dictionary<string, string> dListeAControler = new Dictionary<string, string>();
-            string sRequeteControle;
+            StringBuilder sRequeteControle = new StringBuilder();
             bool bPremierElement = true;
 
 
@@ -68,7 +69,7 @@ namespace PNPUCore.Controle
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    sRequeteControle = "SELECT ID_OBJECT FROM M4RDC_LOGIC_OBJECT WHERE ID_OBJECT IN (";
+                    sRequeteControle.Append("SELECT ID_OBJECT FROM M4RDC_LOGIC_OBJECT WHERE ID_OBJECT IN (");
 
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
@@ -86,10 +87,10 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequeteControle += ",";
+                                sRequeteControle.Append(",");
                             }
 
-                            sRequeteControle += "'" + drRow[1].ToString() + "'";
+                            sRequeteControle.AppendFormat("'{0}'", drRow[1].ToString());
                         }
 
                     }
@@ -98,8 +99,8 @@ namespace PNPUCore.Controle
                     if (!bPremierElement && (ConnectionStringBaseRef != string.Empty))
                     {
                         DataManagerSQLServer dmsManagerSQL = new DataManagerSQLServer();
-                        sRequeteControle += ")";
-                        dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ConnectionStringBaseRef);
+                        sRequeteControle.Append(")");
+                        dsDataSet = dmsManagerSQL.GetData(sRequeteControle.ToString(), ConnectionStringBaseRef);
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
                             foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
