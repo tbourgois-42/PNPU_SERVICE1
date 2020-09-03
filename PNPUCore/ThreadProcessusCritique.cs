@@ -108,19 +108,8 @@ namespace PNPUCore.Process
                 {
                     string sTaskStatus;
                     string sNumTraitement = "NA";
-                    List<string> lTraitements = new List<string>();
                     int iID_SCHED_TASKTrt = -1;
 
-                    // Lecture des traitements paramétrés dans le traitement groupé
-                    sRequete = "select A.CFR_ID_STEP, B.CFR_TASK_NMFRA, B.CFR_METHODE_LANCEMENT from M4CFR_MODEL_TACHES A,M4CFR_TACHES B where A.ID_ORGANIZATION='" + ParamAppli.ListeInfoClient[Process.CLIENT_ID].ID_ORGA + "' AND A.ID_ORGANIZATION=B.ID_ORGANIZATION AND A.CFR_ID_MODEL='" + sModelCode + "' AND A.CFR_ID_TASK=B.CFR_ID_TASK ORDER BY A.CFR_ID_STEP";
-                    dataSet = dataManagerSQL.GetData(sRequete, Process.sConnectionString[IIndex]);
-                    if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
-                    {
-                        foreach (DataRow drRow in dataSet.Tables[0].Rows)
-                        {
-                            lTraitements.Add(drRow[1].ToString());
-                        }
-                    }
 
                     // Attente de l'exécution de la tâche créant le traitement groupé
                     sTaskStatus = ResultScheduleTask(iID_SCHED_TASK, 500, out sResultTask);
@@ -156,7 +145,7 @@ namespace PNPUCore.Process
 
                             iID_SCHED_TASKTrt = iID_SCHED_TASK;
                             // Boucle sur les traitements
-                            foreach (string sTraitement in lTraitements)
+                            foreach (string sTraitement in Process.lTraitements[IIndex])
                             { 
                                 RapportControle = new RControle
                                 {
