@@ -38,7 +38,7 @@ namespace PNPUCore.Process
                 ParamAppli.ListeInfoClient[Process.CLIENT_ID].ID_ORGA = "0002";
 
                 ParamToolbox paramToolbox = new ParamToolbox();
-                DateTime sDatePaie = paramToolbox.GetDtPaie(Process.WORKFLOW_ID, Process.ID_INSTANCEWF);
+                //DateTime sDatePaie = paramToolbox.GetDtPaie(Process.WORKFLOW_ID, Process.ID_INSTANCEWF);
 
 
                 RapportSource = new Rapport.Source
