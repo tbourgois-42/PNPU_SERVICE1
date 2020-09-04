@@ -2,6 +2,7 @@
 using PNPUTools.DataManager;
 using System;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -45,7 +46,7 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete;
+            StringBuilder sRequete = new StringBuilder();
 
             DataManagerAccess dmaManagerAccess;
             DataManagerAccess dmaManagerAccess2;
@@ -111,8 +112,9 @@ namespace PNPUCore.Controle
 
                                 bMultiOrga = false;
                                 // Controle si la table est multi orga
-                                sRequete = "SELECT ID_ORG_TYPE FROM M4RDC_LOGIC_OBJECT WHERE REAL_NAME = '" + sTable + "'";
-                                dsDataSet2 = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                                sRequete.Clear();
+                                sRequete.Append("SELECT ID_ORG_TYPE FROM M4RDC_LOGIC_OBJECT WHERE REAL_NAME = '" + sTable + "'");
+                                dsDataSet2 = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                                 if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                 {
                                     if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
@@ -123,7 +125,7 @@ namespace PNPUCore.Controle
                                 else
                                 {
                                     DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
-                                    dsDataSet2 = dataManagerSQL.GetData(sRequete, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
+                                    dsDataSet2 = dataManagerSQL.GetData(sRequete.ToString(), ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                                     if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                     {
                                         if (dsDataSet2.Tables[0].Rows[0][0].ToString() == "2")
@@ -136,18 +138,19 @@ namespace PNPUCore.Controle
                                 if (bMultiOrga)
                                 {
                                     // Recherche de la commande de propagation SQL Server
-                                    sRequete = "select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%EXEC%M4SFR_COPY_DATA_ORG%" + sTable + "%";
+                                    sRequete.Clear();
+                                    sRequete.Append("select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%EXEC%M4SFR_COPY_DATA_ORG%" + sTable + "%");
                                     if (sWhere != string.Empty)
                                     {
                                         sWhere = sWhere.Trim();
                                         sWhere2 = sWhere.ToUpper();
                                         sWhere2 = sWhere2.Trim();
                                         sWhere2 = sWhere2.Replace("'", "' + CHR(39) + CHR(39) + '");
-                                        sRequete += sWhere2 + "%";
+                                        sRequete.Append(sWhere2 + "%");
                                     }
-                                    sRequete += "'";
+                                    sRequete.Append("'");
 
-                                    dsDataSet2 = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                                    dsDataSet2 = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                                     if ((dsDataSet2 == null) || (dsDataSet2.Tables[0].Rows.Count == 0))
                                     {
                                         string sTypeBase = string.Empty;
@@ -171,7 +174,8 @@ namespace PNPUCore.Controle
                                     // Si on est en dédié on vérifie la propagation Oracle
                                     if (Process.TYPOLOGY == "Dédié")
                                     {
-                                        sRequete = "select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%CALL%M4SFR_COPY_DATA_ORG%" + sTable + "%";
+                                        sRequete.Clear();
+                                        sRequete.Append("select ID_PACKAGE, CMD_CODE FROM M4RDL_PACK_CMDS WHERE UCase(CMD_CODE) LIKE '%CALL%M4SFR_COPY_DATA_ORG%" + sTable + "%");
                                         if (sWhere != string.Empty)
                                         {
                                             sWhere2 = sWhere.ToUpper();
@@ -181,11 +185,11 @@ namespace PNPUCore.Controle
                                                 sWhere2 = sWhere2.Replace("{D", "TO_DATE(");
                                                 sWhere2 = sWhere2.Replace("}", ",' + CHR(39) + CHR(39) + 'YYYY-MM-DD' + CHR(39) + CHR(39) +')");
                                             }
-                                            sRequete += sWhere2 + "%";
+                                            sRequete.Append(sWhere2 + "%");
                                         }
-                                        sRequete += "'";
+                                        sRequete.Append("'");
 
-                                        dsDataSet2 = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                                        dsDataSet2 = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                                         if ((dsDataSet2 == null) || (dsDataSet2.Tables[0].Rows.Count == 0))
                                         {
                                             bResultat = ParamAppli.StatutError;

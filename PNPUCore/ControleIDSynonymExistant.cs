@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -51,7 +52,7 @@ namespace PNPUCore.Controle
             string sID_SYNONYM;
             Dictionary<string, string> dicListItems = new Dictionary<string, string>();
             bool bItemAControler = false;
-            string sRequeteSqlServer;
+            StringBuilder sRequeteSqlServer = new StringBuilder();
 
             DataManagerAccess dmaManagerAccess;
 
@@ -66,11 +67,11 @@ namespace PNPUCore.Controle
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-                    sRequeteSqlServer = "select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE (ID_TI LIKE '%HRPERIOD%CALC' OR ID_TI LIKE '%HRROLE%CALC') ";
+                    sRequeteSqlServer.Append("select ID_ITEM, ID_SYNONYM FROM M4RCH_ITEMS WHERE (ID_TI LIKE '%HRPERIOD%CALC' OR ID_TI LIKE '%HRROLE%CALC') ");
                     // Ne faire que si pack standard
-                    sRequeteSqlServer += "AND(ID_TI LIKE 'SCO%' OR ID_TI LIKE 'SFR%' OR ID_TI LIKE 'CFR%') ";
+                    sRequeteSqlServer.Append("AND(ID_TI LIKE 'SCO%' OR ID_TI LIKE 'SFR%' OR ID_TI LIKE 'CFR%') ");
 
-                    sRequeteSqlServer += "AND ID_TI NOT LIKE '%DIF%' AND (";
+                    sRequeteSqlServer.Append("AND ID_TI NOT LIKE '%DIF%' AND (");
 
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
@@ -84,26 +85,26 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequeteSqlServer += "OR ";
+                                sRequeteSqlServer.Append("OR ");
                             }
 
-                            sRequeteSqlServer += " (ID_SYNONYM = " + drRow[1].ToString() + " AND ID_ITEM <> '" + drRow[0].ToString() + "') ";
+                            sRequeteSqlServer.Append(" (ID_SYNONYM = " + drRow[1].ToString() + " AND ID_ITEM <> '" + drRow[0].ToString() + "') ");
                         }
                     }
 
                     if (bItemAControler)
                     {
-                        sRequeteSqlServer += ")";
+                        sRequeteSqlServer.Append(")");
                         DataManagerSQLServer dmasqlManagerSQL = new DataManagerSQLServer();
 
                         // Contrôle sur la base de référence si pack standard, sinon sur base client
                         if (Process.STANDARD)
                         {
-                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
+                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer.ToString(), ParamAppli.ConnectionStringBaseRef[Process.TYPOLOGY]);
                         }
                         else
                         {
-                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer, sConnectionStringBaseQA1);
+                            dsDataSet = dmasqlManagerSQL.GetData(sRequeteSqlServer.ToString(), sConnectionStringBaseQA1);
                         }
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

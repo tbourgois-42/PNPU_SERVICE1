@@ -2,6 +2,7 @@
 using PNPUTools.DataManager;
 using System;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -10,8 +11,8 @@ namespace PNPUCore.Controle
     /// </summary>  
     internal class ControleParamAppli : PControle, IControle
     {
-        private readonly string sCLE = string.Empty;
-        private readonly string sSECTION = string.Empty;
+        private readonly StringBuilder sCLE = new StringBuilder();
+        private readonly StringBuilder sSECTION = new StringBuilder();
         readonly private PNPUCore.Process.ProcessControlePacks Process;
 
         /// <summary>  
@@ -24,22 +25,22 @@ namespace PNPUCore.Controle
             LibControle = "Contrôle des paramètres applicatifs";
             foreach (string cle in ParamAppli.ListeCleInterdite)
             {
-                if (sCLE != string.Empty)
+                if (sCLE.Length > 0)
                 {
-                    sCLE += ",";
+                    sCLE.Append(",");
                 }
 
-                sCLE += "'" + cle + "'";
+                sCLE.Append("'" + cle + "'");
             }
 
             foreach (string section in ParamAppli.ListeSectionInterdite)
             {
-                if (sSECTION != string.Empty)
+                if (sSECTION.Length >0)
                 {
-                    sSECTION += ",";
+                    sSECTION.Append(",");
                 }
 
-                sSECTION += "'" + section + "'";
+                sSECTION.Append("'" + section + "'");
             }
 
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
@@ -56,22 +57,22 @@ namespace PNPUCore.Controle
         {
             foreach (string cle in ParamAppli.ListeCleInterdite)
             {
-                if (sCLE != string.Empty)
+                if (sCLE.Length > 0)
                 {
-                    sCLE += ",";
+                    sCLE.Append(",");
                 }
 
-                sCLE += "'" + cle + "'";
+                sCLE.Append("'" + cle + "'");
             }
 
             foreach (string section in ParamAppli.ListeSectionInterdite)
             {
-                if (sSECTION != string.Empty)
+                if (sSECTION.Length > 0)
                 {
-                    sSECTION += ",";
+                    sSECTION.Append(",");
                 }
 
-                sSECTION += "'" + section + "'";
+                sSECTION.Append("'" + section + "'");
             }
             Process = (PNPUCore.Process.ProcessControlePacks)pProcess;
             LibControle = drRow[1].ToString();
@@ -85,16 +86,22 @@ namespace PNPUCore.Controle
         /// </summary>
         private void CompleteToolTip()
         {
-            ToolTipControle += ". Liste des clés interdites :";
+            StringBuilder sbToolTipControle = new StringBuilder();
+
+            sbToolTipControle.Append(ToolTipControle);
+            sbToolTipControle.Append(". Liste des clés interdites :");
+
             foreach (string sElt in ParamAppli.ListeCleInterdite)
             {
-                ToolTipControle += " - " + sElt;
+                sbToolTipControle.Append(" - " + sElt);
             }
-            ToolTipControle += " - Liste des sections interdites :";
+            sbToolTipControle.Append(" - Liste des sections interdites :");
             foreach (string sElt in ParamAppli.ListeSectionInterdite)
             {
-                ToolTipControle += " - " + sElt;
+                sbToolTipControle.Append(" - " + sElt);
             }
+
+            ToolTipControle = sbToolTipControle.ToString();
         }
 
         /// <summary>  
@@ -111,12 +118,12 @@ namespace PNPUCore.Controle
             DataManagerAccess dmaManagerAccess;
             try
             {
-                if (sCLE != string.Empty)
+                if (sCLE.Length > 0)
                 {
                     sCommandPack = "ID_KEY IN (" + sCLE + ")";
                 }
 
-                if (sSECTION != string.Empty)
+                if (sSECTION.Length > 0)
                 {
                     if (sCommandPack != string.Empty)
                     {

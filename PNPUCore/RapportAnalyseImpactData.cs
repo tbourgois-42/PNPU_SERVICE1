@@ -29,13 +29,16 @@ namespace PNPUCore
 
         private string DetermineFormat(int iNombre)
         {
-            string sFormat = "0";
+            StringBuilder sFormat = new StringBuilder();
+
+            sFormat.Append("0");
+
             for (int i = 10; i <= iNombre; i *= 10)
             {
-                sFormat += "0";
+                sFormat.Append("0");
             }
 
-            return sFormat;
+            return sFormat.ToString();
         }
 
         public String ToJSONRepresentation()

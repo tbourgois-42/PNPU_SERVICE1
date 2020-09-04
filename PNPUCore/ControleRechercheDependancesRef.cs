@@ -48,8 +48,8 @@ namespace PNPUCore.Controle
             bool bPremierElementMDB;
             StringBuilder sbFiltreMdb = new StringBuilder();
             string sFiltreNiveauPrec = string.Empty;
-            string sFiltreNiveauN = string.Empty;
-            string sFiltreNiveauN1 = string.Empty;
+            StringBuilder sFiltreNiveauN = new StringBuilder();
+            StringBuilder sFiltreNiveauN1 = new StringBuilder();
             List<string> lListCCTIgnore;
             StringBuilder sbCCTIgnore = new StringBuilder();
 
@@ -98,10 +98,10 @@ namespace PNPUCore.Controle
                                 }
                                 else
                                 {
-                                    sFiltreNiveauN += ",";
+                                    sFiltreNiveauN.Append(",");
                                 }
 
-                                sFiltreNiveauN += "'" + sTacheCCT + "'";
+                                sFiltreNiveauN.Append("'" + sTacheCCT + "'");
 
                                 if (bPremierElementMDB)
                                     bPremierElementMDB = false;
@@ -120,15 +120,16 @@ namespace PNPUCore.Controle
                 
 
                 // Recherche des dépendances de Niveau 1
-                bResultat = RechercheDependances(1, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
+                bResultat = RechercheDependances(1, sFiltreNiveauPrec, sFiltreNiveauN.ToString(), ref sFiltreNiveauN1);
 
                 // Recherche des dépendances de Niveau 2
                 if (bResultat)
                 {
-                    sFiltreNiveauPrec = sFiltreNiveauN;
-                    sFiltreNiveauN = sFiltreNiveauN1;
-                    sFiltreNiveauN1 = string.Empty;
-                    bResultat = RechercheDependances(2, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
+                    sFiltreNiveauPrec = sFiltreNiveauN.ToString();
+                    sFiltreNiveauN.Clear();
+                    sFiltreNiveauN.Append(sFiltreNiveauN1);
+                    sFiltreNiveauN1.Clear();
+                    bResultat = RechercheDependances(2, sFiltreNiveauPrec, sFiltreNiveauN.ToString(), ref sFiltreNiveauN1);
                 }
 
                 // Recherche des dépendances de Niveau 3
@@ -140,9 +141,10 @@ namespace PNPUCore.Controle
                     }
 
                     sFiltreNiveauPrec += sFiltreNiveauN;
-                    sFiltreNiveauN = sFiltreNiveauN1;
-                    sFiltreNiveauN1 = string.Empty;
-                    bResultat = RechercheDependances(3, sFiltreNiveauPrec, sFiltreNiveauN, ref sFiltreNiveauN1);
+                    sFiltreNiveauN.Clear();
+                    sFiltreNiveauN.Append(sFiltreNiveauN1);
+                    sFiltreNiveauN1.Clear();
+                    bResultat = RechercheDependances(3, sFiltreNiveauPrec, sFiltreNiveauN.ToString(), ref sFiltreNiveauN1);
                 }
                 if (!bResultat)
                 {
@@ -291,7 +293,7 @@ namespace PNPUCore.Controle
         /// <param name="sFiltreNiveauN">Liste des tâche CCT pour lesquelles on cherche les dépendances</param>
         /// <param name="sFiltreNiveauN1">Au retour contient la liste des tâches CCT dépendantes</param>
         /// <returns></returns>
-        private bool RechercheDependances(int iNiveau, string sFiltreNiveauxPrec, string sFiltreNiveauN, ref string sFiltreNiveauN1)
+        private bool RechercheDependances(int iNiveau, string sFiltreNiveauxPrec, string sFiltreNiveauN, ref StringBuilder sFiltreNiveauN1)
         {
             bool bResultat = true;
             string sTacheCCT;
@@ -397,7 +399,7 @@ namespace PNPUCore.Controle
                                 cmd.Parameters.Add("@ID_H_WORKFLOW", SqlDbType.Int);
 
                                 bPremierElement = true;
-                                sFiltreNiveauN1 = string.Empty;
+                                sFiltreNiveauN1.Clear();
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                                 {
                                     sTacheCCT = drRow[4].ToString();
@@ -410,10 +412,10 @@ namespace PNPUCore.Controle
                                         }
                                         else
                                         {
-                                            sFiltreNiveauN1 += ",";
+                                            sFiltreNiveauN1.Append(",");
                                         }
 
-                                        sFiltreNiveauN1 += "'" + sTacheCCT + "'";
+                                        sFiltreNiveauN1.Append("'" + sTacheCCT + "'");
                                     }
 
                                     cmd.Parameters[0].Value = Process.WORKFLOW_ID;
@@ -459,7 +461,7 @@ namespace PNPUCore.Controle
             bool bPremierElement = true;
             DataSet dsDataSet;
             string sTacheCCT;
-            string sListeTacheCCT = string.Empty;
+            StringBuilder sListeTacheCCT = new StringBuilder();
 
             try
             {
@@ -489,10 +491,10 @@ namespace PNPUCore.Controle
                                 }
                                 else
                                 {
-                                    sListeTacheCCT += ",";
+                                    sListeTacheCCT.Append(",");
                                 }
 
-                                sListeTacheCCT += "'" + sTacheCCT + "'";
+                                sListeTacheCCT.Append("'" + sTacheCCT + "'");
                             }
 
                         }

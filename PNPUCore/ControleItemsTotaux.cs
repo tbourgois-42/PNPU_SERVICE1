@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -49,13 +50,13 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete;
             List<string[]> lListeAControler = new List<string[]>();
             bool bPremierElement = true;
             string sItem;
             DataSet dsDataSet;
 
-            string sListeItemsLivres = string.Empty;
+            StringBuilder sListeItemsLivres = new StringBuilder();
+            StringBuilder sRequete = new StringBuilder();
 
             DataManagerAccess dmaManagerAccess;
 
@@ -65,38 +66,38 @@ namespace PNPUCore.Controle
 
 
                 // Recherche des items de paie livrés dans les packs du mdb
-                sRequete = "SELECT ID_OBJECT FROM M4RDL_PACK_CMDS WHERE ID_CLASS = 'ITEM' AND CMD_ACTIVE=-1 AND ID_OBJECT LIKE '%HR%CALC%' AND ID_OBJECT NOT LIKE '%DIF%'";
-                dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                sRequete.Append("SELECT ID_OBJECT FROM M4RDL_PACK_CMDS WHERE ID_CLASS = 'ITEM' AND CMD_ACTIVE=-1 AND ID_OBJECT LIKE '%HR%CALC%' AND ID_OBJECT NOT LIKE '%DIF%'");
+                dsDataSet = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                     {
-                        if (sListeItemsLivres != string.Empty)
+                        if (sListeItemsLivres.Length > 0)
                         {
-                            sListeItemsLivres += ",";
+                            sListeItemsLivres.Append(",");
                         }
 
-                        sListeItemsLivres += "'" + drRow[0].ToString() + "'";
+                        sListeItemsLivres.Append("'" + drRow[0].ToString() + "'");
                     }
                 }
                 else // Si aucun item n'est livré pas besoin de faire le reste
                     return bResultat;
 
-
-                sRequete = "select ID_TI, ID_ITEM, ID_ITEM_USED_TI, ID_ITEM_USED FROM M4RCH_TOTAL_REF A";
+                sRequete.Clear();
+                sRequete.Append("select ID_TI, ID_ITEM, ID_ITEM_USED_TI, ID_ITEM_USED FROM M4RCH_TOTAL_REF A");
                 // On livre le total 
-                sRequete += " WHERE (A.ID_TI+'.'+A.ID_ITEM IN (" + sListeItemsLivres + ")) ";
-                sRequete += " AND  (A.ID_ITEM_USED_TI+'.'+ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")) ";
+                sRequete.Append(" WHERE (A.ID_TI+'.'+A.ID_ITEM IN (" + sListeItemsLivres + ")) ");
+                sRequete.Append(" AND  (A.ID_ITEM_USED_TI+'.'+ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")) ");
 
                 // Et il existe des items du total qu'on ne livre pas
-                sRequete += " AND (EXISTS (SELECT * FROM M4RCH_TOTAL_REF C WHERE A.ID_TI=C.ID_TI AND A.ID_ITEM=C.ID_ITEM AND C.ID_ITEM_USED_TI+'.'+C.ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")))";
+                sRequete.Append(" AND (EXISTS (SELECT * FROM M4RCH_TOTAL_REF C WHERE A.ID_TI=C.ID_TI AND A.ID_ITEM=C.ID_ITEM AND C.ID_ITEM_USED_TI+'.'+C.ID_ITEM_USED NOT IN (" + sListeItemsLivres + ")))");
 
-                dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                dsDataSet = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
 
                 if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                 {
-
-                    sRequete = "SELECT ID_TI + '.' + ID_ITEM FROM M4RCH_ITEMS WHERE ID_TI + '.' + ID_ITEM IN (";
+                    sRequete.Clear();
+                    sRequete.Append("SELECT ID_TI + '.' + ID_ITEM FROM M4RCH_ITEMS WHERE ID_TI + '.' + ID_ITEM IN (");
 
                     // Recherche les items utilisés dans les totaux
                     foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -111,20 +112,20 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + sItem + "'";
+                        sRequete.Append("'" + sItem + "'");
 
                     }
-                    sRequete += ")";
+                    sRequete.Append(")");
                 }
 
                 // Recherche des items sur la base de ref
                 if (lListeAControler.Count > 0)
                 {
                     DataManagerSQLServer dmsManagerSQL = new DataManagerSQLServer();
-                    dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
+                    dsDataSet = dmsManagerSQL.GetData(sRequete.ToString(), ConnectionStringBaseRef);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)

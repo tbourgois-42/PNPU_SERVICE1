@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -169,7 +170,7 @@ namespace PNPUCore.Controle
             DataManagerAccess dmaManagerAccess;
             DataManagerSQLServer dmsManagerSQL;
             bool bPremier;
-            string sRequete;
+            StringBuilder sRequete = new StringBuilder();
             string sPathMdb = Process.MDBCourant;
             DataSet dsDataSet;
             bool bResultat = true;
@@ -182,7 +183,7 @@ namespace PNPUCore.Controle
                 // Si la liste n'est pas vide on va rechercher les M4O à partir des NODE STRUCTURES modifiées.
                 if (lListeNODESTRUCTURE.Count > 0)
                 {
-                    sRequete = "select ID_T3,ID_TI from M4RCH_NODES where ID_TI IN (";
+                    sRequete.Append("select ID_T3,ID_TI from M4RCH_NODES where ID_TI IN (");
                     bPremier = true;
                     foreach (string s in lListeNODESTRUCTURE)
                     {
@@ -192,12 +193,12 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + s + "'";
+                        sRequete.Append("'" + s + "'");
                     }
-                    sRequete += ") UNION select ID_NODE_T3 AS ID_T3,ID_TI from M4RCH_OVERWRITE_NO where ID_TI IN (";
+                    sRequete.Append(") UNION select ID_NODE_T3 AS ID_T3,ID_TI from M4RCH_OVERWRITE_NO where ID_TI IN (");
                     bPremier = true;
                     foreach (string s in lListeNODESTRUCTURE)
                     {
@@ -207,15 +208,15 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + s + "'";
+                        sRequete.Append("'" + s + "'");
                     }
-                    sRequete += ")";
+                    sRequete.Append(")");
 
 
-                    dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                    dsDataSet = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -232,7 +233,8 @@ namespace PNPUCore.Controle
                     // S'il reste des NODE STRUCTURES pour lesquelles nous n'avons pas trouvé le M4O dans le MDB on recherche dans la base de ref.
                     if (lListeNODESTRUCTURE.Count > 0)
                     {
-                        sRequete = "select ID_T3,ID_TI from M4RCH_NODES where ID_TI IN (";
+                        sRequete.Clear();
+                        sRequete.Append("select ID_T3,ID_TI from M4RCH_NODES where ID_TI IN (");
                         bPremier = true;
                         foreach (string s in lListeNODESTRUCTURE)
                         {
@@ -242,12 +244,12 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequete += ",";
+                                sRequete.Append(",");
                             }
 
-                            sRequete += "'" + s + "'";
+                            sRequete.Append("'" + s + "'");
                         }
-                        sRequete += ") UNION select ID_NODE_T3 AS ID_T3,ID_TI from M4RCH_OVERWRITE_NO where ID_TI IN (";
+                        sRequete.Append(") UNION select ID_NODE_T3 AS ID_T3,ID_TI from M4RCH_OVERWRITE_NO where ID_TI IN (");
                         bPremier = true;
                         foreach (string s in lListeNODESTRUCTURE)
                         {
@@ -257,16 +259,16 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequete += ",";
+                                sRequete.Append(",");
                             }
 
-                            sRequete += "'" + s + "'";
+                            sRequete.Append("'" + s + "'");
                         }
-                        sRequete += ")";
+                        sRequete.Append(")");
 
                         if (ConnectionStringBaseRef != string.Empty)
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
+                            dsDataSet = dmsManagerSQL.GetData(sRequete.ToString(), ConnectionStringBaseRef);
                             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                             {
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -288,7 +290,8 @@ namespace PNPUCore.Controle
                 // On cherche déja dans le MDB
                 if (lListeM4O.Count > 0)
                 {
-                    sRequete = "select ID_T3, N_T3FRA, OWNER_FLAG from M4RCH_T3S where ID_T3 IN (";
+                    sRequete.Clear();
+                    sRequete.Append("select ID_T3, N_T3FRA, OWNER_FLAG from M4RCH_T3S where ID_T3 IN (");
                     bPremier = true;
                     foreach (string s in lListeM4O)
                     {
@@ -298,14 +301,14 @@ namespace PNPUCore.Controle
                         }
                         else
                         {
-                            sRequete += ",";
+                            sRequete.Append(",");
                         }
 
-                        sRequete += "'" + s + "'";
+                        sRequete.Append("'" + s + "'");
                     }
-                    sRequete += ")";
+                    sRequete.Append(")");
 
-                    dsDataSet = dmaManagerAccess.GetData(sRequete, sPathMdb);
+                    dsDataSet = dmaManagerAccess.GetData(sRequete.ToString(), sPathMdb);
                     if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                     {
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
@@ -324,7 +327,8 @@ namespace PNPUCore.Controle
                     // S'il reste des M4O non trouvés dans le MDB on va chercher dans la base de ref.
                     if (lListeM4O.Count > 0)
                     {
-                        sRequete = "select ID_T3, N_T3FRA, OWNER_FLAG from M4RCH_T3S where ID_T3 IN (";
+                        sRequete.Clear();
+                        sRequete.Append("select ID_T3, N_T3FRA, OWNER_FLAG from M4RCH_T3S where ID_T3 IN (");
                         bPremier = true;
                         foreach (string s in lListeM4O)
                         {
@@ -334,16 +338,16 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequete += ",";
+                                sRequete.Append(",");
                             }
 
-                            sRequete += "'" + s + "'";
+                            sRequete.Append("'" + s + "'");
                         }
-                        sRequete += ")";
+                        sRequete.Append(")");
 
                         if (ConnectionStringBaseRef != string.Empty)
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequete, ConnectionStringBaseRef);
+                            dsDataSet = dmsManagerSQL.GetData(sRequete.ToString(), ConnectionStringBaseRef);
                             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                             {
                                 foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
