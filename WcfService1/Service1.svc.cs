@@ -25,15 +25,20 @@ namespace WcfService1
         {
             if (!npcsPipeClient.IsConnected)
             {
-                npcsPipeClient.Connect();
+                try
+                {
+                    npcsPipeClient.Connect(5000);
+                }
+                catch (TimeoutException)
+                {
+                    throw;
+                }
             }
 
             streamWriter.AutoFlush = true;
             Console.WriteLine("TEST WRITE PIPE : " + ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
             streamWriter.WriteLine(ProcId + "/" + workflowId + "/" + clientId + "/" + idInstanceWF);
-
-
-
+ 
             //Old code string result = ssStreamString.ReadString();
             return "OK";
         }
@@ -395,10 +400,12 @@ namespace WcfService1
             string clientId = parser.GetParameterValue("clientID");
             int workflowId = int.Parse(parser.GetParameterValue("workflowID"));
             int idInstanceWF;
-            string result = "";
+            string result = string.Empty;
             string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
             bool hadFile = parser.Files.Count > 0;
-            string FilePath = "";
+            bool bZipValid = false;
+            string FilePath = string.Empty;
+            int processID;
 
 
             if (hadFile)
@@ -407,7 +414,7 @@ namespace WcfService1
                 FilePart file = parser.Files.First();
                 string FileName = file.FileName;
 
-                //EST CE QUE LE DOSSIER TEMP EXISTE
+                // Check if temp folder exist
                 if (!Directory.Exists(ParamAppli.DossierTemporaire))
                 {
                     Directory.CreateDirectory(ParamAppli.DossierTemporaire);
@@ -421,71 +428,68 @@ namespace WcfService1
                     file.Data.CopyTo(fileStream);
                 }
 
+                if (PNPUTools.ZIP.ManageZip.IsValidZipFile(FilePath))
+                {
+                    bZipValid = true;
+                } else {
+                    File.Delete(FilePath);
+                    throw new WebFaultException<string>("Execution impossible. Le contenu du fichier zip est non valide, seul les fichiers au format .mdb sont autorisés.", HttpStatusCode.BadRequest); ;
+                }
+            }
+
+            DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
+
+            if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
+            {
+                DataRow drRow = dsDataSet.Tables[0].Rows[0];
+                // We generate instance of workflow in PNPU_H_WORKFLOW 
+                PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
+                {
+                    WORKFLOW_ID = workflowId,
+                    CLIENT_ID = clientId,
+                    LAUNCHING_DATE = DateTime.Now,
+                    ENDING_DATE = new DateTime(1800, 1, 1),
+                    STATUT_GLOBAL = ParamAppli.StatutInProgress,
+                    INSTANCE_NAME = "Toolbox Workflow #" + workflowId
+                };
+
+                idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
+                processID = int.Parse(drRow[0].ToString());
+
+                // Add zip into database
+                if (hadFile && bZipValid)
+                {
+                    try
+                    {
+                        GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
+                        gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new WebFaultException<string>("Une erreur est survenue lors de l'enregistrement du fichier zip dans la base de données. " + ex.Message, HttpStatusCode.BadRequest);
+                    }
+                }
+
                 try
                 {
-                    if (PNPUTools.ZIP.ManageZip.IsValidZipFile(FilePath))
-                    {
-                        DataSet dsDataSet = DataManagerSQLServer.GetDatas(sRequest, ParamAppli.ConnectionStringBaseAppli);
-
-                        if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
-                        {
-                            DataRow drRow = dsDataSet.Tables[0].Rows[0];
-                            // We generate instance of workflow in PNPU_H_WORKFLOW 
-                            PNPU_H_WORKFLOW historicWorkflow = new PNPU_H_WORKFLOW
-                            {
-                                WORKFLOW_ID = workflowId,
-                                CLIENT_ID = clientId,
-                                LAUNCHING_DATE = DateTime.Now,
-                                ENDING_DATE = new DateTime(1800, 1, 1),
-                                STATUT_GLOBAL = ParamAppli.StatutInProgress,
-                                INSTANCE_NAME = "Toolbox Workflow #" + workflowId
-                            };
-
-                            idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
-
-                            GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
-                            // Add zip into database
-                            gestionMDBdansBDD.AjouteZipBDD(FilePath, workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
-
-                            try
-                            {
-                                ParamToolbox paramToolbox = new ParamToolbox();
-                                result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
-
-                                if (result != "Requête traité avec succès")
-                                {
-                                    //TODO Suppresion historic workflow
-                                    //TODO LOG
-                                    throw new WebFaultException<string>("Une erreur s'est produite lors de l'enregistrement des informations saisis dans la toolbox.", HttpStatusCode.BadRequest);
-                                }
-
-                                LaunchProcess(int.Parse(drRow[0].ToString()), workflowId, clientId.ToString(), idInstanceWF);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        File.Delete(FilePath);
-
-                        throw new WebFaultException<string>("Execution impossible. Le contenu du fichier zip est non valide, seul les fichiers au format .mdb sont autorisés.", HttpStatusCode.BadRequest);
-                    }
+                    ParamToolbox paramToolbox = new ParamToolbox();
+                    result = paramToolbox.SaveParamsToolbox(parser, idInstanceWF);
                 }
-                catch (Exception ex) when (ex.Source != "Service Web PNPU")
+                catch (Exception ex)
                 {
-                    File.Delete(FilePath);
+                    throw new WebFaultException<string>("Une erreur s'est produite lors de l'enregistrement des informations saisis dans la toolbox. " + ex.Message, HttpStatusCode.BadRequest);
+                }
 
-                    throw new WebFaultException<string>("Execution impossible." + ex.Message, HttpStatusCode.BadRequest);
+                try
+                {
+                    LaunchProcess(processID, workflowId, clientId.ToString(), idInstanceWF);
+                }
+                catch (TimeoutException ex)
+                {
+                    throw new WebFaultException<string>("Une erreur s'est produite lors de la connexion au pipe. " + ex.Message, HttpStatusCode.BadRequest);
                 }
             }
-            else
-            {
-                throw new WebFaultException<string>("Execution impossible. Aucun fichier trouvé.", HttpStatusCode.BadRequest);
-            }
-
+            
             return result;
         }
 
