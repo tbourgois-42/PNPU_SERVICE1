@@ -145,5 +145,42 @@ namespace PNPUTools.ZIP
                 return -1;
             }
         }
+
+        /// <summary>
+        /// Check if all files in zip file are mdb file.
+        /// </summary>
+        /// <param name="pNomFichierZip">Zip name to decompressed.</param>
+        /// <returns>Return true if all files in zip file are mdb file, false otherwise.</returns>
+        static public bool IsValidZipFile(string pNomFichierZip)
+        {
+            string[] validExtension = { "mdb" };
+
+            try
+            {
+                using (var fileStream = new FileStream(pNomFichierZip, FileMode.Open, FileAccess.Read))
+                {
+                    using (var zipFile = new ZipFile(fileStream))
+                    {
+                        foreach (ZipEntry file in zipFile)
+                        {
+                            foreach (string sExtension in validExtension)
+                            {
+                                if (file.Name.IndexOf(sExtension) == -1)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Logger.Log(ex.Message, "ERROR");
+                throw ex;
+            }
+
+            return true;
+        }
     }
 }

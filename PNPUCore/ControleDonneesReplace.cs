@@ -2,6 +2,7 @@
 using PNPUTools.DataManager;
 using System;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -45,7 +46,7 @@ namespace PNPUCore.Controle
         {
             string bResultat = ParamAppli.StatutOk;
             string sPathMdb = Process.MDBCourant;
-            string sRequete;
+            StringBuilder sRequete = new StringBuilder();
 
             DataManagerAccess dmaManagerAccess;
             DataManagerAccess dmaManagerAccess2;
@@ -107,14 +108,15 @@ namespace PNPUCore.Controle
                                     }
                                 }
 
-                                sRequete = "SELECT COUNT(*) FROM " + sTable;
+                                sRequete.Clear();
+                                sRequete.Append("SELECT COUNT(*) FROM " + sTable);
 
                                 if (sWhere != string.Empty)
                                 {
-                                    sRequete += " WHERE " + sWhere;
+                                    sRequete.Append(" WHERE " + sWhere);
                                 }
 
-                                dsDataSet2 = dmaManagerAccess2.GetData(sRequete, sPathMdb);
+                                dsDataSet2 = dmaManagerAccess2.GetData(sRequete.ToString(), sPathMdb);
                                 if ((dsDataSet2 != null) && (dsDataSet2.Tables[0].Rows.Count > 0))
                                 {
                                     foreach (DataRow drRow2 in dsDataSet2.Tables[0].Rows)

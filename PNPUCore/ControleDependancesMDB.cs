@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -154,7 +155,7 @@ namespace PNPUCore.Controle
 
                                     case "PAYROLL ITEM":
                                         // Recherche des dépendances entre Payroll Item et Item livrés dans 2 packs de 2 mdb
-                                        string sListeComposant = string.Empty;
+                                        StringBuilder sListeComposant = new StringBuilder();
                                         DataSet dsDataSet2;
 
                                         dsDataSet2 = dmaManagerAccess2.GetData("select ID_TI +'.' + ID_ITEM FROM M4RCH_PICOMPONENTS WHERE ID_T3 + '.' + ID_PAYROLL_ITEM = '" + drRow[2].ToString() + "'", Process.listMDB[iIndex]);
@@ -162,19 +163,19 @@ namespace PNPUCore.Controle
                                         {
                                             foreach (DataRow drRow2 in dsDataSet2.Tables[0].Rows)
                                             {
-                                                if (sListeComposant == string.Empty)
+                                                if (sListeComposant.Length == 0)
                                                 {
-                                                    sListeComposant = "('" + drRow2[0].ToString() + "'";
+                                                    sListeComposant.Append("('" + drRow2[0].ToString() + "'");
                                                 }
                                                 else
                                                 {
-                                                    sListeComposant += ",'" + drRow2[0].ToString() + "'";
+                                                    sListeComposant.Append(",'" + drRow2[0].ToString() + "'");
                                                 }
                                             }
                                         }
-                                        if (sListeComposant != string.Empty)
+                                        if (sListeComposant.Length > 0)
                                         {
-                                            sListeComposant += ")";
+                                            sListeComposant.Append(")");
                                             sRequete = "select ID_PACKAGE, ID_CLASS, A.ID_OBJECT FROM M4RDL_PACK_CMDS A WHERE A.ID_CLASS = 'ITEM' AND A.ID_OBJECT IN " + sListeComposant + " AND A.ID_PACKAGE <> '" + drRow[0].ToString() + "' AND A.CMD_ACTIVE = -1";
                                             ChercheDependanceEntreMDB(ref bPremierElement, sRequete, Process.listMDB[iIndex2], dmaManagerAccess2, Process.listMDB[iIndex], drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString());
                                         }

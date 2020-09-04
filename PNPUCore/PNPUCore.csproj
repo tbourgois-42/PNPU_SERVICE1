@@ -59,6 +59,7 @@
     <Compile Include="ControleDataGeneric.cs" />
     <Compile Include="ControleDataTablesDSN.cs" />
     <Compile Include="ProcessAnalyseImpactLogique.cs" />
+    <Compile Include="ThreadProcessusCritique.cs" />
     <Compile Include="RapportDependancesInterPack.cs" />
     <Compile Include="RapportAnalyseImpactData.cs" />
     <Compile Include="RapportAnalyseImpactLogique.cs" />

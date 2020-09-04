@@ -184,7 +184,7 @@ namespace PNPUTools
                 { StatutError, "mdi-alert-circle" },
                 { StatutWarning, "mdi-alert" },
                 { StatutInProgress, "mdi-progress-circle" },
-                { StatutInfo, "mdi-information-variant" }
+                { StatutInfo, "mdi-information-outline" }
             };
 
             npcsPipeClient = null;

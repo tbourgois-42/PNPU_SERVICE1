@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -52,7 +53,7 @@ namespace PNPUCore.Controle
             string sRequete;
             DataSet dsDataSet;
             List<string[]> lListeITEMS = new List<string[]>();
-            string sRequeteControle;
+            StringBuilder sRequeteControle = new StringBuilder();
             bool bPremierElement;
             bool bItemTrouve;
 
@@ -70,7 +71,7 @@ namespace PNPUCore.Controle
 
                     dmaManagerAccess = new DataManagerAccess();
 
-                    sRequeteControle = "SELECT ID_DMD_COMPONENT, ID_DMD_GROUP FROM M4RCH_DMD_GRP_CMP WHERE ID_DMD_GROUP<> 'DMD_INC_VAL_MSS' AND ID_DMD_COMPONENT IN (";
+                    sRequeteControle.Append("SELECT ID_DMD_COMPONENT, ID_DMD_GROUP FROM M4RCH_DMD_GRP_CMP WHERE ID_DMD_GROUP<> 'DMD_INC_VAL_MSS' AND ID_DMD_COMPONENT IN (");
                     bPremierElement = true;
 
                     // Recherche des items de paie livrés
@@ -89,16 +90,16 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequeteControle += ",";
+                                sRequeteControle.Append(",");
                             }
 
                             if (drRow[2].ToString() != string.Empty)
                             {
-                                sRequeteControle += "'" + drRow[2].ToString() + "'";
+                                sRequeteControle.Append("'" + drRow[2].ToString() + "'");
                             }
                             else
                             {
-                                sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
+                                sRequeteControle.Append("'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'");
                             }
 
                             bItemTrouve = false;
@@ -147,16 +148,16 @@ namespace PNPUCore.Controle
                             }
                             else
                             {
-                                sRequeteControle += ",";
+                                sRequeteControle.Append(",");
                             }
 
                             if (drRow[2].ToString() != string.Empty)
                             {
-                                sRequeteControle += "'" + drRow[2].ToString() + "'";
+                                sRequeteControle.Append("'" + drRow[2].ToString() + "'");
                             }
                             else
                             {
-                                sRequeteControle += "'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'";
+                                sRequeteControle.Append("'" + drRow[1].ToString().Substring(drRow[1].ToString().LastIndexOf(".") + 1) + "'");
                             }
 
                             bItemTrouve = false;
@@ -193,9 +194,9 @@ namespace PNPUCore.Controle
                     // Recherche des niveaux de saisie dans le mdb
                     if (!bPremierElement)
                     {
-                        sRequeteControle += ") ORDER BY ID_DMD_COMPONENT, ID_DMD_GROUP";
+                        sRequeteControle.Append(") ORDER BY ID_DMD_COMPONENT, ID_DMD_GROUP");
 
-                        dsDataSet = dmaManagerAccess.GetData(sRequeteControle, sPathMdb);
+                        dsDataSet = dmaManagerAccess.GetData(sRequeteControle.ToString(), sPathMdb);
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
                         {
@@ -222,11 +223,11 @@ namespace PNPUCore.Controle
                         dmsManagerSQL = new DataManagerSQLServer();
                         if (Process.PROCESS_ID == ParamAppli.ProcessControlePacks)
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle, ConnectionStringBaseRef);
+                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle.ToString(), ConnectionStringBaseRef);
                         }
                         else
                         {
-                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle, sConnectionStringBaseQA1);
+                            dsDataSet = dmsManagerSQL.GetData(sRequeteControle.ToString(), sConnectionStringBaseQA1);
                         }
 
                         if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))

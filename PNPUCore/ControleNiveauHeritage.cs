@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -16,9 +17,8 @@ namespace PNPUCore.Controle
         readonly private string ConnectionStringBaseRef;
         private List<string[]> lObjetsHeritesSTD = null;
         private List<string[]> lPresentsHeritesSTD = null;
-        private string sListeID_T3 = string.Empty;
-        private string sListeID_PRES = string.Empty;
-
+        private readonly StringBuilder sListeID_T3 = new StringBuilder();
+        private readonly StringBuilder sListeID_PRES = new StringBuilder();
 
         /// <summary>  
         /// Constructeur de la classe. 
@@ -168,12 +168,12 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             lObjetsHeritesSTD.Add(new string[] { drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString() });
-                            if (sListeID_T3 != string.Empty)
+                            if (sListeID_T3.Length > 0)
                             {
-                                sListeID_T3 += ",";
+                                sListeID_T3.Append(",");
                             }
 
-                            sListeID_T3 += "'" + drRow[0].ToString() + "'";
+                            sListeID_T3.Append("'" + drRow[0].ToString() + "'");
                         }
                         dsDataSet.Clear();
                     }
@@ -188,12 +188,12 @@ namespace PNPUCore.Controle
                         foreach (DataRow drRow in dsDataSet.Tables[0].Rows)
                         {
                             lPresentsHeritesSTD.Add(new string[] { drRow[0].ToString(), drRow[1].ToString(), drRow[2].ToString() });
-                            if (sListeID_PRES != string.Empty)
+                            if (sListeID_PRES.Length > 0)
                             {
-                                sListeID_PRES += ",";
+                                sListeID_PRES.Append(",");
                             }
 
-                            sListeID_PRES += "'" + drRow[0].ToString() + "'";
+                            sListeID_PRES.Append("'" + drRow[0].ToString() + "'");
                         }
                         dsDataSet.Clear();
                     }

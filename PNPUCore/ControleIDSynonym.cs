@@ -3,6 +3,7 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace PNPUCore.Controle
 {
@@ -53,11 +54,15 @@ namespace PNPUCore.Controle
         /// </summary>
         private void CompleteToolTip()
         {
-            ToolTipControle += ". Liste des plages réservées aux clients :";
+            StringBuilder sbToolTipControle = new StringBuilder(ToolTipControle);
+            sbToolTipControle.Append(". Liste des plages réservées aux clients :");
+
             for (int i = 0; i < lLIM_INF.Count; i++)
             {
-                ToolTipControle += " - De " + lLIM_INF[i].ToString() + " à " + lLIM_SUP[i].ToString();
+                sbToolTipControle.Append(" - De " + lLIM_INF[i].ToString() + " à " + lLIM_SUP[i].ToString());
             }
+
+            ToolTipControle = sbToolTipControle.ToString();
         }
 
         /// <summary>  

@@ -2,6 +2,7 @@
 using PNPUTools;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace PNPUCore
 {
@@ -14,13 +15,16 @@ namespace PNPUCore
 
         private string DetermineFormat(int iNombre)
         {
-            string sFormat = "0";
+            StringBuilder sFormat = new StringBuilder();
+
+            sFormat.Append("0");
+
             for (int i = 10; i <= iNombre; i *= 10)
             {
-                sFormat += "0";
+                sFormat.Append("0");
             }
 
-            return sFormat;
+            return sFormat.ToString();
         }
 
         public void ToJSONRepresentation(JsonWriter jw, string id, int index)
@@ -33,7 +37,7 @@ namespace PNPUCore
 
             Id = id;
             jw.Formatting = Formatting.Indented;
-            jw.WriteStartArray();
+            //jw.WriteStartArray();
             jw.WriteStartObject();
             jw.WritePropertyName("id");
             jw.WriteValue(Id);
@@ -52,7 +56,7 @@ namespace PNPUCore
 
             jw.WriteEndArray();
             jw.WriteEndObject();
-            jw.WriteEndArray();
+            //jw.WriteEndArray();
 
             /*if (PNPUTools.ParamAppli.SimpleCotesReport == false)
             {

@@ -5,12 +5,19 @@ using PNPUTools.DataManager;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
+using System.Threading;
 
 namespace PNPUCore.Process
 {
     internal class ProcessProcessusCritique : ProcessCore, IProcess
     {
-        private readonly List<string> lStatusContinue;
+        public string[] sConnectionString;
+        public List<Rapport.Source>[] rSource;
+        public bool[] bThreadTermine;
+        public List<string>[] lTraitements;
+        private ThreadProcessusCritique[] threadProcessusCritiques;
+        
 
 
         /// <summary>  
@@ -36,22 +43,29 @@ namespace PNPUCore.Process
         /// </summary>  
         public new void ExecuteMainProcess()
         {
-            //List<IControle> listControl = ListControls.listOfMockControl;
             string GlobalResult = ParamAppli.StatutOk;
             sRapport = string.Empty;
             RapportProcess.Name = LibProcess;
             RapportProcess.Debut = DateTime.Now;
             RapportProcess.IdClient = CLIENT_ID;
             RapportProcess.Source = new List<Rapport.Source>();
+            RapportProcess.Result = ParamAppli.StatutOk;
             int idInstanceWF = ID_INSTANCEWF;
-            string sResultTask;
-            string sRequete;
-            string sModelCode = "PNPU_TRT_CRIT"; // MHUM pour tests
-            Rapport.Source RapportSource;
+            Source RapportSource;
             RControle RapportControle;
-            bool bBoucle;
+            StringBuilder stringBuilder = new StringBuilder();
+            bool bTraitementInterrompu;
+            string sMessageErreur;
+            string sModelCode = "PNPU_TRT_CRIT";
+            string sRequete;
+            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
+            DataSet dataSet;
+            bool bTraitementsIdentiques = true;
 
-            // MHUM pour tests
+
+            sConnectionString = new string[2];
+
+            // MHUM pour tests, nous ne récupérons pas les orgas des clients
             ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "0002";
 
             //On génère les historic au début pour mettre en inprogress
@@ -59,183 +73,212 @@ namespace PNPUCore.Process
 
             ParamToolbox paramToolbox = new ParamToolbox();
 
+            
+            rSource = new List<Source>[2];
+            rSource[0] = new List<Source>();
+            rSource[1] = new List<Source>();
 
-            // MHUM POUR TESTS 
-            ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2 = "server=M4FRDB18.fr.meta4.com;uid=CAPITAL_DEV;pwd=Cpldev2017;database=CAPITAL_DEV;";
+            lTraitements = new List<string>[2];
+            lTraitements[0] = new List<string>();
+            lTraitements[1] = new List<string>();
 
-            RapportSource = new Rapport.Source
-            {
-                Name = "Planification des processus critiques",
-                Controle = new List<RControle>(),
-                Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk]
-            };
+            // MHUM POUR TESTS, j'utilise les clients zero SAAS dédié 
+            sConnectionString[0] = "server=10.113.24.81;uid=FRACUSQA1;pwd=FRACUSQA1;database=FRACUSQA1;";
+            sConnectionString[1] = "server=10.113.24.81;uid=FRACUSQA2;pwd=FRACUSQA2;database=FRACUSQA2;";
+            //sConnectionString[0] = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
+            //sConnectionString[1] = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
 
+            bThreadTermine = new bool[2];
+            bThreadTermine[0] = false;
+            bThreadTermine[1] = false;
 
-            List<string> lParameters = new List<string>();
-            List<string> lRequests = new List<string>();
-            int iID_SCHED_TASK = 1;
-            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
-
-            sRequete = "select MAX(ID_SCHED_TASK) from M4RJS_SCHED_TASKS";
-            DataSet dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
+            // Vérification que les traitements groupés sont paramétré de la même façon sur les deux environnements
+            // Lecture du paramétrage du premier environnement
+            sRequete = "select A.CFR_ID_STEP, B.CFR_TASK_NMFRA, B.CFR_METHODE_LANCEMENT from M4CFR_MODEL_TACHES A,M4CFR_TACHES B where A.ID_ORGANIZATION='" + ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA + "' AND A.ID_ORGANIZATION=B.ID_ORGANIZATION AND A.CFR_ID_MODEL='" + sModelCode + "' AND A.CFR_ID_TASK=B.CFR_ID_TASK ORDER BY A.CFR_ID_STEP";
+            dataSet = dataManagerSQL.GetData(sRequete, sConnectionString[0]);
             if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
             {
-                if (Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASK))
+                foreach (DataRow drRow in dataSet.Tables[0].Rows)
                 {
-                    iID_SCHED_TASK++;
-                }
-                else
-                {
-                    iID_SCHED_TASK = 1;
+                    lTraitements[0].Add(drRow[1].ToString());
                 }
             }
 
-            RapportControle = new RControle
+            // Lecture du paramétrage du deuxième environnement
+            dataSet = dataManagerSQL.GetData(sRequete, sConnectionString[1]);
+            if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
             {
-                Name = "Planification (" + iID_SCHED_TASK.ToString("########0") + ")",
-                Tooltip = "Génération de la planification des processus critiques",
-                Message = new List<string>()
-            };
-
-            lParameters.Add("@ID_SCHED_TASK");
-            lParameters.Add(iID_SCHED_TASK.ToString());
-            lParameters.Add("@SCHED_TASK_NAME");
-            lParameters.Add("PNPU_EXEC_TRAITEMENT_GRP_JS");
-            lParameters.Add("@ID_ORGA_TMP");
-            lParameters.Add(ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA);
-            lParameters.Add("@USER");
-            lParameters.Add("M4ADM");
-            lParameters.Add("@ROLE");
-            lParameters.Add("M4ADM");
-            /*            lParameters.Add("@SERVER_NAME");
-                        lParameters.Add(null);
-                        lParameters.Add("@SERVICE_NAME");
-                        lParameters.Add(null);*/
-            lParameters.Add("@TASK_DESC");
-            lParameters.Add("PNPU - Planification des processus critiques");
-            lParameters.Add("@DATE_LAUNCH");
-            lParameters.Add(DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:00"));
-            lParameters.Add("@DATE_PAY");
-            lParameters.Add("2020-03-25");
-
-            //lRequests.Add("INSERT INTO M4RJS_SCHED_TASKS(ID_SCHED_TASK, SCHED_TASK_NAME, SCHED_TASK_DESC, ID_TASK, CREATOR, USER_PLANNER, USER_EXECUTOR, ROLE_EXECUTOR, PRIORITY, SERVER_NAME, SERVICE_NAME, ID_TIMEZONE, MAX_DELAY, HAS_CALENDARS, SET_STATISTICS, STAT_FILE_BASENAME, SET_NOTIFICATIONS, START_DATE, END_DATE, DATE_CREATED, STATISTICS_LEVEL, IS_DYNAMIC, PREVIEW_PERIOD, DATE_MAX, DATE_NEXT, EXECUTION_MAX, EXECUTION_NUMBER, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, ID_ORGANIZATION, IS_ADMINISTRATIVE, SET_NOTIFY_EXEC_START, SET_NOTIFY_EXEC_END, MAILS_TO_NOTIFY_EXEC, AUTO_NOTIFY_EXEC, SET_ATTACH_RESOURCES, SET_ATTACH_PASSWORD) VALUES (@ID_SCHED_TASK, @SCHED_TASK_NAME + ' ' + @ID_ORGA_TMP, @TASK_DESC, @SCHED_TASK_NAME, 29, @USER, @USER, @ROLE, 5, @SERVER_NAME, @SERVICE_NAME, 'Romance', 0, 0, 0, null, 0, getUTCDate(), null, getUTCDate(), 0, 0, null, null, null, null, null, @ROLE, @USER, getUTCDate(), @ID_ORGA_TMP, null, null, null, null, null, null, null)");
-            lRequests.Add("INSERT INTO M4RJS_SCHED_TASKS(ID_SCHED_TASK, SCHED_TASK_NAME, SCHED_TASK_DESC, ID_TASK, CREATOR, USER_PLANNER, USER_EXECUTOR, ROLE_EXECUTOR, PRIORITY, SERVER_NAME, SERVICE_NAME, ID_TIMEZONE, MAX_DELAY, HAS_CALENDARS, SET_STATISTICS, STAT_FILE_BASENAME, SET_NOTIFICATIONS, START_DATE, END_DATE, DATE_CREATED, STATISTICS_LEVEL, IS_DYNAMIC, PREVIEW_PERIOD, DATE_MAX, DATE_NEXT, EXECUTION_MAX, EXECUTION_NUMBER, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, ID_ORGANIZATION, IS_ADMINISTRATIVE, SET_NOTIFY_EXEC_START, SET_NOTIFY_EXEC_END, MAILS_TO_NOTIFY_EXEC, AUTO_NOTIFY_EXEC, SET_ATTACH_RESOURCES, SET_ATTACH_PASSWORD) VALUES (@ID_SCHED_TASK, @SCHED_TASK_NAME + ' ' + @ID_ORGA_TMP, @TASK_DESC, @SCHED_TASK_NAME, 29, @USER, @USER, @ROLE, 5, null, null, 'Romance', 0, 0, 0, null, 0, getUTCDate(), null, getUTCDate(), 0, 0, null, null, null, null, null, @ROLE, @USER, getUTCDate(), @ID_ORGA_TMP, null, null, null, null, null, null, null)");
-            lRequests.Add("INSERT INTO M4RJS_SCHED_TASKS1 VALUES (@ID_SCHED_TASK,@USER+'|'+@ROLE+'|ROOT_SESSION#ID_RSM#\"'+@ROLE+'\"|ROOT_SESSION#LICENSE#\"\"|ROOT_SESSION#WU_MASK#\"''; 430; 460; 200; ''\"|ROOT_SESSION#LANGUAGE#4|ROOT_SESSION#ID_PERSON#\"\"|ROOT_SESSION#ID_PROFILE#\"RSM_DEVELOPPEMENT\"|ROOT_SESSION#ID_APP_ROLE#\"'+@ROLE+'\"|ROOT_SESSION#ID_APP_USER#\"'+@USER+'\"|ROOT_SESSION#ROUND_NUMBER#0|ROOT_SESSION#DATA_END_DATE#{4000-01-01 00:00:00}|ROOT_SESSION#ID_DEBUG_USER#\"\"|ROOT_SESSION#APP_USER_ALIAS#\"\"|ROOT_SESSION#EXECUTION_DATE#{'+convert(varchar(19),getUTCDate(),20)+'}|ROOT_SESSION#ROUND_CURRENCY#0|ROOT_SESSION#USR_AUDIT_CRED#\"\"|ROOT_SESSION#DATA_START_DATE#{1800-01-01 00:00:00}|ROOT_SESSION#DEFAULT_PROJECT#\"\"|ROOT_SESSION#WU_MASK_CONTROL#0|ROOT_SESSION#PREFIX_OVERWRITE#\"\"|ROOT_SESSION#NUM_ROWS_DB_LIMIT#0|ROOT_SESSION#EXECUTION_END_DATE#{4000-01-01 00:00:00}|ROOT_SESSION#META_DATA_END_DATE#{4000-01-01 00:00:00}|ROOT_SESSION#USR_AUDIT_SRV_NAME#\"\"|ROOT_SESSION#ID_DEFAULT_CURRENCY#\"EUR\"|ROOT_SESSION#DATA_CORRECTION_DATE#{'+convert(varchar(10),getUTCdate(),103)+'}|ROOT_SESSION#EXECUTE_REALSQL_MODE#0|ROOT_SESSION#EXECUTION_START_DATE#{1800-01-01 00:00:00}|ROOT_SESSION#META_DATA_START_DATE#{1800-01-01 00:00:00}|ROOT_SESSION#USR_AUDIT_SESSION_KEY#\"\"|ROOT_SESSION#SELECT_TO_GET_DB_USER_2X#\"\"|ROOT_SESSION#USR_AUDIT_CLIENT_MACHINE#\"''\"|ROOT_SESSION#USR_AUDIT_SRV_ID_SESSION#\"\"|ROOT_SESSION#META_DATA_CORRECTION_DATE#{'+convert(varchar(19),getUTCDate(), 120)+'}|ROOT_SESSION#ID_ORGANIZATION#\"'+@ID_ORGA_TMP+'\"')");
-            lRequests.Add("INSERT INTO M4RJS_SCHED_TASKS2 values(@ID_SCHED_TASK,'ASAP')");
-            //lRequests.Add("INSERT INTO M4RJS_TASK_EXE (ID_SCHED_TASK,ID_TASK_EXE,PLANNED_DATETIME,EXPIRATION_DATETIM,STATUS,EXCEPTION_FLAG,START_DATETIME,END_DATETIME,SERVER_NAME,SERVICE_NAME,SELECTED_BY_SERVIC,EXE_SERVER,EXE_SERVICE,TASK_EXE_DESC,ID_APPROLE,ID_SECUSER,DT_LAST_UPDATE,USER_ABORTER) VALUES (@ID_SCHED_TASK,1,@DATE_LAUNCH,null,1,0,null,null,@SERVER_NAME,@SERVICE_NAME,0,null,null,@TASK_DESC,@ROLE,@USER,getUTCDate(),null)");
-            lRequests.Add("INSERT INTO M4RJS_TASK_EXE (ID_SCHED_TASK,ID_TASK_EXE,PLANNED_DATETIME,EXPIRATION_DATETIM,STATUS,EXCEPTION_FLAG,START_DATETIME,END_DATETIME,SERVER_NAME,SERVICE_NAME,SELECTED_BY_SERVIC,EXE_SERVER,EXE_SERVICE,TASK_EXE_DESC,ID_APPROLE,ID_SECUSER,DT_LAST_UPDATE,USER_ABORTER) VALUES (@ID_SCHED_TASK,1,@DATE_LAUNCH,null,1,0,null,null,null,null,0,null,null,@TASK_DESC,@ROLE,@USER,getUTCDate(),null)");
-            lRequests.Add("INSERT INTO M4RJS_SUBTASK_EXE (ID_SCHED_TASK,ID_TASK_EXE,ID_SUBTASK_EXE,ORDER_IN_TREE,ID_TASK,COMPOSITE,LOCAL_ID,START_DATETIME,END_DATETIME,VM_EXIT_FLAG,PARENT_ORDER,ID_APPROLE,ID_SECUSER,DT_LAST_UPDATE,QUOTA_ROWS,QUOTA_MAX_ROWS,QUOTA_PEAK_ROWS) VALUES (@ID_SCHED_TASK,1,1,1,@SCHED_TASK_NAME,1,0,null,null,null,1,@ROLE,@USER,getUTCDate(),null,null,null)");
-            lRequests.Add("INSERT INTO  M4RJS_SUBTASK_EXE1 (ID_SCHED_TASK,ID_TASK_EXE,ID_SUBTASK_EXE,ORDER_IN_TREE,LOG_MESSAGES) VALUES (@ID_SCHED_TASK,1,1,1,null)");
-            lRequests.Add("INSERT INTO M4RJS_SUBTASK_EXE2 (ID_SCHED_TASK,ID_TASK_EXE,ID_SUBTASK_EXE,ORDER_IN_TREE,STATISTICS_LOG) VALUES (@ID_SCHED_TASK,1,1,1,null)");
-            lRequests.Add("INSERT INTO M4RJS_DEF_PARAMS (DT_LAST_UPDATE, ID_SECUSER, ID_APPROLE, ID_SCHED_TASK, PARAM_NAME) VALUES (getUTCDate(), @USER, @ROLE, @ID_SCHED_TASK, 'ARG_DT_PAIE_JS')");
-            lRequests.Add("INSERT INTO M4RJS_DEF_PARAMS1 (ID_SCHED_TASK, PARAM_NAME, PARAM_VALUE) VALUES (@ID_SCHED_TASK, 'ARG_DT_PAIE_JS', @DATE_PAY)");
-
-            string sTest = DataManagerSQLServer.ExecuteSqlTransaction(lRequests.ToArray(), lParameters.ToArray(), ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-            if (sTest == "OK")
-            {
-                string sTaskStatus;
-                string sNumTraitement = "NA";
-                List<string> lTraitements = new List<string>();
-                int iID_SCHED_TASKTrt = -1;
-
-                // Lecture des traitements paramétrés dans le traitement groupé
-                sRequete = "select A.CFR_ID_STEP, B.CFR_TASK_NMFRA, B.CFR_METHODE_LANCEMENT from M4CFR_MODEL_TACHES A,M4CFR_TACHES B where A.ID_ORGANIZATION='" + ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA + "' AND A.ID_ORGANIZATION=B.ID_ORGANIZATION AND A.CFR_ID_MODEL='" + sModelCode + "' AND A.CFR_ID_TASK=B.CFR_ID_TASK ORDER BY A.CFR_ID_STEP";
-                dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-                if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
+                foreach (DataRow drRow in dataSet.Tables[0].Rows)
                 {
-                    foreach (DataRow drRow in dataSet.Tables[0].Rows)
-                    {
-                        lTraitements.Add(drRow[1].ToString());
+                    lTraitements[1].Add(drRow[1].ToString());
+                }
+            }
+
+            // Comparaison du paramétrage des 2 environnements
+            if (lTraitements[0].Count != lTraitements[1].Count)
+                bTraitementsIdentiques = false;
+            else
+            {
+                for (int index = 0; (index < lTraitements[0].Count) && (bTraitementsIdentiques); index++)
+                {
+                    if (lTraitements[0][index] != lTraitements[1][index])
+                    { 
+                        bTraitementsIdentiques = false; 
                     }
                 }
 
-                // Attente de l'exécution de la tâche créant le traitement groupé
-                sTaskStatus = ResultScheduleTask(iID_SCHED_TASK, 1000, out sResultTask);
-                TraiteResultat(sTaskStatus, sResultTask, ref RapportControle);
-                if (RapportControle.Result == ParamAppli.StatutError)
+            }
+
+            if (bTraitementsIdentiques)
+            {
+                // Instanciation des objets thrad
+                threadProcessusCritiques = new ThreadProcessusCritique[2];
+                threadProcessusCritiques[0] = new ThreadProcessusCritique(this, 0);
+                threadProcessusCritiques[1] = new ThreadProcessusCritique(this, 1);
+
+                Thread[] thread = new Thread[2];
+                thread[0] = new Thread(new ThreadStart(threadProcessusCritiques[0].ThreadProcCrit));
+                thread[1] = new Thread(new ThreadStart(threadProcessusCritiques[1].ThreadProcCrit));
+
+                thread[0].Start();
+                thread[1].Start();
+
+                // Attente de la fin des 2 threads
+                while ((!bThreadTermine[0]) || (!bThreadTermine[1])) Thread.Sleep(500);
+
+
+                for (int indexSource = 0; indexSource < rSource[0].Count; indexSource++)
                 {
-                    RapportSource.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
-                    GlobalResult = ParamAppli.StatutError;
-                }
-                RapportControle.Result = ParamAppli.TranscoSatut[RapportControle.Result];
-                RapportSource.Controle.Add(RapportControle);
-                RapportProcess.Source.Add(RapportSource);
+                    RapportSource = new Source();
+                    RapportSource.Controle = new List<RControle>();
 
-                if ((sTaskStatus == ParamAppli.statusScheduleTaskTermine) && (sResultTask == ParamAppli.StatutOk))
-                {
+                    RapportSource.Name = rSource[0][indexSource].Name;
+                    RapportSource.Result = ParamAppli.StatutOk;
 
-                    // Recherche du numéro de traitement affecté
-                    sRequete = "select TOP 1 B.PARAM_VALUE from M4RJS_SCHED_TASKS A, M4RJS_DEF_PARAMS1 B where A.SCHED_TASK_NAME LIKE 'PNPU%' AND A.ID_SCHED_TASK>" + iID_SCHED_TASK.ToString("########0") + " AND A.ID_TASK='CFR_BP_START_TRAIT_GROUP_JS' AND A.ID_SCHED_TASK = B.ID_SCHED_TASK AND B.PARAM_NAME = 'ARG_ID_EXEC' ORDER BY A.ID_SCHED_TASK";
-                    dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-                    if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
+                    for (int indexControle = 0; indexControle < rSource[0][indexSource].Controle.Count; indexControle++)
                     {
-                        sNumTraitement = dataSet.Tables[0].Rows[0][0].ToString();
-                    }
-
-                    if (sNumTraitement != "NA")
-                    {
-                        RapportSource = new Rapport.Source
+                        bTraitementInterrompu = false;
+                        RapportControle = new RControle();
+                        RapportControle.Message = new List<string>();
+                        RapportControle.Result = ParamAppli.StatutOk;
+                        int iIndexString = rSource[0][indexSource].Controle[indexControle].Name.IndexOf('(');
+                        RapportControle.Name = rSource[0][indexSource].Controle[indexControle].Name.Substring(0, iIndexString);
+                        RapportControle.Tooltip = rSource[0][indexSource].Controle[indexControle].Tooltip;
+                        if ((rSource[0][indexSource].Controle[indexControle].Result == ParamAppli.StatutOk) && (rSource[1][indexSource].Controle[indexControle].Result == ParamAppli.StatutOk))
                         {
-                            Name = "Processus critiques",
-                            Controle = new List<RControle>(),
-                            Result = ParamAppli.TranscoSatut[ParamAppli.StatutOk]
-                        };
-
-                        // Boucle sur les traitements
-                        foreach (string sTraitement in lTraitements)
-                        {
-                            RapportControle = new RControle
-                            {
-                                Name = sTraitement,
-                                Message = new List<string>()
-                            };
-
-                            sRequete = "select ID_SCHED_TASK from M4RJS_SCHED_TASKS where SCHED_TASK_NAME like 'Traitement " + sNumTraitement + " : " + sTraitement + "' and ID_SCHED_TASK> " + iID_SCHED_TASK.ToString("########0");
-                            bBoucle = true;
-
-                            while (bBoucle)
-                            {
-                                dataSet = dataManagerSQL.GetData(sRequete, ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-                                if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
-                                {
-                                    bBoucle = false;
-                                    if (!Int32.TryParse(dataSet.Tables[0].Rows[0][0].ToString(), out iID_SCHED_TASKTrt))
-                                    {
-                                        iID_SCHED_TASKTrt = -1;
-                                    }
-                                }
-                                else
-                                {
-                                    System.Threading.Thread.Sleep(500);
-                                }
-                            }
-
-                            // Attente de l'exécution du traitement
-                            RapportControle.Name += " (" + iID_SCHED_TASKTrt.ToString("########0") + ")";
-                            sTaskStatus = ResultScheduleTask(iID_SCHED_TASK, 5000, out sResultTask);
-                            TraiteResultat(sTaskStatus, sResultTask, ref RapportControle);
-                            RapportSource.Controle.Add(RapportControle);
-                            if (RapportControle.Result == ParamAppli.StatutError)
-                            {
-                                RapportSource.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
-                                RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
-                                GlobalResult = ParamAppli.StatutError;
-                                break;
-                            }
-                            else
-                            {
-                                RapportControle.Result = ParamAppli.TranscoSatut[RapportControle.Result];
-                            }
-
+                            RapportControle.Result = ParamAppli.StatutOk;
                         }
-                        RapportProcess.Source.Add(RapportSource);
+                        else if ((rSource[0][indexSource].Controle[indexControle].Result == ParamAppli.StatutError) && (rSource[1][indexSource].Controle[indexControle].Result == ParamAppli.StatutError))
+                        {
+                            RapportControle.Result = ParamAppli.StatutWarning;
+                        }
+                        else
+                        {
+                            RapportControle.Result = ParamAppli.StatutError;
+                        }
+
+                        // Constitution du report du résultat
+                        stringBuilder.Clear();
+                        stringBuilder.Append("Base avant : ");
+                        stringBuilder.Append(rSource[0][indexSource].Controle[indexControle].Name);
+                        stringBuilder.Append(" - ");
+                        if (rSource[0][indexSource].Controle[indexControle].Result == ParamAppli.StatutOk)
+                        {
+                            stringBuilder.Append("OK");
+                        }
+                        else
+                        {
+                            stringBuilder.Append("Erreur - ");
+                            if (rSource[0][indexSource].Controle[indexControle].Message.Count > 0)
+                            {
+                                sMessageErreur = rSource[0][indexSource].Controle[indexControle].Message[0];
+                                stringBuilder.Append(sMessageErreur);
+                                if ((sMessageErreur.Contains("annulée")) || (sMessageErreur.Contains("expirée")) || (sMessageErreur.Contains("interrompue")))
+                                    bTraitementInterrompu = true;
+                            }
+                        }
+                        RapportControle.Message.Add(stringBuilder.ToString());
+
+                        stringBuilder.Clear();
+                        stringBuilder.Append("Base après : ");
+                        stringBuilder.Append(rSource[1][indexSource].Controle[indexControle].Name);
+                        stringBuilder.Append(" - ");
+                        if (rSource[1][indexSource].Controle[indexControle].Result == ParamAppli.StatutOk)
+                        {
+                            stringBuilder.Append("OK");
+                        }
+                        else
+                        {
+                            stringBuilder.Append("Erreur - ");
+                            if (rSource[1][indexSource].Controle[indexControle].Message.Count > 0)
+                            {
+                                sMessageErreur = rSource[1][indexSource].Controle[indexControle].Message[0];
+                                stringBuilder.Append(sMessageErreur);
+                                if ((sMessageErreur.Contains("annulée")) || (sMessageErreur.Contains("expirée")) || (sMessageErreur.Contains("interrompue")))
+                                    bTraitementInterrompu = true;
+                            }
+                        }
+                        RapportControle.Message.Add(stringBuilder.ToString());
+
+                        // Gestion du cas où la tâche ne s'est pas terminée sur au moins un environnement
+                        if (bTraitementInterrompu)
+                        {
+                            RapportControle.Message.Add("La tâche ne s'est pas terminée. La comparaison entre les deux environnements n'est pas pertinente.");
+                            RapportControle.Result = ParamAppli.StatutInfo;
+                        }
+
+                        if (RapportSource.Result == ParamAppli.StatutOk)
+                        {
+                            RapportSource.Result = RapportControle.Result;
+                        }
+                        else if ((RapportSource.Result == ParamAppli.StatutWarning) && (RapportControle.Result == ParamAppli.StatutError))
+                        {
+                            RapportSource.Result = ParamAppli.StatutError;
+                        }
+
+                        RapportControle.Result = ParamAppli.TranscoSatut[RapportControle.Result];
+                        RapportSource.Controle.Add(RapportControle);
                     }
+
+                    if (RapportProcess.Result == ParamAppli.StatutOk)
+                    {
+                        RapportProcess.Result = RapportSource.Result;
+                    }
+                    else if ((RapportProcess.Result == ParamAppli.StatutWarning) && (RapportSource.Result == ParamAppli.StatutError))
+                    {
+                        RapportProcess.Result = ParamAppli.StatutError;
+                    }
+                    RapportSource.Result = ParamAppli.TranscoSatut[RapportSource.Result];
+                    RapportProcess.Source.Add(RapportSource);
                 }
             }
+            else // Les traitements groupés sont paramétrés différement sur les 2 environnements
+            {
+                RapportSource = new Rapport.Source
+                {
+                    Name = "Planification des processus critiques",
+                    Controle = new List<RControle>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                RapportControle = new RControle
+                {
+                    Name = "Planification",
+                    Tooltip = "Génération de la planification des processus critiques",
+                    Message = new List<string>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                stringBuilder.Clear();
+                stringBuilder.Append("Le paramétrage des traitements groupés ");
+                stringBuilder.Append(sModelCode);
+                stringBuilder.Append(" est différent entre les deux environnements. Le processus est annulé.");
 
-
+                RapportControle.Message.Add(stringBuilder.ToString());
+                RapportSource.Controle.Add(RapportControle);
+                RapportProcess.Result = ParamAppli.StatutWarning;
+                RapportProcess.Source.Add(RapportSource);
+            }
             RapportProcess.Fin = DateTime.Now;
-            RapportProcess.Result = ParamAppli.TranscoSatut[GlobalResult];
+            RapportProcess.Result = ParamAppli.TranscoSatut[RapportProcess.Result];
 
             //On fait un update pour la date de fin du process et son statut
             GenerateHistoric(RapportProcess.Fin, GlobalResult, RapportProcess.Debut);
@@ -251,92 +294,7 @@ namespace PNPUCore.Process
                 int NextProcess = RequestTool.GetNextProcess(WORKFLOW_ID, ParamAppli.ProcessProcessusCritique);
                 LauncherViaDIspatcher.LaunchProcess(NextProcess, decimal.ToInt32(WORKFLOW_ID), CLIENT_ID, idInstanceWF);
             }
-
-        }
-
-        private void TraiteResultat(string sTaskStatus, string sResultTask, ref RControle rapportControle)
-        {
-            if (sTaskStatus == ParamAppli.statusScheduleTaskTermine)
-            {
-                if (sResultTask == ParamAppli.StatutOk)
-                {
-                    rapportControle.Result = ParamAppli.StatutOk;
-                }
-                else
-                {
-                    rapportControle.Result = ParamAppli.StatutError;
-                    rapportControle.Message.Add("Le traitement s'est terminé en erreur");
-                }
-            }
-            else
-            {
-                switch (sTaskStatus)
-                {
-                    case ParamAppli.statusScheduleTaskAnnule1:
-                    case ParamAppli.statusScheduleTaskAnnule2:
-                    case ParamAppli.statusScheduleTaskAnnule3:
-                        rapportControle.Result = ParamAppli.StatutError;
-                        rapportControle.Message.Add("La tâche a été annulée.");
-                        break;
-
-                    case ParamAppli.statusScheduleTaskExpire:
-                        rapportControle.Result = ParamAppli.StatutError;
-                        rapportControle.Message.Add("La tâche a expirée.");
-                        break;
-
-                    case ParamAppli.statusScheduleTaskInterrompu:
-                        rapportControle.Result = ParamAppli.StatutError;
-                        rapportControle.Message.Add("La tâche a été interrompue.");
-                        break;
-                }
-            }
-        }
-
-        private string ResultScheduleTask(int iID_SCHED_TASK, int iTimeOut, out string sResultTask)
-        {
-            DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
-            string sStatus = string.Empty;
-            DataSet dataSet;
-            bool bBoucle = true;
-            sResultTask = string.Empty;
-
-            while (bBoucle)
-            {
-                dataSet = dataManagerSQL.GetData("SELECT STATUS FROM M4RJS_TASK_EXE WHERE ID_SCHED_TASK =" + iID_SCHED_TASK.ToString("########0"), ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-                if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
-                {
-                    sStatus = dataSet.Tables[0].Rows[0][0].ToString();
-
-                    if ((sStatus != ParamAppli.statusScheduleTaskAttente) && (sStatus != ParamAppli.statusScheduleTaskEnCours))
-                    {
-                        bBoucle = false;
-                    }
-
-                    if (bBoucle)
-                    {
-                        System.Threading.Thread.Sleep(iTimeOut);
-                    }
-                }
-            }
-
-            // Si la tâche est terminée, on récupère le résultat de l'exécution
-            if (sStatus == ParamAppli.statusScheduleTaskTermine)
-            {
-                dataSet = dataManagerSQL.GetData("SELECT VM_EXIT_FLAG FROM M4RJS_SUBTASK_EXE WHERE ID_SCHED_TASK =" + iID_SCHED_TASK.ToString("########0"), ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA2);
-                if ((dataSet != null) && (dataSet.Tables[0].Rows.Count > 0))
-                {
-                    if (dataSet.Tables[0].Rows[0][0].ToString() == "0")
-                    {
-                        sResultTask = ParamAppli.StatutOk;
-                    }
-                    else
-                    {
-                        sResultTask = ParamAppli.StatutError;
-                    }
-                }
-
-            }
-            return sStatus;
+            
         }
     }
 }
