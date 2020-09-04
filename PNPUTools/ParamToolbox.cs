@@ -203,7 +203,7 @@ namespace PNPUTools
             }
             catch (Exception)
             {
-                throw new Exception();
+                throw;
             }
         }
 

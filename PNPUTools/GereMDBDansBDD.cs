@@ -98,9 +98,8 @@ namespace PNPUTools
             }
             catch (Exception ex)
             {
-                //TODO LOG
-                Console.WriteLine(ex.Message);
-                return -1;
+                Logger.Log(ex.Message, ParamAppli.StatutError);
+                throw;
             }
         }
 

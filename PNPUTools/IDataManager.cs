@@ -955,7 +955,29 @@ namespace PNPUTools.DataManager
             Array.Resize(ref arr, arr.Length - 1);
         }
 
+        public string ExtractDataBase(string sConnectionString)
+        {
+            string sDataBase = string.Empty;
+            int Index1;
+            int Index2;
 
+            Index1 = sConnectionString.ToUpper().IndexOf("DATABASE=");
+            if (Index1 >= 0)
+            {
+                Index1 += "DATABASE=".Length;
+                Index2 = sConnectionString.IndexOf(";", Index1);
+                if (Index2 > -1)
+                {
+                    sDataBase = sConnectionString.Substring(Index1, Index2 - Index1);
+                }
+                else
+                {
+                    sDataBase = sConnectionString.Substring(Index1);
+                }
+            }
+
+            return sDataBase;
+        }
     }
 }
 

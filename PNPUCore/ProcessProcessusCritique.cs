@@ -61,7 +61,8 @@ namespace PNPUCore.Process
             DataManagerSQLServer dataManagerSQL = new DataManagerSQLServer();
             DataSet dataSet;
             bool bTraitementsIdentiques = true;
-
+            bool[] bCSIsValide = new bool[2];
+            string sDataBase;
 
             sConnectionString = new string[2];
 
@@ -87,6 +88,9 @@ namespace PNPUCore.Process
             sConnectionString[1] = "server=10.113.24.81;uid=FRACUSQA2;pwd=FRACUSQA2;database=FRACUSQA2;";
             //sConnectionString[0] = paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
             //sConnectionString[1] = paramToolbox.GetConnexionString("After", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF);
+
+            bCSIsValide[0] = dataManagerSQL.CheckConnectionString(sConnectionString[0]);
+            bCSIsValide[1] = dataManagerSQL.CheckConnectionString(sConnectionString[1]);
 
             bThreadTermine = new bool[2];
             bThreadTermine[0] = false;
@@ -129,7 +133,7 @@ namespace PNPUCore.Process
 
             }
 
-            if (bTraitementsIdentiques)
+            if ((bTraitementsIdentiques) && (bCSIsValide[0]) && (bCSIsValide[1]))
             {
                 // Instanciation des objets thrad
                 threadProcessusCritiques = new ThreadProcessusCritique[2];
@@ -252,6 +256,97 @@ namespace PNPUCore.Process
                     RapportProcess.Source.Add(RapportSource);
                 }
             }
+            // Les chaines de connexions sont invalides
+            else if ((!bCSIsValide[0]) && (!bCSIsValide[1]))  
+            {
+                sDataBase = dataManagerSQL.ExtractDataBase(sConnectionString[0]);
+                if (sDataBase == string.Empty)
+                {
+                    sDataBase = "QA1";
+                }
+                stringBuilder.Clear();
+                stringBuilder.AppendFormat("Echec de la connexion sur les serveurs clients {0}", sDataBase);
+                sDataBase = dataManagerSQL.ExtractDataBase(sConnectionString[1]);
+                if (sDataBase == string.Empty)
+                {
+                    sDataBase = "QA2";
+                }
+                stringBuilder.AppendFormat(" et {0}. Veuillez contacter un administrateur", sDataBase);
+                RapportSource = new Rapport.Source
+                {
+                    Name = "Planification des processus critiques",
+                    Controle = new List<RControle>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                RapportControle = new RControle
+                {
+                    Name = "ERREUR DE CONNEXION",
+                    Tooltip = stringBuilder.ToString(),
+                    Message = new List<string>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                
+                RapportControle.Message.Add(stringBuilder.ToString());
+                RapportSource.Controle.Add(RapportControle);
+                RapportProcess.Result = ParamAppli.StatutWarning;
+                RapportProcess.Source.Add(RapportSource);
+            }
+            else if (!bCSIsValide[0])
+            {
+                sDataBase = dataManagerSQL.ExtractDataBase(sConnectionString[0]);
+                if (sDataBase == string.Empty)
+                {
+                    sDataBase = "QA1";
+                }
+                stringBuilder.Clear();
+                stringBuilder.AppendFormat("Echec de la connexion sur le serveur client {0}. Veuillez contacter un administrateur",sDataBase);
+                RapportSource = new Rapport.Source
+                {
+                    Name = "Planification des processus critiques",
+                    Controle = new List<RControle>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                RapportControle = new RControle
+                {
+                    Name = "ERREUR DE CONNEXION",
+                    Tooltip = stringBuilder.ToString(),
+                    Message = new List<string>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+
+                RapportControle.Message.Add(stringBuilder.ToString());
+                RapportSource.Controle.Add(RapportControle);
+                RapportProcess.Result = ParamAppli.StatutWarning;
+                RapportProcess.Source.Add(RapportSource);
+            }
+            else if (!bCSIsValide[1])
+            {
+                sDataBase = dataManagerSQL.ExtractDataBase(sConnectionString[1]);
+                if (sDataBase == string.Empty)
+                {
+                    sDataBase = "QA2";
+                }
+                stringBuilder.Clear();
+                stringBuilder.AppendFormat("Echec de la connexion sur le serveur client {0}. Veuillez contacter un administrateur", sDataBase);
+                RapportSource = new Rapport.Source
+                {
+                    Name = "Planification des processus critiques",
+                    Controle = new List<RControle>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+                RapportControle = new RControle
+                {
+                    Name = "ERREUR DE CONNEXION",
+                    Tooltip = stringBuilder.ToString(),
+                    Message = new List<string>(),
+                    Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
+                };
+
+                RapportControle.Message.Add(stringBuilder.ToString());
+                RapportSource.Controle.Add(RapportControle);
+                RapportProcess.Result = ParamAppli.StatutWarning;
+                RapportProcess.Source.Add(RapportSource);
+            }
             else // Les traitements groupés sont paramétrés différement sur les 2 environnements
             {
                 RapportSource = new Rapport.Source
@@ -268,10 +363,8 @@ namespace PNPUCore.Process
                     Result = ParamAppli.TranscoSatut[ParamAppli.StatutWarning]
                 };
                 stringBuilder.Clear();
-                stringBuilder.Append("Le paramétrage des traitements groupés ");
-                stringBuilder.Append(sModelCode);
-                stringBuilder.Append(" est différent entre les deux environnements. Le processus est annulé.");
-
+                stringBuilder.AppendFormat("Le paramétrage des traitements groupés {0} est différent entre les deux environnements. Le processus est annulé.", sModelCode);
+                
                 RapportControle.Message.Add(stringBuilder.ToString());
                 RapportSource.Controle.Add(RapportControle);
                 RapportProcess.Result = ParamAppli.StatutWarning;
@@ -296,5 +389,6 @@ namespace PNPUCore.Process
             }
             
         }
+        
     }
 }
