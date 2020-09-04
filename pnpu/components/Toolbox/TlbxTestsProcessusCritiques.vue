@@ -72,6 +72,43 @@
             </v-card-text>
           </v-card>
         </v-col>
+        <v-col cols="12" sm="6" md="6">
+          <v-card>
+            <v-card-title class="d-flex justify-space-between"
+              >Date de paiement<v-icon>mdi-calendar</v-icon></v-card-title
+            >
+            <v-divider></v-divider>
+            <v-card-text>
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="290px"
+                :rules="[rules.required]"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="computedDateFormatted"
+                    hint="Format MM/DD/YYYY"
+                    persistent-hint
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  color="primary"
+                  v-model="date"
+                  no-title
+                  @input="menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-card-text>
+          </v-card>
+        </v-col>
       </v-row>
 
       <v-col cols="2">
@@ -117,6 +154,8 @@ export default {
     return {
       loader: null,
       loading: false,
+      date: new Date().toISOString().substr(0, 10),
+      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
       form: {
         serverBefore: null,
         serverAfter: null,
@@ -128,10 +167,17 @@ export default {
       showPassword: false,
       rules: {
         required: (value) => !!value || 'Champ obligatoire.'
-      }
+      },
+      menu: false,
+      snackbar: '',
+      colorsnackbar: '',
+      snackbarMessage: ''
     }
   },
   computed: {
+    computedDateFormatted() {
+      return this.formatDate(this.date)
+    },
     formIsValid() {
       return (
         this.form.serverBefore &&
@@ -140,6 +186,7 @@ export default {
         this.form.databaseAfter &&
         this.form.passwordBefore &&
         this.form.passwordAfter &&
+        this.computedDateFormatted &&
         this.client !== ''
       )
     }
@@ -153,9 +200,23 @@ export default {
       setTimeout(() => (this[l] = false), 3000)
 
       this.loader = null
+    },
+    date(val) {
+      this.dateFormatted = this.formatDate(this.date)
     }
   },
   methods: {
+    /**
+     * Format date
+     * @param {string} - date
+     */
+    formatDate(date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${year}/${month}/${day}`
+    },
+
     /**
      * Launch toolbox process
      */
@@ -167,6 +228,7 @@ export default {
       fd.append('serverAfter', this.form.serverAfter)
       fd.append('databaseAfter', this.form.databaseAfter)
       fd.append('passwordAfter', this.form.passwordAfter)
+      fd.append('dtPaie', this.computedDateFormatted)
       fd.append('clientID', this.client)
       fd.append('workflowID', this.workflowID)
       try {
