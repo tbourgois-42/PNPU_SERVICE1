@@ -85,12 +85,13 @@ namespace XUnitTest
 
         public static void AddInfoClientToParamAppli()
         {
+
             InfoClient infoClient0 = new InfoClient("999", "FRACUS", "Dédié", "256", "server=vm-PN-RDSQL-001;uid=FRACUSQA1;pwd=FRACUSQA1;database=FRACUSQA1;", "server=vm-PN-RDSQL-001;uid=FRACUSQA2;pwd=FRACUSQA2;database=FRACUSQA2;", false);
-            ParamAppli.ListeInfoClient.Add("999", infoClient0);
+            ParamAppli.ListeInfoClient["999"] = infoClient0;
             infoClient0 = new InfoClient("998", "FRADER", "Désynchronisé", "258 ", "server=vm-PN-RDSQL-001;uid=FRADERQA1;pwd=FRADERQA1;database=FRADERQA1;", "server=vm-PN-RDSQL-001;uid=FRADERQA2;pwd=FRADERQA2;database=FRADERQA2;", false);
-            ParamAppli.ListeInfoClient.Add("998", infoClient0);
+            ParamAppli.ListeInfoClient["998"] =  infoClient0;
             infoClient0 = new InfoClient("997", "FRASTA", "Mutualisé", "257 ", "server=vm-PN-RDSQL-001;uid=FRADERQA1;pwd=FRADERQA1;database=FRADERQA1;", "server=vm-PN-RDSQL-001;uid=FRADERQA2;pwd=FRADERQA2;database=FRADERQA2;", false);
-            ParamAppli.ListeInfoClient.Add("997", infoClient0);
+            ParamAppli.ListeInfoClient["997"] = infoClient0;
 
         }
     }

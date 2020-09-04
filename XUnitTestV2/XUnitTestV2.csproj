@@ -46,6 +46,7 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PreCheckToolBoxTest.cs" />
     <Compile Include="DependanceToolboxTest.cs" />
     <Compile Include="ParamToolboxTest.cs" />
     <Compile Include="TestHelper.cs" />

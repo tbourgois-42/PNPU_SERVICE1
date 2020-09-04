@@ -90,7 +90,7 @@ namespace XUnitTest
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 DataRow drRow = dsDataSet.Tables[0].Rows[0];
-                isReportIsPresent = String.IsNullOrEmpty((string)drRow[0]) && dsDataSet.Tables[0].Rows.Count == 1;
+                isReportIsPresent = !String.IsNullOrEmpty((string)drRow[0]) && dsDataSet.Tables[0].Rows.Count == 1;
 
             }
 
