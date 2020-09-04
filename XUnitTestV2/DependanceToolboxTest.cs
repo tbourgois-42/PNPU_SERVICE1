@@ -2,6 +2,7 @@
 using PNPUTools;
 using PNPUTools.DataManager;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Xunit;
 
@@ -10,18 +11,20 @@ namespace XUnitTest
 
     public class InitialisationProcessDependance : IDisposable
     {
-        private string clientId { get; set; }
-        private int workflowId { get; set; }
+        public string clientId { get; set; }
+        public int workflowId { get; set; }
+        public int idInstanceWF { get; set; }
 
 
         public InitialisationProcessDependance()
         {
-            /* ... initialize data in the test database ...
-            string listClientId = "49"; //
-            int workflowId = 32; //TODO
+            // ... initialize data in the test database ...
+
+            TestHelper.AddInfoClientToParamAppli();
+
+            workflowId = 32;
             int process = ParamAppli.ProcessGestionDependance;
-            int idInstanceWF;
-            clientId = "49";
+            clientId = "999";
 
             //OLD CODE string sRequest = "SELECT ID_PROCESS FROM PNPU_STEP PS INNER JOIN PNPU_WORKFLOW PHW ON PHW.WORKFLOW_ID = PS.WORKFLOW_ID  WHERE PHW.WORKFLOW_ID = " + workflowId + " AND PS.ORDER_ID = 0 AND PHW.IS_TOOLBOX = 1";
 
@@ -38,8 +41,14 @@ namespace XUnitTest
 
             idInstanceWF = int.Parse(RequestTool.CreateUpdateWorkflowHistoric(historicWorkflow));
 
+            TestHelper.CreateParamToolboxForDedie(workflowId.ToString(), null, idInstanceWF);
+
+            GereMDBDansBDD gestionMDBdansBDD = new GereMDBDansBDD();
+            // Add zip into database
+            gestionMDBdansBDD.AjouteZipBDD("C:\\TEMPO\\MDB_TEST\\TEST_DEPENDANCE_WF32.zip", workflowId, ParamAppli.ConnectionStringBaseAppli, idInstanceWF);
+
             var launcher = new Launcher();
-            launcher.Launch(listClientId, workflowId, process, idInstanceWF);*/
+            launcher.Launch(clientId, workflowId, process, idInstanceWF);
 
         }
 
@@ -75,13 +84,13 @@ namespace XUnitTest
         [Fact]
         public void ShouldGetReportWhenLaunchDependanceProcess()
         {
-            string requestCheckIfAReportIsPresent = "select JSON_TEMPLATE from PNPU_H_REPORT where WORKFLOW_ID = 32 AND ID_PROCESS = 1 AND CLIENT_ID = '12' ";
+            string requestCheckIfAReportIsPresent = String.Format("select JSON_TEMPLATE from PNPU_H_REPORT where WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_H_WORKFLOW = {2} ", fixture.workflowId, fixture.clientId, fixture.idInstanceWF);
             DataSet dsDataSet = DataManagerSQLServer.GetDatas(requestCheckIfAReportIsPresent, ParamAppli.ConnectionStringBaseAppli);
             bool isReportIsPresent = false;
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
             {
                 DataRow drRow = dsDataSet.Tables[0].Rows[0];
-                isReportIsPresent = String.IsNullOrEmpty((string)drRow[0]) && dsDataSet.Tables[0].Rows.Count == 1;
+                isReportIsPresent = !String.IsNullOrEmpty((string)drRow[0]) && dsDataSet.Tables[0].Rows.Count == 1;
 
             }
 
@@ -90,10 +99,10 @@ namespace XUnitTest
         }
 
         [Fact]
-        public void ShouldGetMDBWhenLaunchDependanceProcess()
+        public void ShouldNotGetMDBWhenLaunchDependanceProcess()
         {
             bool isMDBIsPresent = false;
-            string requestCheckIfAReportIsPresent = "select MDB from PNPU_MDB where WORKFLOW_ID = AND CLIENT_ID = ";
+            string requestCheckIfAReportIsPresent = String.Format("select MDB from PNPU_H_REPORT where WORKFLOW_ID = {0} AND CLIENT_ID = '{1}' AND ID_H_WORKFLOW = {2} ", fixture.workflowId, fixture.clientId, fixture.idInstanceWF);
             DataSet dsDataSet = DataManagerSQLServer.GetDatas(requestCheckIfAReportIsPresent, ParamAppli.ConnectionStringBaseAppli);
 
             if ((dsDataSet != null) && (dsDataSet.Tables[0].Rows.Count > 0))
@@ -102,7 +111,7 @@ namespace XUnitTest
                 isMDBIsPresent = dsDataSet.Tables[0].Rows.Count >= 1;
             }
 
-            Assert.True(isMDBIsPresent);
+            Assert.True(!isMDBIsPresent);
         }
     }
 }
