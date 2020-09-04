@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text;
 
 namespace PNPUCore.Process
 {
@@ -64,7 +65,7 @@ namespace PNPUCore.Process
 
             // MHUM POUR TEST
             // TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ConnectionStringQA1 = "server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";//ParamAppli.ConnectionStringBaseQA1;//"server=M4FRSQL13;uid=SAASSN305;pwd=SAASSN305;database=SAASSN305;";
-            //TO REMOVE ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "1600";//"0002";//
+             ParamAppli.ListeInfoClient[CLIENT_ID].ID_ORGA = "0002";
 
             rapportAnalyseImpactData.Debut = DateTime.Now;
 
@@ -216,10 +217,13 @@ namespace PNPUCore.Process
             }
             else
             {
+                StringBuilder stringBuilder = new StringBuilder();
+                string sDataBase = dataManagerSQLServer.ExtractDataBase(sConnectionStringBaseQA1);
+                stringBuilder.AppendFormat("Echec de la connexion sur le serveur client {0}. Veuillez contacter un administrateur", sDataBase);
                 rapportAnalyseImpactData.Result = ParamAppli.StatutError;
                 RapportAnalyseImpactMDBData rapportAnalyseImpactMDBData = new RapportAnalyseImpactMDBData();
-                rapportAnalyseImpactMDBData.Name = "Erreur de connexion sur le serveur client";
-                rapportAnalyseImpactMDBData.Tooltip = "Erreur de connexion sur le serveur client";
+                rapportAnalyseImpactMDBData.Name = stringBuilder.ToString();
+                rapportAnalyseImpactMDBData.Tooltip = stringBuilder.ToString();
                 rapportAnalyseImpactMDBData.Result = ParamAppli.StatutError;
                 rapportAnalyseImpactMDBData.listRapportAnalyseImpactPackData = new List<RapportAnalyseImpactPackData>();
                 rapportAnalyseImpactData.listRapportAnalyseImpactMDBData.Add(rapportAnalyseImpactMDBData);
