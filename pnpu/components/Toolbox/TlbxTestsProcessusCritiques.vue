@@ -37,6 +37,41 @@
             </v-card-text>
           </v-card>
         </v-col>
+        <v-col cols="12" sm="6" md="6">
+          <v-card>
+            <v-card-title class="d-flex justify-space-between"
+              >Base de données
+              <v-chip text-color="white" color="Pantone171C" label
+                ><v-icon left>mdi-label</v-icon>
+                après
+              </v-chip></v-card-title
+            >
+            <v-divider></v-divider>
+            <v-card-text>
+              <v-col cols="12" sm="12" md="12">
+                <v-text-field
+                  v-model="form.serverAfter"
+                  label="Serveur"
+                  :rules="[rules.required]"
+                ></v-text-field>
+                <v-text-field
+                  v-model="form.databaseAfter"
+                  label="Database"
+                  :rules="[rules.required]"
+                ></v-text-field>
+                <v-text-field
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  v-model="form.passwordAfter"
+                  :rules="[rules.required]"
+                  :type="showPassword ? 'text' : 'password'"
+                  label="Mot de passe"
+                  name="password"
+                  @click:append="showPassword = !showPassword"
+                ></v-text-field>
+              </v-col>
+            </v-card-text>
+          </v-card>
+        </v-col>
       </v-row>
 
       <v-col cols="2">
@@ -104,7 +139,8 @@ export default {
         this.form.databaseBefore &&
         this.form.databaseAfter &&
         this.form.passwordBefore &&
-        this.form.passwordAfter
+        this.form.passwordAfter &&
+        this.client !== ''
       )
     }
   },
