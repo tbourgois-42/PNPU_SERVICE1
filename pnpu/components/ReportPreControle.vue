@@ -107,6 +107,16 @@
             @change="Filtered($event)"
           ></v-checkbox>
         </v-list-item-group>
+        <v-alert
+          class="mr-2"
+          v-if="tooltip"
+          icon="mdi-information"
+          prominent
+          text
+          type="info"
+        >
+          {{ tooltip }}
+        </v-alert>
         <transition appear name="fade">
           <v-data-table
             :headers="headers"
@@ -126,13 +136,14 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon v-bind="attrs" v-on="on" :color=getgetColorIconResult(item.result)>{{ item.result }}</v-icon>
                 </template>
-                <span>{{ tooltipMessage }}</span>
+                <span  v-if="item.Tooltip">{{ item.Tooltip }}</span>
               </v-tooltip>
             </template>
           </v-data-table>
         </transition>
         <v-alert
           v-if="selectedItemTable.length === 0"
+          class="mr-2"
           icon="mdi-check"
           prominent
           text
@@ -140,16 +151,6 @@
         >
           Ce contrôle s'est déroulé avec succès, il n'a généré aucun message
           d'erreur.
-        </v-alert>
-        <v-alert
-          v-if="showInfo === true"
-          icon="mdi-information-variant"
-          prominent
-          text
-          type="primary"
-        >
-          Pour visualiser les résultats de ce contrôle, veuillez cliquer sur
-          {{ titleTable }} dans l'arborescence.
         </v-alert>
       </v-col>
 
@@ -231,7 +232,6 @@ export default {
     page: 1,
     pageCount: 0,
     itemsPerPage: 15,
-    showInfo: false,
     loadingReport: false,
     reportTNR: false,
     alertMessage: '',
@@ -245,7 +245,8 @@ export default {
       { text: 'Status', value: 'result' }
     ],
     searchDataTable: '',
-    treeviewFiltered: []
+    treeviewFiltered: [],
+    tooltip: null
   }),
 
   computed: {
@@ -308,6 +309,7 @@ export default {
     getSelected(e) {
       if (e.length > 0) {
         for (const selectedItem of e) {
+          this.getTooltip(selectedItem)
           if (selectedItem.children !== undefined) {
             this.GenerateTableValues(selectedItem.children, selectedItem.name)
           } else if (selectedItem.elements !== undefined) {
@@ -323,8 +325,19 @@ export default {
           }
         }
       }
-      this.showInfo = false
       this.Filtered(this.checkboxValue)
+    },
+
+    /**
+     * Get tooltip of selected item
+     * @param {object} item - item selected
+    */
+    getTooltip(item) {
+      if (item.Tooltip) {
+        this.tooltip = item.Tooltip
+      } else {
+        this.tooltip = null
+      }
     },
 
     /**
