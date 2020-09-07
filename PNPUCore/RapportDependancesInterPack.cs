@@ -117,7 +117,8 @@ namespace PNPUCore
             jw.WriteValue(sCote + Name + sCote);
 
 
-            jw.WritePropertyName("elements");
+            //jw.WritePropertyName("elements");
+            jw.WritePropertyName("children");
             jw.WriteStartArray();
             foreach (RapportDependancesInterPackMDBN2 type in listRapportDependancesInterPackMDBN2)
             {

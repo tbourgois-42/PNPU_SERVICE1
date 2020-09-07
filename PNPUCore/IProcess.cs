@@ -250,7 +250,7 @@ namespace PNPUCore.Process
 
             foreach (string clientId in listClientId)
             {
-                InfoClient client = RequestTool.GetClientsById(clientId);
+                InfoClient client = ParamAppli.ListeInfoClient[clientId];
                 PNPU_H_STEP historicStep = new PNPU_H_STEP
                 {
                     ID_PROCESS = PROCESS_ID,

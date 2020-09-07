@@ -38,6 +38,8 @@ namespace PNPUCore.Process
                 ParamAppli.ListeInfoClient[Process.CLIENT_ID].ID_ORGA = "0002";
 
                 ParamToolbox paramToolbox = new ParamToolbox();
+                //DateTime sDatePaie = paramToolbox.GetDtPaie(Process.WORKFLOW_ID, Process.ID_INSTANCEWF);
+
 
                 RapportSource = new Rapport.Source
                 {
@@ -89,6 +91,8 @@ namespace PNPUCore.Process
                 lParameters.Add("@DATE_LAUNCH");
                 lParameters.Add(DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:00"));
                 lParameters.Add("@DATE_PAY");
+                // MHUM Pour tests
+                //lParameters.Add(sDatePaie.ToString("yyyy-MM-dd"));
                 lParameters.Add("2020-08-25");
 
                 //lRequests.Add("INSERT INTO M4RJS_SCHED_TASKS(ID_SCHED_TASK, SCHED_TASK_NAME, SCHED_TASK_DESC, ID_TASK, CREATOR, USER_PLANNER, USER_EXECUTOR, ROLE_EXECUTOR, PRIORITY, SERVER_NAME, SERVICE_NAME, ID_TIMEZONE, MAX_DELAY, HAS_CALENDARS, SET_STATISTICS, STAT_FILE_BASENAME, SET_NOTIFICATIONS, START_DATE, END_DATE, DATE_CREATED, STATISTICS_LEVEL, IS_DYNAMIC, PREVIEW_PERIOD, DATE_MAX, DATE_NEXT, EXECUTION_MAX, EXECUTION_NUMBER, ID_APPROLE, ID_SECUSER, DT_LAST_UPDATE, ID_ORGANIZATION, IS_ADMINISTRATIVE, SET_NOTIFY_EXEC_START, SET_NOTIFY_EXEC_END, MAILS_TO_NOTIFY_EXEC, AUTO_NOTIFY_EXEC, SET_ATTACH_RESOURCES, SET_ATTACH_PASSWORD) VALUES (@ID_SCHED_TASK, @SCHED_TASK_NAME + ' ' + @ID_ORGA_TMP, @TASK_DESC, @SCHED_TASK_NAME, 29, @USER, @USER, @ROLE, 5, @SERVER_NAME, @SERVICE_NAME, 'Romance', 0, 0, 0, null, 0, getUTCDate(), null, getUTCDate(), 0, 0, null, null, null, null, null, @ROLE, @USER, getUTCDate(), @ID_ORGA_TMP, null, null, null, null, null, null, null)");

@@ -3,7 +3,7 @@ using PNPUCore.Rapport;
 using PNPUTools;
 using System;
 using System.Collections.Generic;
-
+using System.Text;
 namespace PNPUCore.Process
 {
     internal class ProcessGestionDependance : ProcessCore, IProcess
@@ -116,13 +116,16 @@ namespace PNPUCore.Process
             }
             else
             {
+                StringBuilder stringBuilder = new StringBuilder();
+                string sDataBase = dataManagerSQLServer.ExtractDataBase(paramToolbox.GetConnexionString("Before", WORKFLOW_ID, CLIENT_ID, ID_INSTANCEWF));
+                stringBuilder.AppendFormat("Echec de la connexion sur le serveur client {0}. Veuillez contacter un administrateur", sDataBase);
                 RControle RapportControle = new RControle
                 {
-                    Name = "ERREUR DECONNEXION",
-                    Tooltip = "Erreur de connexion sur le serveur client",
+                    Name = "ERREUR DE CONNEXION",
+                    Tooltip = stringBuilder.ToString(),
                     Message = new List<string>()
                 };
-                RapportControle.Message.Add("Erreur de connexion sur le serveur client");
+                RapportControle.Message.Add(stringBuilder.ToString());
                 GlobalResult = ParamAppli.StatutError;
                 RapportControle.Result = ParamAppli.TranscoSatut[ParamAppli.StatutError];
                 RapportSource.Result = RapportControle.Result;
