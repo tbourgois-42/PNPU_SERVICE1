@@ -185,7 +185,7 @@ export default {
       try {
         await axios.post(`${process.env.WEB_SERVICE_WCF}/toolbox`, fd)
       } catch (error) {
-        this.showSnackbar('error', `${error} !`)
+        this.showSnackbar('error', `${error.response.data}`)
       }
     },
 
